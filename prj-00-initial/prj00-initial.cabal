@@ -3,22 +3,23 @@ name:               prj00-initial
 version:            0.1.0.0
 
 -- A short (one-line) description of the package.
--- synopsis:
+synopsis:           Mingyu Choo's algorithm
 
 -- A longer description of the package.
--- description:
+description:        This is very basic algorithm code
 
 -- A URL where users can report bugs.
--- bug-reports:
+bug-reports:        mingyuchoo@gmail.com
 
 -- The license under which the package is released.
--- license:
+license:            MIT
 author:             mingyuchoo
 maintainer:         mingyuchoo@gmail.com
 
 -- A copyright notice.
 -- copyright:
--- category:
+category:           Algorithm
+
 extra-source-files: CHANGELOG.md
 
 executable prj00-initial
