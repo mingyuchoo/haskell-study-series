@@ -1,4 +1,4 @@
-# prj-00-initial
+# tutorial-01-first-functions
 
 ## How to build
 
@@ -19,4 +19,11 @@ $ cabal run
 $ cabal sdist
 $ cabal upload
 $ cabal install
+```
+
+## How to test
+
+```bash
+$ cd ./app
+$ doctest ./Main.hs
 ```
