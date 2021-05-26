@@ -20,3 +20,12 @@ $ cabal sdist
 $ cabal upload
 $ cabal install
 ```
+
+## How to test
+
+### doctest
+
+```bash
+$ cd ./app
+$ doctest ./Main.hs
+```
