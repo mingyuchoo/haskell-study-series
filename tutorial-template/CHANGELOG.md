@@ -1,4 +1,4 @@
-# Revision history for tutorial00-initial
+# Revision history for tutorial-template
 
 ## 0.1.0.0 -- 2021-05-22
 

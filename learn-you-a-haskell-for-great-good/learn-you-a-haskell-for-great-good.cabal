@@ -1,5 +1,5 @@
 cabal-version:      2.4
-name:               tutorial00-initial
+name:               learn-you-a-haskell-for-great-good
 version:            0.1.0.0
 
 -- A short (one-line) description of the package.
@@ -22,11 +22,15 @@ category:           Algorithm
 
 extra-source-files: CHANGELOG.md
 
-executable tutorial00-initial
+executable learn-you-a-haskell-for-great-good
     main-is:          Main.hs
 
     -- Modules included in this executable, other than Main.
-    -- other-modules:
+    other-modules:
+        Chapter02.StartingOut
+        Chapter03.TypesAndTypeclasses
+        Chapter04.PatternMatching
+        Chapter04.Guards
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:

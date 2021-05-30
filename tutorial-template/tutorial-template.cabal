@@ -1,5 +1,5 @@
 cabal-version:      2.4
-name:               tutorial01-first-functions
+name:               tutorial-template
 version:            0.1.0.0
 
 -- A short (one-line) description of the package.
@@ -22,7 +22,7 @@ category:           Algorithm
 
 extra-source-files: CHANGELOG.md
 
-executable tutorial00-first-functions
+executable tutorial-template
     main-is:          Main.hs
 
     -- Modules included in this executable, other than Main.

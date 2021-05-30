@@ -1,4 +1,4 @@
-# tutorial-00-initial
+# tutorial-template
 
 ## How to build
 

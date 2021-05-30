@@ -1,4 +1,4 @@
-# tutorial-01-first-functions
+# learn-you-a-haskell-for-great-good
 
 ## How to build
 
