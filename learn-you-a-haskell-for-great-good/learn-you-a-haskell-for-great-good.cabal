@@ -31,7 +31,8 @@ executable learn-you-a-haskell-for-great-good
         Chapter03.TypesAndTypeclasses
         Chapter04.PatternMatching
         Chapter04.Guards
-        Chaptet05.Recursion
+        Chapter05.Recursion
+        Chapter06.HigherOrderFunctions
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
