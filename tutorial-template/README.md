@@ -5,6 +5,7 @@
 ```bash
 $ cabal install doctest
 $ cabal install hlint
+$ cabal install apply-refact
 ```
 
 ## How to build
