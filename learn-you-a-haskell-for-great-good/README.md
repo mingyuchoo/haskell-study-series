@@ -1,5 +1,12 @@
 # learn-you-a-haskell-for-great-good
 
+## Prerequisite
+
+```bash
+$ cabal install doctest
+$ cabal install hlint
+```
+
 ## How to build
 
 ```bash

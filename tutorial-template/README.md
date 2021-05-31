@@ -1,5 +1,12 @@
 # tutorial-template
 
+## Prerequisite
+
+```bash
+$ cabal install doctest
+$ cabal install hlint
+```
+
 ## How to build
 
 ```bash
