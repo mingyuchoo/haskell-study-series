@@ -3,11 +3,15 @@ module Chapter06.Lambdas
 ) where
 
 -- | addThree'
--- 
+-- >>> addThree' 2 5 7
+-- 14
+--
 addThree' :: (Num a) => a -> a -> a -> a
 addThree' x y z = x + y + z
 
 -- | addThree''
+-- >>> addThree'' 2 5 7
+-- 14
 --
 addThree'' :: (Num a) => a -> a -> a -> a
 addThree'' = \x -> \y -> \z -> x + y + z
