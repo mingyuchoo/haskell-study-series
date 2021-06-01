@@ -32,7 +32,7 @@ executable learn-you-a-haskell-for-great-good
         Chapter04.PatternMatching
         Chapter04.Guards
         Chapter05.Recursion
-        Chapter06.HigherOrderFunctions
+        Chapter06.CurriedFunctions
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
