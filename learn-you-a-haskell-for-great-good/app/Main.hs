@@ -2,13 +2,12 @@ module Main where
 
 import Chapter02.StartingOut
 import Chapter03.TypesAndTypeclasses
-import Chapter04.PatternMatching
-import Chapter04.Guards
+import Chapter04.SyntaxInFunctions
 
 
 -- | main
 main :: IO ()
-main = do 
+main = do
     putStrLn (show (doubleMe 3))
     putStrLn "Hello, Haskell!"
     putStrLn (removeNonUppercase "Hello Haskell!")

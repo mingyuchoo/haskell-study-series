@@ -1,4 +1,4 @@
-module Chapter06.CurriedFunctions
+module Chapter06.HigherOrderFunctions
 ( multThree
 , compareWithHundred
 , compareWithHundred'
@@ -88,7 +88,7 @@ zipWith' f (x:xs) (y:ys) = f x y : zipWith' f xs ys
 -- [('h',1),('e',2),('l',3),('l',4),('o',5)]
 -- >>> zipWith (flip' div) [2,2..] [10,8,6,4,2]
 -- [5,4,3,2,1]
--- 
+--
 flip' :: (a -> b -> c) -> b -> a -> c
 flip' f y x = f x y
 
@@ -130,7 +130,7 @@ filter' f (x:xs)
 --
 quicksort :: (Ord a) => [a] -> [a]
 quicksort [] = []
-quicksort (x:xs) = 
+quicksort (x:xs) =
     let smallerSorted = quicksort (filter (<=x) xs)
         biggerSorted  = quicksort (filter (>x)  xs)
     in  smallerSorted ++ [x] ++ biggerSorted
@@ -165,3 +165,75 @@ numLongChains :: Int
 numLongChains = length (filter isLong (map chain [1..100]))
     where isLong xs = length xs > 15
 
+
+-- | addThree'
+-- >>> addThree' 2 5 7
+-- 14
+--
+addThree' :: (Num a) => a -> a -> a -> a
+addThree' x y z = x + y + z
+
+-- | addThree''
+-- >>> addThree'' 2 5 7
+-- 14
+--
+addThree'' :: (Num a) => a -> a -> a -> a
+addThree'' = \x -> \y -> \z -> x + y + z
+
+-- | filp''
+-- >>> flip'' zip [1,2,3,4,5] "hello"
+-- [('h',1),('e',2),('l',3),('l',4),('o',5)]
+--
+flip'' :: (a -> b -> c) -> b -> a -> c
+flip'' f = \x y -> f y x
+
+-- | sum'
+-- >>> sum' [1,2,3,4]
+-- 10
+--
+sum' :: (Num a) => [a] -> a
+sum' xs = foldl (\acc x -> acc + x) 0 xs
+
+-- | sum''
+-- >>> sum'' [1,2,3,4]
+-- 10
+--
+sum'' :: (Num a) => [a] -> a
+sum'' = foldl (+) 0
+
+
+-- | elem'
+--
+elem' :: (Eq a) => a -> [a] -> Bool
+elem' y ys = foldl (\acc x -> if x == y then True else acc) False ys
+
+
+-- | map''
+--
+map'' :: (a -> b) -> [a] -> [b]
+map'' f xs = foldr (\x acc -> f x : acc) [] xs
+
+
+-- | sum'''
+--
+sum''' :: (Num a) => [a] -> a
+sum''' xs = foldl (+) 0 xs
+
+
+-- | oddSquareSum
+--
+oddSquareSum :: Integer
+oddSquareSum = sum (takeWhile (<10000) (filter odd (map (^2) [1..])))
+
+-- | oddSquareSum'
+--
+oddSquareSum' :: Integer
+oddSquareSum' = sum . takeWhile (<10000) . filter odd . map (^2) $ [1..]
+
+-- | oddSquareSum''
+--
+oddSquareSum'' :: Integer
+oddSquareSum'' =
+    let oddSquares = filter odd $ map (^2) [1..]
+        belowLimit = takeWhile (<10000) oddSquares
+    in sum belowLimit
