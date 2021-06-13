@@ -224,3 +224,63 @@ treeInsert x (Node a left right)                -- pattern matching
     | x <  a = Node a (treeInsert x left) right
     | x >  a = Node a left (treeInsert x right)
 
+
+-- function definition
+treeElem :: (Ord a) => a -> Tree a -> Bool
+treeElem x EmptyTree            = False
+treeElem x (Node a left right)
+    | x == a = True
+    | x < a  = treeElem x left
+    | x > a  = treeElem x right
+
+{--
+ - Typeclasses 102
+ -}
+
+data TrafficLight = Red | Yellow | Green
+
+instance Eq TrafficLight where
+    Red    == Red    = True
+    Green  == Green  = True
+    Yellow == Yellow = True
+    _      == _      = False
+
+instance Show TrafficLight where
+    show Red    = "Red light"
+    show Yellow = "Yellow light"
+    show Green  = "Green light"
+
+{--
+ - A yes-not typeclass
+ -}
+
+
+-- class declaration
+--  - YesNo: typeclass
+--  - yesno: function
+class YesNo a where 
+    yesno :: a -> Bool
+
+instance YesNo Int where
+    yesno 0 = False
+    yesno _ = True
+
+instance YesNo [a] where
+    yesno [] = False
+    yesno _  = True
+
+instance YesNo Bool where
+    yesno = id
+
+instance YesNo (Maybe a) where
+    yesno (Just _) = True
+    yesno Nothing  = False
+
+
+
+yesnoIf :: (YesNo y) => y -> a -> a -> a
+yesnoIf yesnoVal yesResult noResult = if yesno yesnoVal then yesResult else noResult
+
+class Functor f where
+    fmap :: (a -> b) -> f a -> f b
+
