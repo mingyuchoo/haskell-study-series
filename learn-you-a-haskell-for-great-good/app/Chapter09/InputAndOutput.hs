@@ -61,17 +61,23 @@
 --     putStrLn $ a ++ " " ++ b
 
 
+{-- putStr --}
+
 
 -- main = do   putStr "Hey, "
 --             putStr "I'm "
 --             putStrLn "Andy!"
 
 
+{-- putchar --}
+
 
 -- main = do putChar 't'
 --           putChar 'e'
 --           putChar 'h'
 
+
+{-- print --}
 
 
 -- main = do print True
@@ -80,6 +86,23 @@
 --           print 3.2
 --           print [3,4,3]
 
+
+{-- when --}
+
+
+-- import Control.Monad
+-- main = do
+--     input <- getLine
+--     when (input == "SWORDFISH") $ do
+--         putStrLn input
+
+
+
+-- main = do
+--     input <- getLine
+--     if (input == "SWORDFISH")
+--         then putStrLn input
+--         else return ()
 
 
 
@@ -102,6 +125,7 @@
 --         main
 
 
+{-- sequence --}
 
 
 -- main = do
@@ -118,6 +142,8 @@
 --     print rs
 
 
+{-- forever --}
+
 
 -- import Control.Monad
 -- import Data.Char
@@ -126,6 +152,8 @@
 --     l <- getLine
 --     putStrLn $ map toUpper l
 
+
+{-- forM --}
 
 
 -- import Control.Monad
@@ -140,6 +168,10 @@
 
 
 
+{-- input redirection --}
+
+
+-- -- if you want to quit, type Ctr+d
 -- import Control.Monad
 -- import Data.Char
 -- main = forever $ do
@@ -152,7 +184,7 @@
 -- import Data.Char
 -- main = do
 --     contents <- getContents
---     putStr (map toUpper contents)
+--     putStr $ map toUpper contents     -- ==  putStr (map toUpper contents)
 
 
 
@@ -288,26 +320,26 @@ I think you need a new one!
 
 
 
-import System.IO
-import System.Directory
-import Data.List
-main = do
-    handle <- openFile "todo.txt" ReadMode
-    (tempName, tempHandle) <- openTempFile "." "temp"
-    contents <- hGetContents handle
-    let todoTasks = lines contents
-        numberedTasks = zipWith (\n line -> show n ++ " - " ++ line) [0..] todoTasks
-    putStrLn "These are your TO-DO items:"
-    putStr $ unlines numberedTasks
-    putStrLn "Which one do you want to delete?"
-    numberString <- getLine
-    let number = read numberString
-        newTodoItems = delete (todoTasks !! number) todoTasks
-    hPutStr tempHandle $ unlines newTodoItems
-    hClose handle
-    hClose tempHandle
-    removeFile "todo.txt"
-    renameFile tempName "todo.txt"
+-- import System.IO
+-- import System.Directory
+-- import Data.List
+-- main = do
+--     handle <- openFile "todo.txt" ReadMode
+--     (tempName, tempHandle) <- openTempFile "." "temp"
+--     contents <- hGetContents handle
+--     let todoTasks = lines contents
+--         numberedTasks = zipWith (\n line -> show n ++ " - " ++ line) [0..] todoTasks
+--     putStrLn "These are your TO-DO items:"
+--     putStr $ unlines numberedTasks
+--     putStrLn "Which one do you want to delete?"
+--     numberString <- getLine
+--     let number = read numberString
+--         newTodoItems = delete (todoTasks !! number) todoTasks
+--     hPutStr tempHandle $ unlines newTodoItems
+--     hClose handle
+--     hClose tempHandle
+--     removeFile "todo.txt"
+--     renameFile tempName "todo.txt"
 
 
 
