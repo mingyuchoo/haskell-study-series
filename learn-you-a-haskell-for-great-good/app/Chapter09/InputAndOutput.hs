@@ -17,14 +17,17 @@
 --     putStrLn "What's your first name?"
 --     firstName <- getLine
 --     putStrLn "What's your last name?"
---     lastName <- getLine
---     let bigFirstName = map toUpper firstName
---         bigLastName = map toUpper lastName
+--     lastName  <- getLine
+--     let 
+--         bigFirstName = map toUpper firstName
+--         bigLastName  = map toUpper lastName
 --     putStrLn $ "hey " ++ bigFirstName ++ " " ++ bigLastName ++ ", how are you?"
 
 
 
 
+-- reverseWords :: String -> String
+-- reverseWords = unwords . map reverse . words
 -- main = do
 --     line <- getLine
 --     if null line
@@ -32,10 +35,7 @@
 --         else do
 --             putStrLn $ reverseWords line
 --             main
--- 
--- 
--- reverseWords :: String -> String
--- reverseWords = unwords . map reverse . words
+
 
 
 
@@ -55,6 +55,10 @@
 --     putStrLn $ a ++ " " ++ b
 
 
+
+
+
+
 -- main = do
 --     let a = "hell"
 --         b = "yeah"
@@ -67,6 +71,8 @@
 -- main = do   putStr "Hey, "
 --             putStr "I'm "
 --             putStrLn "Andy!"
+
+
 
 
 {-- putchar --}
@@ -117,12 +123,21 @@
 
 
 
+
 -- import Control.Monad
 -- main = do
 --     c <- getChar
 --     when (c /= ' ') $ do
 --         putChar c
 --         main
+
+
+import Control.Monad
+main = do
+    c <- getChar
+    when (c /= ' ') $ do
+        putChar c
+        main
 
 
 {-- sequence --}
