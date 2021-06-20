@@ -1,9 +1,8 @@
 module Chapter03.TypesAndTypeclasses
-( removeNonUppercase
-, addThree
-, circumference
-) where
-
+  ( removeNonUppercase
+  , addThree
+  , circumference
+  ) where
 
 -- | removeNonUppercase
 -- >>> removeNonUppercase "Hello, Haskell!"
@@ -12,10 +11,7 @@ module Chapter03.TypesAndTypeclasses
 -- ""
 --
 removeNonUppercase :: [Char] -> [Char]
-removeNonUppercase st = [ c | c <- st, c `elem` ['A'..'Z']]
-
-
-
+removeNonUppercase st = [c | c <- st, c `elem` ['A' .. 'Z']]
 
 -- | addThree
 -- >>> addThree 1 1 1
@@ -25,9 +21,7 @@ removeNonUppercase st = [ c | c <- st, c `elem` ['A'..'Z']]
 -- >>> addThree (-1) (-2) 3
 -- 0
 addThree :: Int -> Int -> Int -> Int -- type signature declaration
-addThree x y z = x + y + z           -- function pattern matching
-
-
+addThree x y z = x + y + z -- function pattern matching
 
 -- | circumference
 -- >>> circumference 4.0

@@ -13,7 +13,6 @@ module Main where
 --
 -- prop> countSpace s == sum [ 1 | c <- s, c == ' ' ]
 --
-
 countSpace :: String -> Int
 countSpace = length . filter (' ' ==)
 

@@ -1,7 +1,7 @@
 module Geometry.Cube
-( volume
-, area
-) where
+  ( volume
+  , area
+  ) where
 
 import qualified Geometry.Cuboid as Cuboid
 

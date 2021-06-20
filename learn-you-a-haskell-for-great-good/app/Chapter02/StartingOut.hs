@@ -1,8 +1,7 @@
 module Chapter02.StartingOut
-( doubleMe
-, doubleUs
-) where
-
+  ( doubleMe
+  , doubleUs
+  ) where
 
 -- | doubleMe
 --
@@ -18,8 +17,6 @@ module Chapter02.StartingOut
 doubleMe :: Int -> Int
 doubleMe x = x + x
 
-
-
 -- | doubleUs
 -- >>> doubleUs 1 1
 -- 4
@@ -28,4 +25,4 @@ doubleMe x = x + x
 -- >>> doubleUs 2 3
 -- 10
 doubleUs :: Int -> Int -> Int
-doubleUs x y = x*2 + y*2
+doubleUs x y = x * 2 + y * 2

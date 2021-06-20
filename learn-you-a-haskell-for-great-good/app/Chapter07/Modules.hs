@@ -1,4 +1,6 @@
-module Chapter07.Modules () where
+module Chapter07.Modules
+  (
+  ) where
 
 import Data.List
 

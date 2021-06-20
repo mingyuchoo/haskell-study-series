@@ -5,6 +5,7 @@
 ```bash
 $ cabal install doctest
 $ cabal install hlint
+$ cabal install hindent
 $ cabal install apply-refact
 ```
 
@@ -27,6 +28,12 @@ $ cabal run
 $ cabal sdist
 $ cabal upload
 $ cabal install
+```
+
+## How to pretty format
+
+```bash
+$ hindent ./**/*.hs
 ```
 
 ## How to test
