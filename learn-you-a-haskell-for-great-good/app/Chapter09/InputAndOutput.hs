@@ -1,6 +1,16 @@
+{-# LANGUAGE ConstraintKinds            #-}
+{-# LANGUAGE DeriveGeneric              #-}
+{-# LANGUAGE DerivingStrategies         #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE InstanceSigs               #-}
+{-# LANGUAGE KindSignatures             #-}
+{-# LANGUAGE LambdaCase                 #-}
+{-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE RecordWildCards            #-}
 {-# LANGUAGE ScopedTypeVariables        #-}
-{-# LANGUAGE TemplateHaskell            #-}
+{-# LANGUAGE StandaloneDeriving         #-}
+{-# LANGUAGE TupleSections              #-}
+{-# LANGUAGE TypeApplications           #-}
 
 -- module Chapter09.InputAndOutput
 -- (
@@ -335,14 +345,138 @@ I think you need a new one!
 --   gen2 <- getStdGen
 --   putStr   $ take 20 (randomRs ('a','z') gen2)
 {-- ------------------------------------------------------------------------ --}
-import           Data.List
-import           System.Random
-main = do
-  gen <- getStdGen
-  let randomChars     = randomRs ('a','z') gen
-      (first20, rest) = splitAt 20 randomChars
-      (second20,   _) = splitAt 20 rest
-  putStrLn first20
-  putStr   second20
+-- import           Data.List
+-- import           System.Random
+-- main = do
+--   gen <- getStdGen
+--   let randomChars     = randomRs ('a','z') gen
+--       (first20, rest) = splitAt 20 randomChars
+--       (second20,   _) = splitAt 20 rest
+--   putStrLn first20
+--   putStr   second20
+{-- ------------------------------------------------------------------------ --}
+-- import           System.Random
+-- main = do
+--     gen <- getStdGen
+--     putStrLn $ take 20 (randomRs ('a','z') gen)
+--     gen' <- newStdGen
+--     putStr $ take 20 (randomRs ('a','z') gen')
+{-- ------------------------------------------------------------------------ --}
+-- import           Control.Monad (when)
+-- import           System.Random
+--
+-- main = do
+--     gen <- getStdGen
+--     askForNumber gen
+--
+-- askForNumber :: StdGen -> IO ()
+-- askForNumber gen = do
+--     let (randNumber, newGen) = randomR (1,10) gen :: (Int, StdGen)
+--     putStr "Which number in the range from 1 to 10 am I thinking of? "
+--     numberString <- getLine
+--     when (not $ null numberString) $ do
+--         let number = read numberString
+--         if randNumber == number
+--             then putStrLn "You are correct!"
+--             else putStrLn $ "Sorry, it was " ++ show randNumber
+--         askForNumber newGen
+{-- ------------------------------------------------------------------------ --}
+-- import           Control.Monad (when)
+-- import           System.Random
+--
+-- main = do
+--     gen <- getStdGen
+--     let (randNumber, _) = randomR (1,10) gen :: (Int, StdGen)
+--     putStr "Which number in the range from 1 to 10 am I thinking of? "
+--     numberString <- getLine
+--     when (not $ null numberString) $ do
+--         let number = read numberString
+--         if randNumber == number
+--             then putStrLn "You are correct!"
+--             else putStrLn $ "Sorry, it was " ++ show randNumber
+--         newStdGen
+--         main
+{-- ------------------------------------------------------------------------ --}
+{-- Bytestrings --}
+-- import qualified Data.ByteString      as S
+-- import qualified Data.ByteString.Lazy as B
+-- import           System.Environment
+--
+-- main = do
+--     (fileName1:fileName2:_) <- getArgs
+--     copyFile fileName1 fileName2
+--
+-- copyFile :: FilePath -> FilePath -> IO ()
+-- copyFile source dest = do
+--     contents <- B.readFile source
+--     B.writeFile dest contents
+{-- ------------------------------------------------------------------------ --}
+-- import           System.Environment
+-- import           System.IO
+-- main = do
+--     (fileName:_) <- getArgs
+--     contents <- readFile fileName
+--     putStrLn $ "The file has " ++ show (length (lines contents)) ++ " lines!"
+{-- ------------------------------------------------------------------------ --}
+-- import           System.Directory
+-- import           System.Environment
+-- import           System.IO
+-- main = do
+--     (fileName:_) <- getArgs
+--     fileExists <- doesFileExist fileName
+--     if fileExists
+--         then do
+--             contents <- readFile fileName
+--             putStrLn $ "The file has " ++ show (length (lines contents)) ++ "lines!"
+--         else do
+--             putStrLn "The file doesn't exist!"
+{-- ------------------------------------------------------------------------ --}
+-- import           System.Environment
+-- import           System.IO
+-- import           System.IO.Error
+-- main = toTry `catchIOError` handler
+-- toTry :: IO ()
+-- toTry = do
+--     (fileName:_) <- getArgs
+--     contents <- readFile fileName
+--     putStrLn $ "The file has " ++ show (length (lines contents)) ++ " lines!"
+-- handler :: IOError -> IO ()
+-- handler e = putStrLn "Whoops, had some trouble!"
+{-- ------------------------------------------------------------------------ --}
+-- import           System.Environment
+-- import           System.IO
+-- import           System.IO.Error
+-- main = toTry `catchIOError` handler
+-- toTry :: IO ()
+-- toTry = do
+--     (fileName:_) <- getArgs
+--     contents     <- readFile fileName
+--     putStrLn $ "The file has " ++ show (length (lines contents)) ++ " lines!"
+--
+-- handler :: IOError -> IO ()
+-- handler e
+--     | isDoesNotExistError e = putStrLn "The file doesn't exist!"
+--     | otherwise = ioError e
+{-- ------------------------------------------------------------------------ --}
+import           System.Environment
+import           System.IO
+import           System.IO.Error
 
+main = toTry `catchIOError` handler
+
+toTry :: IO ()
+toTry = do
+    (fileName:_) <- getArgs
+    contents <- readFile fileName
+    putStrLn $ "The file has " ++ show (length (lines contents)) ++ " lines!"
+
+handler :: IOError -> IO ()
+handler e
+    | isDoesNotExistError e =
+        case ioeGetFileName e of
+            Just path -> putStrLn $ "Whoops! File does not exist at: " ++ path
+            Nothing   -> putStrLn "Whoops! File does not exist at unkown location"
+    | otherwise = ioError e
+
+{-- ------------------------------------------------------------------------ --}
 
