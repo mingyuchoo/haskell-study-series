@@ -5,7 +5,7 @@
 ```bash
 $ cabal install doctest
 $ cabal install hlint
-$ cabal install hindent
+$ cabal install stylish-haskell
 $ cabal install apply-refact
 ```
 
@@ -33,7 +33,7 @@ $ cabal install
 ## How to pretty format
 
 ```bash
-$ hindent ./**/*.hs
+$ stylish-haskell -i ./**/*.hs
 ```
 
 ## How to test

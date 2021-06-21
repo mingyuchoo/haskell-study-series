@@ -1,3 +1,6 @@
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE ScopedTypeVariables        #-}
+{-# LANGUAGE TemplateHaskell            #-}
 module Chapter04.SyntaxInFunctions
   ( lucky
   , sayMe
@@ -110,7 +113,7 @@ third (_, _, z) = z
 -- 'H'
 --
 head' :: [a] -> a
-head' [] = error "Can't call head on an empy list, dummy!"
+head' []    = error "Can't call head on an empy list, dummy!"
 head' (x:_) = x
 
 -- | tell
@@ -130,7 +133,7 @@ tell (x:y:_) =
 -- 5
 --
 length' :: (Num b) => [a] -> b
-length' [] = 0
+length' []     = 0
 length' (_:xs) = 1 + length' xs
 
 -- | sum'
@@ -138,7 +141,7 @@ length' (_:xs) = 1 + length' xs
 -- 15
 --
 sum' :: (Num a) => [a] -> a
-sum' [] = 0
+sum' []     = 0
 sum' (x:xs) = x + sum' xs
 
 -- | capital
@@ -148,7 +151,7 @@ sum' (x:xs) = x + sum' xs
 -- "The first letter of Dracula is D"
 --
 capital :: String -> String
-capital "" = "Empty string, whoops!"
+capital ""         = "Empty string, whoops!"
 capital all@(x:xs) = "The first letter of " ++ all ++ " is " ++ [x]
 
 -- | bmiTell
@@ -226,7 +229,7 @@ cylinder r h =
 -- 1
 --
 head'' :: [a] -> a
-head'' [] = error "No head for empty lists!"
+head'' []    = error "No head for empty lists!"
 head'' (x:_) = x
 
 -- | head'''
@@ -236,7 +239,7 @@ head'' (x:_) = x
 head''' :: [a] -> a
 head''' xs =
   case xs of
-    [] -> error "No head for empty list!"
+    []    -> error "No head for empty list!"
     (x:_) -> x
 
 -- | describeList
@@ -247,9 +250,9 @@ describeList :: [a] -> String
 describeList xs =
   "The list is " ++
   case xs of
-    [] -> "empty."
+    []  -> "empty."
     [x] -> "a singleton list."
-    xs -> "a longer list."
+    xs  -> "a longer list."
 
 -- | describeList'
 -- >>> describeList' [1,2,3]
@@ -258,6 +261,6 @@ describeList xs =
 describeList' :: [a] -> String
 describeList' xs = "The list is " ++ what xs
   where
-    what [] = "empty."
+    what []  = "empty."
     what [x] = "a singleton list."
-    what xs = "a longer list."
+    what xs  = "a longer list."

@@ -1,8 +1,11 @@
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE ScopedTypeVariables        #-}
+{-# LANGUAGE TemplateHaskell            #-}
 module Chapter07.Modules
   (
   ) where
 
-import Data.List
+import           Data.List
 
 -- | numUniques
 --

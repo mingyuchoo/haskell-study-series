@@ -1,3 +1,6 @@
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE ScopedTypeVariables        #-}
+{-# LANGUAGE TemplateHaskell            #-}
 module Chapter08.MakingOurOwnTypesAndTypeclasses
   (
   ) where
@@ -19,7 +22,7 @@ data Shape
 
 -- | area
 area :: Shape -> Float -- function signature declaration
-area (Circle _ r) = pi * r ^ 2
+area (Circle _ r)                            = pi * r ^ 2
 area (Rectangle (Point x1 y1) (Point x2 y2)) = (abs $ x2 - x1) * (abs $ y2 - y1)
 
 -- | nudge
@@ -46,30 +49,30 @@ data Person =
 
 -- firstName :: Person -> String
 -- firstName (Person firstname _ _ _ _ _) = firstname
--- 
+--
 -- lastName :: Person -> String
 -- lastName (Person _ lastname _ _ _ _) = lastname
--- 
+--
 -- age :: Person -> Int
 -- age (Person _ _ age _ _ _) = age
--- 
+--
 -- height :: Person -> Float
 -- height (Person _ _ _ height _ _) = height
--- 
+--
 -- phoneNumber :: Person -> String
 -- phoneNumber (Person _ _ _ _ number _) = number
--- 
+--
 -- flavor :: Person -> String
 -- flavor (Person _ _ _ _ _ flavor) = flavor
 -- data declaration
 data Person2 =
   Person2
-    { firstName2 :: String
-    , lastName2 :: String
-    , age2 :: Int
-    , height2 :: Float
+    { firstName2   :: String
+    , lastName2    :: String
+    , age2         :: Int
+    , height2      :: Float
     , phoneNumber2 :: String
-    , flavor2 :: String
+    , flavor2      :: String
     }
   deriving (Show)
 
@@ -77,8 +80,8 @@ data Person2 =
 data Car =
   Car
     { company :: String
-    , model :: String
-    , year :: Int
+    , model   :: String
+    , year    :: Int
     }
   deriving (Show)
 
@@ -88,8 +91,8 @@ data Car =
 data Car2 a b c =
   Car2
     { company2 :: a
-    , model2 :: b
-    , year2 :: c
+    , model2   :: b
+    , year2    :: c
     }
   deriving (Show)
 
@@ -118,8 +121,8 @@ scalarMult :: (Num t) => Vector t -> Vector t -> t
 data Person3 =
   Person3
     { firstName3 :: String
-    , lastName3 :: String
-    , age3 :: Int
+    , lastName3  :: String
+    , age3       :: Int
     }
   deriving (Eq)
 
@@ -127,8 +130,8 @@ data Person3 =
 data Person4 =
   Person4
     { firstName4 :: String
-    , lastName4 :: String
-    , age4 :: Int
+    , lastName4  :: String
+    , age4       :: Int
     }
   deriving (Eq, Show, Read)
 
@@ -205,7 +208,7 @@ lockers =
     , (105, (Taken, "88292"))
     ]
 
-{-- 
+{--
  - Recursive data structures
  -}
 -- data declaration
@@ -226,7 +229,7 @@ infixr 5 .++
 
 -- data declaration
 (.++) :: List a -> List a -> List a -- type signature declaration
-Empty .++ ys = ys -- pattern matching
+Empty .++ ys      = ys -- pattern matching
 (x :-: xs) .++ ys = x :-: (xs .++ ys) -- pattern matching
 
 -- data declaration
@@ -264,15 +267,15 @@ data TrafficLight
   | Green
 
 instance Eq TrafficLight where
-  Red == Red = True
-  Green == Green = True
+  Red == Red       = True
+  Green == Green   = True
   Yellow == Yellow = True
-  _ == _ = False
+  _ == _           = False
 
 instance Show TrafficLight where
-  show Red = "Red light"
+  show Red    = "Red light"
   show Yellow = "Yellow light"
-  show Green = "Green light"
+  show Green  = "Green light"
 
 {--
  - A yes-not typeclass
@@ -289,14 +292,14 @@ instance YesNo Int where
 
 instance YesNo [a] where
   yesno [] = False
-  yesno _ = True
+  yesno _  = True
 
 instance YesNo Bool where
   yesno = id
 
 instance YesNo (Maybe a) where
   yesno (Just _) = True
-  yesno Nothing = False
+  yesno Nothing  = False
 
 yesnoIf :: (YesNo y) => y -> a -> a -> a
 yesnoIf yesnoVal yesResult noResult =

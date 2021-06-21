@@ -1,3 +1,6 @@
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE ScopedTypeVariables        #-}
+{-# LANGUAGE TemplateHaskell            #-}
 module Chapter02.StartingOut
   ( doubleMe
   , doubleUs
@@ -26,3 +29,4 @@ doubleMe x = x + x
 -- 10
 doubleUs :: Int -> Int -> Int
 doubleUs x y = x * 2 + y * 2
+

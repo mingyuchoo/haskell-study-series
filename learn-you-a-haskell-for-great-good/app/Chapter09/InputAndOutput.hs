@@ -1,6 +1,10 @@
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE ScopedTypeVariables        #-}
+{-# LANGUAGE TemplateHaskell            #-}
+
 -- module Chapter09.InputAndOutput
 -- (
--- 
+--
 -- ) where
 {-- ------------------------------------------------------------------------ --}
 -- main = putStrLn "Hello, World!"
@@ -16,7 +20,7 @@
 --     firstName <- getLine
 --     putStrLn "What's your last name?"
 --     lastName  <- getLine
---     let 
+--     let
 --         bigFirstName = map toUpper firstName
 --         bigLastName  = map toUpper lastName
 --     putStrLn $ "hey " ++ bigFirstName ++ " " ++ bigLastName ++ ", how are you?"
@@ -85,7 +89,7 @@
 --         then do
 --             putChar c
 --             main
---         else 
+--         else
 --             return ()
 {-- ------------------------------------------------------------------------ --}
 -- import Control.Monad
@@ -148,7 +152,7 @@
 -- main = do
 --     contents <- getContents
 --     putStr (shortLinesOnly contents)
--- 
+--
 -- shortLinesOnly :: String -> String
 -- shortLinesOnly input =
 --     let allLines   = lines input
@@ -199,7 +203,7 @@ I think you need a new one!
 --     withFile' "girlfriend.txt" ReadMode (\handle -> do
 --         contents <- hGetContents handle
 --         putStr contents)
--- 
+--
 -- withFile' :: FilePath -> IOMode -> (Handle -> IO a) -> IO a
 -- withFile' path mode f = do
 --     handle <- openFile path mode
@@ -272,18 +276,18 @@ I think you need a new one!
 -- import System.Directory
 -- import System.Environment
 -- import System.IO
--- 
+--
 -- dispatch :: [(String, [String] -> IO ())]
 -- dispatch = [("add", add), ("view", view), ("remove", remove)]
--- 
+--
 -- main = do
 --   (command:args) <- getArgs
 --   let (Just action) = lookup command dispatch
 --   action args
--- 
+--
 -- add :: [String] -> IO ()
 -- add [fileName, todoItem] = appendFile fileName (todoItem ++ "\n")
--- 
+--
 -- view :: [String] -> IO ()
 -- view [fileName] = do
 --   contents <- readFile fileName
@@ -291,7 +295,7 @@ I think you need a new one!
 --       numberedTasks =
 --         zipWith (\n line -> show n ++ " - " ++ line) [0 ..] todoTasks
 --   putStr $ unlines numberedTasks
--- 
+--
 -- remove :: [String] -> IO ()
 -- remove [fileName, numberString] = do
 --   handle <- openFile fileName ReadMode
@@ -306,3 +310,39 @@ I think you need a new one!
 --   removeFile fileName
 --   renameFile tempName fileName
 {-- ------------------------------------------------------------------------ --}
+-- randomNumber :: (Num a) => a
+-- randomNumber = 4
+
+{-- ------------------------------------------------------------------------ --}
+-- import System.Random
+-- threeCoins :: StdGen -> (Bool, Bool, Bool)
+-- threeCoins gen =
+--   let (firstCoin,   newGen) = random gen
+--       (secondCoin, newGen') = random newGen
+--       (thirdCoin, newGen'') = random newGen'
+--   in  (firstCoin, secondCoin, thirdCoin)
+{-- ------------------------------------------------------------------------ --}
+-- import System.Random
+-- randoms' :: (RandomGen g, Random a) => g -> [a]
+-- randoms' gen =
+--   let (value, newGen) = random gen
+--   in   value:randoms' newGen
+{-- ------------------------------------------------------------------------ --}
+-- import System.Random
+-- main = do
+--   gen <- getStdGen
+--   putStrLn $ take 20 (randomRs ('a','z') gen)
+--   gen2 <- getStdGen
+--   putStr   $ take 20 (randomRs ('a','z') gen2)
+{-- ------------------------------------------------------------------------ --}
+import           Data.List
+import           System.Random
+main = do
+  gen <- getStdGen
+  let randomChars     = randomRs ('a','z') gen
+      (first20, rest) = splitAt 20 randomChars
+      (second20,   _) = splitAt 20 rest
+  putStrLn first20
+  putStr   second20
+
+

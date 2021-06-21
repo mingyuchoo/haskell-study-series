@@ -1,3 +1,6 @@
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE ScopedTypeVariables        #-}
+{-# LANGUAGE TemplateHaskell            #-}
 module Chapter05.Recursion
   ( maximum'
   , maximum''
@@ -36,8 +39,8 @@ maximum'' (x:xs)
 -- 5
 --
 maximum''' :: (Ord a) => [a] -> a
-maximum''' [] = error "maximum of empty list"
-maximum''' [x] = x
+maximum''' []     = error "maximum of empty list"
+maximum''' [x]    = x
 maximum''' (x:xs) = max x (maximum' xs)
 
 -- | replicate'
@@ -61,12 +64,12 @@ take' n _
 take' _ [] = []
 take' n (x:xs) = x : take' (n - 1) xs
 
--- | reverse' 
+-- | reverse'
 -- >>> reverse' [1,2,3,4,5]
 -- [5,4,3,2,1]
 --
 reverse' :: [a] -> [a]
-reverse' [] = []
+reverse' []     = []
 reverse' (x:xs) = reverse' xs ++ [x]
 
 -- | zip'
@@ -74,8 +77,8 @@ reverse' (x:xs) = reverse' xs ++ [x]
 -- [(1,'a'),(2,'b')]
 --
 zip' :: [a] -> [b] -> [(a, b)]
-zip' _ [] = []
-zip' [] _ = []
+zip' _ []          = []
+zip' [] _          = []
 zip' (x:xs) (y:ys) = (x, y) : zip' xs ys
 
 -- | elem'

@@ -1,3 +1,6 @@
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE ScopedTypeVariables        #-}
+{-# LANGUAGE TemplateHaskell            #-}
 module Chapter06.HigherOrderFunctions
   ( multThree
   , compareWithHundred
@@ -70,8 +73,8 @@ applyTwice f x = f (f x)
 -- [[3,4,6],[9,20,30],[10,12,12]]
 --
 zipWith' :: (a -> b -> c) -> [a] -> [b] -> [c]
-zipWith' _ [] _ = []
-zipWith' _ _ [] = []
+zipWith' _ [] _          = []
+zipWith' _ _ []          = []
 zipWith' f (x:xs) (y:ys) = f x y : zipWith' f xs ys
 
 -- | flip'
@@ -96,7 +99,7 @@ flip' f y x = f x y
 -- [1,3,6,2,2]
 --
 map' :: (a -> b) -> [a] -> [b]
-map' _ [] = []
+map' _ []     = []
 map' f (x:xs) = f x : map' f xs
 
 -- | filter'
