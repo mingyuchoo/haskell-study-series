@@ -2,8 +2,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Handler.CommentSpec (spec) where
 
-import TestImport
-import Data.Aeson
+import           Data.Aeson
+import           TestImport
 
 spec :: Spec
 spec = withApp $ do
@@ -28,7 +28,7 @@ spec = withApp $ do
             Entity _id comment <-
                 case comments of
                     [ent] -> pure ent
-                    _ -> error "needed 1 entity"
+                    _     -> error "needed 1 entity"
             assertEq "Should have " comment (Comment message Nothing)
 
     describe "invalid requests" $ do

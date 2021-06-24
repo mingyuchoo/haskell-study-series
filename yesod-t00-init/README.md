@@ -26,6 +26,16 @@ stack test --flag yesod-t00-init:library-only --flag yesod-t00-init:dev
 
 (Because `yesod devel` passes the `library-only` and `dev` flags, matching those flags means you don't need to recompile between tests and development, and it disables optimization to speed up your test compile times).
 
+## Clean up
+
+```
+cabal clean
+
+# or
+
+stack exec cabal clean
+```
+
 ## Documentation
 
 * Read the [Yesod Book](https://www.yesodweb.com/book) online for free
