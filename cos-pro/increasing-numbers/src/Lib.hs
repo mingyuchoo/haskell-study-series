@@ -1,22 +1,23 @@
 module Lib
     ( someFunc
-    , TrafficLight(..)
-    , Week(..)
-    , Shape(..)
     ) where
 
-class Same a where
-    same :: a -> a -> Bool
+-- ------------------------------------------------------------------------- --
 
-data TrafficLight = Red | Amber | Green deriving (Eq, Show)
-data Week = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday
-data Shape = Circle Float Float Float | Rectangle Float Float Float Float
+data MyTypeConstructor = MyDataConstructor deriving (Show)
 
-instance Same TrafficLight where
-    same Red Red     = Red   == Red
-    same Amber Amber = Amber == Amber
-    same Green Green = Green == Green
-    same _ _         = False
+
+class MyTypeClass myTypeVariable where
+  myTypeClassFunction :: myTypeVariable -> String
+
+
+instance MyTypeClass MyTypeConstructor where
+  myTypeClassFunction MyDataConstructor = "MyValue"
+
+
+myOtherFunction :: String -> MyTypeConstructor
+myOtherFunction "MyValue" = MyDataConstructor
+-- ------------------------------------------------------------------------- --
 
 someFunc :: IO ()
 someFunc = print "Hello, World"
