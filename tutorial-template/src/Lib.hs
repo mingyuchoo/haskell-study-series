@@ -3,6 +3,10 @@ module Lib
     , MyTypeConstructor(..)
     , MyTypeClass
     , myOtherFunction
+    , Located
+    , Movable
+    , NamedPoint
+    , move
     , YesNo
     , yesno
     , yesnoIf
