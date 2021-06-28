@@ -2,12 +2,12 @@ module Lib where
 
 -- ------------------------------------------------------------------------- --
 
-data TypeA   = DataA1                               deriving (Show)
-data TypeB a = DataB1 a                             deriving (Show)
-data TypeC a = DataC1 a | DataC2 a a                deriving (Show)
-data TypeD a = DataD1 a | DataD2 a a | DataD3 a a a deriving (Show)
+data TypeA   = DataA0                                        deriving (Show)
+data TypeB a = DataB0 | DataB1 a                             deriving (Show)
+data TypeC a = DataC0 | DataC1 a | DataC2 a a                deriving (Show)
+data TypeD a = DataD0 | DataD1 a | DataD2 a a | DataD3 a a a deriving (Show)
 
-
+-- ------------------------------------------------------------------------- --
 
 class TypeClassA a where
   typeClassFunctionA :: a -> String
@@ -21,25 +21,66 @@ class TypeClassB a => TypeClassC a where
 class TypeClassC a => TypeClassD a where
   typeClassFunctionD :: a -> String
 
-
+-- ------------------------------------------------------------------------- --
 
 instance TypeClassA TypeA where
-  typeClassFunctionA x = "ValueA"
+  typeClassFunctionA x = "TypeClassA - TypeA"
 
 instance TypeClassB TypeA where
-  typeClassFunctionB x = "ValueA"
+  typeClassFunctionB x = "TypeClassB - TypeA"
 
--- instance TypeClassC TypeC where
---   typeClassFunctionC x = "ValueC"
---
--- instance TypeClassD TypeD where
---   typeClassFunctionD x = "ValueD"
+instance TypeClassC TypeA where
+  typeClassFunctionC x = "TypeClassC - TypeA"
 
+instance TypeClassD TypeA where
+  typeClassFunctionD x = "TypeClassD - TypeA"
 
+-- ------------------------------------------------------------------------- --
 
+instance (Ord a) => TypeClassA (TypeB a) where
+  typeClassFunctionA x = "TypeClassA - TypeB"
+
+instance (Ord a) => TypeClassB (TypeB a) where
+  typeClassFunctionB x = "TypeClassB - TypeB"
+
+instance (Ord a) => TypeClassC (TypeB a) where
+  typeClassFunctionC x = "TypeClassC - TypeB"
+
+instance (Ord a) => TypeClassD (TypeB a) where
+  typeClassFunctionD x = "TypeClassD - TypeB"
+
+-- ------------------------------------------------------------------------- --
+
+instance TypeClassA (TypeC a) where
+  typeClassFunctionA x = "TypeClassA - TypeC"
+
+instance TypeClassB (TypeC a) where
+  typeClassFunctionB x = "TypeClassB - TypeC"
+
+instance TypeClassC (TypeC a) where
+  typeClassFunctionC x = "TypeClassC - TypeC"
+
+instance TypeClassD (TypeC a) where
+  typeClassFunctionD x = "TypeClassD - TypeC"
+
+-- ------------------------------------------------------------------------- --
+
+instance TypeClassA (TypeD a) where
+  typeClassFunctionA x = "TypeClassA - TypeD"
+
+instance TypeClassB (TypeD a) where
+  typeClassFunctionB x = "TypeClassB - TypeD"
+
+instance TypeClassC (TypeD a) where
+  typeClassFunctionC x = "TypeClassC - TypeD"
+
+instance TypeClassD (TypeD a) where
+  typeClassFunctionD x = "TypeClassD - TypeD"
+
+-- ------------------------------------------------------------------------- --
 
 myFunctionA :: TypeA ->  String
-myFunctionA x  = "TypeA - DataA"
+myFunctionA x  = "TypeA - DataA0"
 
 myFunctionB :: TypeB t ->  String
 myFunctionB (DataB1 _)  = "TypeB - DataB1"
@@ -53,8 +94,8 @@ myFunctionD (DataD1 _)     = "TypeD - DataD1"
 myFunctionD (DataD2 _ _)   = "TypeD - DataD2"
 myFunctionD (DataD3 _ _ _) = "TypeD - DataD3"
 
-
 -- ------------------------------------------------------------------------ --
+
 data Car  = Car { company :: String
                 , model   :: String
                 , year    :: Int
@@ -67,13 +108,11 @@ data Passenger a b c  = Passenger { name :: a
 
 -- ------------------------------------------------------------------------ --
 
--- Car
 tellCar :: Car -> String
 tellCar Car {company = c, model = m, year = y} =
   "This " ++ c ++ " " ++ m ++ " was made in " ++ show y
 
 
--- Passenger
 tellPassenger :: (Show t) => Passenger String String t -> String
 tellPassenger (Passenger {name = n, gender = g, age = a}) =
   "This person is " ++ n ++ ", " ++ g ++ ", " ++ show a
@@ -96,11 +135,6 @@ dobuleMe' x = x ++ x
 
 doubleUs :: (Num a) => a -> a -> a
 doubleUs x y = x*2 + y*2
-
-
-
-
-
 
 -- ------------------------------------------------------------------------ --
 someFunc :: IO ()
