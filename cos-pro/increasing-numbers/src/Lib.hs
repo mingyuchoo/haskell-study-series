@@ -37,44 +37,44 @@ instance TypeClassD TypeA where
 
 -- ------------------------------------------------------------------------- --
 
-instance (Ord a) => TypeClassA (TypeB a) where
+instance (Num a) => TypeClassA (TypeB a) where
   typeClassFunctionA x = "TypeClassA - TypeB"
 
-instance (Ord a) => TypeClassB (TypeB a) where
+instance (Num a) => TypeClassB (TypeB a) where
   typeClassFunctionB x = "TypeClassB - TypeB"
 
-instance (Ord a) => TypeClassC (TypeB a) where
+instance (Num a) => TypeClassC (TypeB a) where
   typeClassFunctionC x = "TypeClassC - TypeB"
 
-instance (Ord a) => TypeClassD (TypeB a) where
+instance (Num a) => TypeClassD (TypeB a) where
   typeClassFunctionD x = "TypeClassD - TypeB"
 
 -- ------------------------------------------------------------------------- --
 
-instance TypeClassA (TypeC a) where
+instance (Eq a) => TypeClassA (TypeC a) where
   typeClassFunctionA x = "TypeClassA - TypeC"
 
-instance TypeClassB (TypeC a) where
+instance (Eq a) => TypeClassB (TypeC a) where
   typeClassFunctionB x = "TypeClassB - TypeC"
 
-instance TypeClassC (TypeC a) where
+instance (Eq a) => TypeClassC (TypeC a) where
   typeClassFunctionC x = "TypeClassC - TypeC"
 
-instance TypeClassD (TypeC a) where
+instance (Eq a) => TypeClassD (TypeC a) where
   typeClassFunctionD x = "TypeClassD - TypeC"
 
 -- ------------------------------------------------------------------------- --
 
-instance TypeClassA (TypeD a) where
+instance (Ord a) => TypeClassA (TypeD a) where
   typeClassFunctionA x = "TypeClassA - TypeD"
 
-instance TypeClassB (TypeD a) where
+instance (Ord a) => TypeClassB (TypeD a) where
   typeClassFunctionB x = "TypeClassB - TypeD"
 
-instance TypeClassC (TypeD a) where
+instance (Ord a) => TypeClassC (TypeD a) where
   typeClassFunctionC x = "TypeClassC - TypeD"
 
-instance TypeClassD (TypeD a) where
+instance (Ord a) => TypeClassD (TypeD a) where
   typeClassFunctionD x = "TypeClassD - TypeD"
 
 -- ------------------------------------------------------------------------- --
@@ -135,6 +135,33 @@ dobuleMe' x = x ++ x
 
 doubleUs :: (Num a) => a -> a -> a
 doubleUs x y = x*2 + y*2
+
+
+-- ------------------------------------------------------------------------ --
+
+sum' :: (Num a) => [a] -> a -> a
+sum' [] y     = y
+sum' [x] y    = sum (x:[y])
+sum' (x:xs) y = sum ((sum' [x] y) : xs)
+
+
+
+minimum' :: (Ord a) => [a] -> a
+minimum' []     = error "Error"
+minimum' [x]    = x
+minimum' (x:xs) = min x (minimum' xs)
+
+
+maximum' []     = error "maximum of empty list"
+maximum' [x]    = x
+maximum' (x:xs) = max x (maximum' xs)
+
+
+
+fib :: Integer -> Integer
+fib 0 = 0
+fib 1 = 1
+fib n = fib (n-1) + fib(n-2)
 
 -- ------------------------------------------------------------------------ --
 someFunc :: IO ()
