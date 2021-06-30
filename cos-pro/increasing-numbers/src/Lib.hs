@@ -163,6 +163,14 @@ fib 0 = 0
 fib 1 = 1
 fib n = fib (n-1) + fib(n-2)
 
+
+hundred :: (Eq a, Num a) => a -> a -> a
+hundred _ 0 = 0
+hundred x 1 = x
+hundred x y = x + (hundred x (y - 1))
+
+
+
 -- ------------------------------------------------------------------------ --
 someFunc :: IO ()
 someFunc = do
