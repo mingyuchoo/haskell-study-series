@@ -14,5 +14,6 @@ driver x  = calc x  [10, 50, 100, 500, 1000, 5000, 10000, 50000] 0
 
 someFunc :: IO ()
 someFunc = do
+    putStrLn "Input price to be changed"
     input <- readLn
     print (driver input::Int)
