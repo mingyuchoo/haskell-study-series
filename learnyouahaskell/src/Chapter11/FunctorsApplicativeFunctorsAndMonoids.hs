@@ -1,4 +1,24 @@
 module Chapter11.FunctorsApplicativeFunctorsAndMonoids where
+
+import Data.Char
+import Data.List
+import Data.Monoid
+
+myAction :: IO ()
+myAction = do
+  a <- (++) <$> getLine <*> getLine
+  putStrLn $ "The two lines concatenated turn out to be: " ++ a
+
+newtype CoolBool = CoolBool { getCoolBool :: Bool }
+helloMe :: CoolBool -> String
+helloMe (CoolBool _) = "Hello"
+
+type IntList = [Int]
+newtype CharList = CharList { getCharList :: [Char] }
+
+
+
+
 {-- ------------------------------------------------------------------------ --}
 -- main = do
 --     line <- getLine
@@ -96,4 +116,3 @@ module Chapter11.FunctorsApplicativeFunctorsAndMonoids where
 --                 (Node 10 Empty Empty)
 --             )
 {-- ------------------------------------------------------------------------ --}
-
