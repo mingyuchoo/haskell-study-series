@@ -1,6 +1,6 @@
 module Chapter10.FunctionallySolvingProblems where
 
-{-- ------------------------------------------------------------------------ --}
+--------------------------------------------------------------------------------
 {-- Reverse Polish notation calculator --}
 -- solveRPN :: String -> Float
 -- solveRPN = head . foldl foldingFunction [] . words
@@ -12,9 +12,10 @@ module Chapter10.FunctionallySolvingProblems where
 --         foldingFunction (x:xs) "ln"     = log x:xs
 --         foldingFunction xs "sum"        = [sum xs]
 --         foldingFunction xs numberString = read numberString:xs
-{-- ------------------------------------------------------------------------ --}
+--------------------------------------------------------------------------------
 import           Data.List
 
+--------------------------------------------------------------------------------
 data Node    = Node Road (Maybe Road)
 data Road    = Road Int Node
 data Section = Section { getA :: Int
@@ -66,4 +67,4 @@ main = do
       pathPrice  = sum $ map snd path
   putStrLn $ "The best path to take is: " ++ pathString
   putStrLn $ "The price is: " ++ show pathPrice
-{-- ------------------------------------------------------------------------ --}
+--------------------------------------------------------------------------------

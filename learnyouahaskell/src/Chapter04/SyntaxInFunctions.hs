@@ -1,4 +1,5 @@
 module Chapter04.SyntaxInFunctions where
+--------------------------------------------------------------------------------
 
 -- | lucky
 -- >>> lucky 7
@@ -10,6 +11,7 @@ lucky :: (Integral a) => a -> String
 lucky 7 = "LUCKY NUMBER SEVEN!"
 lucky x = "Sorry, you're out of luck, pal!"
 
+--------------------------------------------------------------------------------
 -- | sayMe
 -- >>> sayMe 1
 -- "One!"
@@ -32,6 +34,7 @@ sayMe 4 = "Four!"
 sayMe 5 = "Five!"
 sayMe x = "Not between 1 and 5"
 
+--------------------------------------------------------------------------------
 -- | factorial
 -- >>> factorial 1
 -- 1
@@ -50,6 +53,7 @@ factorial :: Integral a => a -> a
 factorial 0 = 1
 factorial n = n * factorial (n - 1)
 
+--------------------------------------------------------------------------------
 -- | charName
 -- >>> charName 'a'
 -- "Alpha"
@@ -66,12 +70,14 @@ charName 'b' = "Bravo"
 charName 'c' = "Charlie"
 charName 'd' = "Delta"
 
+--------------------------------------------------------------------------------
 -- | addVectors
 -- >>> addVectors (1,2) (2,3)
 -- (3,5)
 addVectors :: Num a => (a, a) -> (a, a) -> (a, a)
 addVectors (x1, y1) (x2, y2) = (x1 + x2, y1 + y2)
 
+--------------------------------------------------------------------------------
 -- | first
 -- >>> first (1, 2, 3)
 -- 1
@@ -81,6 +87,7 @@ addVectors (x1, y1) (x2, y2) = (x1 + x2, y1 + y2)
 first :: (a, b, c) -> a
 first (x, _, _) = x
 
+--------------------------------------------------------------------------------
 -- | second
 -- >>> second (1, 2, 3)
 -- 2
@@ -90,6 +97,7 @@ first (x, _, _) = x
 second :: (a, b, c) -> b
 second (_, y, _) = y
 
+--------------------------------------------------------------------------------
 -- | third
 -- >>> third ((1, "a"), [2], 3.0)
 -- 3.0
@@ -97,6 +105,7 @@ second (_, y, _) = y
 third :: (a, b, c) -> c
 third (_, _, z) = z
 
+--------------------------------------------------------------------------------
 -- | head'
 -- >>> head' [4,5,6]
 -- 4
@@ -107,6 +116,7 @@ head' :: [a] -> a
 head' []    = error "Can't call head on an empy list, dummy!"
 head' (x:_) = x
 
+--------------------------------------------------------------------------------
 -- | tell
 -- >>> tell []
 -- "The list is empty"
@@ -119,6 +129,7 @@ tell (x:y:_) =
   "This list is long, The first two elements are: " ++
   show x ++ " and " ++ show y
 
+--------------------------------------------------------------------------------
 -- | length'
 -- >>> length' [1, 2, 3, 4, 5]
 -- 5
@@ -127,6 +138,7 @@ length' :: (Num b) => [a] -> b
 length' []     = 0
 length' (_:xs) = 1 + length' xs
 
+--------------------------------------------------------------------------------
 -- | sum'
 -- >>> sum' [1,2,3,4,5]
 -- 15
@@ -135,6 +147,7 @@ sum' :: (Num a) => [a] -> a
 sum' []     = 0
 sum' (x:xs) = x + sum' xs
 
+--------------------------------------------------------------------------------
 -- | capital
 -- >>> capital ""
 -- "Empty string, whoops!"
@@ -145,6 +158,7 @@ capital :: String -> String
 capital ""         = "Empty string, whoops!"
 capital all@(x:xs) = "The first letter of " ++ all ++ " is " ++ [x]
 
+--------------------------------------------------------------------------------
 -- | bmiTell
 -- >>> bmiTell 85 1.90
 -- "You're supposedly normal. Pffft, I bet you're ugly!"
@@ -161,6 +175,7 @@ bmiTell weight height
     normal = 25.0
     fat = 30.0
 
+--------------------------------------------------------------------------------
 -- | calcBmis
 -- >>> calcBmis [(85, 1.90)]
 -- [23.545706371191137]
@@ -170,6 +185,7 @@ calcBmis xs = [bmi w h | (w, h) <- xs]
   where
     bmi weight height = weight / height ^ 2
 
+--------------------------------------------------------------------------------
 -- | max'
 -- >>> max' 1 2
 -- 2
@@ -182,6 +198,7 @@ max' x y
   | x > y = x
   | otherwise = y
 
+--------------------------------------------------------------------------------
 -- | myCompare
 -- >>> myCompare 1 1
 -- EQ
@@ -196,6 +213,7 @@ myCompare x y
   | x == y = EQ
   | otherwise = LT
 
+--------------------------------------------------------------------------------
 -- | initials
 -- >>> initials "Tom" "Brown"
 -- "T. B."
@@ -206,6 +224,7 @@ initials firstname lastname = [f] ++ ". " ++ [l] ++ "."
     (f:_) = firstname
     (l:_) = lastname
 
+--------------------------------------------------------------------------------
 -- | cylinder
 -- >>> cylinder 1.1 2.2
 -- 22.8079626650619
@@ -215,6 +234,7 @@ cylinder r h =
       topArea = pi * r ^ 2
    in sideArea + 2 * topArea
 
+--------------------------------------------------------------------------------
 -- | head''
 -- >>> head'' [1,2,3]
 -- 1
@@ -223,6 +243,7 @@ head'' :: [a] -> a
 head'' []    = error "No head for empty lists!"
 head'' (x:_) = x
 
+--------------------------------------------------------------------------------
 -- | head'''
 -- >>> head''' [1,2,3]
 -- 1
@@ -233,18 +254,21 @@ head''' xs =
     []    -> error "No head for empty list!"
     (x:_) -> x
 
+--------------------------------------------------------------------------------
 -- | describeList
 -- >>> describeList [1,2,3]
 -- "The list is a longer list."
 --
 describeList :: [a] -> String
 describeList xs =
+--------------------------------------------------------------------------------
   "The list is " ++
   case xs of
     []  -> "empty."
     [x] -> "a singleton list."
     xs  -> "a longer list."
 
+--------------------------------------------------------------------------------
 -- | describeList'
 -- >>> describeList' [1,2,3]
 -- "The list is a longer list."
@@ -255,3 +279,4 @@ describeList' xs = "The list is " ++ what xs
     what []  = "empty."
     what [x] = "a singleton list."
     what xs  = "a longer list."
+--------------------------------------------------------------------------------
