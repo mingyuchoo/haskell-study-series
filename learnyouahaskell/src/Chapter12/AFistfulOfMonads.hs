@@ -56,6 +56,23 @@ chapter12 = do
   print $ Just 3 >>= (\x -> Just "!" >>= (\y -> Just (show x ++ y)))
 
 
+  print $ Just 9 >>= (\x -> Just(x > 8))
+  print $ marySue
+
+  print $ routine
+  print $ routine'
+
+  print $ justH
+  print $ wopwop
+
+  print $ [3,4,5] >>= \x -> [x,-x]
+  print $ []      >>= \x -> ["bad","mad","rad"]
+  print $ [1,2]   >>= \n -> ['a','b'] >>= \ch -> return (n, ch)
+  print $ listOfTuples
+  print $ [(n,ch) | n <- [1,2], ch <- ['a','b']]
+  print $ [x | x <- [1..50], '7' `elem` show x]
+
+
   return ()
 -------------------------------------------------------------------------------
 applyMaybe :: Maybe a -> (a -> Maybe b) -> Maybe b
@@ -86,5 +103,54 @@ landRight' n (left,right)
 -------------------------------------------------------------------------------
 banana :: Pole -> Maybe Pole
 banana _ = Nothing
+-------------------------------------------------------------------------------
+foo :: Maybe String
+foo = Just 3   >>= (\x ->
+      Just "!" >>= (\y ->
+      Just (show x ++ y)))
+
+foo' :: Maybe String
+foo' = do
+  x <- Just 3
+  y <- Just "!"
+  Just (show x ++ y)
+-------------------------------------------------------------------------------
+
+marySue :: Maybe Bool
+marySue = do
+  x <- Just 9
+  Just (x > 8)
+-------------------------------------------------------------------------------
+routine :: Maybe Pole
+routine = do
+  start  <- return (0,0)
+  first  <- landLeft' 2 start
+  second <- landRight' 2 first
+  landLeft' 1 second
+-------------------------------------------------------------------------------
+routine' :: Maybe Pole
+routine' = do
+  start <- return (0,0)
+  first <- landLeft' 2 start
+  Nothing
+  second <- landRight' 2 first
+  landLeft' 1 second
+-------------------------------------------------------------------------------
+justH :: Maybe Char
+justH = do
+  (x:xs) <- Just "hello"
+  return x
+-------------------------------------------------------------------------------
+wopwop :: Maybe Char
+wopwop = do
+  (x:xs) <- Just ""
+  return x
+-------------------------------------------------------------------------------
+listOfTuples :: [(Int,Char)]
+listOfTuples = do
+  n  <- [1,2]
+  ch <- ['a','b']
+  return (n, ch)
+-------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
