@@ -1,15 +1,15 @@
 module Chapter09.InputAndOutput where
 
 --------------------------------------------------------------------------------
--- main = putStrLn "Hello, World!"
+-- main' = putStrLn "Hello, World!"
 --------------------------------------------------------------------------------
--- main = do
+-- main' = do
 --     putStrLn "Hello, what's your name?"
 --     name <- getLine
 --     putStrLn ("Hey " ++ name ++ ", you rock!")
 --------------------------------------------------------------------------------
 -- import Data.Char
--- main = do
+-- main' = do
 --     putStrLn "What's your first name?"
 --     firstName <- getLine
 --     putStrLn "What's your last name?"
@@ -21,15 +21,15 @@ module Chapter09.InputAndOutput where
 -- reverseWords :: String -> String
 -- reverseWords = unwords . map reverse . words
 --------------------------------------------------------------------------------
--- main = do
+-- main' = do
 --     line <- getLine
 --     if null line
 --         then return ()
 --         else do
 --             putStrLn $ reverseWords line
---             main
+--             main'
 --------------------------------------------------------------------------------
--- main = do
+-- main' = do
 --     return ()
 --     return "HAHAHA"
 --     line <- getLine
@@ -37,28 +37,28 @@ module Chapter09.InputAndOutput where
 --     return 4
 --     putStrLn line
 --------------------------------------------------------------------------------
--- main = do
+-- main' = do
 --     a <- return "hell"
 --     b <- return "yeah!"
 --     putStrLn $ a ++ " " ++ b
 --------------------------------------------------------------------------------
--- main = do
+-- main' = do
 --     let a = "hell"
 --         b = "yeah"
 --     putStrLn $ a ++ " " ++ b
 --------------------------------------------------------------------------------
 {-- putStr --}
--- main = do   putStr "Hey, "
+-- main' = do   putStr "Hey, "
 --             putStr "I'm "
 --             putStrLn "Andy!"
 --------------------------------------------------------------------------------
 {-- putchar --}
--- main = do putChar 't'
+-- main' = do putChar 't'
 --           putChar 'e'
 --           putChar 'h'
 --------------------------------------------------------------------------------
 {-- print --}
--- main = do print True
+-- main' = do print True
 --           print 2
 --           print "haha"
 --           print 3.2
@@ -66,62 +66,62 @@ module Chapter09.InputAndOutput where
 --------------------------------------------------------------------------------
 {-- when --}
 -- import Control.Monad
--- main = do
+-- main' = do
 --     input <- getLine
 --     when (input == "SWORDFISH") $ do
 --         putStrLn input
 --------------------------------------------------------------------------------
--- main = do
+-- main' = do
 --     input <- getLine
 --     if (input == "SWORDFISH")
 --         then putStrLn input
 --         else return ()
 --------------------------------------------------------------------------------
--- main = do
+-- main' = do
 --     c <- getChar
 --     if c /= ' '
 --         then do
 --             putChar c
---             main
+--             main'
 --         else
 --             return ()
 --------------------------------------------------------------------------------
 -- import Control.Monad
--- main = do
+-- main' = do
 --     c <- getChar
 --     when (c /= ' ') $ do
 --         putChar c
---         main
+--         main'
 --------------------------------------------------------------------------------
 -- import Control.Monad
--- main = do
+-- main' = do
 --     c <- getChar
 --     when (c /= ' ') $ do
 --         putChar c
---         main
+--         main'
 --------------------------------------------------------------------------------
 {-- sequence --}
--- main = do
+-- main' = do
 --     a <- getLine
 --     b <- getLine
 --     c <- getLine
 --     print [a,b,c]
 --------------------------------------------------------------------------------
--- main = do
+-- main' = do
 --     rs <- sequence [getLine, getLine, getLine]
 --     print rs
 --------------------------------------------------------------------------------
 {-- forever --}
 -- import Control.Monad
 -- import Data.Char
--- main = forever $ do
+-- main' = forever $ do
 --     putStr "Give me some input: "
 --     l <- getLine
 --     putStrLn $ map toUpper l
 --------------------------------------------------------------------------------
 {-- forM --}
 -- import Control.Monad
--- main = do
+-- main' = do
 --     colors <- forM [1,2,3,4] (\a -> do
 --         putStrLn $ "Which color do you associate with the number " ++ show a ++ "?"
 --         color <- getLine
@@ -133,17 +133,17 @@ module Chapter09.InputAndOutput where
 ----- if you want to quit, type Ctr+d
 -- import Control.Monad
 -- import Data.Char
--- main = forever $ do
+-- main' = forever $ do
 --     putStr "Give me some input: "
 --     l <- getLine
 --     putStrLn $ map toUpper l
 --------------------------------------------------------------------------------
 -- import Data.Char
--- main = do
+-- main' = do
 --     contents <- getContents
 --     putStr $ map toUpper contents     -- ==  putStr (map toUpper contents)
 --------------------------------------------------------------------------------
--- main = do
+-- main' = do
 --     contents <- getContents
 --     putStr (shortLinesOnly contents)
 --
@@ -154,7 +154,7 @@ module Chapter09.InputAndOutput where
 --         result     = unlines shortLines
 --     in  result
 --------------------------------------------------------------------------------
--- main = interact shortLinesOnly
+-- main' = interact shortLinesOnly
 -- shortLinesOnly :: String -> String
 -- shortLinesOnly input =
 --     let allLines   = lines input
@@ -162,12 +162,12 @@ module Chapter09.InputAndOutput where
 --         result     = unlines shortLines
 --     in  result
 --------------------------------------------------------------------------------
--- main = interact $ unlines . filter ((<10) . length) . lines
+-- main' = interact $ unlines . filter ((<10) . length) . lines
 --------------------------------------------------------------------------------
--- main = interact respondPalindromes
+-- main' = interact respondPalindromes
 -- respondPalindromes contents = unlines (map (\xs -> if isPalindrome xs then "palindrome" else "not a palindrome") (lines contents))
 --     where isPalindrome xs = xs == reverse xs
--- main = interact respondPalindromes
+-- main' = interact respondPalindromes
 -- respondPalindromes = unlines . map (\xs -> if isPalindrome xs then "palindrome" else "not a palindrome") . lines
 --     where isPalindrome xs = xs == reverse xs
 --------------------------------------------------------------------------------
@@ -180,20 +180,20 @@ I think you need a new one!
 
 --}
 -- import System.IO
--- main = do
+-- main' = do
 --     handle <- openFile "girlfriend.txt" ReadMode
 --     contents <- hGetContents handle
 --     putStr contents
 --     hClose handle
 --------------------------------------------------------------------------------
 -- import System.IO
--- main = do
+-- main' = do
 --     withFile "girlfriend.txt" ReadMode (\handle -> do
 --         contents <- hGetContents handle
 --         putStr contents)
 --------------------------------------------------------------------------------
 -- import System.IO
--- main = do
+-- main' = do
 --     withFile' "girlfriend.txt" ReadMode (\handle -> do
 --         contents <- hGetContents handle
 --         putStr contents)
@@ -206,29 +206,29 @@ I think you need a new one!
 --     return result
 --------------------------------------------------------------------------------
 -- import System.IO
--- main = do
+-- main' = do
 --     contents <- readFile "girlfriend.txt"
 --     putStr contents
 --------------------------------------------------------------------------------
 -- import System.IO
 -- import Data.Char
--- main = do
+-- main' = do
 --     contents <- readFile "girlfriend.txt"
 --     writeFile "girlfriendcaps.txt" (map toUpper contents)
 --------------------------------------------------------------------------------
 -- import System.IO
--- main = do
+-- main' = do
 --     todoItem <- getLine
 --     appendFile "todo.txt" (todoItem ++ "\n")
 --------------------------------------------------------------------------------
 -- import System.IO
--- main = do
+-- main' = do
 --     withFile "todo.txt" ReadMode (\handle -> do
 --         contents <- hGetContents handle
 --         putStr contents)
 --------------------------------------------------------------------------------
 -- import System.IO
--- main = do
+-- main' = do
 --     withFile "todo.txt" ReadMode (\handle -> do
 --         hSetBuffering handle $ BlockBuffering (Just 2048)
 --         contents <- hGetContents handle
@@ -237,7 +237,7 @@ I think you need a new one!
 -- import System.IO
 -- import System.Directory
 -- import Data.List
--- main = do
+-- main' = do
 --     handle <- openFile "todo.txt" ReadMode
 --     (tempName, tempHandle) <- openTempFile "." "temp"
 --     contents <- hGetContents handle
@@ -258,7 +258,7 @@ I think you need a new one!
 {-- Command line arguments --}
 -- import System.Environment
 -- import Data.List
--- main = do
+-- main' = do
 --     args <- getArgs
 --     progName <- getProgName
 --     putStrLn "The arguments are:"
@@ -274,7 +274,7 @@ I think you need a new one!
 -- dispatch :: [(String, [String] -> IO ())]
 -- dispatch = [("add", add), ("view", view), ("remove", remove)]
 --
--- main = do
+-- main' = do
 --   (command:args) <- getArgs
 --   let (Just action) = lookup command dispatch
 --   action args
@@ -323,7 +323,7 @@ I think you need a new one!
 --   in   value:randoms' newGen
 --------------------------------------------------------------------------------
 -- import System.Random
--- main = do
+-- main' = do
 --   gen <- getStdGen
 --   putStrLn $ take 20 (randomRs ('a','z') gen)
 --   gen2 <- getStdGen
@@ -331,7 +331,7 @@ I think you need a new one!
 --------------------------------------------------------------------------------
 -- import           Data.List
 -- import           System.Random
--- main = do
+-- main' = do
 --   gen <- getStdGen
 --   let randomChars     = randomRs ('a','z') gen
 --       (first20, rest) = splitAt 20 randomChars
@@ -340,7 +340,7 @@ I think you need a new one!
 --   putStr   second20
 --------------------------------------------------------------------------------
 -- import           System.Random
--- main = do
+-- main' = do
 --     gen <- getStdGen
 --     putStrLn $ take 20 (randomRs ('a','z') gen)
 --     gen' <- newStdGen
@@ -349,7 +349,7 @@ I think you need a new one!
 -- import           Control.Monad (when)
 -- import           System.Random
 --
--- main = do
+-- main' = do
 --     gen <- getStdGen
 --     askForNumber gen
 --
@@ -368,7 +368,7 @@ I think you need a new one!
 -- import           Control.Monad (when)
 -- import           System.Random
 --
--- main = do
+-- main' = do
 --     gen <- getStdGen
 --     let (randNumber, _) = randomR (1,10) gen :: (Int, StdGen)
 --     putStr "Which number in the range from 1 to 10 am I thinking of? "
@@ -379,14 +379,14 @@ I think you need a new one!
 --             then putStrLn "You are correct!"
 --             else putStrLn $ "Sorry, it was " ++ show randNumber
 --         newStdGen
---         main
+--         main'
 --------------------------------------------------------------------------------
 {-- Bytestrings --}
 -- import qualified Data.ByteString      as S
 -- import qualified Data.ByteString.Lazy as B
 -- import           System.Environment
 --
--- main = do
+-- main' = do
 --     (fileName1:fileName2:_) <- getArgs
 --     copyFile fileName1 fileName2
 --
@@ -397,7 +397,7 @@ I think you need a new one!
 --------------------------------------------------------------------------------
 -- import           System.Environment
 -- import           System.IO
--- main = do
+-- main' = do
 --     (fileName:_) <- getArgs
 --     contents <- readFile fileName
 --     putStrLn $ "The file has " ++ show (length (lines contents)) ++ " lines!"
@@ -405,7 +405,7 @@ I think you need a new one!
 -- import           System.Directory
 -- import           System.Environment
 -- import           System.IO
--- main = do
+-- main' = do
 --     (fileName:_) <- getArgs
 --     fileExists <- doesFileExist fileName
 --     if fileExists
@@ -418,7 +418,7 @@ I think you need a new one!
 -- import           System.Environment
 -- import           System.IO
 -- import           System.IO.Error
--- main = toTry `catchIOError` handler
+-- main' = toTry `catchIOError` handler
 -- toTry :: IO ()
 -- toTry = do
 --     (fileName:_) <- getArgs
@@ -430,7 +430,7 @@ I think you need a new one!
 -- import           System.Environment
 -- import           System.IO
 -- import           System.IO.Error
--- main = toTry `catchIOError` handler
+-- main' = toTry `catchIOError` handler
 -- toTry :: IO ()
 -- toTry = do
 --     (fileName:_) <- getArgs
@@ -446,7 +446,7 @@ import           System.Environment
 import           System.IO
 import           System.IO.Error
 
-main = toTry `catchIOError` handler
+main' = toTry `catchIOError` handler
 
 toTry :: IO ()
 toTry = do

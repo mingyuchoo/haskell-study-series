@@ -39,6 +39,7 @@ library
       Chapter10.FunctionallySolvingProblems
       Chapter11.FunctorsApplicativeFunctorsAndMonoids
       Chapter12.AFistfulOfMonads
+      Chapter13.ForAFewMonadsMore
       Lib
   other-modules:
       Paths_learnyouahaskell

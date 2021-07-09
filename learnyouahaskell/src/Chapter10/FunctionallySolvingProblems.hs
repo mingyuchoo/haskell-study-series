@@ -58,7 +58,7 @@ groupsOf 0 _  = undefined
 groupsOf _ [] = []
 groupsOf n xs = take n xs : groupsOf n (drop n xs)
 
-main = do
+main' = do
   contents <- getContents
   let threes     = groupsOf 3 (map read $ lines contents)
       roadSystem = map (\[a,b,c] -> Section a b c) threes
