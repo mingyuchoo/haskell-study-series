@@ -9,7 +9,7 @@ calc x y  z
     | div x (last y) == 0 = calc x (init y) z
 
 
-driver:: (Integral a) => a -> a
+driver :: (Integral a) => a -> a
 driver x  = calc x  [10, 50, 100, 500, 1000, 5000, 10000, 50000] 0
 
 someFunc :: IO ()
