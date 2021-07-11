@@ -1,5 +1,7 @@
 module Chapter13.ForAFewMonadsMore where
 -------------------------------------------------------------------------------
+import           Control.Monad
+import           Control.Monad.Writer
 import           Data.Monoid
 -------------------------------------------------------------------------------
 chapter13 :: IO ()
@@ -31,4 +33,26 @@ addDrink :: Food -> (Food,Price)
 addDrink "beans" = ("milk",    Sum 25)
 addDrink "jerky" = ("whiskey", Sum 99)
 addDrink _       = ("beer",    Sum 30)
+-------------------------------------------------------------------------------
+logNumber :: Int -> Writer [String] Int
+logNumber x = writer (x, ["Got number: " ++ show x])
+
+multWithLog :: Writer [String] Int
+multWithLog = do
+  a <- logNumber 3
+  b <- logNumber 5
+  return (a*b)
+-------------------------------------------------------------------------------
+gcd' :: Int -> Int -> Int
+gcd' a b
+  | b == 0    = a
+  | otherwise = gcd' b (a `mod` b)
+-------------------------------------------------------------------------------
+newtype DiffList a = DiffList { getDiffList :: [a] -> [a] }
+
+toDiffList :: [a] -> DiffList a
+toDiffList xs = DiffList (xs++)
+
+fromDiffList :: DiffList a -> [a]
+fromDiffList (DiffList f) = f []
 -------------------------------------------------------------------------------
