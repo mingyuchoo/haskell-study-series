@@ -23,7 +23,7 @@ module Lib
     , fly
     ) where
 
--- ------------------------------------------------------------------------- --
+--------------------------------------------------------------------------------
 
 data MyTypeConstructor = MyDataConstructor deriving (Show)
 
@@ -39,7 +39,7 @@ instance MyTypeClass MyTypeConstructor where
 myOtherFunction :: (MyTypeClass myTypeVariable) => myTypeVariable -> String
 myOtherFunction x = "MyValue"
 
--- ------------------------------------------------------------------------- --
+--------------------------------------------------------------------------------
 -- Class Inheritance (A concerted example)
 -- https://en.wikibooks.org/wiki/Haskell/Classes_and_types
 
@@ -78,7 +78,7 @@ move (dx, dy) p = setLocation (x + dx, y + dy) p
 
 
 
--- ------------------------------------------------------------------------- --
+--------------------------------------------------------------------------------
 
 
 -- 'TrafficLight' is a `type constructor` if has zero arguments just called a `type`
@@ -110,7 +110,7 @@ instance Checkable TrafficLight where
 checkIf :: (Checkable a) => a -> a -> Bool
 checkIf x y  = same x y                         -- 'x', 'y' are `bind variables`
 
--- ------------------------------------------------------------------------- --
+--------------------------------------------------------------------------------
 
 class YesNo a where
   yesno :: a -> Bool
@@ -145,7 +145,7 @@ yesnoIf yesnoVal yesResult noResult = if yesno yesnoVal then yesResult else noRe
 
 -- >>>>> yesnoIf Red "GO" "STOP" >>> "STOP"
 
--- ------------------------------------------------------------------------- --
+--------------------------------------------------------------------------------
 
 -- 'Mammal'  is a `type constructor` if has zero arguments just called a `type`
 -- 'Bat',... are `data(value) constructors` if has zero arguments just called a `constant`
@@ -180,7 +180,7 @@ instance Move Mammal where
   fly  Human    = False
 
 
--- ------------------------------------------------------------------------- --
+--------------------------------------------------------------------------------
 
 -- 'Week'       is a `type constructor` if has zero arguments just called a `type`
 -- 'Monday',... are `data(value) constructors` if has zero arguments just called a `constant`
@@ -188,7 +188,7 @@ instance Move Mammal where
 data Week = Sunday | Monday | Tuesday | Wednesday | Thursday | Friday | Saturday
 
 
--- ------------------------------------------------------------------------- --
+--------------------------------------------------------------------------------
 
 -- 'Shape'      is a `type constructor` if has zero arguments just called a `type`
 -- 'Circle',... are `data(value) constructors` if has zero arguments just called a `constant`
@@ -196,7 +196,7 @@ data Week = Sunday | Monday | Tuesday | Wednesday | Thursday | Friday | Saturday
 data Shape = Circle Float Float Float | Rectangle Float Float Float Float
 
 
--- ------------------------------------------------------------------------- --
+--------------------------------------------------------------------------------
 
 someFunc :: IO ()
 someFunc = print "Hello, World"

@@ -1,0 +1,20 @@
+module NamingConventions where
+
+data MyType = MyDataConstructor String
+
+class MyClass a where
+  name :: a -> String
+
+instance MyClass MyType where
+  name (MyDataConstructor name) = name
+
+
+func x  = x
+func' y = y
+
+
+solution :: IO ()
+solution = do
+  print $ name  (MyDataConstructor "Haskell")
+  print $ 100 + 200
+  print $ (+) 100 200
