@@ -23,6 +23,7 @@ dependencies:
   - base >= 4.7 && < 5
   - containers
   - mtl
+  - hspec
 
 library:
   source-dirs: src
@@ -34,7 +35,7 @@ executables:
     ghc-options:
       - -threaded
       - -rtsopts
-      - -with-rtsopts=-N
+      - -with-rtsopts=-N4
     dependencies:
       - learnyouahaskell
 
@@ -45,6 +46,6 @@ tests:
     ghc-options:
       - -threaded
       - -rtsopts
-      - -with-rtsopts=-N
+      - -with-rtsopts=-N4
     dependencies:
       - learnyouahaskell
