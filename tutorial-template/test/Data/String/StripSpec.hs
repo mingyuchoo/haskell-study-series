@@ -1,11 +1,8 @@
 module Data.String.StripSpec (spec) where
 
 
-import Data.Char
-import Test.Hspec
-
-strip :: String -> String
-strip = dropWhile isSpace . reverse . dropWhile isSpace . reverse
+import           Data.String.Strip
+import           Test.Hspec
 
 spec :: Spec
 spec = do
