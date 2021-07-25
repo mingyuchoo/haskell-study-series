@@ -2,7 +2,7 @@ name: unit-tests
 on: [push, pull_request]
 jobs:
   tutorial-template:
-    name: Unit Tests
+    name: tutorial-template
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -11,10 +11,9 @@ jobs:
           ghc-version: 'latest'
           enable-stack: true
           stack-version: 'latest'
-          cabal-version: 'latest'
       - run: cd tutorial-template; stack test
   learnyouahaskell:
-    name: Unit Tests
+    name: learnyouahaskell
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -23,6 +22,16 @@ jobs:
           ghc-version: 'latest'
           enable-stack: true
           stack-version: 'latest'
-          cabal-version: 'latest'
       - run: cd learnyouahaskell; stack test
+  practical-haskell:
+    name: practical-haskell
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: haskell/actions/setup@v1
+        with:
+          ghc-version: 'latest'
+          enable-stack: true
+          stack-version: 'latest'
+      - run: cd practical-haskell; stack test
 
