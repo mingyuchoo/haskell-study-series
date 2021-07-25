@@ -6,10 +6,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-haskell@v1.1
+      - uses: haskell/actions/setup@v1
         with:
-          ghc-version: 8.8.3
+          ghc-version: '8.8.3'
           enable-stack: true
-          stack-version: latest
-          cabal-version: latest
+          stack-version: 'latest'
+          cabal-version: 'latest'
       - run: cd tutorial-template; stack test
