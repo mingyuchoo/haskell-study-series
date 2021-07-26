@@ -24,6 +24,8 @@ dependencies:
   - containers
   - mtl
   - hspec
+  - doctest
+  - doctest-discover
 
 library:
   source-dirs: src

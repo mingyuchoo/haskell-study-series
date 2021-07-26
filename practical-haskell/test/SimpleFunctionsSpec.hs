@@ -1,17 +1,22 @@
 {-# LANGUAGE UnicodeSyntax #-}
 
 --------------------------------------------------------------------------------
-module ExampleSpec
+module SimpleFunctionsSpec
     ( spec
     ) where
 
 --------------------------------------------------------------------------------
+import           Chapter2.SimpleFunctions
 import           Test.Hspec
 
 --------------------------------------------------------------------------------
 spec ∷ Spec
 spec = do
-  describe "Example" $ do
-    it "1 + 1 = 2" $ do
-      1 + 1 `shouldBe` 2
+  describe "firstOrEmpty" $ do
+    it "firstOrEmpty [] should be []" $ do
+      firstOrEmpty [] `shouldBe` "empty"
+
+    it "firstOrEmpty [\"hello\",\"hola\"] should be \"hello\"" $ do
+      firstOrEmpty ["hello","hola"] `shouldBe` "hello"
+
 
