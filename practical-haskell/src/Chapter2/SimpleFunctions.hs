@@ -1,5 +1,6 @@
 {-# LANGUAGE UnicodeSyntax #-}
 
+
 --------------------------------------------------------------------------------
 module Chapter2.SimpleFunctions
     where
@@ -204,6 +205,35 @@ fibonacci' 0 = 0
 fibonacci' 1 = 1
 fibonacci' n = fibonacci (n - 1) + fibonacci (n - 2)
 
+
+-- | ifibonacci
+--
+-- Example:
+--
+--
+ifibonacci ∷ Integer → Maybe Integer
+ifibonacci n =
+  if n < 0
+  then Nothing
+  else case n of
+    0 -> Just 0
+    1 -> Just 1
+    n' -> let Just f1 = ifibonacci (n' - 1)
+              Just f2 = ifibonacci (n' - 2)
+          in Just (f1 + f2)
+
+-- | ifibonacci'
+--
+-- Example:
+--
+--
+ifibonacci' ∷ Integer → Maybe Integer
+ifibonacci' n | n < 0  = Nothing
+ifibonacci' 0 = Just 0
+ifibonacci' 1 = Just 1
+ifibonacci' n | others = let Just f1 = ifibonacci' (n - 1)
+                             Just f2 = ifibonacci' (n - 2)
+                         in Just (f1 + f2)
 --------------------------------------------------------------------------------
 -- | f
 --
@@ -263,3 +293,35 @@ sorted'' list
       [] -> True
       [_] -> True
       (x:r@(y:_)) -> x < y && sorted'' r
+
+--------------------------------------------------------------------------------
+-- | binom
+--
+-- Examples:
+--
+--
+binom _ 0 = 1
+binom x x = 1
+binom n k = (binom (n - 1) (k - 1)) + (binom (n - 1) k)
+
+
+-- | binom'
+--
+-- Examples:
+--
+--
+binom' _ 0 = 1
+binom' x y | x == y = 1
+binom' n k = (binom (n - 1) (k - 1)) + (binom (n - 1) k)
+
+
+--------------------------------------------------------------------------------
+-- | multipleOf
+--
+-- Examples:
+--
+--
+multipleOf ∷ Integer → Integer → Bool
+multifplOf x y = (mod x y) == 0
+
+
