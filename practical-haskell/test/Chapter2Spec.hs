@@ -1,12 +1,12 @@
 {-# LANGUAGE UnicodeSyntax #-}
 
 --------------------------------------------------------------------------------
-module SimpleFunctionsSpec
+module Chapter2Spec
     ( spec
     ) where
 
 --------------------------------------------------------------------------------
-import           Chapter2.SimpleFunctions
+import           Chapter2
 import           Test.Hspec
 
 --------------------------------------------------------------------------------

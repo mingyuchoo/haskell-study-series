@@ -59,8 +59,8 @@ test-suite practical-haskell-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      Chapter2Spec
       ExampleSpec
-      SimpleFunctionsSpec
       Paths_practical_haskell
   hs-source-dirs:
       test
