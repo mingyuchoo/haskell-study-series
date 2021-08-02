@@ -1,16 +1,9 @@
-{-# LANGUAGE UnicodeSyntax #-}
 
+{-# LANGUAGE UnicodeSyntax   #-}
 --------------------------------------------------------------------------------
-module Main
+module Chapter3
     where
 
 --------------------------------------------------------------------------------
-import           Chapter2
-
+-- Parametric Polymorphism
 --------------------------------------------------------------------------------
-main ∷ IO ()
-main = do
-  putStrLn (firstOrEmpty [])
-  putStrLn (firstOrEmpty ["hello", "hola"])
-
-  print ([1,2] +++ [3,4])

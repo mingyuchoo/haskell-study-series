@@ -25,7 +25,8 @@ source-repository head
 
 library
   exposed-modules:
-      Chapter2.SimpleFunctions
+      Chapter2
+      Chapter3
   other-modules:
       Paths_practical_haskell
   hs-source-dirs:
