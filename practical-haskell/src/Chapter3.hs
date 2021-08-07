@@ -1,9 +1,13 @@
-{-# LANGUAGE UnicodeSyntax   #-}
-{-# LANGUAGE BlockArguments  #-}
-{-# LANGUAGE LambdaCase      #-}
+{-# LANGUAGE BlockArguments #-}
+{-# LANGUAGE LambdaCase     #-}
+{-# LANGUAGE UnicodeSyntax  #-}
 --------------------------------------------------------------------------------
 module Chapter3
     where
+
+--------------------------------------------------------------------------------
+import           Data.List hiding (head, tail)
+import qualified Data.List as L (filter, permutations)
 
 --------------------------------------------------------------------------------
 -- Parametric Polymorphism
@@ -99,7 +103,7 @@ equalTuples t = map (\(x,y) -> x == y) t
 sayHello :: [String] -> [String]
 sayHello names = map (\name -> case name of
                                  "Alejandro" -> "Hello, writer"
-                                 _            -> "Welcome, " ++ name
+                                 _           -> "Welcome, " ++ name
                      ) names
 
 -- | sayHello'
@@ -208,3 +212,41 @@ duplicateOdds' = map (*2) . filter odd
 
 --------------------------------------------------------------------------------
 -- More on Modules
+--------------------------------------------------------------------------------
+-- | permutationsStartingWith
+--
+-- Examples:
+--
+-- >>> permutationsStartingWith 'a' "abc"
+-- ["abc","acb"]
+
+permutationsStartingWith :: Char -> String -> [String]
+permutationsStartingWith letter
+  =  filter (\l -> head l == letter) . L.permutations
+
+-- | range
+--
+-- Examples:
+--
+-- >>> range 1 100
+-- Range 1 100
+--
+data Range = Range Integer Integer deriving Show
+
+range :: Integer -> Integer -> Range
+range a b = if a <= b
+            then Range a b
+            else error "a must be <= b"
+
+-- | r
+--
+-- Examples:
+--
+-- >>> r (Range 1 10)
+-- R 1 10
+--
+data RangeObs = R Integer Integer deriving Show
+
+r :: Range -> RangeObs
+r (Range a b) = R a b
+
