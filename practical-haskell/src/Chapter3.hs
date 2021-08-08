@@ -1,6 +1,8 @@
-{-# LANGUAGE BlockArguments #-}
-{-# LANGUAGE LambdaCase     #-}
-{-# LANGUAGE UnicodeSyntax  #-}
+{-# LANGUAGE BlockArguments  #-}
+{-# LANGUAGE LambdaCase      #-}
+{-# LANGUAGE PatternSynonyms #-}
+{-# LANGUAGE UnicodeSyntax   #-}
+{-# LANGUAGE ViewPatterns    #-}
 --------------------------------------------------------------------------------
 module Chapter3
     where
@@ -224,6 +226,10 @@ permutationsStartingWith :: Char -> String -> [String]
 permutationsStartingWith letter
   =  filter (\l -> head l == letter) . L.permutations
 
+-- | Range
+--
+data Range = Range Integer Integer deriving Show
+
 -- | range
 --
 -- Examples:
@@ -231,12 +237,14 @@ permutationsStartingWith letter
 -- >>> range 1 100
 -- Range 1 100
 --
-data Range = Range Integer Integer deriving Show
-
 range :: Integer -> Integer -> Range
 range a b = if a <= b
             then Range a b
             else error "a must be <= b"
+
+-- | RangeObs
+--
+data RangeObs = R Integer Integer deriving Show
 
 -- | r
 --
@@ -245,8 +253,36 @@ range a b = if a <= b
 -- >>> r (Range 1 10)
 -- R 1 10
 --
-data RangeObs = R Integer Integer deriving Show
-
 r :: Range -> RangeObs
 r (Range a b) = R a b
 
+-- | prettyRange
+--
+-- Examples:
+--
+-- >>> prettyRange (Range 1 10)
+-- "[1,10]"
+--
+-- >>> prettyRange (Range 10 1)
+-- "[10,1]"
+--
+prettyRange :: Range -> String
+prettyRange rng = case rng of
+                    (r -> R a b) -> "[" ++ show a ++ "," ++ show b ++ "]"
+
+-- | pattern R'
+--
+-- Examples:
+--
+-- >>> R' 1 10
+-- Range 1 10
+--
+-- >>> R' 10 1
+--
+pattern R' :: Integer -> Integer -> Range
+pattern R' a b <- Range a b
+  where R' a b = range a b
+
+--------------------------------------------------------------------------------
+-- Diving into Lists
+--------------------------------------------------------------------------------
