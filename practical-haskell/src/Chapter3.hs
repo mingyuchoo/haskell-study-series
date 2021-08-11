@@ -277,8 +277,6 @@ prettyRange rng = case rng of
 -- >>> R' 1 10
 -- Range 1 10
 --
--- >>> R' 10 1
---
 pattern R' :: Integer -> Integer -> Range
 pattern R' a b <- Range a b
   where R' a b = range a b
@@ -286,3 +284,59 @@ pattern R' a b <- Range a b
 --------------------------------------------------------------------------------
 -- Diving into Lists
 --------------------------------------------------------------------------------
+
+-- | foldr
+--
+-- foldr :: (a -> b -> b) -> b -> [a] -> b
+-- foldr f initial [] = initial
+-- foldr f initial (x:xs) = f x (foldr f initial xs)
+--
+-- >>> foldr (+) 0 [1,2,3]
+-- 6
+
+-- | infMax
+--
+-- Examples:
+--
+-- >>> foldr infMax MinusInfinity $ map Number [1,2,3]
+-- Number 3
+--
+-- >>> foldr (\x y -> infMax (Number x) y) MinusInfinity [1,2,3]
+-- Number 3
+--
+data InfNumber a = MinusInfinity
+                 | Number a
+                 | PlusInfinity
+                 deriving Show
+
+infMax MinusInfinity x       = x
+infMax x MinusInfinity       = x
+infMax PlusInfinity _        = PlusInfinity
+infMax _ PlusInfinity        = PlusInfinity
+infMax (Number a) (Number b) = Number (max a b)
+
+-- | foldl
+--
+-- foldl :: (a -> b -> a) -> a -> [b] -> a
+-- foldl _ initial []     = initial
+-- foldl f initial (x:xs) = foldl f (f initial x) xs
+--
+-- >>> foldl (+) 0 [1,2,3]
+-- 6
+--
+-- >>> foldr (-) 0 [1,2,3]
+-- 2
+--
+-- >>> foldl (-) 0 [1,2,3]
+-- -6
+
+-- | maximum'
+--
+-- Examples:
+--
+-- >>> maximum' [1,2,3,4,5]
+-- 5
+--
+maximum' :: [Integer] -> Integer
+maximum' = foldr1 max
+
