@@ -1,15 +1,17 @@
-{-# LANGUAGE BlockArguments  #-}
-{-# LANGUAGE LambdaCase      #-}
-{-# LANGUAGE PatternSynonyms #-}
-{-# LANGUAGE UnicodeSyntax   #-}
-{-# LANGUAGE ViewPatterns    #-}
+{-# LANGUAGE BlockArguments           #-}
+{-# LANGUAGE LambdaCase               #-}
+{-# LANGUAGE PatternSynonyms          #-}
+{-# LANGUAGE StandaloneKindSignatures #-}
+{-# LANGUAGE UnicodeSyntax            #-}
+{-# LANGUAGE ViewPatterns             #-}
 --------------------------------------------------------------------------------
 module Chapter3
     where
 
 --------------------------------------------------------------------------------
-import           Data.List hiding (head, tail)
-import qualified Data.List as L (filter, partition, permutations)
+import           Data.Function
+import           Data.List     hiding (head, tail)
+import qualified Data.List     as L (filter, partition, permutations)
 
 --------------------------------------------------------------------------------
 -- Parametric Polymorphism
@@ -41,16 +43,24 @@ maybeString Nothing  = "Nothing"
 --
 -- >>> :t GovOrg 'n' "NTTF"
 -- GovOrg 'n' "NTTF" :: Client Char
+
+type Client :: * -> *
 data Client i = GovOrg     { clientId :: i, clientName :: String}
               | Company    { clientId :: i, clientName :: String, person :: Person, duty :: String }
               | Individual { clientId :: i,                       person :: Person }
               deriving (Show, Eq, Ord)
+
+type Person :: *
 data Person = Person { firstName :: String, lastName :: String}
             deriving (Show, Eq, Ord)
 
+type Triple :: * -> * -> * -> *
 data Triple a b c = Triple a b c
+                  deriving Show
 
-data SamePair a = SamePair a a a a a a a
+type SamePair :: * -> *
+data SamePair a = SamePair a a a
+                deriving Show
 
 --------------------------------------------------------------------------------
 -- | map and succ
@@ -228,6 +238,7 @@ permutationsStartingWith letter
 
 -- | Range
 --
+type Range :: *
 data Range = Range Integer Integer deriving Show
 
 -- | range
@@ -244,6 +255,7 @@ range a b = if a <= b
 
 -- | RangeObs
 --
+type RangeObs :: *
 data RangeObs = R Integer Integer deriving Show
 
 -- | r
@@ -303,7 +315,8 @@ pattern R' a b <- Range a b
 --
 -- >>> foldr (\x y -> infMax (Number x) y) MinusInfinity [1,2,3]
 -- Number 3
---
+
+type InfNumber :: * -> *
 data InfNumber a = MinusInfinity
                  | Number a
                  | PlusInfinity
@@ -332,6 +345,7 @@ infMax (Number a) (Number b) = Number (max a b)
 
 
 
+--------------------------------------------------------------------------------
 -- | maximum'
 --
 -- Examples:
@@ -342,7 +356,7 @@ infMax (Number a) (Number b) = Number (max a b)
 maximum' :: [Integer] -> Integer
 maximum' = foldr1 max
 
--- | mothFilters
+-- | bothFilters
 --
 -- Examples:
 --
@@ -352,6 +366,8 @@ maximum' = foldr1 max
 bothFilters :: (a -> Bool) -> [a] -> ([a],[a])
 bothFilters p list = (filter p list, filter (not . p) list)
 
+
+--------------------------------------------------------------------------------
 -- | import Data.List
 -- | partition :: (a -> Bool) -> [a] -> [a] -> ([a], [a])
 --
@@ -375,6 +391,7 @@ bothFilters p list = (filter p list, filter (not . p) list)
 -- Nothing
 
 
+--------------------------------------------------------------------------------
 -- | import Data.List
 -- | dropWhile :: (a -> Bool) -> [a] -> [a]
 --
@@ -407,6 +424,7 @@ skipUntilGov = dropWhile (\case { GovOrg {} -> False; _ -> True })
 -- ["hello","send"]
 
 
+--------------------------------------------------------------------------------
 -- | import Data.List
 -- | span :: (a -> Bool) -> [a] -> ([a], [a])
 --
@@ -428,6 +446,7 @@ skipUntilGov = dropWhile (\case { GovOrg {} -> False; _ -> True })
 -- (["hello","send"],["stop","receive"])
 
 
+--------------------------------------------------------------------------------
 -- | isIndividual
 --
 -- Examples:
@@ -448,6 +467,7 @@ isIndividual _               = False
 checkAnalytics :: [Client a] -> (Bool, Bool)
 checkAnalytics cs = (any isIndividual cs, not $ all isIndividual cs)
 
+--------------------------------------------------------------------------------
 -- >>> nub [1,2,1,1,3,2,4,1]
 --
 -- | nubBy :: (a -> a -> Bool) -> [a] -> [a]
@@ -470,6 +490,7 @@ checkAnalytics cs = (any isIndividual cs, not $ all isIndividual cs)
 -- [1,2,3,4]
 
 
+--------------------------------------------------------------------------------
 -- | union :: Eq a => [a] -> [a] -> [a]
 -- | A ∪ B
 --
@@ -531,3 +552,23 @@ listOfClients
     , Individual 5 (Person "Doctor" "")
     , Individual 6 (Person "Sarah" "Jane")
     ]
+
+--------------------------------------------------------------------------------
+companyDutiesAnalytics :: [Client a] -> [String]
+companyDutiesAnalytics = map (duty . head) .
+                           sortBy (\x y -> compare (length y) (length x)) .
+                           groupBy (\x y -> duty x == duty y) .
+                           filter isCompany
+                       where isCompany (Company {}) = True
+                             isCompany _            = False
+
+
+companyDutiesAnalytics' :: [Client a] -> [String]
+companyDutiesAnalytics' = map (duty . head) .
+                            sortBy (flip (compare `on` length)) .
+                            groupBy ((==) `on` duty) .
+                            filter isCompany
+                        where isCompany (Company {}) = True
+                              isCompany _            = False
+
+--------------------------------------------------------------------------------

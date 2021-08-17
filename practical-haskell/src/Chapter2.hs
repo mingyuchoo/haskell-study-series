@@ -1,7 +1,8 @@
-{-# LANGUAGE NamedFieldPuns  #-}
-{-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE UnicodeSyntax   #-}
-{-# LANGUAGE ViewPatterns    #-}
+{-# LANGUAGE NamedFieldPuns           #-}
+{-# LANGUAGE RecordWildCards          #-}
+{-# LANGUAGE StandaloneKindSignatures #-}
+{-# LANGUAGE UnicodeSyntax            #-}
+{-# LANGUAGE ViewPatterns             #-}
 
 --------------------------------------------------------------------------------
 module Chapter2
@@ -117,15 +118,18 @@ maxmin'' (x:xs) = ( if x > xs_max then x else xs_max
                     (xs_max, xs_min) = maxmin'' xs
 
 --------------------------------------------------------------------------------
+type Client :: *
 data Client = GovOrg     String
             | Company    String Integer Person String
             | Individual Person Bool
             deriving (Show)
 
 
+type Person :: *
 data Person = Person String String Gender
             deriving (Show)
 
+type Gender :: *
 data Gender = Male
             | Femail
             | Unkown
@@ -413,6 +417,8 @@ specialClient _                               = False
 --
 -- >>> clientRName (GovOrgR "NATO")
 -- "NATO"
+
+type ClientR :: *
 data ClientR = GovOrgR     { clientRName :: String }
              | CompanyR    { clientRName :: String
                            , companyId   :: Integer
@@ -421,6 +427,7 @@ data ClientR = GovOrgR     { clientRName :: String }
              | IndividualR { person :: PersonR }
              deriving Show
 
+type PersonR :: *
 data PersonR = PersonR { firstName :: String
                        , lastName  :: String }
              deriving Show
@@ -493,9 +500,16 @@ nameInCapitals p@PersonR { firstName = initial : rest } = let newName = toUpper 
 nameInCapitals p@PersonR { firstName = "" }             = p
 
 --------------------------------------------------------------------------------
+type ConnType :: *
 data ConnType = TCP       | UDP
+
+type UseProxy :: *
 data UseProxy = NoProxy   | Proxy String
+
+type TimeOut :: *
 data TimeOut  = NoTimeOut | TimeOut Integer
+
+type ConnOptions :: *
 data ConnOptions = ConnOptions { connType      :: ConnType
                                , connSpeed     :: Integer
                                , connProxy     :: UseProxy
