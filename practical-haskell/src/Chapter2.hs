@@ -1,14 +1,14 @@
-{-# LANGUAGE UnicodeSyntax   #-}
-{-# LANGUAGE ViewPatterns    #-}
 {-# LANGUAGE NamedFieldPuns  #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE UnicodeSyntax   #-}
+{-# LANGUAGE ViewPatterns    #-}
 
 --------------------------------------------------------------------------------
 module Chapter2
     where
 
 --------------------------------------------------------------------------------
-import Data.Char
+import           Data.Char
 --------------------------------------------------------------------------------
 -- | firstOrEmpty
 --

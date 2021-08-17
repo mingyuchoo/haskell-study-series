@@ -9,7 +9,7 @@ module Chapter3
 
 --------------------------------------------------------------------------------
 import           Data.List hiding (head, tail)
-import qualified Data.List as L (filter, permutations)
+import qualified Data.List as L (filter, partition, permutations)
 
 --------------------------------------------------------------------------------
 -- Parametric Polymorphism
@@ -330,6 +330,8 @@ infMax (Number a) (Number b) = Number (max a b)
 -- >>> foldl (-) 0 [1,2,3]
 -- -6
 
+
+
 -- | maximum'
 --
 -- Examples:
@@ -340,3 +342,192 @@ infMax (Number a) (Number b) = Number (max a b)
 maximum' :: [Integer] -> Integer
 maximum' = foldr1 max
 
+-- | mothFilters
+--
+-- Examples:
+--
+-- >>> bothFilters (> 5) [1,2,3,4,5,6,7,8,9,10]
+-- ([6,7,8,9,10],[1,2,3,4,5])
+--
+bothFilters :: (a -> Bool) -> [a] -> ([a],[a])
+bothFilters p list = (filter p list, filter (not . p) list)
+
+-- | import Data.List
+-- | partition :: (a -> Bool) -> [a] -> [a] -> ([a], [a])
+--
+-- Examples:
+--
+-- >>> partition  (> 5) [1,2,3,4,5,6,7,8,9,10]
+-- ([6,7,8,9,10],[1,2,3,4,5])
+
+
+-- | find :: Foldable t => (a -> Bool) -> t a -> Maybe a
+--
+-- Examples:
+--
+-- >>> find (> 5) [1,2,3,4,5,6,7,8,9,10]
+-- Just 6
+--
+-- >>> find (> 0) [1,2,-3,4,-5,6]
+-- Just 1
+--
+-- >>> find (> 7)  [1,2,-3,4,-5,6]
+-- Nothing
+
+
+-- | import Data.List
+-- | dropWhile :: (a -> Bool) -> [a] -> [a]
+--
+-- Examples:
+--
+-- >>> dropWhile (> 5) [1,2,3,4,5,6,7,8,9,10]
+-- [1,2,3,4,5,6,7,8,9,10]
+--
+-- >>> dropWhile (< 5) [1,2,3,4,5,6,7,8,9,10]
+-- [5,6,7,8,9,10]
+--
+-- >>> dropWhile (> 5) [10,9,8,7,6,5,1,2,3,4,5,6,7,8,9,10]
+-- [5,1,2,3,4,5,6,7,8,9,10]
+
+
+-- | skipUntilGov
+--
+-- Examples:
+--
+--
+skipUntilGov :: [Client a] -> [Client a]
+skipUntilGov = dropWhile (\case { GovOrg {} -> False; _ -> True })
+
+-- | import Data.List
+-- | takeWhile :: (a -> Bool) -> [a] -> [a]
+--
+-- Examples:
+--
+-- >>> takeWhile (/= "stop") ["hello", "send", "stop", "receive"]
+-- ["hello","send"]
+
+
+-- | import Data.List
+-- | span :: (a -> Bool) -> [a] -> ([a], [a])
+--
+-- Examples:
+--
+-- >>> span (< 5) [1,2,3,4,5,6,7,8,9,10]
+-- ([1,2,3,4],[5,6,7,8,9,10])
+--
+-- >>> span (> 5) [1,2,3,4,5,6,7,8,9,10]
+-- ([],[1,2,3,4,5,6,7,8,9,10])
+--
+-- >>> span (== 5) [1,2,3,4,5,6,7,8,9,10]
+-- ([],[1,2,3,4,5,6,7,8,9,10])
+--
+-- >>> span (> 5) [10,9,8,7,6,5,4,3,2,1]
+-- ([10,9,8,7,6],[5,4,3,2,1])
+--
+-- >>> span (/= "stop") ["hello", "send", "stop", "receive"]
+-- (["hello","send"],["stop","receive"])
+
+
+-- | isIndividual
+--
+-- Examples:
+--
+--
+isIndividual :: Client a -> Bool
+isIndividual (Individual {}) = True
+isIndividual _               = False
+
+
+-- | checkAnalytics
+-- | any :: Foldable t => (a -> Bool) -> t a -> Bool
+-- | all :: Foldable t => (a -> Bool) -> t a -> Bool
+--
+-- Examples:
+--
+--
+checkAnalytics :: [Client a] -> (Bool, Bool)
+checkAnalytics cs = (any isIndividual cs, not $ all isIndividual cs)
+
+-- >>> nub [1,2,1,1,3,2,4,1]
+--
+-- | nubBy :: (a -> a -> Bool) -> [a] -> [a]
+--
+-- Examples:
+--
+-- >>> let p x y = (even x && even y) || (odd x && odd y)
+-- >>> nubBy p [1,2,3,4,5]
+-- [1,2]
+--
+-- >>> nubBy (==) [1,2,1,1,3,2,4,1]
+-- [1,2,3,4]
+
+
+-- | nub :: Eq a => [a] -> [a]
+--
+-- Examples:
+--
+-- >>> nub [1,2,1,1,3,2,4,1]
+-- [1,2,3,4]
+
+
+-- | union :: Eq a => [a] -> [a] -> [a]
+-- | A ∪ B
+--
+-- Examples:
+--
+-- >>> [1,2,3,4] `union` [2,3,5]
+-- [1,2,3,4,5]
+
+
+-- | intersect :: Eq a => [a] -> [a] -> [a]
+-- | A ∩ B
+--
+-- Examples:
+--
+-- >>> [1,2,3,4] `intersect` [2,3,5]
+-- [2,3]
+
+
+-- | (\\) :: Eq a => [a] -> [a] -> [a]
+-- | A - B
+--
+-- Examples:
+--
+-- >>> [1,2,3,4] \\ [2,3,5]
+-- [1,4]
+
+
+-- | elem :: (Foldable t, Eq a) => a -> t a -> Bool
+--
+-- Examples:
+--
+-- >>> 2 `elem` [1,2,3]
+-- True
+--
+-- >>> 4 `elem` [1,2,3]
+-- False
+
+
+--------------------------------------------------------------------------------
+
+-- | comapreClient
+--
+-- Examples::
+--
+-- >>> sortBy comapreClient listOfClients
+-- [GovOrg {clientId = 3, clientName = "NTTF"},Company {clientId = 4, clientName = "Wormhole Inc.", person = Person {firstName = "Karl", lastName = "Schwarzschild"}, duty = "Physicist"},Individual {clientId = 6, person = Person {firstName = "Sarah", lastName = "Jane"}},Individual {clientId = 5, person = Person {firstName = "Doctor", lastName = ""}},Individual {clientId = 2, person = Person {firstName = "H. G.", lastName = "Wells"}}]
+--
+compareClient :: Client a -> Client a -> Ordering
+compareClient (Individual {person = p1}) (Individual {person = p2}) = compare (firstName p1) (firstName p2)
+comapreClient (Individual {})            _                          = GT
+comapreClient _                          (Individual {})            = LT
+comapreClient c1                         c2                         = compare (clientName c1) (clientName c2)
+
+
+listOfClients
+  = [ Individual 2 (Person "H. G." "Wells")
+    , GovOrg 3 "NTTF" -- National Time Travel Foundation
+    , Company 4 "Wormhole Inc." (Person "Karl" "Schwarzschild") "Physicist"
+    , Individual 5 (Person "Doctor" "")
+    , Individual 6 (Person "Sarah" "Jane")
+    ]
