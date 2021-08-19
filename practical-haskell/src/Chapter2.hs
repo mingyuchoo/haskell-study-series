@@ -13,14 +13,10 @@ import           Data.Char
 --------------------------------------------------------------------------------
 -- | firstOrEmpty
 --
--- Examples:
---
 -- >>> firstOrEmpty []
 -- "empty"
---
 -- >>> firstOrEmpty ["hello","hola"]
 -- "hello"
---
 firstOrEmpty ∷ [String] -> String
 firstOrEmpty list = if not (null list)
                     then head list
@@ -28,10 +24,6 @@ firstOrEmpty list = if not (null list)
 
 --------------------------------------------------------------------------------
 -- | (+++)
---
--- Examples:
---
---
 (+++) ∷ [a] -> [a] -> [a]
 list1 +++ list2 = if null list1 {- check emptyness -}
                   then list2    {- base case       -}
@@ -39,10 +31,6 @@ list1 +++ list2 = if null list1 {- check emptyness -}
 
 
 -- | (+++!)
---
--- Examples:
---
---
 (+++!) ∷ [a] -> [a] -> [a]
 list1 +++! list2 = case list1 of
                      []   -> list2
@@ -50,19 +38,11 @@ list1 +++! list2 = case list1 of
 
 
 -- | (+++!!)
---
--- Examples:
---
---
 (+++!!) ∷ [a] -> [a] -> [a]
 []     +++!! list2 = list2
 (x:xs) +++!! list2 = x:(xs +++!! list2)
 --------------------------------------------------------------------------------
 -- | reverse2
---
--- Examples:
---
---
 reverse2 ∷ [a] -> [a]
 reverse2 list = if null list
                 then []
@@ -70,10 +50,6 @@ reverse2 list = if null list
 
 --------------------------------------------------------------------------------
 -- | maxmin
---
--- Examples:
---
---
 maxmin ∷ Ord a => [a] -> (a, a)
 maxmin list = if null (tail list)
               then (head list, head list)
@@ -87,10 +63,6 @@ maxmin list = if null (tail list)
 
 
 -- | maxmin'
---
--- Examples:
---
---
 maxmin' ∷ Ord a => [a] -> (a, a)
 maxmin' list = let h = head list
                in if null (tail list)
@@ -105,10 +77,6 @@ maxmin' list = let h = head list
 
 
 -- | maxmin''
---
--- Examples:
---
---
 maxmin'' ∷ Ord a => [a] -> (a, a)
 maxmin'' [x]    = (x, x)
 maxmin'' (x:xs) = ( if x > xs_max then x else xs_max
@@ -137,10 +105,6 @@ data Gender = Male
 
 --------------------------------------------------------------------------------
 -- | clientName
---
--- Examples:
---
---
 clientName ∷ Client -> String
 clientName client = case client of
                       GovOrg name                 -> name
@@ -150,10 +114,6 @@ clientName client = case client of
 
 
 -- | clientName2
---
--- Examples:
---
---
 clientName2 ∷ Client -> String
 clientName2 (GovOrg name)                                = name
 clientName2 (Company name _ _ _)                         = name
@@ -161,10 +121,6 @@ clientName2 (Individual (Person firstName lastName _) _) = firstName ++ " " ++ l
 
 
 -- | clientName'
---
--- Examples:
---
---
 clientName' ∷ Client -> String
 clientName' client = case client of
                        GovOrg name                               -> name
@@ -173,10 +129,6 @@ clientName' client = case client of
 
 
 -- | clientName''
---
--- Examples:
---
---
 clientName'' ∷ Client -> Maybe String
 clientName'' client = case client of
                         Company name _ _ _ -> Just name
@@ -184,10 +136,6 @@ clientName'' client = case client of
 
 --------------------------------------------------------------------------------
 -- | fibonacci
---
--- Examples:
---
---
 fibonacci ∷ Integer -> Integer
 fibonacci n = case n of
                 0 -> 0
@@ -196,10 +144,6 @@ fibonacci n = case n of
 
 
 -- | fibonacci'
---
--- Examples:
---
---
 fibonacci' ∷ Integer -> Integer
 fibonacci' 0 = 0
 fibonacci' 1 = 1
@@ -207,10 +151,6 @@ fibonacci' n = fibonacci (n - 1) + fibonacci (n - 2)
 
 
 -- | ifibonacci
---
--- Example:
---
---
 ifibonacci ∷ Integer -> Maybe Integer
 ifibonacci n = if n < 0
                then Nothing
@@ -222,10 +162,6 @@ ifibonacci n = if n < 0
                             in Just (f1 + f2)
 
 -- | ifibonacci'
---
--- Example:
---
---
 ifibonacci' ∷ Integer -> Maybe Integer
 ifibonacci' n | n < 0     = Nothing
 ifibonacci' 0             = Just 0
@@ -235,20 +171,12 @@ ifibonacci' n  = let Just f1 = ifibonacci' (n - 1)
                  in Just (f1 + f2)
 --------------------------------------------------------------------------------
 -- | f
---
--- Examples:
---
---
 f ∷ Client -> String
 f client = case client of
            Company _ _ (Person name _ _) "Boss" -> name ++ " is the boss"
            _                                    -> "There is no boss"
 
 -- | g
---
--- Examples:
---
---
 g ∷ Client -> String
 g client = case client of
            Company _ _ (Person name _ _) pos -> case pos of
@@ -257,10 +185,6 @@ g client = case client of
 
 --------------------------------------------------------------------------------
 -- | sorted
---
--- Examples:
---
---
 sorted ∷ [Integer] -> Bool
 sorted []       = True
 sorted [_]      = True
@@ -268,10 +192,6 @@ sorted (x:y:zs) = x < y && sorted (y:zs)
 
 
 -- | sorted'
---
--- Examples:
---
---
 sorted' ∷ [Integer] -> Bool
 sorted' []          = True
 sorted' [_]         = True
@@ -279,10 +199,6 @@ sorted' (x:r@(y:_)) = x < y && sorted' r
 
 
 -- | sorted''
---
--- Examples:
---
---
 sorted'' ∷ [Integer] -> Bool
 sorted'' list = case list of
                   []          -> True
@@ -291,10 +207,6 @@ sorted'' list = case list of
 
 --------------------------------------------------------------------------------
 -- | binom
---
--- Examples:
---
---
 binom :: (Eq a, Num a, Num p) => a -> a -> p
 binom _ 0          = 1
 binom x y | x == y = 1
@@ -304,45 +216,31 @@ binom n k          = binom (n - 1) (k - 1) + binom (n - 1) k
 --------------------------------------------------------------------------------
 -- | multipleOf
 --
--- Examples:
---
 -- >>> multipleOf 0 0
 -- *** Exception: divide by zero
---
 -- >>> multipleOf 1 0
 -- *** Exception: divide by zero
---
 -- >>> multipleOf 1 1
 -- True
---
 -- >>> multipleOf 1 2
 -- False
---
 -- >>> multipleOf 1 3
 -- False
---
 multipleOf ∷ Integer -> Integer -> Bool
 multipleOf x y = mod x y == 0
 
 -- | specialMultiples
 --
--- Examples:
---
 -- >>> specialMultiples 2
 -- "2 is multiple of 2"
---
 -- >>> specialMultiples 3
 -- "3 is multiple of 3"
---
 -- >>> specialMultiples 4
 -- "4 is multiple of 2"
---
 -- >>> specialMultiples 5
 -- "5 is multiple of 5"
---
 -- >>> specialMultiples 7
 -- "7 is beautiful number"
---
 specialMultiples :: Integer -> String
 specialMultiples n | multipleOf n 2 = show n ++ " is multiple of 2"
 specialMultiples n | multipleOf n 3 = show n ++ " is multiple of 3"
@@ -351,23 +249,16 @@ specialMultiples n       = show n ++ " is beautiful number"
 
 -- | specialMultiples'
 --
--- Examples:
---
 -- >>> specialMultiples' 2
 -- "2 is multiple of 2"
---
 -- >>> specialMultiples' 3
 -- "3 is multiple of 3"
---
 -- >>> specialMultiples' 4
 -- "4 is multiple of 2"
---
 -- >>> specialMultiples' 5
 -- "5 is multiple of 5"
---
 -- >>> specialMultiples' 7
 -- "7 is beautiful number"
---
 specialMultiples' n
   | multipleOf n 2 = show n ++ " is multiple of 2"
   | multipleOf n 3 = show n ++ " is multiple of 3"
@@ -377,25 +268,18 @@ specialMultiples' n
 --------------------------------------------------------------------------------
 -- | responsibility
 --
--- Examples:
---
 -- >>> responsibility (Company "A" 5 (Person "John" "Do" Male) "Director")
 -- "Director"
---
 -- >>> responsibility (GovOrg "NASA")
 -- "Unknown"
---
 responsibility :: Client -> String
 responsibility (Company _ _ _ r) = r
 responsibility _                 = "Unknown"
 
 -- | specialClient
 --
--- Examples:
---
 -- >>> specialClient (Individual (Person "Mr." "Alejandro" Male) True)
 -- True
---
 specialClient :: Client -> Bool
 specialClient (clientName -> "Mr. Alejandro") = True
 specialClient (responsibility -> "Director")  = True
@@ -404,20 +288,14 @@ specialClient _                               = False
 --------------------------------------------------------------------------------
 -- | ClientR
 --
--- Examples:
---
 -- >>> GovOrgR "NATO"
 -- GovOrgR {clientRName = "NATO"}
---
 -- >>> CompanyR { clientRName = "GE", companyId = 1, person = PersonR { firstName = "John", lastName = "Smith"}, duty = "CEO"}
 -- CompanyR {clientRName = "GE", companyId = 1, person = PersonR {firstName = "John", lastName = "Smith"}, duty = "CEO"}
---
 -- >>> IndividualR { person = PersonR { lastName = "Smith", firstName = "John"}}
 -- IndividualR {person = PersonR {firstName = "John", lastName = "Smith"}}
---
 -- >>> clientRName (GovOrgR "NATO")
 -- "NATO"
-
 type ClientR :: *
 data ClientR = GovOrgR     { clientRName :: String }
              | CompanyR    { clientRName :: String
@@ -435,17 +313,12 @@ data PersonR = PersonR { firstName :: String
 --------------------------------------------------------------------------------
 -- | greet
 --
--- Examples:
---
 -- >>> greet (GovOrgR "NATO")
 -- "Welcome"
---
 -- >>> greet (CompanyR {clientRName = "GE", companyId = 1, person = PersonR {firstName = "John", lastName = "Smith"}, duty = "CEO"})
 -- "Hi, GE"
---
 -- >>> greet (IndividualR { person = PersonR { lastName = "Smith", firstName = "John"}})
 -- "Hi, John"
---
 greet :: ClientR -> String
 greet IndividualR { person = PersonR { firstName = fn }} = "Hi, " ++ fn
 greet CompanyR    { clientRName = c }                    = "Hi, " ++ c
@@ -453,17 +326,12 @@ greet GovOrgR     { }                                    = "Welcome"
 
 -- | greet'
 --
--- Examples:
---
 -- >>> greet' (GovOrgR "NATO")
 -- "Welcome"
---
 -- >>> greet' (CompanyR {clientRName = "GE", companyId = 1, person = PersonR {firstName = "John", lastName = "Smith"}, duty = "CEO"})
 -- "Hi, GE"
---
 -- >>> greet' (IndividualR { person = PersonR { lastName = "Smith", firstName = "John"}})
 -- "Hi, John"
---
 greet' :: ClientR -> String
 greet' IndividualR { person = PersonR { firstName }} = "Hi, " ++ firstName
 greet' CompanyR    { clientRName }                   = "Hi, " ++ clientRName
@@ -471,17 +339,12 @@ greet' GovOrgR     { }                               = "Welcome"
 
 -- | greet''
 --
--- Examples:
---
 -- >>> greet'' (GovOrgR "NATO")
 -- "Welcome"
---
 -- >>> greet'' (CompanyR {clientRName = "GE", companyId = 1, person = PersonR {firstName = "John", lastName = "Smith"}, duty = "CEO"})
 -- "Hi, GE"
---
 -- >>> greet'' (IndividualR { person = PersonR { lastName = "Smith", firstName = "John"}})
 -- "Hi, John"
---
 greet'' :: ClientR -> String
 greet'' IndividualR { person = PersonR { .. }} = "Hi, " ++ firstName
 greet'' CompanyR    { .. }                     = "Hi, " ++ clientRName
@@ -489,11 +352,8 @@ greet'' GovOrgR     { }                        = "Welcome"
 
 -- | nameInCapitals
 --
--- Examples:
---
 -- >>> nameInCapitals (PersonR { lastName = "smith", firstName = "john"})
 -- PersonR {firstName = "John", lastName = "smith"}
---
 nameInCapitals :: PersonR -> PersonR
 nameInCapitals p@PersonR { firstName = initial : rest } = let newName = toUpper initial : rest
                                                           in p { firstName = newName }

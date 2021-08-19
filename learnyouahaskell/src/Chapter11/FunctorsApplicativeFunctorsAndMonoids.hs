@@ -1,8 +1,8 @@
 module Chapter11.FunctorsApplicativeFunctorsAndMonoids where
 --------------------------------------------------------------------------------
-import Data.Char
-import Data.List
-import Data.Monoid
+import           Data.Char
+import           Data.List
+import           Data.Monoid
 --------------------------------------------------------------------------------
 myAction :: IO ()
 myAction = do
