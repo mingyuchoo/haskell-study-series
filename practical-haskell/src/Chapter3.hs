@@ -15,7 +15,7 @@ module Chapter3
 import           Data.Char
 import           Data.Function
 import           Data.List     hiding (head, tail)
-import qualified Data.List     as L (filter, partition, permutations)
+import qualified Data.List     as L (filter, partition, permutations, unfoldr)
 import           GHC.Exts
 
 --------------------------------------------------------------------------------
@@ -556,3 +556,19 @@ companyAnalytics clients = [ (the clientName, zip person duty)
 -- [1,2,3,2,4,6,3,6,9]
 -- >>> [ x*y | x <- [1,2,3] | y <- [1,2,3] ] -- zipping
 -- [1,4,9]
+
+--------------------------------------------------------------------------------
+-- | filterAsFold
+--
+-- >>> filterAsFold (> 2) [1,2,3]
+-- [3]
+filterAsFold :: (a -> Bool) -> [a] -> [a]
+filterAsFold p = foldr (\x l -> if p x then x : l else l) []
+
+
+-- | filterAsFold'
+--
+-- >>> filterAsFold' [1,2,3] (> 2)
+-- [3]
+filterAsFold' :: [a] -> (a -> Bool) -> [a]
+filterAsFold' d p = foldr (\x l -> if p x then x : l else l) [] d

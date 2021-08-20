@@ -27,6 +27,7 @@ library
   exposed-modules:
       Chapter2
       Chapter3
+      Chapter4
   other-modules:
       Paths_practical_haskell
   hs-source-dirs:
