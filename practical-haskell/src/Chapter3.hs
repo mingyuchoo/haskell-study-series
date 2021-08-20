@@ -1,7 +1,10 @@
 {-# LANGUAGE BlockArguments           #-}
 {-# LANGUAGE LambdaCase               #-}
+{-# LANGUAGE ParallelListComp         #-}
 {-# LANGUAGE PatternSynonyms          #-}
+{-# LANGUAGE RecordWildCards          #-}
 {-# LANGUAGE StandaloneKindSignatures #-}
+{-# LANGUAGE TransformListComp        #-}
 {-# LANGUAGE UnicodeSyntax            #-}
 {-# LANGUAGE ViewPatterns             #-}
 --------------------------------------------------------------------------------
@@ -13,6 +16,7 @@ import           Data.Char
 import           Data.Function
 import           Data.List     hiding (head, tail)
 import qualified Data.List     as L (filter, partition, permutations)
+import           GHC.Exts
 
 --------------------------------------------------------------------------------
 -- Parametric Polymorphism
@@ -502,27 +506,53 @@ withPositions' list = zip [1 .. length list] list
 duplicateOdds''' :: [Integer] -> [Integer]
 duplicateOdds''' list = [2 * x | x <- list, odd x]
 
--- | list comprehension example 1
+--------------------------------------------------------------------------------
+-- | list comprehension
 --
 -- >>> [clientName x | x@(GovOrg _ _) <- listOfClients]
 -- ["NTTF"]
 -- >>> [(x,y,x*y) | x <- [1 .. 4],y <- [1 .. 10]]
 -- [(1,1,1),(1,2,2),(1,3,3),(1,4,4),(1,5,5),(1,6,6),(1,7,7),(1,8,8),(1,9,9),(1,10,10),(2,1,2),(2,2,4),(2,3,6),(2,4,8),(2,5,10),(2,6,12),(2,7,14),(2,8,16),(2,9,18),(2,10,20),(3,1,3),(3,2,6),(3,3,9),(3,4,12),(3,5,15),(3,6,18),(3,7,21),(3,8,24),(3,9,27),(3,10,30),(4,1,4),(4,2,8),(4,3,12),(4,4,16),(4,5,20),(4,6,24),(4,7,28),(4,8,32),(4,9,36),(4,10,40)]
-
--- | list comprehension example 2
 --
 -- >>> [ toUpper c | s <- ["A", "list"], c <- ' ':s ]
 -- " A LIST"
-
--- | list comprehension example 3
 --
 -- >>> [ sqrt v | (x,y) <- [(1,2),(3,8)], let v = x*x + y*y ]
 -- [2.23606797749979,8.54400374531753]
-
-
--- | list compreshention example 4 using TransformListComp extension
 --
 -- >>> :set -XTransformListComp
 -- >>> [x*y | x <- [-1,1,-2], y <- [1,2,3], then reverse]
 -- [-6,-4,-2,3,2,1,-3,-2,-1]
+--
+-- >>> import GHC.Exts
+-- >>> [x*y | x <- [-1,1,-2], y <- [1,2,3], then sortWith by x]
+-- [-2,-4,-6,-1,-2,-3,1,2,3]
+--
+-- >>> :{
+-- >>> [ (the p, m)| x <- [-1,1,-2]
+-- >>>             , y <- [1,2,3]
+-- >>>             , let m = x*y
+-- >>>             , let p = m > 0
+-- >>>             , then group by p using groupWith ]
+-- >>> :}
+-- [(False,[-1,-2,-3,-2,-4,-6]),(True,[1,2,3])]
 
+--------------------------------------------------------------------------------
+-- | companyAnalytics
+--
+--
+companyAnalytics :: [Client a] -> [(String, [(Person, String)])]
+companyAnalytics clients = [ (the clientName, zip person duty)
+                           | client@(Company { .. }) <- clients
+                           , then sortWith by duty
+                           , then group by clientName using groupWith
+                           , then sortWith by length client
+                           ]
+
+-- | list comprehension using ParallelListComp pragma
+--
+-- >>> :set -XParallelListComp
+-- >>> [ x*y | x <- [1,2,3], y <- [1,2,3] ] -- nesting
+-- [1,2,3,2,4,6,3,6,9]
+-- >>> [ x*y | x <- [1,2,3] | y <- [1,2,3] ] -- zipping
+-- [1,4,9]
