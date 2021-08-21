@@ -1,3 +1,6 @@
+{-# LANGUAGE StandaloneKindSignatures #-}
+
+--------------------------------------------------------------------------------
 module Lib
     ( someFunc
     , MyTypeConstructor(..)
@@ -24,9 +27,7 @@ module Lib
     ) where
 
 --------------------------------------------------------------------------------
-
 data MyTypeConstructor = MyDataConstructor deriving (Show)
-
 
 class MyTypeClass myTypeVariable where
   myTypeClassFunction :: myTypeVariable -> String
