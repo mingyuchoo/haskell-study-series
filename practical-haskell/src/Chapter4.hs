@@ -2,8 +2,9 @@
 module Chapter4
   where
 --------------------------------------------------------------------------------
-import qualified Data.Map  as M
-import qualified Data.Set  as S
+import           Data.Graph
+import qualified Data.Map   as M
+import qualified Data.Set   as S
 import           Data.Tree
 --------------------------------------------------------------------------------
 -- Map
@@ -70,4 +71,42 @@ import           Data.Tree
 -- Tree
 --
 
+-- | preOrder
+--
+-- >>> preOrder show $ Node 1 []
+-- ["1"]
+preOrder :: (a -> b) -> Tree a -> [b]
+preOrder f (Node v subtrees) =
+  let subtreesTraversed = concat $ map (preOrder f) subtrees
+  in f v : subtreesTraversed
+
+-- | pictureTree
+--
+-- >>> preOrder show pictureTree
+-- ["1","2","3","4","5","6"]
+-- >>> flatten pictureTree
+-- [1,2,3,4,5,6]
+-- >>> levels pictureTree
+-- [[1],[2,6],[3,4,5]]
+pictureTree :: Tree Int
+pictureTree = Node 1 [ Node 2 [ Node 3 []
+                              , Node 4 []
+                              , Node 5 []]
+                              , Node 6 []]
+
+-- | fmap (predicate) tree
+--
+-- >>> fmap (*2) pictureTree
+-- Node {rootLabel = 2, subForest = [Node {rootLabel = 4, subForest = [Node {rootLabel = 6, subForest = []},Node {rootLabel = 8, subForest = []},Node {rootLabel = 10, subForest = []}]},Node {rootLabel = 12, subForest = []}]}
+
+
+-- | Data.Foldable.foldr (predicate) initial tree
+--
+-- >>> Data.Foldable.foldr (+) 0 pictureTree
+-- 21
+
 --------------------------------------------------------------------------------
+-- Graph
+--
+
+
