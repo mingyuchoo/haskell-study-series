@@ -1,191 +1,230 @@
+--------------------------------------------------------------------------------
 module TypeClassInheritance where
 
 --------------------------------------------------------------------------------
-
 import           Data.Maybe
 
 --------------------------------------------------------------------------------
+-- 1. Algebraic Data Type (ADT)
+-- 2. Parametric Pohlymorphism
+-- 3. Data Type declaration
 
-data TypeA  = DataA0
-            | DataA1 { fieldA11 :: String }
-            | DataA2 { fieldA21 :: String
-                     , fieldA22 :: String }
+
+-- `TypeA` is a Data Type
+-- :kind TypeA    :: *
+-- :type DataA0   :: TypeA
+-- :type DataA1   :: String -> TypeA
+-- :type fieldA11 :: TypeA -> String
+data TypeA  = DataA0                         -- `DataA0` is a Data Constructor
+            | DataA1 { fieldA11 :: String }  -- `DataA1` is a Data Constructor
             deriving (Show)
 
-data TypeB  = DataB0
-            | DataB1 { fieldB11 :: String }
-            | DataB2 { fieldB21 :: String
-                     , fieldB22 :: String }
-            deriving (Show)
 
-data TypeC  = DataC0
-            | DataC1 { fieldC11 :: String }
-            | DataC2 { fieldC21 :: String
-                     , fieldC22 :: String }
-            deriving (Show)
+-- `TypeB a` is a Data Type having `a` type variable
+-- :kind TypeB    :: * -> *
+-- :type DataB0   :: TypeB a
+-- :type DataB1   :: String -> TypeB a
+-- :type DataB2   :: a -> a -> TypeB a
+-- :type fieldB11 :: TypeB a -> String
+-- :type fieldB21 :: TypeB a -> a
+-- :type fieldB22 :: TypeB a -> a
+data TypeB a = DataB0                        -- `DataB0` is a Data Constructor
+             | DataB1 { fieldB11 :: String } -- `DataB1` is a Data Constructor
+             | DataB2 { fieldB21 :: a        -- `a` is a type variable but when fieldB22 is called
+                      , fieldB22 :: a }      -- `a` is used to a value of the type
+             deriving (Show)
+
+
+-- `TypeC a b` is a Data Type having `a and b` type variables
+-- :kind TypeC  :: * -> * -> *
+-- :type DataC0 :: Type C a b
+-- :type DataC1 :: String -> TypeC a b
+-- :type DataC2 :: String -> a -> TypeC a b
+-- :type DataC3 :: String -> b -> b -> TypeC a b
+-- :type DataC4 :: String -> a -> b -> TypeC a b
+-- :type fieldC11 :: TypeC a b -> String
+-- :type fieldC21 :: TypeC a b -> String
+-- :type fieldC22 :: TypeC a b -> a
+-- :type fieldC31 :: TypeC a b -> String
+-- :type fieldC32 :: TypeC a b -> b
+-- :type fieldC33 :: TypeC a b -> b
+-- :type fieldC41 :: TypeC a b -> String
+-- :type fieldC42 :: TypeC a b -> a
+-- :type fieldC43 :: TypeC a b -> b
+data TypeC a b = DataC0
+               | DataC1 { fieldC11 :: String }
+               | DataC2 { fieldC21 :: String
+                        , fieldC22 :: a }
+               | DataC3 { fieldC31 :: String
+                        , fieldC32 :: b
+                        , fieldC33 :: b }
+               | DataC4 { fieldC41 :: String
+                        , fieldC42 :: a
+                        , fieldC43 :: b }
+               deriving (Show)
+
+--------------------------------------------------------------------------------
+-- 1. Ad-hoc Polymorphism
+-- 2. Type Class Inheritance
+-- 3. Type Class declaration
+
+
+-- `TypeCassA a` is a Type Class having `a` type variable
+class TypeClassA a where                   -- `a` is a type variable
+    functionA :: a -> a
+
+
+-- `TypeCassB b` is a Type Class having `b` type variable which inheriting `TypeClassA b`
+class (TypeClassA b) => TypeClassB b where -- `b` is a type variable
+    functionB :: b -> Maybe b
+
+
+-- `TypeCassC c` is a Type Class having `c` type variable which inheriting `TypeClassB c`
+class (TypeClassB c) => TypeClassC c where -- `c` is a type variable
+    functionC :: c -> Either c c
 
 --------------------------------------------------------------------------------
 
-class TypeClassA a where
-    typeClassA :: a -> a
-
-class (TypeClassA a) => TypeClassB a where
-    typeClassB :: a -> Maybe a
-
-class (TypeClassB a) => TypeClassC a where
-    typeClassC :: a -> Either a a
-
---------------------------------------------------------------------------------
-
--- | typeClassA TypeA
+-- | functionA TypeA
 --
--- >>> typeClassA DataA0
+-- >>> functionA DataA0
 -- DataA0
 --
--- >>> typeClassA DataA1 { fieldA11 = "a11" }
+-- >>> functionA DataA1 { fieldA11 = "a11" }
 -- DataA1 {fieldA11 = "a11"}
 --
--- >>> typeClassA DataA2 { fieldA21 = "a21", fieldA22 = "a22" }
--- DataA2 {fieldA21 = "a21", fieldA22 = "a22"}
+instance TypeClassA TypeA where  -- `TypeA` is a Data Type
+    functionA x = x              -- `x` is a value paramter for a type variable
+
+
+
+
+-- | functionA TypeB
 --
-instance TypeClassA TypeA where
-    typeClassA x = x
-
-
-
-
--- | typeClassA TypeB
---
--- >>> typeClassA DataB0
+-- >>> functionA DataB0
 -- DataB0
 --
--- >>> typeClassA DataB1 { fieldB11 = "b11" }
+-- >>> functionA DataB1 { fieldB11 = "b11" }
 -- DataB1 {fieldB11 = "b11"}
 --
--- >>> typeClassA DataB2 { fieldB21 = "b21", fieldB22 = "b22" }
+-- >>> functionA DataB2 { fieldB21 = "b21", fieldB22 = "b22" }
 -- DataB2 {fieldB21 = "b21", fieldB22 = "b22"}
 --
-instance TypeClassA TypeB where
-    typeClassA x = x
+instance TypeClassA (TypeB a) where -- `(TypeB a)` is a Data Type having a type variable
+    functionA x = x                 -- `x` is a value paramter for a type variable
 
 
 
 
--- | typeClassA TypeC
+-- | functionA TypeC
 --
--- >>> typeClassA DataC0
+-- >>> functionA DataC0
 -- DataC0
 --
--- >>> typeClassA DataC1 { fieldC11 = "c11" }
+-- >>> functionA DataC1 { fieldC11 = "c11" }
 -- DataC1 {fieldC11 = "c11"}
 --
--- >>> typeClassA DataC2 { fieldC21 = "c21", fieldC22 = "c22" }
+-- >>> functionA DataC2 { fieldC21 = "c21", fieldC22 = "c22" }
 -- DataC2 {fieldC21 = "c21", fieldC22 = "c22"}
 --
-instance TypeClassA TypeC where
-    typeClassA x = x
+instance TypeClassA (TypeC a b) where -- `(TypeC a b) is a Data Type having two type variables
+    functionA x = x                   -- `x` is a value parameter for a type variable
 
 
 
 
--- | typeClassB TypeA
+-- | functionB TypeA
 --
--- >>> typeClassB DataA0
+-- >>> functionB DataA0
 -- Just DataA0
 --
--- >>> typeClassB DataA1 { fieldA11 = "a11" }
+-- >>> functionB DataA1 { fieldA11 = "a11" }
 -- Just (DataA1 {fieldA11 = "a11"})
 --
--- >>> typeClassB DataA2 { fieldA21 = "a21", fieldA22 = "a22" }
--- Just (DataA2 {fieldA21 = "a21", fieldA22 = "a22"})
---
 instance TypeClassB TypeA where
-    typeClassB x = Just x
+    functionB x = Just x
 
 
 
 
--- | typeClassB TypeB
+-- | functionB TypeB
 --
--- >>> typeClassB DataB0
+-- >>> functionB DataB0
 -- Just DataB0
 --
--- >>> typeClassB DataB1 { fieldB11 = "b11" }
+-- >>> functionB DataB1 { fieldB11 = "b11" }
 -- Just (DataB1 {fieldB11 = "b11"})
 --
--- >>> typeClassB DataB2 { fieldB21 = "b21", fieldB22 = "b22" }
+-- >>> functionB DataB2 { fieldB21 = "b21", fieldB22 = "b22" }
 -- Just (DataB2 {fieldB21 = "b21", fieldB22 = "b22"})
 --
-instance TypeClassB TypeB where
-    typeClassB x = Just x
+instance TypeClassB (TypeB a) where
+    functionB x = Just x
 
 
 
 
--- | typeClassB TypeC
+-- | functionB TypeC
 --
--- >>> typeClassB DataC0
+-- >>> functionB DataC0
 -- Just DataC0
 --
--- >>> typeClassB DataC1 { fieldC11 = "c11" }
+-- >>> functionB DataC1 { fieldC11 = "c11" }
 -- Just (DataC1 {fieldC11 = "c11"})
 --
--- >>> typeClassB DataC2 { fieldC21 = "c21", fieldC22 = "c22" }
+-- >>> functionB DataC2 { fieldC21 = "c21", fieldC22 = "c22" }
 -- Just (DataC2 {fieldC21 = "c21", fieldC22 = "c22"})
 --
-instance TypeClassB TypeC where
-    typeClassB x = Just x
+instance TypeClassB (TypeC a b) where
+    functionB x = Just x
 
 
 
 
--- | typeClassC TypeA
+-- | functionC TypeA
 --
--- >>> typeClassC DataA0
+-- >>> functionC DataA0
 -- Left DataA0
 --
--- >>> typeClassC DataA1 { fieldA11 = "a11" }
+-- >>> functionC DataA1 { fieldA11 = "a11" }
 -- Left (DataA1 {fieldA11 = "a11"})
 --
--- >>> typeClassC DataA2 { fieldA21 = "a21", fieldA22 = "a22" }
--- Left (DataA2 {fieldA21 = "a21", fieldA22 = "a22"})
---
 instance TypeClassC TypeA where
-    typeClassC x = Left x
+    functionC x = Left x
 
 
 
 
--- | typeClassC TypeB
+-- | functionC TypeB
 --
--- >>> typeClassC DataB0
+-- >>> functionC DataB0
 -- Left DataB0
 --
--- >>> typeClassC DataB1 { fieldB11 = "b11" }
+-- >>> functionC DataB1 { fieldB11 = "b11" }
 -- Left (DataB1 {fieldB11 = "b11"})
 --
--- >>> typeClassC DataB2 { fieldB21 = "b21", fieldB22 = "b22" }
+-- >>> functionC DataB2 { fieldB21 = "b21", fieldB22 = "b22" }
 -- Left (DataB2 {fieldB21 = "b21", fieldB22 = "b22"})
 --
-instance TypeClassC TypeB where
-    typeClassC x = Left x
+instance TypeClassC (TypeB a) where
+    functionC x = Left x
 
 
 
 
--- | typeClassC TypeC
+-- | functionC TypeC
 --
--- >>> typeClassC DataC0
+-- >>> functionC DataC0
 -- Left DataC0
 --
--- >>> typeClassC DataC1 { fieldC11 = "c11" }
+-- >>> functionC DataC1 { fieldC11 = "c11" }
 -- Left (DataC1 {fieldC11 = "c11"})
 --
--- >>> typeClassC DataC2 { fieldC21 = "c21", fieldC22 = "c22" }
+-- >>> functionC DataC2 { fieldC21 = "c21", fieldC22 = "c22" }
 -- Left (DataC2 {fieldC21 = "c21", fieldC22 = "c22"})
 --
-instance TypeClassC TypeC where
-    typeClassC x = Left x
+instance TypeClassC (TypeC a b) where
+    functionC x = Left x
 
 --------------------------------------------------------------------------------
 
@@ -196,9 +235,6 @@ instance TypeClassC TypeC where
 --
 -- >>> functionOne DataA1 {fieldA11 = "a11"}
 -- DataA1 {fieldA11 = "a11"}
---
--- >>> functionOne DataA2 {fieldA21 = "a21", fieldA22 = "a22"}
--- DataA2 {fieldA21 = "a21", fieldA22 = "a22"}
 --
 -- >>> functionOne DataB0
 -- DataB0
@@ -233,9 +269,6 @@ functionOne x = x
 -- >>> functionTwo DataA1 {fieldA11 = "a11"}
 -- DataA1 {fieldA11 = "a11"}
 --
--- >>> functionTwo DataA2 {fieldA21 = "a21", fieldA22 = "a22"}
--- DataA2 {fieldA21 = "a21", fieldA22 = "a22"}
---
 -- >>> functionTwo DataB0
 -- DataB0
 --
@@ -254,7 +287,7 @@ functionOne x = x
 -- >>> functionTwo DataC2 {fieldC21 = "c21", fieldC22 = "c22"}
 -- DataC2 {fieldC21 = "c21", fieldC22 = "c22"}
 --
-functionTwo :: (TypeClassB a) => a -> a
+functionTwo :: (TypeClassB b) => b -> b
 functionTwo x = x
 
 
@@ -265,9 +298,6 @@ functionTwo x = x
 --
 -- >>> functionThree DataA1 {fieldA11 = "a11"}
 -- DataA1 {fieldA11 = "a11"}
---
--- >>> functionThree DataA2 {fieldA21 = "a21", fieldA22 = "a22"}
--- DataA2 {fieldA21 = "a21", fieldA22 = "a22"}
 --
 -- >>> functionThree DataB0
 -- DataB0
@@ -287,7 +317,7 @@ functionTwo x = x
 -- >>> functionThree DataC2 {fieldC21 = "c21", fieldC22 = "c22"}
 -- DataC2 {fieldC21 = "c21", fieldC22 = "c22"}
 --
-functionThree :: (TypeClassC a) => a -> a
+functionThree :: (TypeClassC c) => c -> c
 functionThree x = x
 
 --------------------------------------------------------------------------------
