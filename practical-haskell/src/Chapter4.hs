@@ -109,4 +109,88 @@ pictureTree = Node 1 [ Node 2 [ Node 3 []
 -- Graph
 --
 
+-- | timeMachineGraph  ( is just value)
+--
+timeMachineGraph :: [(String, String, [String])]
+timeMachineGraph = [ ("wood",     "wood",     ["walls"])
+                   , ("plastic",  "plastic",  ["walls",  "wheels"])
+                   , ("aluminum", "aluminum", ["wheels", "door"])
+                   , ("walls",    "walls",    ["done"])
+                   , ("wheels",   "wheels",   ["done"])
+                   , ("door",     "door",     ["done"])
+                   , ("done",     "done",     [])
+                   ]
+
+-- | tmeMachinePrecence
+--
+-- >>> let (g,v,_) = timeMachinePrecedent in map (\x -> let (k,_,_) = v x in k) $ topSort g
+-- ["wood","plastic","walls","aluminum","door","whells","done"]
+timeMachinePrecedence :: (Graph, Vertex -> (String, String, [String]), String -> Maybe Vertex)
+timeMachinePrecedence = graphFromEdges timeMachineGraph
+
+-- | timeMachineTravel
+-- | path      :: Graph -> Vertex -> Vertex -> Bool
+-- | buildG    :: Bounds -> [Edge] -> Graph
+-- | reachable :: Graph -> Vertex -> [Vertex]
+--
+-- >>> path timeMachineTravel 1302 917
+-- True
+-- >>> reachable timeMachineTravel 1302
+-- [1302,2013,1408,917,103,1993,1614]
+timeMachineTravel :: Graph
+timeMachineTravel = buildG (103,2013) [ (1302,1614)
+                                      , (1614,1302)
+                                      , (1302,2013)
+                                      , (2013,1302)
+                                      , (1614,2013)
+                                      , (2013,1408)
+                                      , (1408,1993)
+                                      , (1408,917)
+                                      , (1993,917)
+                                      , (917, 103)
+                                      , (103, 917)
+                                      ]
+
+
+--------------------------------------------------------------------------------
+--
+-- Ad-Hoc Polymorphism: type Classes
+--
+--------------------------------------------------------------------------------
+-- Declaring Classes and Instances
+--
+
+data Color      = Red | Yellow | Green | Blue
+data Contrast i = White i | Black i -- `i` is a type variable
+
+-- | Nameable type class
+--
+class Nameable t where  -- `t` is a type
+  name :: t -> String
+
+-- | initial
+--
+initial :: Nameable t => t -> Char
+initial t = head (name t)
+
+
+-- | instance Nameable Color
+--
+instance Nameable Color where -- Color is a type
+  name Red    = "Red"
+  name Yellow = "Yellow"
+  name Green  = "Green"
+  name Blue   = "Blue"
+
+
+-- | instance Nameable Contrast
+--
+instance Nameable (Contrast i) where -- (Contrast i) is a type, `i` is a type varialble
+  name (White i) = "White" -- `i` should be a value of a type variable
+  name (Black i) = "Black" -- `i` should be a value of a type variable
+
+
+--------------------------------------------------------------------------------
+-- Built-in Type Classes
+--
 
