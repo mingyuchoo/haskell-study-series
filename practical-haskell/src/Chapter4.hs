@@ -124,7 +124,6 @@ timeMachineGraph = [ ("wood",     "wood",     ["walls"])
 -- | tmeMachinePrecence
 --
 -- >>> let (g,v,_) = timeMachinePrecedent in map (\x -> let (k,_,_) = v x in k) $ topSort g
--- ["wood","plastic","walls","aluminum","door","whells","done"]
 timeMachinePrecedence :: (Graph, Vertex -> (String, String, [String]), String -> Maybe Vertex)
 timeMachinePrecedence = graphFromEdges timeMachineGraph
 
