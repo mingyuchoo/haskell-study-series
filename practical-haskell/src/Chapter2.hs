@@ -86,6 +86,8 @@ maxmin'' (x:xs) = ( if x > xs_max then x else xs_max
                     (xs_max, xs_min) = maxmin'' xs
 
 --------------------------------------------------------------------------------
+-- https://wiki.haskell.org/Constructor
+--
 type Client :: *
 data Client = GovOrg     String
             | Company    String Integer Person String
@@ -286,6 +288,9 @@ specialClient (responsibility -> "Director")  = True
 specialClient _                               = False
 
 --------------------------------------------------------------------------------
+-- https://wiki.haskell.org/Constructor
+--
+
 -- | ClientR
 --
 -- >>> GovOrgR "NATO"
@@ -360,6 +365,9 @@ nameInCapitals p@PersonR { firstName = initial : rest } = let newName = toUpper 
 nameInCapitals p@PersonR { firstName = "" }             = p
 
 --------------------------------------------------------------------------------
+-- https://wiki.haskell.org/Constructor
+--
+
 type ConnType :: *
 data ConnType = TCP       | UDP
 

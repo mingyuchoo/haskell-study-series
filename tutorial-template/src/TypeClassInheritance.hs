@@ -14,6 +14,8 @@ import           Data.Maybe
 -- (o) :kind TypeA    :: *
 -- (o) :type DataA0   :: TypeA
 -- (o) :type DataA1   :: String -> TypeA
+-- (x) :type DataA1 String  <<error>>
+-- (o) :type DataA1 "A1" :: TypeA
 -- (o) :type fieldA11 :: TypeA -> String
 data TypeA  = DataA0                         -- `DataA0` is a Data Constructor
             | DataA1 { fieldA11 :: String }  -- `DataA1` is a Data Constructor

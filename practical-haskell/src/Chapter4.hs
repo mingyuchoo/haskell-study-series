@@ -158,11 +158,30 @@ timeMachineTravel = buildG (103,2013) [ (1302,1614)
 -- Declaring Classes and Instances
 --
 
+-- (o) :kind Color  :: *       -- `Color`  is a Type Constructor and a Data Type
+-- (o) :type Red    :: Color   -- `Red`    is a Data Constructor and a funciton
+-- (o) :type Yellow :: Color   -- `Yellow` is a Data Constructor and a funciton
+-- (o) :type Green  :: Color   -- `Green`  is a Data Constructor and a funciton
+-- (o) :type Blue   :: Color   -- `Blue`   is a Data Constructor and a funciton
 data Color      = Red | Yellow | Green | Blue
+
+-- (o) :kind Contrast  :: * -> *              -- `Contrast` is a Type Constructor and a Data Type
+-- (o) :type White     :: i -> Contrast i     -- `White`    is a Data Constructor and a function
+-- (x) :type White Int :: << error >>         -- This expression cant's construct a data (or a value).
+-- (o) :type White 1   :: Num i => Contrast i -- This is correct, it's a function call
+-- (o) :type Black     :: i -> Contrast i     --`Black`     is a Data Constructor and a function
+-- (x) :type Black String :: << error >>      -- This expression cant's construct a data (or a value).
+-- (o) :type Black "000"  :: Contrast [Char]  -- This is correct, it's a function call
 data Contrast i = White i | Black i -- `i` is a type variable
 
 -- | Nameable type class
---
+-- (o) :kind Nameable        :: * -> Constraint
+-- (o) :kind Nameable Int    :: Constraint
+-- (o) :kind Nameable String :: Constraint
+-- (o) :kind Nameable Color  :: Constraint
+-- (x) :kind Nameable Contrast       :: << error >> -- This expression cant's construct a type.
+-- (x) :kind Nameable (Contrast i)   :: << error >> -- This expression cant's construct a type.
+-- (o) :kind Nameable (Contrast Int) :: Constraint
 class Nameable t where  -- `t` is a type
   name :: t -> String
 

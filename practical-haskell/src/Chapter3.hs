@@ -36,6 +36,9 @@ maybeString (Just _) = "Just"
 maybeString Nothing  = "Nothing"
 
 --------------------------------------------------------------------------------
+-- https://wiki.haskell.org/Constructor
+--
+
 -- | Client
 --
 -- >>> :t GovOrg 'n' "NTTF"
@@ -183,6 +186,9 @@ duplicateOdds' = map (*2) . filter odd
 --------------------------------------------------------------------------------
 -- More on Modules
 --------------------------------------------------------------------------------
+-- https://wiki.haskell.org/Constructor
+--
+
 -- | permutationsStartingWith
 --
 -- >>> permutationsStartingWith 'a' "abc"
