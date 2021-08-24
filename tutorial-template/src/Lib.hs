@@ -4,11 +4,11 @@
 module Lib
     ( someFunc
     , MyTypeConstructor(..)
-    , MyTypeClass
+    , MyTypeClass(..)
     , myOtherFunction
-    , Located
-    , Movable
-    , NamedPoint
+    , Located(..)
+    , Movable(..)
+    , NamedPoint(..)
     , move
     , YesNo
     , yesno
@@ -27,12 +27,22 @@ module Lib
     ) where
 
 --------------------------------------------------------------------------------
-data MyTypeConstructor = MyDataConstructor deriving (Show)
+-- https://wiki.haskell.org/Constructor
+--
 
+-- :kind MyTypeConstructor :: *
+-- :type MyDataConstructor :: MyTypeConstructor
+data MyTypeConstructor = MyDataConstructor
+                       deriving (Show)
+
+-- :kind MyTypeClass :: * -> Constraint
+-- :type myTypeClassFunction :: MyTypeClass myTypeVariable => myTypeVariable -> String
 class MyTypeClass myTypeVariable where
   myTypeClassFunction :: myTypeVariable -> String
 
-
+-- :kind MyTypeClass :: * -> Constraint
+-- :type myTypeClassFunction :: MyTypeClass myTypeVariable => myTypeVariable -> String
+-- :kind MyTypeConstructor :: *
 instance MyTypeClass MyTypeConstructor where
   myTypeClassFunction MyDataConstructor = "MyValue"
 
@@ -43,17 +53,27 @@ myOtherFunction x = "MyValue"
 --------------------------------------------------------------------------------
 -- Class Inheritance (A concerted example)
 -- https://en.wikibooks.org/wiki/Haskell/Classes_and_types
+-- https://wiki.haskell.org/Constructor
+
 
 -- Location, in two dimesions.
+-- :kind Located :: * -> Constraint
+-- :type getLocation :: Located a => a -> (Int, Int)
 class Located a where
   getLocation :: a -> (Int, Int)
 
 
+-- :kind Movable :: * -> Constraint
+-- :type setLocation :: Movable a => (Int, Int) -> a -> a
 class (Located a) => Movable a where
   setLocation :: (Int, Int) -> a -> a
 
 
 -- An example type, with accompanying instances.
+-- :kind NamedPoint :: *
+--            ^-- This is Type Constructor
+-- :type NamedPoint :: String -> Int -> Int -> NamedPoint
+--            ^-- This is Data Constructor
 data NamedPoint = NamedPoint
   { pointName :: String
   , pointX    :: Int
