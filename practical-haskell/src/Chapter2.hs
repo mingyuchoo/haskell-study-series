@@ -369,13 +369,16 @@ nameInCapitals p@PersonR { firstName = "" }             = p
 --
 
 type ConnType :: *
-data ConnType = TCP       | UDP
+data ConnType = TCP
+              | UDP
 
 type UseProxy :: *
-data UseProxy = NoProxy   | Proxy String
+data UseProxy = NoProxy
+              | Proxy String
 
 type TimeOut :: *
-data TimeOut  = NoTimeOut | TimeOut Integer
+data TimeOut = NoTimeOut
+             | TimeOut Integer
 
 type ConnOptions :: *
 data ConnOptions = ConnOptions { connType      :: ConnType

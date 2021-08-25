@@ -7,7 +7,7 @@ module Chapter04.SyntaxInFunctions where
 -- >>> lucky 1
 -- "Sorry, you're out of luck, pal!"
 --
-lucky :: (Integral a) => a -> String
+lucky :: Integral a => a -> String
 lucky 7 = "LUCKY NUMBER SEVEN!"
 lucky x = "Sorry, you're out of luck, pal!"
 
@@ -121,7 +121,7 @@ head' (x:_) = x
 -- >>> tell []
 -- "The list is empty"
 --
-tell :: (Show a) => [a] -> String
+tell :: Show a => [a] -> String
 tell [] = "The list is empty"
 tell (x:[]) = "The list has one element: " ++ show x
 tell (x:y:[]) = "The list has two elements: " ++ show x ++ " and " ++ show y
@@ -134,7 +134,7 @@ tell (x:y:_) =
 -- >>> length' [1, 2, 3, 4, 5]
 -- 5
 --
-length' :: (Num b) => [a] -> b
+length' :: Num b => [a] -> b
 length' []     = 0
 length' (_:xs) = 1 + length' xs
 
@@ -143,7 +143,7 @@ length' (_:xs) = 1 + length' xs
 -- >>> sum' [1,2,3,4,5]
 -- 15
 --
-sum' :: (Num a) => [a] -> a
+sum' :: Num a => [a] -> a
 sum' []     = 0
 sum' (x:xs) = x + sum' xs
 
@@ -163,7 +163,7 @@ capital all@(x:xs) = "The first letter of " ++ all ++ " is " ++ [x]
 -- >>> bmiTell 85 1.90
 -- "You're supposedly normal. Pffft, I bet you're ugly!"
 --
-bmiTell :: (RealFloat a) => a -> a -> String
+bmiTell :: RealFloat a => a -> a -> String
 bmiTell weight height
   | bmi <= skinny = "You're underweight, you emo, you!"
   | bmi <= normal = "You're supposedly normal. Pffft, I bet you're ugly!"
@@ -193,7 +193,7 @@ calcBmis xs = [bmi w h | (w, h) <- xs]
 -- 2
 -- >>> max' 1 (-1)
 -- 1
-max' :: (Ord a) => a -> a -> a
+max' :: Ord a => a -> a -> a
 max' x y
   | x > y = x
   | otherwise = y

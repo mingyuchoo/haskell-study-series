@@ -102,9 +102,13 @@ chapter12 = do
 applyMaybe :: Maybe a -> (a -> Maybe b) -> Maybe b
 applyMaybe Nothing  f = Nothing
 applyMaybe (Just x) f = f x
+
+
 -------------------------------------------------------------------------------
 type Birds = Int
 type Pole  = (Birds,Birds)
+
+
 -------------------------------------------------------------------------------
 landLeft :: Birds -> Pole -> Pole
 landLeft n (left,right) = (left + n,right)
@@ -114,6 +118,8 @@ landRight n (left,right) = (left,right+1)
 
 -- | (-:) :: t1 -> (t1 -> t2) -> t2
 x -: f = f x
+
+
 -------------------------------------------------------------------------------
 landLeft' :: Birds -> Pole -> Maybe Pole
 landLeft' n (left,right)
@@ -124,9 +130,13 @@ landRight' :: Birds -> Pole -> Maybe Pole
 landRight' n (left,right)
   | abs (left - (right + n)) < 4 = Just (left, right + n )
   | otherwise                    = Nothing
+
+
 -------------------------------------------------------------------------------
 banana :: Pole -> Maybe Pole
 banana _ = Nothing
+
+
 -------------------------------------------------------------------------------
 foo :: Maybe String
 foo = Just 3   >>= (\x ->
@@ -138,12 +148,15 @@ foo' = do
   x <- Just 3
   y <- Just "!"
   Just (show x ++ y)
--------------------------------------------------------------------------------
 
+
+-------------------------------------------------------------------------------
 marySue :: Maybe Bool
 marySue = do
   x <- Just 9
   Just (x > 8)
+
+
 -------------------------------------------------------------------------------
 routine :: Maybe Pole
 routine = do
@@ -151,6 +164,8 @@ routine = do
   first  <- landLeft' 2 start
   second <- landRight' 2 first
   landLeft' 1 second
+
+
 -------------------------------------------------------------------------------
 routine' :: Maybe Pole
 routine' = do
@@ -159,28 +174,41 @@ routine' = do
   Nothing
   second <- landRight' 2 first
   landLeft' 1 second
+
+
 -------------------------------------------------------------------------------
 justH :: Maybe Char
 justH = do
   (x:xs) <- Just "hello"
   return x
+
+
+
 -------------------------------------------------------------------------------
 wopwop :: Maybe Char
 wopwop = do
   (x:xs) <- Just ""
   return x
+
+
+
 -------------------------------------------------------------------------------
 listOfTuples :: [(Int,Char)]
 listOfTuples = do
   n  <- [1,2]
   ch <- ['a','b']
   return (n, ch)
+
+
+
 -------------------------------------------------------------------------------
 sevensOnly :: [Int]
 sevensOnly = do
   x <- [1..50]
   guard ('7' `elem` show x)
   return x
+
+
 -------------------------------------------------------------------------------
 type KnightPos = (Int,Int)
 
@@ -203,7 +231,7 @@ moveKnight' (c,r) = filter onBoard
 
 in3 :: KnightPos -> [KnightPos]
 in3 start = do
-  first <- moveKnight start
+  first  <- moveKnight start
   second <- moveKnight first
   moveKnight second
 
@@ -213,6 +241,7 @@ in3' start = return start >>= moveKnight >>= moveKnight >>= moveKnight
 
 canReachIn3 :: KnightPos -> KnightPos -> Bool
 canReachIn3 start end = end `elem` in3 start
+
 
 -------------------------------------------------------------------------------
 (<=<) :: (Monad m) => (b -> m c) -> (a -> m b) -> (a -> m c)

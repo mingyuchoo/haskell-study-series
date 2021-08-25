@@ -20,14 +20,22 @@ data Node    = Node Road (Maybe Road)
 data Road    = Road Int Node
 data Section = Section { getA :: Int
                        , getB :: Int
-                       , getC :: Int
-} deriving (Show)
+                       , getC :: Int }
+             deriving (Show)
+
+
 type RoadSystem = [Section]
 
 heathrowToLondon :: RoadSystem
 heathrowToLondon = [Section 50 10 30, Section 5 90 20, Section 40 2 25, Section 10 8 0]
 
-data Label = A | B | C deriving (Show)
+
+data Label = A
+           | B
+           | C
+           deriving (Show)
+
+
 type Path  = [(Label, Int)]
 
 roadStep :: (Path, Path) -> Section -> (Path, Path)
@@ -46,6 +54,8 @@ roadStep (pathA, pathB) (Section a b c) =
                         else (C,c):(A,a):pathA
   in (newPathToA, newPathToB)
 
+
+
 optimalPath :: RoadSystem -> Path
 optimalPath roadSystem =
   let (bestAPath, bestBPath) = foldl roadStep ([],[]) roadSystem
@@ -53,10 +63,14 @@ optimalPath roadSystem =
      then reverse bestAPath
      else reverse bestBPath
 
+
+
 groupsOf :: Int -> [a] -> [[a]]
 groupsOf 0 _  = undefined
 groupsOf _ [] = []
 groupsOf n xs = take n xs : groupsOf n (drop n xs)
+
+
 
 main' = do
   contents <- getContents

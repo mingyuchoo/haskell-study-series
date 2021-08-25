@@ -26,7 +26,6 @@ source-repository head
 library
   exposed-modules:
       Data.String.Strip
-      GADT
       Lib
       NamingConventions
       TypeClassInheritance

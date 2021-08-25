@@ -298,7 +298,7 @@ instance TypeClassC (TypeC a b) where -- `(TypeC a b)` is a Data Type having two
 -- (o) :type functionOne DataA0 :: TypeA
 -- (o) :type functionOne DataB0 :: TypeB a
 -- (o) :type functionOne DataC0 :: TypeC a b
-functionOne :: (TypeClassA a) => a -> a
+functionOne :: TypeClassA a => a -> a
 functionOne x = x
 
 
@@ -334,7 +334,7 @@ functionOne x = x
 -- (o) :type functionTwo DataA0 :: TypeA
 -- (o) :type functionTwo DataB0 :: TypeB a
 -- (o) :type functionTwo DataC0 :: TypeC a b
-functionTwo :: (TypeClassB b) => b -> b
+functionTwo :: TypeClassB b => b -> b
 functionTwo x = x
 
 
@@ -367,7 +367,7 @@ functionTwo x = x
 -- (o) :type functionThree DataA0 :: TypeA
 -- (o) :type functionThree DataB0 :: TypeB a
 -- (o) :type functionThree DataC0 :: TypeC a b
-functionThree :: (TypeClassC c) => c -> c
+functionThree :: TypeClassC c => c -> c
 functionThree x = x
 
 --------------------------------------------------------------------------------

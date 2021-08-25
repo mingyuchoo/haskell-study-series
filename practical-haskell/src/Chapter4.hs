@@ -163,7 +163,10 @@ timeMachineTravel = buildG (103,2013) [ (1302,1614)
 -- (o) :type Yellow :: Color   -- `Yellow` is a Data Constructor and a funciton
 -- (o) :type Green  :: Color   -- `Green`  is a Data Constructor and a funciton
 -- (o) :type Blue   :: Color   -- `Blue`   is a Data Constructor and a funciton
-data Color      = Red | Yellow | Green | Blue
+data Color = Red
+           | Yellow
+           | Green
+           | Blue
 
 -- (o) :kind Contrast  :: * -> *              -- `Contrast` is a Type Constructor and a Data Type
 -- (o) :type White     :: i -> Contrast i     -- `White`    is a Data Constructor and a function
@@ -172,7 +175,8 @@ data Color      = Red | Yellow | Green | Blue
 -- (o) :type Black     :: i -> Contrast i     --`Black`     is a Data Constructor and a function
 -- (x) :type Black String :: << error >>      -- This expression cant's construct a data (or a value).
 -- (o) :type Black "000"  :: Contrast [Char]  -- This is correct, it's a function call
-data Contrast i = White i | Black i -- `i` is a type variable
+data Contrast i = White i -- `i` is a type variable
+                | Black i
 
 -- | Nameable type class
 -- (o) :kind Nameable        :: * -> Constraint

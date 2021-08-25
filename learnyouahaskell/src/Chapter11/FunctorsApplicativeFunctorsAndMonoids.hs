@@ -10,12 +10,15 @@ myAction = do
   a <- (++) <$> getLine <*> getLine
   putStrLn $ "The two lines concatenated turn out to be: " ++ a
 
+
 newtype CoolBool = CoolBool { getCoolBool :: Bool }
 helloMe :: CoolBool -> String
 helloMe (CoolBool _) = "Hello"
 
+
 type IntList = [Int]
 newtype CharList = CharList { getCharList :: [Char] }
+
 
 lengthCompare :: String -> String -> Ordering
 lengthCompare x y = (length x `compare` length y) `mappend` (x `compare` y)

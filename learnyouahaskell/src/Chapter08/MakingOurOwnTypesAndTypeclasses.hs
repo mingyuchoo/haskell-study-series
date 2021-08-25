@@ -9,15 +9,13 @@ import qualified Data.Map as Map
 --}
 
 --------------------------------------------------------------------------------
-data Point =
-  Point Float Float
-  deriving (Show)
+data Point = Point Float Float
+           deriving (Show)
 
 --------------------------------------------------------------------------------
-data Shape
-  = Circle Point Float
-  | Rectangle Point Point
-  deriving (Show)
+data Shape = Circle    Point Float
+           | Rectangle Point Point
+           deriving (Show)
 
 --------------------------------------------------------------------------------
 -- | area
@@ -48,9 +46,8 @@ baseRect width height = Rectangle (Point 0 0) (Point width height)
 --}
 
 --------------------------------------------------------------------------------
-data Person =
-  Person String String Int Float String String
-  deriving (Show)
+data Person = Person String String Int Float String String
+            deriving (Show)
 
 --------------------------------------------------------------------------------
 -- firstName :: Person -> String
@@ -73,39 +70,30 @@ data Person =
 
 
 --------------------------------------------------------------------------------
-data Person2 =
-  Person2
-    { firstName2   :: String
-    , lastName2    :: String
-    , age2         :: Int
-    , height2      :: Float
-    , phoneNumber2 :: String
-    , flavor2      :: String
-    }
-  deriving (Show)
+data Person2 = Person2 { firstName2   :: String
+                       , lastName2    :: String
+                       , age2         :: Int
+                       , height2      :: Float
+                       , phoneNumber2 :: String
+                       , flavor2      :: String }
+             deriving (Show)
 
 --------------------------------------------------------------------------------
 
-data Car =
-  Car
-    { company :: String
-    , model   :: String
-    , year    :: Int
-    }
-  deriving (Show)
+data Car = Car { company :: String
+               , model   :: String
+               , year    :: Int    }
+         deriving (Show)
 
 --------------------------------------------------------------------------------
 -- tellCar :: Car -> String
 -- tellCar (Car { company = c, model = m, year = y}) =
 --   "This " ++ c ++ " " ++ m ++ " was made in " ++ show y
 --------------------------------------------------------------------------------
-data Car2 a b c =
-  Car2
-    { company2 :: a
-    , model2   :: b
-    , year2    :: c
-    }
-  deriving (Show)
+data Car2 a b c = Car2 { company2 :: a
+                       , model2   :: b
+                       , year2    :: c }
+                deriving (Show)
 
 tellCar2 :: (Show a) => Car2 String String a -> String
 tellCar2 (Car2 {company2 = c, model2 = m, year2 = y}) =
@@ -113,9 +101,8 @@ tellCar2 (Car2 {company2 = c, model2 = m, year2 = y}) =
 
 --------------------------------------------------------------------------------
 
-data Vector a =
-  Vector a a a
-  deriving (Show)
+data Vector a = Vector a a a
+              deriving (Show)
 
 vplus :: (Num t) => Vector t -> Vector t -> Vector t
 (Vector i j k) `vplus` (Vector l m n) = Vector (i + l) (j + m) (k + n)
@@ -129,35 +116,28 @@ scalarMult :: (Num t) => Vector t -> Vector t -> t
 --------------------------------------------------------------------------------
 
 
-data Person3 =
-  Person3
-    { firstName3 :: String
-    , lastName3  :: String
-    , age3       :: Int
-    }
-  deriving (Eq)
+data Person3 = Person3 { firstName3 :: String
+                       , lastName3  :: String
+                       , age3       :: Int    }
+             deriving (Eq)
 
 --------------------------------------------------------------------------------
 
-data Person4 =
-  Person4
-    { firstName4 :: String
-    , lastName4  :: String
-    , age4       :: Int
-    }
-  deriving (Eq, Show, Read)
+data Person4 = Person4 { firstName4 :: String
+                       , lastName4  :: String
+                       , age4       :: Int    }
+             deriving (Eq, Show, Read)
 
 --------------------------------------------------------------------------------
 
-data Day
-  = Monday
-  | Tuesday
-  | Wednesday
-  | Thursday
-  | Friday
-  | Saturday
-  | Sunday
-  deriving (Eq, Ord, Show, Read, Bounded, Enum)
+data Day = Monday
+         | Tuesday
+         | Wednesday
+         | Thursday
+         | Friday
+         | Saturday
+         | Sunday
+         deriving (Eq, Ord, Show, Read, Bounded, Enum)
 
 --------------------------------------------------------------------------------
 
@@ -171,14 +151,12 @@ type PhoneBook = [(Name, PhoneNumber)]
 --------------------------------------------------------------------------------
 
 phoneBook :: PhoneBook
-phoneBook =
-  [ ("betty", "555-2938")
-  , ("bonnie", "452-2928")
-  , ("patsy", "493-2928")
-  , ("lucille", "205-2928")
-  , ("wendy", "939-8282")
-  , ("penny", "853-2492")
-  ]
+phoneBook = [ ("betty", "555-2938")
+            , ("bonnie", "452-2928")
+            , ("patsy", "493-2928")
+            , ("lucille", "205-2928")
+            , ("wendy", "939-8282")
+            , ("penny", "853-2492") ]
 
 --------------------------------------------------------------------------------
 
@@ -191,10 +169,9 @@ type AssocList k v = [(k, v)]
 
 --------------------------------------------------------------------------------
 
-data LockerState
-  = Taken
-  | Free
-  deriving (Show, Eq)
+data LockerState = Taken
+                 | Free
+                 deriving (Show, Eq)
 
 --------------------------------------------------------------------------------
 
@@ -205,9 +182,7 @@ type LockerMap = Map.Map Int (LockerState, Code)
 --------------------------------------------------------------------------------
 
 lockerLookup :: Int -> LockerMap -> Either String Code
-lockerLookup lockerNumber map
- =
-  case Map.lookup lockerNumber map of
+lockerLookup lockerNumber map = case Map.lookup lockerNumber map of
     Nothing -> Left $ "Locker number " ++ show lockerNumber ++ " doesn't exist!"
     Just (state, code) ->
       if state /= Taken
@@ -217,15 +192,13 @@ lockerLookup lockerNumber map
 --------------------------------------------------------------------------------
 
 lockers :: LockerMap
-lockers =
-  Map.fromList
-    [ (100, (Taken, "ZD39I"))
-    , (101, (Free, "JAH3I"))
-    , (102, (Free, "IQSA9"))
-    , (103, (Free, "QOTSA"))
-    , (104, (Taken, "893JJ"))
-    , (105, (Taken, "88292"))
-    ]
+lockers = Map.fromList [ (100, (Taken, "ZD39I"))
+                       , (101, (Free, "JAH3I"))
+                       , (102, (Free, "IQSA9"))
+                       , (103, (Free, "QOTSA"))
+                       , (104, (Taken, "893JJ"))
+                       , (105, (Taken, "88292"))
+                       ]
 
 --------------------------------------------------------------------------------
 -- data List a = Empty | Cons a (List a) deriving (Show, Read, Eq, Ord)
@@ -235,10 +208,9 @@ lockers =
 infixr 5 :-:
 
 
-data List a
-  = Empty
-  | a :-: (List a)
-  deriving (Show, Read, Eq, Ord)
+data List a = Empty
+            | a :-: (List a)
+            deriving (Show, Read, Eq, Ord)
 
 -- fixity
 infixr 5 .++
@@ -249,10 +221,9 @@ Empty .++ ys      = ys
 (x :-: xs) .++ ys = x :-: (xs .++ ys)
 
 
-data Tree a
-  = EmptyTree
-  | Node a (Tree a) (Tree a)
-  deriving (Show, Read, Eq)
+data Tree a = EmptyTree
+            | Node a (Tree a) (Tree a)
+            deriving (Show, Read, Eq)
 
 
 singleton :: a -> Tree a
@@ -261,25 +232,22 @@ singleton x = Node x EmptyTree EmptyTree
 
 treeInsert :: (Ord a) => a -> Tree a -> Tree a
 treeInsert x EmptyTree = singleton x
-treeInsert x (Node a left right)
-  | x == a = Node x left right
-  | x < a = Node a (treeInsert x left) right
-  | x > a = Node a left (treeInsert x right)
+treeInsert x (Node a left right) | x == a = Node x left right
+                                 | x < a  = Node a (treeInsert x left) right
+                                 | x > a  = Node a left (treeInsert x right)
 
 
 treeElem :: (Ord a) => a -> Tree a -> Bool
 treeElem x EmptyTree = False
-treeElem x (Node a left right)
-  | x == a = True
-  | x < a = treeElem x left
-  | x > a = treeElem x right
+treeElem x (Node a left right) | x == a = True
+                               | x < a  = treeElem x left
+                               | x > a  = treeElem x right
 
 --------------------------------------------------------------------------------
 
-data TrafficLight
-  = Red
-  | Yellow
-  | Green
+data TrafficLight = Red
+                  | Yellow
+                  | Green
 
 instance Eq TrafficLight where
   Red == Red       = True
@@ -299,49 +267,53 @@ instance Show TrafficLight where
 class YesNo a where
   yesno :: a -> Bool
 
+
 instance YesNo Int where
   yesno 0 = False
   yesno _ = True
+
 
 instance YesNo [a] where
   yesno [] = False
   yesno _  = True
 
+
 instance YesNo Bool where
   yesno = id
+
 
 instance YesNo (Maybe a) where
   yesno (Just _) = True
   yesno Nothing  = False
 
+
 yesnoIf :: (YesNo y) => y -> a -> a -> a
-yesnoIf yesnoVal yesResult noResult =
-  if yesno yesnoVal
-    then yesResult
-    else noResult
+yesnoIf yesnoVal yesResult noResult = if yesno yesnoVal
+                                        then yesResult
+                                        else noResult
+
 
 instance Functor Tree where
   fmap f EmptyTree = EmptyTree
   fmap f (Node x leftsub rightsub) =
     Node (f x) (fmap f leftsub) (fmap f rightsub)
 
+
 class Tofu t where
   tofu :: j a -> t a j
 
-data Frank a b =
-  Frank
-    { frankField :: b a
-    }
-  deriving (Show)
+
+data Frank a b = Frank { frankField :: b a }
+               deriving (Show)
+
 
 instance Tofu Frank where
   tofu x = Frank x
 
-data Barry t k p =
-  Barry
-    { yabba :: p
-    , dabba :: t k
-    }
+
+data Barry t k p = Barry { yabba :: p
+                         , dabba :: t k }
+
 
 instance Functor (Barry a b) where
   fmap f (Barry {yabba = x, dabba = y}) = Barry {yabba = f x, dabba = y}

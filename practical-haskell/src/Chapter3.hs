@@ -199,7 +199,8 @@ permutationsStartingWith letter
 
 -- | Range
 type Range :: *
-data Range = Range Integer Integer deriving Show
+data Range = Range Integer Integer
+           deriving Show
 
 -- | range
 --
@@ -212,7 +213,8 @@ range a b = if a <= b
 
 -- | RangeObs
 type RangeObs :: *
-data RangeObs = R Integer Integer deriving Show
+data RangeObs = R Integer Integer
+              deriving Show
 
 -- | r
 --

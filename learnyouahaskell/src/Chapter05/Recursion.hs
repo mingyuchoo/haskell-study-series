@@ -7,9 +7,8 @@ module Chapter05.Recursion where
 maximum' :: (Ord a) => [a] -> a
 maximum' [] = error "maximum of empty list"
 maximum' [x] = x
-maximum' (x:xs)
-  | x > maximum' xs = x
-  | otherwise = maximum' xs
+maximum' (x:xs) | x > maximum' xs = x
+                | otherwise       = maximum' xs
 
 --------------------------------------------------------------------------------
 -- | maximum''
@@ -19,11 +18,9 @@ maximum' (x:xs)
 maximum'' :: (Ord a) => [a] -> a
 maximum'' [] = error "maximum of empty list"
 maximum'' [x] = x
-maximum'' (x:xs)
-  | x > maxTail = x
-  | otherwise = maxTail
-  where
-    maxTail = maximum' xs
+maximum'' (x:xs) | x > maxTail = x
+                 | otherwise   = maxTail where
+                                   maxTail = maximum' xs
 
 --------------------------------------------------------------------------------
 -- | maximum'''
@@ -43,9 +40,8 @@ maximum''' (x:xs) = max x (maximum' xs)
 -- [5,5,5]
 --
 replicate' :: (Num i, Ord i) => i -> a -> [a]
-replicate' n x
-  | n <= 0 = []
-  | otherwise = x : replicate' (n - 1) x
+replicate' n x | n <= 0 = []
+               | otherwise = x : replicate' (n - 1) x
 
 --------------------------------------------------------------------------------
 -- | take'
@@ -53,10 +49,9 @@ replicate' n x
 -- [1,2,3]
 --
 take' :: (Num i, Ord i) => i -> [a] -> [a]
-take' n _
-  | n <= 0 = []
-take' _ [] = []
-take' n (x:xs) = x : take' (n - 1) xs
+take' n _ | n <= 0 = []
+take' _ []         = []
+take' n (x:xs)     = x : take' (n - 1) xs
 
 --------------------------------------------------------------------------------
 -- | reverse'
@@ -85,9 +80,8 @@ zip' (x:xs) (y:ys) = (x, y) : zip' xs ys
 -- False
 --
 elem' :: (Eq a) => a -> [a] -> Bool
-elem' a [] = False
-elem' a (x:xs)
-  | a == x = True
-  | otherwise = elem' a xs
+elem' a []                 = False
+elem' a (x:xs) | a == x    = True
+               | otherwise = elem' a xs
 
 --------------------------------------------------------------------------------
