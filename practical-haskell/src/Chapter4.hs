@@ -3,8 +3,9 @@ module Chapter4
   where
 --------------------------------------------------------------------------------
 import           Data.Graph
-import qualified Data.Map   as M
-import qualified Data.Set   as S
+import qualified Data.Map    as M
+import           Data.Monoid
+import qualified Data.Set    as S
 import           Data.Tree
 --------------------------------------------------------------------------------
 -- Map
@@ -215,3 +216,205 @@ instance Nameable (Contrast i) where -- (Contrast i) is a type, `i` is a type va
 -- Built-in Type Classes
 --
 
+-- | Eq'
+--
+class Eq' a where
+  (===), (/==) :: a -> a -> Bool
+  x /== y = not (x === y)
+  x === y = not (x /== y)
+
+
+
+
+-- | Eq' [a]
+--
+instance Eq' a => Eq' [a] where
+  []     === []     = True
+  (x:xs) === (y:ys) = x === y && xs === ys
+  _      === _      = False
+
+
+-- | Complex
+--
+data Complex = C Double Double
+             deriving (Show, Eq)
+
+
+-- | Num Complex
+--
+instance Num Complex where
+  (C a1 b1) + (C a2 b2) = C (a1 + a2) (b1 + b2)
+  (C a1 b1) - (C a2 b2) = C (a1 - a2) (b1 - b2)
+  (C a1 b1) * (C a2 b2) = C (a1*a2 - b1*b2) (a1*b2 + b1*a2)
+  negate (C a b)        = C (negate a) (negate b)
+  fromInteger n         = C (fromInteger n) 0
+  abs (C a b)           = C (sqrt $ a*a + b*b) 0
+  signum c@(C a b)      = let C n _ = abs c in C (a / n) (b / n)
+
+
+--------------------------------------------------------------------------------
+-- Binary Trees for the Minimum Price
+--
+
+-- | TravelGuide
+--
+data TravelGuide = TravelGuide { title   :: String
+                               , authors :: [String]
+                               , price   :: Double
+                               }
+                 deriving (Show, Eq, Ord)
+
+
+
+
+--------------------------------------------------------------------------------
+-- Simple Binary Trees
+--
+
+
+-- | BinaryTree1
+data BinaryTree1 = Node1 TravelGuide BinaryTree1 BinaryTree1
+                 | Leaf1
+                 deriving (Show)
+
+
+
+-- | treeFind1
+--
+treeFind1 :: TravelGuide -> BinaryTree1 -> Maybe TravelGuide
+treeFind1 t (Node1 v l r) = case compare t v of
+                              EQ -> Just v
+                              LT -> treeFind1 t l
+                              GT -> treeFind1 t r
+treeFind1 _ Leaf1         = Nothing
+
+
+
+-- | treeInsert1
+--
+treeInsert1 :: TravelGuide -> BinaryTree1 -> BinaryTree1
+treeInsert1 t n@(Node1 v l r) = case compare t v of
+                                  EQ -> n
+                                  LT -> Node1 v (treeInsert1 t l) r
+                                  GT -> Node1 v l (treeInsert1 t r)
+treeInsert1 t Leaf1           = Node1 t Leaf1 Leaf1
+
+
+
+
+--------------------------------------------------------------------------------
+-- Polymorphic Binary Trees
+--
+
+
+-- | BinaryTree2
+data BinaryTree2 a = Node2 a (BinaryTree2 a) (BinaryTree2 a)
+                   | Leaf2
+                   deriving (Show)
+
+
+-- | treeFind2
+--
+treeFind2 :: Ord a => a -> BinaryTree2 a -> Maybe a
+treeFind2 t (Node2 v l r) = case compare t v of
+                              EQ -> Just v
+                              LT -> treeFind2 t l
+                              GT -> treeFind2 t r
+treeFind2 _ Leaf2         = Nothing
+
+
+
+
+-- | treeInsert2
+--
+treeInsert2 :: Ord a => a -> (BinaryTree2 a) -> (BinaryTree2 a)
+treeInsert2 t n@(Node2 v l r) = case compare t v of
+                                  EQ -> n
+                                  LT -> Node2 v (treeInsert2 t l) r
+                                  GT -> Node2 v l (treeInsert2 t r)
+treeInsert2 t Leaf2           = Node2 t Leaf2 Leaf2
+
+
+
+-- | TGByPrice
+--
+newtype TGByPrice = TGByPrice TravelGuide
+                  deriving (Eq)
+
+
+-- | Ord TGByPrice
+--
+instance Ord TGByPrice where
+  (TGByPrice (TravelGuide t1 a1 p1)) <= (TGByPrice (TravelGuide t2 a2 p2)) =
+    p1 < p2 || (p1 == p2 && (t1 < t2 || (t1 == t2 && a1 <= a2)))
+
+
+
+--------------------------------------------------------------------------------
+-- Binary Trees with Monoidal Cache
+--
+
+-- | BinaryTree3
+--
+data BinaryTree3 v c = Node3 v c (BinaryTree3 v c) (BinaryTree3 v c)
+                     | Leaf3
+                     deriving (Show, Eq, Ord)
+
+
+
+
+-- | treeInsert3
+--
+treeInsert3 :: (Ord v, Ord c) => v -> c -> BinaryTree3 v c -> BinaryTree3 v c
+treeInsert3 v c (Node3 v2 c2 l r) =
+  case compare v v2 of
+    EQ -> Node3 v2 c2 l r
+    LT -> Node3 v2 (min c c2) (treeInsert3 v c l) r
+    GT -> Node3 v2 (min c c2) l (treeInsert3 v c r)
+treeInsert3 v c Leaf3 = Node3 v c Leaf3 Leaf3
+
+
+
+-- treeInsert4 :: (Ord v, Ord c) => v -> c -> BinaryTree3 v c -> BinaryTree3 v c
+-- treeInsert4 v c (Node3 v2 c2 l r) =
+--   case compare v v2 of
+--     EQ -> Node3 v2 c2 l r
+--     LT -> let newLeft = treeInsert4 v c l
+--               newCache = c2 <> cached newLeft <> cached r
+--           in Node3 v2 newCache newLeft r
+--     GT -> let newRight = treeInsert4 v c r
+--               newCache = c2 <> cached l <> cached newRight
+--           in Node3 v2 newCache l newRight
+-- treeInsert4 v c Leaf3 = Node3 v c Leaf3 Leaf3
+--
+--
+-- cached :: Monoid c => BinaryTree3 v c -> c
+-- cached (Node3 _ c _ _) = c
+-- cached Leaf3           = mempty
+
+
+-- | Min
+--
+newtype Min = Min Double
+            deriving Show
+
+
+
+-- | Semigroup
+--
+instance Semigroup Min where
+  Min x <> Min y = Min $ min x y
+
+
+-- | Monoid Min
+--
+instance Monoid Min where
+  mempty  = Min infinity where infinity = 1/0
+  mappend = (<>) -- use the definition from Semigroup
+
+
+
+
+--------------------------------------------------------------------------------
+-- Container-Related Type Classes
+--

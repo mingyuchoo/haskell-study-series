@@ -91,7 +91,7 @@ class TypeClassA a where                   -- `a` is a type variable
 -- (o) :kind TypeClassB (TypeB Int) :: Constraint
 -- (o) :kind TypeClassB (TypeC Int String) :: Constraint
 -- (o) :type functionB :: TypeClassB b => b -> Maybe b
-class (TypeClassA b) => TypeClassB b where -- `b` is a type variable
+class TypeClassA b => TypeClassB b where -- `b` is a type variable
     functionB :: b -> Maybe b
 
 
@@ -103,7 +103,7 @@ class (TypeClassA b) => TypeClassB b where -- `b` is a type variable
 -- (o) :kind TypeClassC (TypeB Int) :: Constraint
 -- (o) :kind TypeClassC (TypeC Int String) :: Constraint
 -- (o) :type functionC :: TypeClassC c => c -> Either c c
-class (TypeClassB c) => TypeClassC c where -- `c` is a type variable
+class TypeClassB c => TypeClassC c where -- `c` is a type variable
     functionC :: c -> Either c c
 
 --------------------------------------------------------------------------------
