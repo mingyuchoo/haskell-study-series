@@ -7,7 +7,7 @@ module Chapter04.SyntaxInFunctions where
 -- >>> lucky 1
 -- "Sorry, you're out of luck, pal!"
 --
-lucky :: Integral a => a -> String
+lucky :: (Integral a) => a -> String
 lucky 7 = "LUCKY NUMBER SEVEN!"
 lucky x = "Sorry, you're out of luck, pal!"
 
@@ -26,7 +26,7 @@ lucky x = "Sorry, you're out of luck, pal!"
 -- >>> sayMe 0
 -- "Not between 1 and 5"
 --
-sayMe :: Integral a => a -> String
+sayMe :: (Integral a) => a -> String
 sayMe 1 = "One!"
 sayMe 2 = "Two!"
 sayMe 3 = "Three!"
@@ -49,7 +49,7 @@ sayMe x = "Not between 1 and 5"
 -- >>> factorial 50
 -- 30414093201713378043612608166064768844377641568960512000000000000
 --
-factorial :: Integral a => a -> a
+factorial :: (Integral a) => a -> a
 factorial 0 = 1
 factorial n = n * factorial (n - 1)
 
@@ -74,7 +74,7 @@ charName 'd' = "Delta"
 -- | addVectors
 -- >>> addVectors (1,2) (2,3)
 -- (3,5)
-addVectors :: Num a => (a, a) -> (a, a) -> (a, a)
+addVectors :: (Num a) => (a, a) -> (a, a) -> (a, a)
 addVectors (x1, y1) (x2, y2) = (x1 + x2, y1 + y2)
 
 --------------------------------------------------------------------------------
@@ -121,7 +121,7 @@ head' (x:_) = x
 -- >>> tell []
 -- "The list is empty"
 --
-tell :: Show a => [a] -> String
+tell :: (Show a) => [a] -> String
 tell [] = "The list is empty"
 tell (x:[]) = "The list has one element: " ++ show x
 tell (x:y:[]) = "The list has two elements: " ++ show x ++ " and " ++ show y
@@ -134,7 +134,7 @@ tell (x:y:_) =
 -- >>> length' [1, 2, 3, 4, 5]
 -- 5
 --
-length' :: Num b => [a] -> b
+length' :: (Num b) => [a] -> b
 length' []     = 0
 length' (_:xs) = 1 + length' xs
 
@@ -143,7 +143,7 @@ length' (_:xs) = 1 + length' xs
 -- >>> sum' [1,2,3,4,5]
 -- 15
 --
-sum' :: Num a => [a] -> a
+sum' :: (Num a) => [a] -> a
 sum' []     = 0
 sum' (x:xs) = x + sum' xs
 
@@ -163,7 +163,7 @@ capital all@(x:xs) = "The first letter of " ++ all ++ " is " ++ [x]
 -- >>> bmiTell 85 1.90
 -- "You're supposedly normal. Pffft, I bet you're ugly!"
 --
-bmiTell :: RealFloat a => a -> a -> String
+bmiTell :: (RealFloat a) => a -> a -> String
 bmiTell weight height
   | bmi <= skinny = "You're underweight, you emo, you!"
   | bmi <= normal = "You're supposedly normal. Pffft, I bet you're ugly!"
@@ -180,7 +180,7 @@ bmiTell weight height
 -- >>> calcBmis [(85, 1.90)]
 -- [23.545706371191137]
 --
-calcBmis :: RealFloat a => [(a, a)] -> [a]
+calcBmis :: (RealFloat a) => [(a, a)] -> [a]
 calcBmis xs = [bmi w h | (w, h) <- xs]
   where
     bmi weight height = weight / height ^ 2
@@ -193,7 +193,7 @@ calcBmis xs = [bmi w h | (w, h) <- xs]
 -- 2
 -- >>> max' 1 (-1)
 -- 1
-max' :: Ord a => a -> a -> a
+max' :: (Ord a) => a -> a -> a
 max' x y
   | x > y = x
   | otherwise = y
@@ -207,7 +207,7 @@ max' x y
 -- >>> myCompare 2 1
 -- GT
 --
-myCompare :: Ord a => a -> a -> Ordering
+myCompare :: (Ord a) => a -> a -> Ordering
 myCompare x y
   | x > y = GT
   | x == y = EQ

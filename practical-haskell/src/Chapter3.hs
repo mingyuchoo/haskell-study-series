@@ -138,7 +138,7 @@ multiplyByN n = (n *)
 -- [2,4,6,8,10]
 -- >>> double''' [1,2,3,4,5]
 -- [2,4,6,8,10]
-double :: Num b => [b] -> [b]
+double :: (Num b) => [b] -> [b]
 double list  = map (\x -> x * 2) list
 
 double' :: [Integer] -> [Integer]
@@ -166,7 +166,7 @@ double'''    = map (* 2)
 --
 -- >>> duplicateOdds [1,2,3,4,5,6,7,8,9]
 -- [2,6,10,14,18]
-duplicateOdds :: Integral b => [b] -> [b]
+duplicateOdds :: (Integral b) => [b] -> [b]
 duplicateOdds list = map (*2) $ filter odd list
 
 -- | duplicateOdds'

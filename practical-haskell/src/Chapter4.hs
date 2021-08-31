@@ -315,7 +315,7 @@ data BinaryTree2 a = Node2 a (BinaryTree2 a) (BinaryTree2 a)
 
 -- | treeFind2
 --
-treeFind2 :: Ord a => a -> BinaryTree2 a -> Maybe a
+treeFind2 :: (Ord a) => a -> BinaryTree2 a -> Maybe a
 treeFind2 t (Node2 v l r) = case compare t v of
                               EQ -> Just v
                               LT -> treeFind2 t l
@@ -327,7 +327,7 @@ treeFind2 _ Leaf2         = Nothing
 
 -- | treeInsert2
 --
-treeInsert2 :: Ord a => a -> (BinaryTree2 a) -> (BinaryTree2 a)
+treeInsert2 :: (Ord a) => a -> (BinaryTree2 a) -> (BinaryTree2 a)
 treeInsert2 t n@(Node2 v l r) = case compare t v of
                                   EQ -> n
                                   LT -> Node2 v (treeInsert2 t l) r

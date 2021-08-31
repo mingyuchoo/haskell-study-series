@@ -200,7 +200,7 @@ instance YesNo TrafficLight where
           | otherwise = True
 
 
-yesnoIf :: YesNo a => a -> b -> b -> b
+yesnoIf :: (YesNo a) => a -> b -> b -> b
 yesnoIf yesnoVal yesResult noResult = if yesno yesnoVal
                                         then yesResult
                                         else noResult

@@ -2,7 +2,7 @@ module Chapter06.HigherOrderFunctions where
 --------------------------------------------------------------------------------
 -- | multThree
 --
-multThree :: Num a => a -> a -> a -> a
+multThree :: (Num a) => a -> a -> a -> a
 multThree x y z = x * y * z
 
 --------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ compareWithHundred' = compare 100
 -- :t (/)   :: Fractional a => a -> a -> a
 -- :t (/10) :: Fractional a => a -> a
 --
-devideByTen :: Floating a => a -> a
+devideByTen :: (Floating a) => a -> a
 devideByTen = (/ 10)
 
 --------------------------------------------------------------------------------

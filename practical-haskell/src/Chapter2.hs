@@ -50,7 +50,7 @@ reverse2 list = if null list
 
 --------------------------------------------------------------------------------
 -- | maxmin
-maxmin ∷ Ord a => [a] -> (a, a)
+maxmin ∷ (Ord a) => [a] -> (a, a)
 maxmin list = if null (tail list)
               then (head list, head list)
               else ( if head list > fst (maxmin (tail list))
@@ -63,7 +63,7 @@ maxmin list = if null (tail list)
 
 
 -- | maxmin'
-maxmin' ∷ Ord a => [a] -> (a, a)
+maxmin' ∷ (Ord a) => [a] -> (a, a)
 maxmin' list = let h = head list
                in if null (tail list)
                   then (h, h)
@@ -77,7 +77,7 @@ maxmin' list = let h = head list
 
 
 -- | maxmin''
-maxmin'' ∷ Ord a => [a] -> (a, a)
+maxmin'' ∷ (Ord a) => [a] -> (a, a)
 maxmin'' [x]    = (x, x)
 maxmin'' (x:xs) = ( if x > xs_max then x else xs_max
                   , if x < xs_min then x else xs_min
