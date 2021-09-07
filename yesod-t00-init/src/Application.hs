@@ -11,9 +11,11 @@ module Application
     , develMain
     , makeFoundation
     , makeLogWare
+
     -- * for DevelMain
     , getApplicationRepl
     , shutdownApp
+
     -- * for GHCI
     , handler
     , db
