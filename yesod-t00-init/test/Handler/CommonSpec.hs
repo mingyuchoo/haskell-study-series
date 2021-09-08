@@ -1,7 +1,10 @@
 module Handler.CommonSpec (spec) where
 
+--------------------------------------------------------------------------------
 import           TestImport
 
+--------------------------------------------------------------------------------
+-- |
 spec :: Spec
 spec = withApp $ do
     describe "robots.txt" $ do

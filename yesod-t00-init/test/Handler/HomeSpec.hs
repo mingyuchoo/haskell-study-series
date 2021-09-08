@@ -1,9 +1,14 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
+
+--------------------------------------------------------------------------------
 module Handler.HomeSpec (spec) where
 
+--------------------------------------------------------------------------------
 import           TestImport
 
+--------------------------------------------------------------------------------
+-- |
 spec :: Spec
 spec = withApp $ do
 
@@ -17,7 +22,8 @@ spec = withApp $ do
               setMethod "POST"
               setUrl HomeR
               addToken
-              fileByLabelExact "Choose a file" "test/Spec.hs" "text/plain" -- talk about self-reference
+              -- talk about self-reference
+              fileByLabelExact "Choose a file" "test/Spec.hs" "text/plain"
               byLabelExact "What's on the file?" "Some Content"
 
           statusIs 200

@@ -4,7 +4,9 @@
 {-# LANGUAGE RecordWildCards       #-}
 {-# LANGUAGE TemplateHaskell       #-}
 {-# LANGUAGE TypeFamilies          #-}
+
 {-# OPTIONS_GHC -fno-warn-orphans #-}
+--------------------------------------------------------------------------------
 module Application
     ( getApplicationDev
     , appMain
@@ -21,6 +23,7 @@ module Application
     , db
     ) where
 
+--------------------------------------------------------------------------------
 import           Control.Monad.Logger                 (liftLoc, runLoggingT)
 import           Database.Persist.Sqlite              (createSqlitePool,
                                                        runSqlPool, sqlDatabase,
@@ -35,6 +38,7 @@ import           Network.Wai.Handler.Warp             (Settings,
                                                        getPort, runSettings,
                                                        setHost, setOnException,
                                                        setPort)
+
 import           Network.Wai.Middleware.RequestLogger (Destination (Logger),
                                                        IPAddrSource (..),
                                                        OutputFormat (..),
@@ -52,11 +56,14 @@ import           Handler.Common
 import           Handler.Home
 import           Handler.Profile
 
+--------------------------------------------------------------------------------
+-- |
 -- This line actually creates our YesodDispatch instance. It is the second half
 -- of the call to mkYesodData which occurs in Foundation.hs. Please see the
 -- comments there for more details.
 mkYesodDispatch "App" resourcesApp
 
+--------------------------------------------------------------------------------
 -- | This function allocates resources (such as a database connection pool),
 -- performs initialization and returns a foundation datatype value. This is also
 -- the place to put your migrate statements to have automatic database
@@ -94,6 +101,7 @@ makeFoundation appSettings = do
     -- Return the foundation
     return $ mkFoundation pool
 
+--------------------------------------------------------------------------------
 -- | Convert our foundation to a WAI Application by calling @toWaiAppPlain@ and
 -- applying some additional middlewares.
 makeApplication :: App -> IO Application
@@ -103,6 +111,8 @@ makeApplication foundation = do
     appPlain <- toWaiAppPlain foundation
     return $ logWare $ defaultMiddlewaresNoLogging appPlain
 
+--------------------------------------------------------------------------------
+-- |
 makeLogWare :: App -> IO Middleware
 makeLogWare foundation =
     mkRequestLogger def
@@ -117,6 +127,7 @@ makeLogWare foundation =
         }
 
 
+--------------------------------------------------------------------------------
 -- | Warp settings for the given foundation value.
 warpSettings :: App -> Settings
 warpSettings foundation =
@@ -132,6 +143,7 @@ warpSettings foundation =
             (toLogStr $ "Exception from Warp: " ++ show e))
       defaultSettings
 
+--------------------------------------------------------------------------------
 -- | For yesod devel, return the Warp settings and WAI Application.
 getApplicationDev :: IO (Settings, Application)
 getApplicationDev = do
@@ -141,13 +153,17 @@ getApplicationDev = do
     app <- makeApplication foundation
     return (wsettings, app)
 
+--------------------------------------------------------------------------------
+-- |
 getAppSettings :: IO AppSettings
 getAppSettings = loadYamlSettings [configSettingsYml] [] useEnv
 
+--------------------------------------------------------------------------------
 -- | main function for use by yesod devel
 develMain :: IO ()
 develMain = develMainHelper getApplicationDev
 
+--------------------------------------------------------------------------------
 -- | The @main@ function for an executable running this site.
 appMain :: IO ()
 appMain = do
@@ -172,6 +188,9 @@ appMain = do
 --------------------------------------------------------------
 -- Functions for DevelMain.hs (a way to run the app from GHCi)
 --------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- |
 getApplicationRepl :: IO (Int, App, Application)
 getApplicationRepl = do
     settings <- getAppSettings
@@ -180,6 +199,8 @@ getApplicationRepl = do
     app1 <- makeApplication foundation
     return (getPort wsettings, foundation, app1)
 
+--------------------------------------------------------------------------------
+-- |
 shutdownApp :: App -> IO ()
 shutdownApp _ = return ()
 
@@ -188,10 +209,12 @@ shutdownApp _ = return ()
 -- Functions for use in development with GHCi
 ---------------------------------------------
 
+--------------------------------------------------------------------------------
 -- | Run a handler
 handler :: Handler a -> IO a
 handler h = getAppSettings >>= makeFoundation >>= flip unsafeHandler h
 
+--------------------------------------------------------------------------------
 -- | Run DB queries
 db :: ReaderT SqlBackend Handler a -> IO a
 db = handler . runDB

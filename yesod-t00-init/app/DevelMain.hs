@@ -1,3 +1,4 @@
+--------------------------------------------------------------------------------
 -- | Running your app inside GHCi.
 --
 -- This option provides significantly faster code reload compared to
@@ -36,6 +37,7 @@
 
 module DevelMain where
 
+--------------------------------------------------------------------------------
 import           Application              (getApplicationRepl, shutdownApp)
 import           Control.Concurrent
 import           Control.Monad            ((>=>))
@@ -45,6 +47,7 @@ import           GHC.Word
 import           Network.Wai.Handler.Warp
 import           Prelude
 
+--------------------------------------------------------------------------------
 -- | Start or restart the server.
 -- newStore is from foreign-store.
 -- A Store holds onto some data across ghci reloads
@@ -71,7 +74,6 @@ update = do
         withStore doneStore takeMVar
         readStore doneStore >>= start
 
-
     -- | Start the server in a separate thread.
     start :: MVar () -- ^ Written to when the thread is killed.
           -> IO ThreadId
@@ -84,6 +86,7 @@ update = do
             -- Normally this should be fine
             (\_ -> putMVar done () >> shutdownApp site)
 
+--------------------------------------------------------------------------------
 -- | kill the server
 shutdown :: IO ()
 shutdown = do
@@ -95,9 +98,13 @@ shutdown = do
           withStore tidStore $ readIORef >=> killThread
           putStrLn "Yesod app is shutdown"
 
+--------------------------------------------------------------------------------
+-- |
 tidStoreNum :: Word32
 tidStoreNum = 1
 
+--------------------------------------------------------------------------------
+-- |
 modifyStoredIORef :: Store (IORef a) -> (a -> IO a) -> IO ()
 modifyStoredIORef store f = withStore store $ \ref -> do
     v <- readIORef ref
