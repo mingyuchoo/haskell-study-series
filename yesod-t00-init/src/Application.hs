@@ -118,11 +118,11 @@ makeLogWare foundation =
     mkRequestLogger def
         { outputFormat =
             if appDetailedRequestLogging $ appSettings foundation
-                then Detailed True
-                else Apache
+              then Detailed True
+              else Apache
                         (if appIpFromHeader $ appSettings foundation
-                            then FromFallback
-                            else FromSocket)
+                          then FromFallback
+                          else FromSocket)
         , destination = Logger $ loggerSet $ appLogger foundation
         }
 
