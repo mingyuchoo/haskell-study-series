@@ -19,15 +19,15 @@ import           Data.Char
 -- "hello"
 firstOrEmpty ∷ [String] -> String
 firstOrEmpty list = if not (null list)
-                    then head list
-                    else "empty"
+                      then head list
+                      else "empty"
 
 --------------------------------------------------------------------------------
 -- | (+++)
 (+++) ∷ [a] -> [a] -> [a]
 list1 +++ list2 = if null list1 {- check emptyness -}
-                  then list2    {- base case       -}
-                  else head list1 : (tail list1 +++ list2)
+                    then list2    {- base case       -}
+                    else head list1 : (tail list1 +++ list2)
 
 
 -- | (+++!)
@@ -45,35 +45,35 @@ list1 +++! list2 = case list1 of
 -- | reverse2
 reverse2 ∷ [a] -> [a]
 reverse2 list = if null list
-                then []
-                else reverse2 (tail list) +++ [head list]
+                  then []
+                  else reverse2 (tail list) +++ [head list]
 
 --------------------------------------------------------------------------------
 -- | maxmin
 maxmin ∷ (Ord a) => [a] -> (a, a)
 maxmin list = if null (tail list)
-              then (head list, head list)
-              else ( if head list > fst (maxmin (tail list))
-                     then head list
-                     else fst (maxmin (tail list))
-                   , if head list < snd (maxmin (tail list))
-                     then head list
-                     else snd (maxmin (tail list))
-                   )
+                then (head list, head list)
+                else ( if head list > fst (maxmin (tail list))
+                         then head list
+                         else fst (maxmin (tail list))
+                     , if head list < snd (maxmin (tail list))
+                         then head list
+                         else snd (maxmin (tail list))
+                     )
 
 
 -- | maxmin'
 maxmin' ∷ (Ord a) => [a] -> (a, a)
 maxmin' list = let h = head list
                in if null (tail list)
-                  then (h, h)
-                  else ( if h > t_max then h else t_max
-                       , if h < t_min then h else t_min
-                       )
-                       where
-                         t     = maxmin' (tail list)
-                         t_max = fst t
-                         t_min = snd t
+                    then (h, h)
+                    else ( if h > t_max then h else t_max
+                         , if h < t_min then h else t_min
+                         )
+                         where
+                           t     = maxmin' (tail list)
+                           t_max = fst t
+                           t_min = snd t
 
 
 -- | maxmin''
@@ -155,13 +155,13 @@ fibonacci' n = fibonacci (n - 1) + fibonacci (n - 2)
 -- | ifibonacci
 ifibonacci ∷ Integer -> Maybe Integer
 ifibonacci n = if n < 0
-               then Nothing
-               else case n of
-                      0 -> Just 0
-                      1 -> Just 1
-                      n' -> let Just f1 = ifibonacci (n' - 1)
-                                Just f2 = ifibonacci (n' - 2)
-                            in Just (f1 + f2)
+                 then Nothing
+                 else case n of
+                        0 -> Just 0
+                        1 -> Just 1
+                        n' -> let Just f1 = ifibonacci (n' - 1)
+                                  Just f2 = ifibonacci (n' - 2)
+                              in Just (f1 + f2)
 
 -- | ifibonacci'
 ifibonacci' ∷ Integer -> Maybe Integer
