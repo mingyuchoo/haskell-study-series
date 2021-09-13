@@ -35,9 +35,8 @@ ps4 = nubBy (((>1).).gcd) [2..] -- i.e., nubBy (\a b -> gcd a b > 1) [2..]
 -- | main
 main :: IO ()
 main = do
-  print $ ps100
+  print   ps100
   print $ take 10 ps1
   print $ take 10 ps2
   print $ take 10 ps3
   print $ take 10 ps4
-  return ()

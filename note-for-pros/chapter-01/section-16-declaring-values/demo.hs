@@ -19,5 +19,4 @@ result = y * 10
 -- |
 main :: IO ()
 main = do
-  print $ result
-  return ()
+  print result
