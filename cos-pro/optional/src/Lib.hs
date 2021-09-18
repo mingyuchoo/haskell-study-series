@@ -1,4 +1,5 @@
-module Lib where
+module Lib
+    where
 -------------------------------------------------------------------------------
 -- Lib.hs
 -- $ ghc --make Optional
@@ -11,7 +12,7 @@ module Lib where
 toNum :: String -> Maybe Int
 toNum s = case reads s of
     [(n,"")] -> Just n
-    _        -> Nothing
+    _ -> Nothing
 
 -------------------------------------------------------------------------------
 -- 사칙 연산, 만약, 연산할 수 없다면 무효 처리
@@ -35,7 +36,7 @@ toBinOp "+" = Just addOp
 toBinOp "-" = Just subOp
 toBinOp "*" = Just mulOp
 toBinOp "/" = Just divOp
-toBinOp _   = Nothing
+toBinOp _ = Nothing
 
 -------------------------------------------------------------------------------
 -- 평가

@@ -21,12 +21,13 @@ arr = [2..1000000]
 
 reduceP :: (b -> a) -> (a -> a -> a) -> [b] -> a
 reduceP f _ [x] = f x
-reduceP f (<+>) xs = (ys `par` zs) `pseq` (ys <+> zs)
-    where
-        len = length xs
-        (ys',zs') = splitAt (len `div` 2) xs
-        ys = reduceP f (<+>) ys'
-        zs = reduceP f (<+>) zs'
+reduceP f (<+>) xs =
+    (ys `par` zs) `pseq` (ys <+> zs)
+  where
+    len = length xs
+    (ys',zs') = splitAt (len `div` 2) xs
+    ys = reduceP f (<+>) ys'
+    zs = reduceP f (<+>) zs'
 -------------------------------------------------------------------------------
 someFunc :: IO ()
 someFunc = do

@@ -1,4 +1,5 @@
-module Lib  where
+module Lib
+    where
 -------------------------------------------------------------------------------
 -- Lib.hs
 -- $ stack run
@@ -7,16 +8,17 @@ module Lib  where
 -- (0.000000,0.707107)
 -- (0.707107,-0.000000)
 -------------------------------------------------------------------------------
-import Text.Printf ( printf )
+import           Text.Printf (printf)
 -------------------------------------------------------------------------------
 -- 좌표 타입
 type Coord = (Double,Double)
 
 -- 좌표 변환 설정
-data Config = Config { rotAt :: Coord           -- 회전 중심 좌표
-                     , theta :: Double          -- 회전량[라디안]
-                     , ofs   :: Coord           -- 병행 이동량
-}
+data Config -- 회전 중심 좌표
+    = Config { rotAt :: Coord
+               , theta :: Double -- 회전량[라디안]
+               , ofs :: Coord -- 병행 이동량
+               }
 
 -- 좌표 변환 함수의 타입은 "좌표를 별도의 좌표로 이동"하는 함수
 type CoordConverter = Coord -> Coord
