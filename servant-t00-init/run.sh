@@ -1,4 +1,6 @@
 #! /bin/bash
 
- stack exec servant-t00-init-exe
+stack clean
+stack build
+stack exec servant-t00-init-exe
 
