@@ -1,4 +1,5 @@
-module Chapter02.StartingOut where
+module Chapter02.StartingOut
+    where
 --------------------------------------------------------------------------------
 
 -- | doubleMe

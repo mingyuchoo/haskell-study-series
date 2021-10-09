@@ -1,4 +1,5 @@
-module Chapter03.TypesAndTypeclasses where
+module Chapter03.TypesAndTypeclasses
+    where
 --------------------------------------------------------------------------------
 
 -- | removeNonUppercase

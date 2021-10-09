@@ -1,7 +1,8 @@
-module Chapter04.SyntaxInFunctionsSpec where
+module Chapter04.SyntaxInFunctionsSpec
+    where
 
-import Test.Hspec
-import Chapter04.SyntaxInFunctions
+import           Chapter04.SyntaxInFunctions
+import           Test.Hspec
 
 
 spec :: Spec

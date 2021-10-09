@@ -1,4 +1,5 @@
-module Chapter12.AFistfulOfMonads where
+module Chapter12.AFistfulOfMonads
+    where
 -------------------------------------------------------------------------------
 import           Control.Monad
 -------------------------------------------------------------------------------

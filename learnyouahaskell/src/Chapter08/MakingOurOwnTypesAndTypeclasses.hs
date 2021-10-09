@@ -1,4 +1,5 @@
-module Chapter08.MakingOurOwnTypesAndTypeclasses where
+module Chapter08.MakingOurOwnTypesAndTypeclasses
+    where
 --------------------------------------------------------------------------------
 
 import qualified Data.Map as Map
@@ -10,12 +11,12 @@ import qualified Data.Map as Map
 
 --------------------------------------------------------------------------------
 data Point = Point Float Float
-           deriving (Show)
+     deriving (Show)
 
 --------------------------------------------------------------------------------
-data Shape = Circle    Point Float
+data Shape = Circle Point Float
            | Rectangle Point Point
-           deriving (Show)
+     deriving (Show)
 
 --------------------------------------------------------------------------------
 -- | area
@@ -47,7 +48,7 @@ baseRect width height = Rectangle (Point 0 0) (Point width height)
 
 --------------------------------------------------------------------------------
 data Person = Person String String Int Float String String
-            deriving (Show)
+     deriving (Show)
 
 --------------------------------------------------------------------------------
 -- firstName :: Person -> String
@@ -75,15 +76,17 @@ data Person2 = Person2 { firstName2   :: String
                        , age2         :: Int
                        , height2      :: Float
                        , phoneNumber2 :: String
-                       , flavor2      :: String }
-             deriving (Show)
+                       , flavor2      :: String
+                       }
+     deriving (Show)
 
 --------------------------------------------------------------------------------
 
 data Car = Car { company :: String
                , model   :: String
-               , year    :: Int    }
-         deriving (Show)
+               , year    :: Int
+               }
+     deriving (Show)
 
 --------------------------------------------------------------------------------
 -- tellCar :: Car -> String
@@ -92,8 +95,9 @@ data Car = Car { company :: String
 --------------------------------------------------------------------------------
 data Car2 a b c = Car2 { company2 :: a
                        , model2   :: b
-                       , year2    :: c }
-                deriving (Show)
+                       , year2    :: c
+                       }
+     deriving (Show)
 
 tellCar2 :: (Show a) => Car2 String String a -> String
 tellCar2 (Car2 {company2 = c, model2 = m, year2 = y}) =
@@ -102,7 +106,7 @@ tellCar2 (Car2 {company2 = c, model2 = m, year2 = y}) =
 --------------------------------------------------------------------------------
 
 data Vector a = Vector a a a
-              deriving (Show)
+     deriving (Show)
 
 vplus :: (Num t) => Vector t -> Vector t -> Vector t
 (Vector i j k) `vplus` (Vector l m n) = Vector (i + l) (j + m) (k + n)
@@ -118,26 +122,28 @@ scalarMult :: (Num t) => Vector t -> Vector t -> t
 
 data Person3 = Person3 { firstName3 :: String
                        , lastName3  :: String
-                       , age3       :: Int    }
-             deriving (Eq)
+                       , age3       :: Int
+                       }
+     deriving (Eq)
 
 --------------------------------------------------------------------------------
 
 data Person4 = Person4 { firstName4 :: String
                        , lastName4  :: String
-                       , age4       :: Int    }
-             deriving (Eq, Show, Read)
+                       , age4       :: Int
+                       }
+     deriving (Eq, Read, Show)
 
 --------------------------------------------------------------------------------
 
-data Day = Monday
-         | Tuesday
-         | Wednesday
-         | Thursday
-         | Friday
-         | Saturday
-         | Sunday
-         deriving (Eq, Ord, Show, Read, Bounded, Enum)
+data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday deriving
+     ( Bounded
+     , Enum
+     , Eq
+     , Ord
+     , Read
+     , Show
+     )
 
 --------------------------------------------------------------------------------
 
@@ -169,9 +175,7 @@ type AssocList k v = [(k, v)]
 
 --------------------------------------------------------------------------------
 
-data LockerState = Taken
-                 | Free
-                 deriving (Show, Eq)
+data LockerState = Taken | Free deriving (Eq, Show)
 
 --------------------------------------------------------------------------------
 
@@ -210,7 +214,7 @@ infixr 5 :-:
 
 data List a = Empty
             | a :-: (List a)
-            deriving (Show, Read, Eq, Ord)
+     deriving (Eq, Ord, Read, Show)
 
 -- fixity
 infixr 5 .++
@@ -223,7 +227,7 @@ Empty .++ ys      = ys
 
 data Tree a = EmptyTree
             | Node a (Tree a) (Tree a)
-            deriving (Show, Read, Eq)
+     deriving (Eq, Read, Show)
 
 
 singleton :: a -> Tree a
@@ -245,9 +249,7 @@ treeElem x (Node a left right) | x == a = True
 
 --------------------------------------------------------------------------------
 
-data TrafficLight = Red
-                  | Yellow
-                  | Green
+data TrafficLight = Red | Yellow | Green
 
 instance Eq TrafficLight where
   Red == Red       = True
@@ -303,8 +305,9 @@ class Tofu t where
   tofu :: j a -> t a j
 
 
-data Frank a b = Frank { frankField :: b a }
-               deriving (Show)
+data Frank a b = Frank { frankField :: b a
+                       }
+     deriving (Show)
 
 
 instance Tofu Frank where
@@ -312,7 +315,8 @@ instance Tofu Frank where
 
 
 data Barry t k p = Barry { yabba :: p
-                         , dabba :: t k }
+                         , dabba :: t k
+                         }
 
 
 instance Functor (Barry a b) where

@@ -1,4 +1,5 @@
-module Chapter04.SyntaxInFunctions where
+module Chapter04.SyntaxInFunctions
+    where
 --------------------------------------------------------------------------------
 
 -- | lucky

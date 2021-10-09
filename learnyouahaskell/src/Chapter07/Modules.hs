@@ -1,4 +1,5 @@
-module Chapter07.Modules where
+module Chapter07.Modules
+    where
 --------------------------------------------------------------------------------
 import           Data.Char (chr, digitToInt, isDigit, ord)
 import           Data.List

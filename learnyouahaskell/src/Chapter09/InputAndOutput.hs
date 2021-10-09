@@ -1,4 +1,5 @@
-module Chapter09.InputAndOutput where
+module Chapter09.InputAndOutput
+    where
 
 --------------------------------------------------------------------------------
 -- main' = putStrLn "Hello, World!"

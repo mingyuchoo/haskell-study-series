@@ -1,4 +1,5 @@
-module Chapter06.HigherOrderFunctions where
+module Chapter06.HigherOrderFunctions
+    where
 --------------------------------------------------------------------------------
 -- | multThree
 --

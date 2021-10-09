@@ -1,7 +1,8 @@
-module Chapter03.TypesAndTypeclassesSpec where
+module Chapter03.TypesAndTypeclassesSpec
+    where
 
-import Test.Hspec
-import Chapter03.TypesAndTypeclasses
+import           Chapter03.TypesAndTypeclasses
+import           Test.Hspec
 
 spec :: Spec
 spec = do

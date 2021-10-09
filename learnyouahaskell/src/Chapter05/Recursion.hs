@@ -1,4 +1,5 @@
-module Chapter05.Recursion where
+module Chapter05.Recursion
+    where
 --------------------------------------------------------------------------------
 -- | maximum'
 -- >>> maximum' [1,2,3,4,5]

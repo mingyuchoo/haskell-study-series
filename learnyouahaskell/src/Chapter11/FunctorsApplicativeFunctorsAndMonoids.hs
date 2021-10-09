@@ -1,4 +1,5 @@
-module Chapter11.FunctorsApplicativeFunctorsAndMonoids where
+module Chapter11.FunctorsApplicativeFunctorsAndMonoids
+    where
 --------------------------------------------------------------------------------
 import           Data.Char
 import           Data.List

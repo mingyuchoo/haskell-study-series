@@ -1,4 +1,5 @@
-module Chapter13.ForAFewMonadsMore where
+module Chapter13.ForAFewMonadsMore
+    where
 -------------------------------------------------------------------------------
 import           Control.Monad
 import           Control.Monad.Writer
