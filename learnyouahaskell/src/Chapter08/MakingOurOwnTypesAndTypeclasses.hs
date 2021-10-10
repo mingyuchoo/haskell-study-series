@@ -153,6 +153,8 @@ data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday 
      )
 
 --------------------------------------------------------------------------------
+-- Phone Book
+--------------------------------------------------------------------------------
 type Name :: *
 type Name = String
 
@@ -162,7 +164,6 @@ type PhoneNumber = String
 type PhoneBook :: *
 type PhoneBook = [(Name, PhoneNumber)]
 
---------------------------------------------------------------------------------
 phoneBook :: PhoneBook
 phoneBook = [ ("betty", "555-2938")
             , ("bonnie", "452-2928")
@@ -171,7 +172,6 @@ phoneBook = [ ("betty", "555-2938")
             , ("wendy", "939-8282")
             , ("penny", "853-2492") ]
 
---------------------------------------------------------------------------------
 inPhoneBook :: Name -> PhoneNumber -> PhoneBook -> Bool
 inPhoneBook name pnumber pbook = (name, pnumber) `elem` pbook
 
@@ -180,27 +180,32 @@ type AssocList :: * -> * -> *
 type AssocList k v = [(k, v)]
 
 --------------------------------------------------------------------------------
+-- Locker
+--------------------------------------------------------------------------------
 type LockerState :: *
 data LockerState = Taken | Free deriving (Eq, Show)
 
---------------------------------------------------------------------------------
-type Code :: *
-type Code = String
+type LockerID :: *
+type LockerID = Int
+
+type LockerPasscode :: *
+type LockerPasscode = String
+
+type LockerMessage :: *
+type LockerMessage = String
 
 type LockerMap :: *
-type LockerMap = Map.Map Int (LockerState, Code)
+type LockerMap = Map.Map LockerID (LockerState, LockerPasscode)
 
---------------------------------------------------------------------------------
-lockerLookup :: Int -> LockerMap -> Either String Code
-lockerLookup lockerNumber lockerMap =
-    case Map.lookup lockerNumber lockerMap of
-        Nothing -> Left $ "Locker number " ++ show lockerNumber ++ " doesn't exist!"
-        Just (state, code) ->
+lockerLookup :: LockerID -> LockerMap -> Either LockerMessage LockerPasscode
+lockerLookup lockerId lockerMap =
+    case Map.lookup lockerId lockerMap of
+        Nothing -> Left $ "Locker number " ++ show lockerId ++ " doesn't exist!"
+        Just (state, passcode) ->
             if state /= Taken
-              then Right code
-              else Left $ "Locker " ++ show lockerNumber ++ " is already taken!"
+              then Right passcode
+              else Left $ "Locker " ++ show lockerId ++ " is already taken!"
 
---------------------------------------------------------------------------------
 lockers :: LockerMap
 lockers = Map.fromList [ (100, (Taken, "ZD39I"))
                        , (101, (Free, "JAH3I"))
@@ -211,12 +216,15 @@ lockers = Map.fromList [ (100, (Taken, "ZD39I"))
                        ]
 
 --------------------------------------------------------------------------------
+-- List Data Constructor
+--------------------------------------------------------------------------------
+
 -- data List a = Empty | Cons a (List a) deriving (Show, Read, Eq, Ord)
 -- data List a = Empty | Cons { listHead :: a, listTail :: List a}
 --   deriving (Show, Read, Eq, Ord)
--- fixity
-infixr 5 :-:
 
+
+infixr 5 :-:
 type List :: * -> *
 data List a = Empty
             | a :-: (List a)
@@ -224,11 +232,13 @@ data List a = Empty
 
 -- fixity
 infixr 5 .++
-
-
 (.++) :: List a -> List a -> List a
 Empty .++ ys      = ys
 (x :-: xs) .++ ys = x :-: (xs .++ ys)
+
+--------------------------------------------------------------------------------
+-- Tree
+--------------------------------------------------------------------------------
 
 type Tree :: * -> *
 data Tree a = EmptyTree
@@ -254,6 +264,9 @@ treeElem x (Node a left right) | x == a = True
                                | x > a  = treeElem x right
 
 --------------------------------------------------------------------------------
+-- TrafficLight
+--------------------------------------------------------------------------------
+
 type TrafficLight :: *
 data TrafficLight = Red | Yellow | Green
 
