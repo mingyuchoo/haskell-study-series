@@ -1,7 +1,10 @@
+{-# LANGUAGE StandaloneKindSignatures #-}
+
 module Chapter11.FunctorsApplicativeFunctorsAndMonoids
     where
 --------------------------------------------------------------------------------
 import           Data.Char
+import           Data.Kind   (Constraint, Type)
 import           Data.List
 import           Data.Monoid
 --------------------------------------------------------------------------------
@@ -12,12 +15,17 @@ myAction = do
   putStrLn $ "The two lines concatenated turn out to be: " ++ a
 
 
+type CoolBool :: Type
 newtype CoolBool = CoolBool { getCoolBool :: Bool }
+
 helloMe :: CoolBool -> String
 helloMe (CoolBool _) = "Hello"
 
 
+type IntList :: Type
 type IntList = [Int]
+
+type CharList :: Type
 newtype CharList = CharList { getCharList :: [Char] }
 
 

@@ -1,3 +1,5 @@
+{-# LANGUAGE StandaloneKindSignatures #-}
+
 module Chapter10.FunctionallySolvingProblems
     where
 
@@ -14,11 +16,17 @@ module Chapter10.FunctionallySolvingProblems
 --         foldingFunction xs "sum"        = [sum xs]
 --         foldingFunction xs numberString = read numberString:xs
 --------------------------------------------------------------------------------
+import           Data.Kind (Constraint, Type)
 import           Data.List
 
 --------------------------------------------------------------------------------
+type Node :: Type
 data Node = Node Road (Maybe Road)
+
+type Road :: Type
 data Road = Road Int Node
+
+type Section :: Type
 data Section = Section { getA :: Int
                        , getB :: Int
                        , getC :: Int
@@ -26,15 +34,17 @@ data Section = Section { getA :: Int
      deriving (Show)
 
 
+type RoadSystem :: Type
 type RoadSystem = [Section]
 
 heathrowToLondon :: RoadSystem
 heathrowToLondon = [Section 50 10 30, Section 5 90 20, Section 40 2 25, Section 10 8 0]
 
-
+type Label :: Type
 data Label = A | B | C deriving (Show)
 
 
+type Path :: Type
 type Path  = [(Label, Int)]
 
 roadStep :: (Path, Path) -> Section -> (Path, Path)

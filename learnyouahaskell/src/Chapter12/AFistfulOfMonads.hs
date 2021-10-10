@@ -1,7 +1,10 @@
+{-# LANGUAGE StandaloneKindSignatures #-}
+
 module Chapter12.AFistfulOfMonads
     where
 -------------------------------------------------------------------------------
 import           Control.Monad
+import           Data.Kind     (Constraint, Type)
 -------------------------------------------------------------------------------
 chapter12 :: IO ()
 chapter12 = do
@@ -106,7 +109,10 @@ applyMaybe (Just x) f = f x
 
 
 -------------------------------------------------------------------------------
+type Birds :: Type
 type Birds = Int
+
+type Pole :: Type
 type Pole  = (Birds,Birds)
 
 
@@ -211,6 +217,7 @@ sevensOnly = do
 
 
 -------------------------------------------------------------------------------
+type KnightPos :: Type
 type KnightPos = (Int,Int)
 
 moveKnight :: KnightPos -> [KnightPos]

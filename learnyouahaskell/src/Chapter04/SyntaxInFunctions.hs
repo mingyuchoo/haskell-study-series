@@ -230,6 +230,7 @@ initials firstname lastname = [f] ++ ". " ++ [l] ++ "."
 -- >>> cylinder 1.1 2.2
 -- 22.8079626650619
 --
+cylinder :: Floating a => a -> a -> a
 cylinder r h =
   let sideArea = 2 * pi * r * h
       topArea = pi * r ^ 2

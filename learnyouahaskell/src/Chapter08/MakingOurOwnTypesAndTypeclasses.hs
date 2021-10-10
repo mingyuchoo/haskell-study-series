@@ -1,8 +1,11 @@
+{-# LANGUAGE StandaloneKindSignatures #-}
+
 module Chapter08.MakingOurOwnTypesAndTypeclasses
     where
 --------------------------------------------------------------------------------
+import           Data.Kind (Constraint)
+import qualified Data.Map  as Map
 
-import qualified Data.Map as Map
 --------------------------------------------------------------------------------
 
 {--
@@ -10,10 +13,12 @@ import qualified Data.Map as Map
 --}
 
 --------------------------------------------------------------------------------
+type Point :: *
 data Point = Point Float Float
      deriving (Show)
 
 --------------------------------------------------------------------------------
+type Shape :: *
 data Shape = Circle Point Float
            | Rectangle Point Point
      deriving (Show)
@@ -47,6 +52,7 @@ baseRect width height = Rectangle (Point 0 0) (Point width height)
 --}
 
 --------------------------------------------------------------------------------
+type Person :: *
 data Person = Person String String Int Float String String
      deriving (Show)
 
@@ -71,6 +77,7 @@ data Person = Person String String Int Float String String
 
 
 --------------------------------------------------------------------------------
+type Person2 :: *
 data Person2 = Person2 { firstName2   :: String
                        , lastName2    :: String
                        , age2         :: Int
@@ -81,7 +88,7 @@ data Person2 = Person2 { firstName2   :: String
      deriving (Show)
 
 --------------------------------------------------------------------------------
-
+type Car :: *
 data Car = Car { company :: String
                , model   :: String
                , year    :: Int
@@ -93,6 +100,7 @@ data Car = Car { company :: String
 -- tellCar (Car { company = c, model = m, year = y}) =
 --   "This " ++ c ++ " " ++ m ++ " was made in " ++ show y
 --------------------------------------------------------------------------------
+type Car2 :: * -> * -> * -> *
 data Car2 a b c = Car2 { company2 :: a
                        , model2   :: b
                        , year2    :: c
@@ -104,7 +112,7 @@ tellCar2 (Car2 {company2 = c, model2 = m, year2 = y}) =
   "This " ++ c ++ " " ++ m ++ " was made in " ++ show y
 
 --------------------------------------------------------------------------------
-
+type Vector :: * -> *
 data Vector a = Vector a a a
      deriving (Show)
 
@@ -118,8 +126,7 @@ scalarMult :: (Num t) => Vector t -> Vector t -> t
 (Vector i j k) `scalarMult` (Vector l m n) = i * l + j * m + k * m
 
 --------------------------------------------------------------------------------
-
-
+type Person3 :: *
 data Person3 = Person3 { firstName3 :: String
                        , lastName3  :: String
                        , age3       :: Int
@@ -127,7 +134,7 @@ data Person3 = Person3 { firstName3 :: String
      deriving (Eq)
 
 --------------------------------------------------------------------------------
-
+type Person4 :: *
 data Person4 = Person4 { firstName4 :: String
                        , lastName4  :: String
                        , age4       :: Int
@@ -135,7 +142,7 @@ data Person4 = Person4 { firstName4 :: String
      deriving (Eq, Read, Show)
 
 --------------------------------------------------------------------------------
-
+type Day :: *
 data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday deriving
      ( Bounded
      , Enum
@@ -146,16 +153,16 @@ data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday 
      )
 
 --------------------------------------------------------------------------------
-
-
+type Name :: *
 type Name = String
 
+type PhoneNumber :: *
 type PhoneNumber = String
 
+type PhoneBook :: *
 type PhoneBook = [(Name, PhoneNumber)]
 
 --------------------------------------------------------------------------------
-
 phoneBook :: PhoneBook
 phoneBook = [ ("betty", "555-2938")
             , ("bonnie", "452-2928")
@@ -165,36 +172,35 @@ phoneBook = [ ("betty", "555-2938")
             , ("penny", "853-2492") ]
 
 --------------------------------------------------------------------------------
-
 inPhoneBook :: Name -> PhoneNumber -> PhoneBook -> Bool
 inPhoneBook name pnumber pbook = (name, pnumber) `elem` pbook
 
 --------------------------------------------------------------------------------
-
+type AssocList :: * -> * -> *
 type AssocList k v = [(k, v)]
 
 --------------------------------------------------------------------------------
-
+type LockerState :: *
 data LockerState = Taken | Free deriving (Eq, Show)
 
 --------------------------------------------------------------------------------
-
+type Code :: *
 type Code = String
 
+type LockerMap :: *
 type LockerMap = Map.Map Int (LockerState, Code)
 
 --------------------------------------------------------------------------------
-
 lockerLookup :: Int -> LockerMap -> Either String Code
-lockerLookup lockerNumber map = case Map.lookup lockerNumber map of
-    Nothing -> Left $ "Locker number " ++ show lockerNumber ++ " doesn't exist!"
-    Just (state, code) ->
-      if state /= Taken
-        then Right code
-        else Left $ "Locker " ++ show lockerNumber ++ " is already taken!"
+lockerLookup lockerNumber lockerMap =
+    case Map.lookup lockerNumber lockerMap of
+        Nothing -> Left $ "Locker number " ++ show lockerNumber ++ " doesn't exist!"
+        Just (state, code) ->
+            if state /= Taken
+              then Right code
+              else Left $ "Locker " ++ show lockerNumber ++ " is already taken!"
 
 --------------------------------------------------------------------------------
-
 lockers :: LockerMap
 lockers = Map.fromList [ (100, (Taken, "ZD39I"))
                        , (101, (Free, "JAH3I"))
@@ -211,7 +217,7 @@ lockers = Map.fromList [ (100, (Taken, "ZD39I"))
 -- fixity
 infixr 5 :-:
 
-
+type List :: * -> *
 data List a = Empty
             | a :-: (List a)
      deriving (Eq, Ord, Read, Show)
@@ -224,7 +230,7 @@ infixr 5 .++
 Empty .++ ys      = ys
 (x :-: xs) .++ ys = x :-: (xs .++ ys)
 
-
+type Tree :: * -> *
 data Tree a = EmptyTree
             | Node a (Tree a) (Tree a)
      deriving (Eq, Read, Show)
@@ -248,7 +254,7 @@ treeElem x (Node a left right) | x == a = True
                                | x > a  = treeElem x right
 
 --------------------------------------------------------------------------------
-
+type TrafficLight :: *
 data TrafficLight = Red | Yellow | Green
 
 instance Eq TrafficLight where
@@ -266,23 +272,20 @@ instance Show TrafficLight where
 -- class declaration
 --  - YesNo: typeclass
 --  - yesno: function
+type YesNo :: * -> Constraint
 class YesNo a where
   yesno :: a -> Bool
-
 
 instance YesNo Int where
   yesno 0 = False
   yesno _ = True
 
-
 instance YesNo [a] where
   yesno [] = False
   yesno _  = True
 
-
 instance YesNo Bool where
   yesno = id
-
 
 instance YesNo (Maybe a) where
   yesno (Just _) = True
@@ -300,11 +303,13 @@ instance Functor Tree where
   fmap f (Node x leftsub rightsub) =
     Node (f x) (fmap f leftsub) (fmap f rightsub)
 
-
+{- ***************** -}
+type Tofu :: (* -> (* -> *) -> *) -> Constraint
 class Tofu t where
   tofu :: j a -> t a j
 
-
+{- ***************** -}
+type Frank :: * -> (* -> *) -> *
 data Frank a b = Frank { frankField :: b a
                        }
      deriving (Show)
@@ -313,7 +318,7 @@ data Frank a b = Frank { frankField :: b a
 instance Tofu Frank where
   tofu x = Frank x
 
-
+type Barry :: (* -> *) -> * -> * -> *
 data Barry t k p = Barry { yabba :: p
                          , dabba :: t k
                          }
