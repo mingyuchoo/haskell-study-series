@@ -279,7 +279,6 @@ x *?? (Node a left right) | x == a = True
 --------------------------------------------------------------------------------
 -- TrafficLight
 --------------------------------------------------------------------------------
-
 type TrafficLight :: *
 data TrafficLight = Red | Yellow | Green
 
@@ -295,11 +294,10 @@ instance Show TrafficLight where
   show Green  = "Green light"
 
 --------------------------------------------------------------------------------
--- class declaration
---  - YesNo: typeclass
---  - yesno: function
+-- Type class declaration and Instantiation of Type class
+--------------------------------------------------------------------------------
 type YesNo :: * -> Constraint
-class YesNo a where
+class YesNo a where    -- `a` is a type variable for concrete type
   yesno :: a -> Bool
 
 instance YesNo Int where
@@ -324,7 +322,16 @@ yesnoIf yesnoVal yesResult noResult = if yesno yesnoVal
                                         else noResult
 
 
-instance Functor Tree where
+--------------------------------------------------------------------------------
+-- Instantiations of Functor type class
+-- `f` is a type constructor having only one type variable
+--
+-- class Functor f where
+--    fmap :: (a -> b) -> f a -> f b
+--    ...
+--------------------------------------------------------------------------------
+
+instance Functor Tree where  -- `Tree` is a type constructor having only one type variable
   fmap f Nil = Nil
   fmap f (Node x leftsub rightsub) =
     Node (f x) (fmap f leftsub) (fmap f rightsub)
@@ -348,7 +355,6 @@ type Barry :: (* -> *) -> * -> * -> *
 data Barry t k p = Barry { yabba :: p
                          , dabba :: t k
                          }
-
 
 instance Functor (Barry a b) where
   fmap f (Barry {yabba = x, dabba = y}) = Barry {yabba = f x, dabba = y}
