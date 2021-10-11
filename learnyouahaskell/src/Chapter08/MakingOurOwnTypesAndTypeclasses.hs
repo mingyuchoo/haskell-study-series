@@ -241,27 +241,40 @@ Empty .++ ys      = ys
 --------------------------------------------------------------------------------
 
 type Tree :: * -> *
-data Tree a = EmptyTree
+data Tree a = Nil
             | Node a (Tree a) (Tree a)
      deriving (Eq, Read, Show)
 
 
 singleton :: a -> Tree a
-singleton x = Node x EmptyTree EmptyTree
+singleton x = Node x Nil Nil
 
 
 treeInsert :: (Ord a) => a -> Tree a -> Tree a
-treeInsert x EmptyTree = singleton x
+treeInsert x Nil = singleton x
 treeInsert x (Node a left right) | x == a = Node x left right
                                  | x < a  = Node a (treeInsert x left) right
                                  | x > a  = Node a left (treeInsert x right)
 
+infixr 5 *>>
+(*>>) :: (Ord a) => a -> Tree a -> Tree a
+x *>> Nil = singleton x
+x *>> (Node a left right) | x == a = Node x left right
+                          | x <  a = Node a (x *>> left) right
+                          | x >  a = Node a left (x *>> right)
 
 treeElem :: (Ord a) => a -> Tree a -> Bool
-treeElem x EmptyTree = False
+treeElem x Nil = False
 treeElem x (Node a left right) | x == a = True
                                | x < a  = treeElem x left
                                | x > a  = treeElem x right
+
+infixr 5 *??
+(*??) :: (Ord a) => a -> Tree a -> Bool
+x *?? Nil = False
+x *?? (Node a left right) | x == a = True
+                          | x <  a = x *?? left
+                          | x >  a = x *?? right
 
 --------------------------------------------------------------------------------
 -- TrafficLight
@@ -312,7 +325,7 @@ yesnoIf yesnoVal yesResult noResult = if yesno yesnoVal
 
 
 instance Functor Tree where
-  fmap f EmptyTree = EmptyTree
+  fmap f Nil = Nil
   fmap f (Node x leftsub rightsub) =
     Node (f x) (fmap f leftsub) (fmap f rightsub)
 
