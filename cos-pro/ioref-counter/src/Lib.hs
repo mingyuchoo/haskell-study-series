@@ -1,24 +1,27 @@
+{-# LANGUAGE StandaloneKindSignatures #-}
+
 module Lib
     where
 
-import           Control.Monad
-import           Data.Functor  ((<&>))
-import           Data.IORef    (IORef, modifyIORef, newIORef, readIORef)
+import           Data.Functor ((<&>))
+import           Data.IORef   (IORef, modifyIORef, newIORef, readIORef)
+import           Data.Kind    (Constraint)
 
 
-newtype Counter = Counter { counter :: IORef Int }
+type Counter :: * -> *
+newtype Counter a = Counter { counter :: IORef a }
 
 
 -- | make Counter data
-makeCounter :: Int -> IO Counter
+makeCounter :: Int -> IO (Counter Int)
 makeCounter i = newIORef i >>= return . Counter
 
 -- | increase Counter data
-incCounter :: Int -> Counter -> IO Counter
+incCounter :: Int -> Counter Int -> IO (Counter Int)
 incCounter i (Counter counter) = modifyIORef counter (+ i) >> return (Counter counter)
 
 -- | show Counter data
-showCounter :: Counter -> IO ()
+showCounter :: (Counter Int) -> IO ()
 showCounter (Counter counter) = readIORef counter >>= print
 
 -- | apply functions
