@@ -336,7 +336,14 @@ instance Functor Tree where  -- `Tree` is a type constructor having only one typ
   fmap f (Node x leftsub rightsub) =
     Node (f x) (fmap f leftsub) (fmap f rightsub)
 
-{- ***************** -}
+{-
+*****************
+`j a` :: *
+  `a` :: *
+`j'   :: * -> *
+`t a j` :: *
+*`a` -> (* -> *)`j` -> *`t`
+-}
 type Tofu :: (* -> (* -> *) -> *) -> Constraint
 class Tofu t where
   tofu :: j a -> t a j
