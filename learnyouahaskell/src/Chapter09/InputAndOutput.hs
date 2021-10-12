@@ -1,134 +1,143 @@
+{-# LANGUAGE StandaloneKindSignatures #-}
+
 module Chapter09.InputAndOutput
     where
 
+import           Control.Monad      (forM, forever, when)
+import           Data.Char
+import           System.Environment
+import           System.IO
+import           System.IO.Error
+
 --------------------------------------------------------------------------------
--- main' = putStrLn "Hello, World!"
+-- | make factorial number
+factorial :: Int -> Int
+factorial n | n == 0 = 0
+            | n == 1 = 1
+            | otherwise = n * factorial (n - 1)
+
 --------------------------------------------------------------------------------
--- main' = do
---     putStrLn "Hello, what's your name?"
---     name <- getLine
---     putStrLn ("Hey " ++ name ++ ", you rock!")
+-- | use case of `getLine`
+askName :: IO ()
+askName = do
+    _ <- putStrLn "What's your first name?"
+    firstName <- getLine
+    _ <- putStrLn "What's your last name?"
+    lastName <- getLine
+    let bigFirstName = map toUpper firstName
+        bigLastName  = map toUpper lastName
+    _ <- putStrLn $
+        "Hey " ++ bigFirstName ++
+        " "    ++ bigLastName  ++
+        ", how are you?"
+    return ()
+
 --------------------------------------------------------------------------------
--- import Data.Char
--- main' = do
---     putStrLn "What's your first name?"
---     firstName <- getLine
---     putStrLn "What's your last name?"
---     lastName  <- getLine
---     let
---         bigFirstName = map toUpper firstName
---         bigLastName  = map toUpper lastName
---     putStrLn $ "hey " ++ bigFirstName ++ " " ++ bigLastName ++ ", how are you?"
--- reverseWords :: String -> String
--- reverseWords = unwords . map reverse . words
+-- |
+makeReverse :: IO ()
+makeReverse = do
+    line <- getLine
+    if null line
+        then return ()
+        else (putStrLn $ reverseWords line) >>
+             makeReverse >>
+             return ()
+
+-- |
+reverseWords :: String -> String
+reverseWords = unwords . map reverse . words
+
 --------------------------------------------------------------------------------
--- main' = do
---     line <- getLine
---     if null line
---         then return ()
---         else do
---             putStrLn $ reverseWords line
---             main'
+-- | use cases of `return`
+assertReturn :: IO ()
+assertReturn = do
+    _ <- return ()
+    a <- return "HAHAHA" -- :: Monad m => m [Char]
+    line <- getLine
+    b <- return "BLAH BLAH BLAH" -- :: Monad m => m [Char]
+    _ <- return 4
+    _ <- putStrLn $ a ++ " " ++ b
+    _ <- putStrLn line
+    let c = "hell"
+        d = "yeah"
+    _ <- putStrLn $ c ++ " " ++ d
+    return ()
+
 --------------------------------------------------------------------------------
--- main' = do
---     return ()
---     return "HAHAHA"
---     line <- getLine
---     return "BLAH BLAH BLAH BLAH"
---     return 4
---     putStrLn line
+-- | example of `when`
+exampleWhen :: IO ()
+exampleWhen = do
+    input <- getLine
+    -- when expression
+    when (input == "SWORDFISH") $ do
+        _ <- putStrLn input
+        return ()
+    -- if expression
+    if (input == "SWORDFISH")
+        then putStrLn input
+        else return ()
+
 --------------------------------------------------------------------------------
--- main' = do
---     a <- return "hell"
---     b <- return "yeah!"
---     putStrLn $ a ++ " " ++ b
+-- | example of `sequence`
+--  sequence :: (Traversable t, Monad m) => t (m a) -> m (t a)
+exampleSequence :: IO ()
+exampleSequence = do
+    -- sequence expression
+    rs <- sequence [getLine, getLine, getLine]
+    print rs
+    -- bind statement
+    a <- getLine
+    b <- getLine
+    c <- getLine
+    print [a,b,c]
+
 --------------------------------------------------------------------------------
--- main' = do
---     let a = "hell"
---         b = "yeah"
---     putStrLn $ a ++ " " ++ b
+-- | example of `mapM` and `mapM_`
+exampleMapM :: IO ()
+exampleMapM = do
+    _ <- sequence $ map print [1,2,3,4,5]
+    _ <- mapM  print [1,2,3,4,5]
+    _ <- mapM_ print [1,2,3,4,5]
+    return ()
+
+
 --------------------------------------------------------------------------------
-{-- putStr --}
--- main' = do   putStr "Hey, "
---             putStr "I'm "
---             putStrLn "Andy!"
+-- | example of `forever`
+exampleForever :: IO ()
+exampleForever = do
+    forever $ do
+        putStr "Give me some input: "
+        input <- getLine
+        putStrLn $ map toUpper input
+
 --------------------------------------------------------------------------------
-{-- putchar --}
--- main' = do putChar 't'
---           putChar 'e'
---           putChar 'h'
+-- | example of `forM`
+exampleForM :: IO ()
+exampleForM = do
+    colors <- forM [1,2,3,4] (\a -> do
+        putStrLn $ "Which color do you associate with the number " ++ show a ++ "?"
+        color <- getLine
+        return color)
+    putStrLn "The colors that you associate with 1, 2, 3, and 4 are: "
+    mapM putStrLn colors
+    return ()
+
 --------------------------------------------------------------------------------
-{-- print --}
--- main' = do print True
---           print 2
---           print "haha"
---           print 3.2
---           print [3,4,3]
---------------------------------------------------------------------------------
-{-- when --}
--- import Control.Monad
--- main' = do
---     input <- getLine
---     when (input == "SWORDFISH") $ do
---         putStrLn input
---------------------------------------------------------------------------------
--- main' = do
---     input <- getLine
---     if (input == "SWORDFISH")
---         then putStrLn input
---         else return ()
---------------------------------------------------------------------------------
--- main' = do
---     c <- getChar
---     if c /= ' '
---         then do
---             putChar c
---             main'
---         else
---             return ()
---------------------------------------------------------------------------------
--- import Control.Monad
--- main' = do
---     c <- getChar
---     when (c /= ' ') $ do
---         putChar c
---         main'
---------------------------------------------------------------------------------
--- import Control.Monad
--- main' = do
---     c <- getChar
---     when (c /= ' ') $ do
---         putChar c
---         main'
---------------------------------------------------------------------------------
-{-- sequence --}
--- main' = do
---     a <- getLine
---     b <- getLine
---     c <- getLine
---     print [a,b,c]
---------------------------------------------------------------------------------
--- main' = do
---     rs <- sequence [getLine, getLine, getLine]
---     print rs
---------------------------------------------------------------------------------
-{-- forever --}
--- import Control.Monad
--- import Data.Char
--- main' = forever $ do
---     putStr "Give me some input: "
---     l <- getLine
---     putStrLn $ map toUpper l
---------------------------------------------------------------------------------
-{-- forM --}
--- import Control.Monad
--- main' = do
---     colors <- forM [1,2,3,4] (\a -> do
---         putStrLn $ "Which color do you associate with the number " ++ show a ++ "?"
---         color <- getLine
---         return color)
---     putStrLn "The colors that you associate with 1,2,3 and 4 are: "
---     mapM putStrLn colors
+-- | evaludate functions
+someFunc :: IO ()
+someFunc = do
+    putStrLn "----------------------------"
+    -- askName
+    -- makeReverse
+    -- assertReturn
+    -- exampleWhen
+    -- exampleSequence
+    -- exampleMapM
+    -- exampleForever
+    -- exampleForM
+
+
+
 --------------------------------------------------------------------------------
 {-- input redirection --}
 ----- if you want to quit, type Ctr+d
@@ -443,10 +452,6 @@ I think you need a new one!
 --     | isDoesNotExistError e = putStrLn "The file doesn't exist!"
 --     | otherwise = ioError e
 --------------------------------------------------------------------------------
-import           System.Environment
-import           System.IO
-import           System.IO.Error
-
 main' = toTry `catchIOError` handler
 
 toTry :: IO ()
