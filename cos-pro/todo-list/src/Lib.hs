@@ -6,9 +6,19 @@ module Lib
 
 import           Control.Exception  (bracketOnError)
 import           Control.Monad      (mapM, mapM_, (>>))
-import           Data.List          (delete, lines, unlines, zipWith)
+import           Data.List
+    ( delete
+    , head
+    , lines
+    , lookup
+    , tail
+    , unlines
+    , zipWith
+    )
 import           Prelude
     ( IO (..)
+    , Maybe (..)
+    , String (..)
     , read
     , return
     , show
@@ -19,10 +29,13 @@ import           Prelude
 import           System.Directory   (removeFile, renameFile)
 import           System.Environment (getArgs, getProgName)
 import           System.IO
-    ( appendFile
+    ( IOMode (..)
+    , appendFile
     , getLine
     , hClose
+    , hGetContents
     , hPutStr
+    , openFile
     , openTempFile
     , putStr
     , putStrLn
@@ -32,46 +45,62 @@ import           System.IO
 -- | application
 someFunc :: IO ()
 someFunc = do
-    args <- getArgs
-    progName <- getProgName
-    putStrLn "------------------------------"
-    putStr "The program name is: " >> putStrLn progName
-    putStr "The arguments are: " >> mapM putStrLn args
-    putStrLn "\n------------------------------"
+    argList <- getArgs
+    case argList of
+        [] -> putStrLn usage
+        _  -> action args
+          where
+            command = head argList
+            args = tail argList
+            (Just action) = lookup command dispatch
 
-    -- addItem
-    removeItem
+usage :: String
+usage = "Usage: stack run COMMAND FILENAME [ITEM]\n" ++
+        "  COMMAND - add \"todo item\"\n" ++
+        "          - view\n" ++
+        "          - remove\n" ++
+        " FILENAME - todo.txt"
+
+
+dispatch :: [(String, [String] -> IO ())]
+dispatch = [ ("add", add)
+           , ("view", view)
+           , ("remove", remove)
+           ]
 
 -- | add todo item
-addItem :: IO ()
-addItem = do
-    item <- getLine
-    appendFile "todo.txt" (item ++ "\n")
+add :: [String] -> IO ()
+add [fileName, todoItem] = appendFile fileName (todoItem ++ "\n")
+add _ = putStrLn "The add command takes exactly two arguments."
+
+
+-- | view todo item
+view :: [String] -> IO ()
+view [fileName] = do
+    contents <- readFile fileName
+    let todoTasks = lines contents
+        numberedTasks = zipWith (\n line -> show n ++ " - " ++ line) [0 ..] todoTasks
+    putStr $ unlines numberedTasks
+view _ = putStrLn "The view command takes exactly one argument."
 
 -- | remove todo item
-removeItem :: IO ()
-removeItem = do
-    contents <- readFile "todo.txt"
+remove :: [String] -> IO ()
+remove [fileName, numberString] = do
+    contents <- readFile fileName
     let todoTasks = lines contents
-        numberedTasks = zipWith
-                            (\n line -> show n ++ " - " ++ line)
-                            [0 ..]
-                            todoTasks
-    putStrLn "These are your To-Do items:"
+        numberedTasks = zipWith (\n line -> show n ++ " - " ++ line) [0 ..] todoTasks
+    putStr $ unlines numberedTasks
+    putStrLn "These are your TODO items:"
     mapM_ putStrLn numberedTasks
-    putStrLn "Which one do you want to delete?"
-    numberString <- getLine
     let number = read numberString
         newTodoItems = unlines $ delete (todoTasks !! number) todoTasks
-    bracketOnError
-        (openTempFile "." "temp")
+    bracketOnError (openTempFile "." "todo.temp")
         (\(tempName, tempHandle) -> do
             hClose tempHandle
             removeFile tempName)
         (\(tempName, tempHandle) -> do
-            hPutStr tempHandle newTodoItems
             hClose tempHandle
-            removeFile "todo.txt"
-            renameFile tempName "todo.txt")
-
+            removeFile fileName
+            renameFile tempName fileName)
+remove _ = putStrLn "The remove command takes exactly two arguments."
 
