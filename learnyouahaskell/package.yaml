@@ -22,10 +22,13 @@ description: Please see the README on GitHub at <https://github.com/githubuser/l
 dependencies:
   - base >= 4.7 && < 5
   - containers
+  - directory
+  - random
   - mtl
   - hspec
   - doctest
   - doctest-discover
+
 
 library:
   source-dirs: src
