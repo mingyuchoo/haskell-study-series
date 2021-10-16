@@ -1,25 +1,99 @@
 {-# OPTIONS_GHC -fwarn-missing-signatures #-}
 
+{-# LANGUAGE ExplicitForAll           #-}
+{-# LANGUAGE NoImplicitPrelude        #-}
+{-# LANGUAGE OverloadedStrings        #-}
 {-# LANGUAGE StandaloneKindSignatures #-}
 
+--------------------------------------------------------------------------------
 module Chapter10.FunctionallySolvingProblems
     where
 
 --------------------------------------------------------------------------------
-{-- Reverse Polish notation calculator --}
--- solveRPN :: String -> Float
--- solveRPN = head . foldl foldingFunction [] . words
---   where foldingFunction (x:y:ys) "*"    = (x * y):ys
---         foldingFunction (x:y:ys) "+"    = (x + y):ys
---         foldingFunction (x:y:ys) "-"    = (y - x):ys
---         foldingFunction (x:y:ys) "/"    = (y / x):ys
---         foldingFunction (x:y:ys) "^"    = (y ** x):ys
---         foldingFunction (x:xs) "ln"     = log x:xs
---         foldingFunction xs "sum"        = [sum xs]
---         foldingFunction xs numberString = read numberString:xs
---------------------------------------------------------------------------------
-import           Data.Kind (Constraint, Type)
+import           Control.Exception (catch)
+import           Data.Kind         (Constraint, Type)
 import           Data.List
+    ( concat
+    , drop
+    , foldl
+    , head
+    , lines
+    , map
+    , reverse
+    , sum
+    , take
+    , words
+    , (++)
+    )
+import           Prelude
+    ( Double (..)
+    , IO (..)
+    , Int (..)
+    , Maybe (..)
+    , Show (..)
+    , String (..)
+    , fst
+    , getContents
+    , log
+    , print
+    , putStrLn
+    , read
+    , return
+    , snd
+    , undefined
+    , ($)
+    , (*)
+    , (**)
+    , (+)
+    , (-)
+    , (.)
+    , (/)
+    , (<=)
+    )
+import           System.IO.Error   (IOError (..))
+--------------------------------------------------------------------------------
+
+main' :: IO ()
+main' = do
+  contents <- getContents
+  let threes     = groupsOf 3 (map read $ lines contents)
+      roadSystem = map (\[a,b,c] -> Section a b c) threes
+      path       = optimalPath roadSystem
+      pathString = concat $ map (show . fst) path
+      pathPrice  = sum $ map snd path
+  putStrLn $ "The best path to take is: " ++ pathString
+  putStrLn $ "The price is: " ++ show pathPrice
+--------------------------------------------------------------------------------
+-- |
+doSolveRPN :: IO()
+doSolveRPN = action `catch` handler
+
+-- |
+action :: IO ()
+action = do
+    print $ solveRPN "10 4 3 + 2 * -"
+    print $ solveRPN "2 3.5 +"
+    print $ solveRPN "90 34 12 33 55 66 + * - +"
+    print $ solveRPN "90 34 12 33 55 66 + * - + -"
+    print $ solveRPN "90 3.8 -"
+    return ()
+
+-- |
+solveRPN :: String -> Double
+solveRPN = head . foldl foldingFunction [] . words
+  where
+    foldingFunction (x0:x1:xs) "+" = (x1 +  x0):xs
+    foldingFunction (x0:x1:xs) "-" = (x1 -  x0):xs
+    foldingFunction (x0:x1:xs) "*" = (x1 *  x0):xs
+    foldingFunction (x0:x1:xs) "/" = (x1 /  x0):xs
+    foldingFunction (x0:x1:xs) "^" = (x1 ** x0):xs
+    foldingFunction (x:xs) "ln"    = log x:xs
+    foldingFunction xs "sum"       = [sum xs]
+    foldingFunction xs ns          = read ns:xs
+
+-- |
+handler :: IOError -> IO ()
+handler e = return ()
 
 --------------------------------------------------------------------------------
 type Node :: Type
@@ -80,16 +154,3 @@ groupsOf :: Int -> [a] -> [[a]]
 groupsOf 0 _  = undefined
 groupsOf _ [] = []
 groupsOf n xs = take n xs : groupsOf n (drop n xs)
-
-
-
-main' = do
-  contents <- getContents
-  let threes     = groupsOf 3 (map read $ lines contents)
-      roadSystem = map (\[a,b,c] -> Section a b c) threes
-      path       = optimalPath roadSystem
-      pathString = concat $ map (show . fst) path
-      pathPrice  = sum $ map snd path
-  putStrLn $ "The best path to take is: " ++ pathString
-  putStrLn $ "The price is: " ++ show pathPrice
---------------------------------------------------------------------------------
