@@ -47,6 +47,7 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , bytestring
     , containers
     , directory
     , doctest
@@ -65,6 +66,7 @@ executable learnyouahaskell-exe
   ghc-options: -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base >=4.7 && <5
+    , bytestring
     , containers
     , directory
     , doctest
@@ -88,6 +90,7 @@ test-suite learnyouahaskell-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base >=4.7 && <5
+    , bytestring
     , containers
     , directory
     , doctest

@@ -4,6 +4,7 @@
 module Chapter09.InputAndOutput
     where
 
+import           Control.Exception    (catch)
 import           Control.Monad        (forM, forever, when)
 import           Data.Bool            (Bool (..), not)
 import qualified Data.ByteString      as S
@@ -11,8 +12,8 @@ import qualified Data.ByteString.Lazy as B
 import           Data.Char
 import           Data.Eq              (Eq (..))
 import           Data.List            (delete, null, take)
-import           System.Directory
-import           System.Environment
+import           System.Directory     (copyFile, removeFile, renameFile)
+import           System.Environment   (getArgs)
 import           System.IO
     ( Handle (..)
     , IO (..)
@@ -25,8 +26,16 @@ import           System.IO
     , openTempFile
     , print
     , putStrLn
+    , readFile
     )
 import           System.IO.Error
+    ( IOError (..)
+    , ioError
+    , ioeGetFileName
+    , isDoesNotExistError
+    , isFullError
+    , isIllegalOperation
+    )
 import           System.Random
     ( Random
     , RandomGen
@@ -249,9 +258,28 @@ doCopyFile = do
     (fileName1:fileName2:_) <- getArgs
     copyFile fileName1 fileName2
 
-copyFile :: FilePath -> FilePath -> IO ()
-copyFile source dest = do
+copyFile' :: FilePath -> FilePath -> IO ()
+copyFile' source dest = do
     contents <- B.readFile source
     B.writeFile dest contents
 --------------------------------------------------------------------------------
 -- | Exception
+
+doCatchException :: IO ()
+doCatchException = catch action handler
+
+action :: IO ()
+action = do
+    (fileName:_) <- getArgs
+    contents <- readFile fileName
+    putStrLn $ "The file has " ++ show (length (lines contents)) ++ " lines!"
+
+handler :: IOError -> IO ()
+handler e | isDoesNotExistError e =
+                case ioeGetFileName e of
+                    Just path -> putStrLn $ "Whoops, File does not exist at: " ++ path
+                    Nothing   -> putStrLn "Whoops! File does not exist at unknown location!"
+          | isFullError e =  putStrLn "free some space"
+          | isIllegalOperation e = putStrLn "notify cops!"
+          | otherwise = ioError e
+
