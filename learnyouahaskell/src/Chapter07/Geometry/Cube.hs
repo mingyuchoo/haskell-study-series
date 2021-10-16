@@ -1,4 +1,10 @@
-module Chapter07.Geometry.Cube where
+{-# OPTIONS_GHC -fwarn-missing-signatures #-}
+
+{-# LANGUAGE ExplicitForAll           #-}
+{-# LANGUAGE StandaloneKindSignatures #-}
+
+module Chapter07.Geometry.Cube
+    where
 --------------------------------------------------------------------------------
 
 import qualified Chapter07.Geometry.Cuboid as Cuboid

@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -fwarn-missing-signatures #-}
+
 {-# LANGUAGE StandaloneKindSignatures #-}
 
 module Chapter13.ForAFewMonadsMore

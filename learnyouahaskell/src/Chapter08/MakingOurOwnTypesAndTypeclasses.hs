@@ -1,3 +1,6 @@
+{-# OPTIONS_GHC -fwarn-missing-signatures #-}
+
+{-# LANGUAGE ExplicitForAll           #-}
 {-# LANGUAGE StandaloneKindSignatures #-}
 
 module Chapter08.MakingOurOwnTypesAndTypeclasses

@@ -1,4 +1,7 @@
+{-# OPTIONS_GHC -fwarn-missing-signatures #-}
+
 {-# LANGUAGE ExplicitForAll           #-}
+{-# LANGUAGE OverloadedStrings        #-}
 {-# LANGUAGE StandaloneKindSignatures #-}
 
 module Chapter09.InputAndOutput

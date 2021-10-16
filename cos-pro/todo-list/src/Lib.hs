@@ -1,4 +1,8 @@
-{-# LANGUAGE NoImplicitPrelude #-}
+{-# OPTIONS_GHC -fwarn-missing-signatures #-}
+
+{-# LANGUAGE ExplicitForAll           #-}
+{-# LANGUAGE NoImplicitPrelude        #-}
+{-# LANGUAGE StandaloneKindSignatures #-}
 
 module Lib
     ( someFunc

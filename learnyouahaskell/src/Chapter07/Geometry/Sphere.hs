@@ -1,4 +1,10 @@
-module Chapter07.Geometry.Sphere where
+{-# OPTIONS_GHC -fwarn-missing-signatures #-}
+
+{-# LANGUAGE ExplicitForAll           #-}
+{-# LANGUAGE StandaloneKindSignatures #-}
+
+module Chapter07.Geometry.Sphere
+    where
 --------------------------------------------------------------------------------
 
 volume :: Float -> Float
