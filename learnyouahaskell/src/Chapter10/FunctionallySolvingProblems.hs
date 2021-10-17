@@ -1,4 +1,6 @@
 {-# OPTIONS_GHC -fwarn-missing-signatures #-}
+{-# OPTIONS_GHC -fwarn-unused-binds #-}
+{-# OPTIONS_GHC -fwarn-unused-imports #-}
 
 {-# LANGUAGE ExplicitForAll           #-}
 {-# LANGUAGE NoImplicitPrelude        #-}
@@ -11,7 +13,7 @@ module Chapter10.FunctionallySolvingProblems
 
 --------------------------------------------------------------------------------
 import           Control.Exception (catch)
-import           Data.Kind         (Constraint, Type)
+import           Data.Kind         (Type)
 import           Data.List
     ( concat
     , drop
@@ -35,6 +37,7 @@ import           Prelude
     , fst
     , getContents
     , log
+    , otherwise
     , print
     , putStrLn
     , read
@@ -50,7 +53,7 @@ import           Prelude
     , (/)
     , (<=)
     )
-import           System.IO.Error   (IOError (..))
+import           System.IO.Error   (IOError (..), isEOFError)
 --------------------------------------------------------------------------------
 
 main' :: IO ()
@@ -93,7 +96,8 @@ solveRPN = head . foldl foldingFunction [] . words
 
 -- |
 handler :: IOError -> IO ()
-handler e = return ()
+handler e | isEOFError e = putStrLn "EOF Error!"
+          | otherwise    = putStrLn "Woops, had some trouble!"
 
 --------------------------------------------------------------------------------
 type Node :: Type
