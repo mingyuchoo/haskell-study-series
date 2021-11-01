@@ -25,9 +25,7 @@ source-repository head
 
 library
   exposed-modules:
-      Chapter2
-      Chapter3
-      Chapter4
+      Lib
   other-modules:
       Paths_practical_haskell
   hs-source-dirs:
