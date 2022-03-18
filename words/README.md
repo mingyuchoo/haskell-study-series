@@ -14,10 +14,6 @@ nix-shell
 ```bash
 cabal new-build
 cabal run <project-name>-exe
-
-# or
-
-stack run
 ```
 
 ## Process
