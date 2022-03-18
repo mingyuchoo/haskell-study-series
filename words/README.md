@@ -1,5 +1,25 @@
 # words
 
+## How to build & run using Nix
+
+### Make Haskell environment
+
+```bash
+nix-collect-garbage
+nix-shell
+```
+
+### run commands
+
+```bash
+cabal new-build
+cabal run <project-name>-exe
+
+# or
+
+stack run
+```
+
 ## Process
 
 ### 1. Developing a Word Game
@@ -29,4 +49,10 @@
 ### 5. Unit Testing the Grid with HSpec
 17. Refactoring data out of the model
 18. Testing our functions
+
+
+## references
+
+-<https://www.srid.ca/haskell-nix>
+-<https://nixos.org/guides/nix-pills/garbage-collector.html>
 
