@@ -1,10 +1,16 @@
-module Data.String.StripSpec (spec) where
+module Data.String.StripSpec
+    ( spec
+    ) where
 
 --------------------------------------------------------------------------------
 import           Data.String.Strip
 import           Test.Hspec
 
 --------------------------------------------------------------------------------
+main :: IO ()
+main = hspec spec
+
+
 spec :: Spec
 spec = do
   describe "strip" $ do

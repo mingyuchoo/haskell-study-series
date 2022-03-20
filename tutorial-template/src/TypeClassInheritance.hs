@@ -1,7 +1,10 @@
+{-# LANGUAGE StandaloneKindSignatures #-}
 --------------------------------------------------------------------------------
-module TypeClassInheritance where
+module TypeClassInheritance
+    where
 
 --------------------------------------------------------------------------------
+import           Data.Kind  (Constraint)
 import           Data.Maybe
 
 --------------------------------------------------------------------------------
@@ -17,6 +20,7 @@ import           Data.Maybe
 -- (x) :type DataA1 String  <<error>>
 -- (o) :type DataA1 "A1" :: TypeA
 -- (o) :type fieldA11 :: TypeA -> String
+type TypeA :: *
 data TypeA  = DataA0                         -- `DataA0` is a Data Constructor
             | DataA1 { fieldA11 :: String }  -- `DataA1` is a Data Constructor
             deriving (Show)
@@ -30,6 +34,7 @@ data TypeA  = DataA0                         -- `DataA0` is a Data Constructor
 -- (o) :type fieldB11 :: TypeB a -> String
 -- (o) :type fieldB21 :: TypeB a -> a
 -- (o) :type fieldB22 :: TypeB a -> a
+type TypeB :: * -> *
 data TypeB a = DataB0                        -- `DataB0` is a Data Constructor
              | DataB1 { fieldB11 :: String } -- `DataB1` is a Data Constructor
              | DataB2 { fieldB21 :: a        -- `a` is a type variable but when fieldB22 is called,
@@ -53,6 +58,7 @@ data TypeB a = DataB0                        -- `DataB0` is a Data Constructor
 -- (o) :type fieldC41 :: TypeC a b -> String
 -- (o) :type fieldC42 :: TypeC a b -> a
 -- (o) :type fieldC43 :: TypeC a b -> b
+type TypeC :: * -> * -> *
 data TypeC a b = DataC0
                | DataC1 { fieldC11 :: String }
                | DataC2 { fieldC21 :: String
@@ -79,6 +85,7 @@ data TypeC a b = DataC0
 -- (o) :kind TypeClassA (TypeB Int) :: Constraint
 -- (o) :kind TypeClassA (TypeC Int String) :: Constraint
 -- (o) :type functionA :: TypeClassA a => a -> a
+type TypeClassA :: * -> Constraint
 class TypeClassA a where                   -- `a` is a type variable
     functionA :: a -> a
 
@@ -91,6 +98,7 @@ class TypeClassA a where                   -- `a` is a type variable
 -- (o) :kind TypeClassB (TypeB Int) :: Constraint
 -- (o) :kind TypeClassB (TypeC Int String) :: Constraint
 -- (o) :type functionB :: TypeClassB b => b -> Maybe b
+type TypeClassB :: * -> Constraint
 class (TypeClassA b) => TypeClassB b where -- `b` is a type variable
     functionB :: b -> Maybe b
 
@@ -103,6 +111,7 @@ class (TypeClassA b) => TypeClassB b where -- `b` is a type variable
 -- (o) :kind TypeClassC (TypeB Int) :: Constraint
 -- (o) :kind TypeClassC (TypeC Int String) :: Constraint
 -- (o) :type functionC :: TypeClassC c => c -> Either c c
+type TypeClassC :: * -> Constraint
 class (TypeClassB c) => TypeClassC c where -- `c` is a type variable
     functionC :: c -> Either c c
 

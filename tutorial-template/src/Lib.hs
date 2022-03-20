@@ -2,30 +2,32 @@
 
 --------------------------------------------------------------------------------
 module Lib
-    ( someFunc
-    , MyTypeConstructor(..)
-    , MyTypeClass(..)
-    , myOtherFunction
-    , Located(..)
-    , Movable(..)
-    , NamedPoint(..)
-    , move
-    , YesNo
-    , yesno
-    , yesnoIf
-    , TrafficLight(..)
-    , Checkable
-    , same
-    , checkIf
-    , Week(..)
-    , Shape(..)
-    , Mammal(..)
-    , Mammal2(..)
+    ( Checkable
+    , Located (..)
+    , Mammal (..)
+    , Mammal2 (..)
+    , Movable (..)
     , Move
+    , MyTypeClass (..)
+    , MyTypeConstructor (..)
+    , NamedPoint (..)
+    , Shape (..)
+    , TrafficLight (..)
+    , Week (..)
+    , YesNo
+    , checkIf
+    , fly
+    , move
+    , myOtherFunction
+    , same
+    , someFunc
     , swim
     , walk
-    , fly
+    , yesno
+    , yesnoIf
     ) where
+
+import           Data.Kind (Constraint)
 
 --------------------------------------------------------------------------------
 -- https://wiki.haskell.org/Constructor
@@ -33,11 +35,13 @@ module Lib
 
 -- :kind MyTypeConstructor :: *
 -- :type MyDataConstructor :: MyTypeConstructor
+type MyTypeConstructor :: *
 data MyTypeConstructor = MyDataConstructor
                        deriving (Show)
 
 -- :kind MyTypeClass :: * -> Constraint
 -- :type myTypeClassFunction :: MyTypeClass myTypeVariable => myTypeVariable -> String
+type MyTypeClass :: * -> Constraint
 class MyTypeClass myTypeVariable where
   myTypeClassFunction :: myTypeVariable -> String
 
@@ -62,12 +66,14 @@ myOtherFunction x = "MyValue"
 -- :kind Located Int         :: Constraint
 -- :kind Located (Maybe Int) :: Constraint
 -- :type getLocation :: Located a => a -> (Int, Int)
+type Located :: * -> Constraint
 class Located a where
   getLocation :: a -> (Int, Int)
 
 
 -- :kind Movable :: * -> Constraint
 -- :type setLocation :: Movable a => (Int, Int) -> a -> a
+type Movable :: * -> Constraint
 class (Located a) => Movable a where
   setLocation :: (Int, Int) -> a -> a
 
@@ -77,6 +83,7 @@ class (Located a) => Movable a where
 --            ^-- This is Type Constructor
 -- :type NamedPoint :: String -> Int -> Int -> NamedPoint
 --            ^-- This is Data Constructor
+type NamedPoint :: *
 data NamedPoint = NamedPoint { pointName :: String
                              , pointX    :: Int
                              , pointY    :: Int }
@@ -117,6 +124,7 @@ move (dx, dy) p = setLocation (x + dx, y + dy) p where
 -- 'TrafficLight' is a `type constructor` if has zero arguments just called a `type`
 -- 'Red',...      are `data(value) constructors` if has zero arguments just called a `constant`
 --
+type TrafficLight :: *
 data TrafficLight = Red
                   | Amber
                   | Green
@@ -126,6 +134,7 @@ data TrafficLight = Red
 -- 'Checkable' is a `type class` or just a `class`
 -- 'a'         is a `type variable`
 --
+type Checkable :: * -> Constraint
 class Checkable a where
     same :: a -> a -> Bool
 
@@ -148,6 +157,7 @@ checkIf x y  = same x y                         -- 'x', 'y' are `bind variables`
 
 --------------------------------------------------------------------------------
 
+type YesNo :: * -> Constraint
 class YesNo a where
   yesno :: a -> Bool
 
@@ -211,11 +221,13 @@ yesnoIf yesnoVal yesResult noResult = if yesno yesnoVal
 
 -- 'Mammal'  is a `type constructor` if has zero arguments just called a `type`
 -- 'Bat',... are `data(value) constructors` if has zero arguments just called a `constant`
+type Mammal :: *
 data Mammal = Bat
             | Dolphin
             | Elephant
             | Human
 
+type Mammal2 :: *
 data Mammal2 = Bat2
             | Dolphin2
             | Elephant2
@@ -226,6 +238,7 @@ data Mammal2 = Bat2
 -- 'Move' is a `type class` or just a `class`
 -- 'a'    is a `type variable`
 --
+type Move :: * -> Constraint
 class Move a where
   swim :: a -> Bool
   walk :: a -> Bool
@@ -276,6 +289,7 @@ instance Move Mammal2 where
 -- 'Week'       is a `type constructor` if has zero arguments just called a `type`
 -- 'Monday',... are `data(value) constructors` if has zero arguments just called a `constant`
 --
+type Week :: *
 data Week = Sunday
           | Monday
           | Tuesday
@@ -290,6 +304,7 @@ data Week = Sunday
 -- 'Shape'      is a `type constructor` if has zero arguments just called a `type`
 -- 'Circle',... are `data(value) constructors` if has zero arguments just called a `constant`
 --
+type Shape :: *
 data Shape = Circle    Float Float Float
            | Rectangle Float Float Float Float
 

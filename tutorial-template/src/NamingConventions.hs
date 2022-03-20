@@ -1,9 +1,13 @@
-{-# LANGUAGE FlexibleContexts     #-}
-{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE FlexibleContexts         #-}
+{-# LANGUAGE StandaloneKindSignatures #-}
+{-# LANGUAGE UndecidableInstances     #-}
 --------------------------------------------------------------------------------
-module NamingConventions where
+module NamingConventions
+    where
 
+import           Data.Kind (Constraint)
 --------------------------------------------------------------------------------
+type Dollars :: *
 newtype Dollars = Dollars Int
 
 instance (Num Int) => Num Dollars where        -- `Num Int =>` needs `FlexibleContexts` pragma
@@ -12,7 +16,7 @@ instance (Num Int) => Num Dollars where        -- `Num Int =>` needs `FlexibleCo
   --   because we didn't implement all of functions
 
 --------------------------------------------------------------------------------
-
+type MyTypeConstructor :: * -> *
 data MyTypeConstructor a = MyDataConstructor a
 
 
@@ -20,6 +24,7 @@ data MyTypeConstructor a = MyDataConstructor a
 -- :kind MyTypeClass Int :: Constraint
 -- :kind MyTypeClass MyTypeConstructor :: Constraint
 -- :type name :: MyTypeClass a => a -> String
+type MyTypeClass :: * -> Constraint
 class MyTypeClass b where
   name :: b -> String
 
@@ -44,4 +49,3 @@ solution = do
 --  print $ name (MyDataConstructor "Haskell")
   print $ 100 + 200
   print $ (+) 100 200
-
