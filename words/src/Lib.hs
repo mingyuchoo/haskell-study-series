@@ -1,55 +1,107 @@
+{-# LANGUAGE StandaloneKindSignatures #-}
+
 module Lib
-    ( findWord
+    ( Cell (Cell, Indent)
+    , cell2char
+    , findWord
+    , findWordInCellLinePrefix
     , findWordInLine
     , findWords
     , formatGrid
+    , gridWithCoords
     , outputGrid
     , skew
+    , zipOverGrid
+    , zipOverGridWith
     ) where
 
+import           Data.Kind  ()
 import           Data.List  (isInfixOf, transpose)
-import           Data.Maybe (catMaybes)
+import           Data.Maybe (catMaybes, listToMaybe)
+import           Flow       ((<|))
 import           Prelude    hiding (Word)
 
-type Grid = [String]
+type Cell :: *
+data Cell = Cell (Int, Int) Char
+          | Indent
+          deriving (Eq, Ord, Show)
+
+type Grid :: * -> *
+type Grid a = [[a]]
+
+type Word :: *
 type Word = String
 
-outputGrid :: Grid -> IO ()
-outputGrid grid = putStrLn $ formatGrid grid
+zipOverGrid :: Grid a -> Grid b -> Grid (a,b)
+zipOverGrid = zipWith zip
 
-formatGrid :: Grid -> Word
-formatGrid = unlines
+zipOverGridWith :: (a -> b -> c) -> Grid a -> Grid b -> Grid c
+zipOverGridWith = zipWith . zipWith
+-- /==/ zipOverGridWith f a b = (zipWith (zipWith f)) a b
+
+coordsGrid :: Grid (Int, Int)
+coordsGrid =
+  let rows = map repeat [0..]
+      cols = repeat [0..]
+  in zipOverGrid rows cols
+
+gridWithCoords :: Grid Char -> Grid Cell
+gridWithCoords grid = zipOverGridWith Cell coordsGrid grid
 
 
-getLines :: Grid -> [String]
+outputGrid :: Grid Cell -> IO ()
+outputGrid = putStrLn . formatGrid
+
+mapOverGrid :: (a -> b) -> Grid a -> Grid b
+mapOverGrid = map . map
+
+formatGrid :: Grid Cell -> Word
+formatGrid = unlines . mapOverGrid cell2char
+
+
+cell2char :: Cell -> Char
+cell2char (Cell _ c) = c
+cell2char Indent     =  '?'
+
+
+getLines :: Grid Cell -> [[Cell]]
 getLines grid =
   let horizontal = grid
       vertical = transpose grid
       diagonal1 = diagonalize grid
       diagonal2 = diagonalize (map reverse grid)
       lines = horizontal ++ vertical ++ diagonal1 ++ diagonal2
-  in lines ++ (map reverse lines)
+  in lines ++ map reverse lines
 
-diagonalize :: Grid -> Grid
+diagonalize :: Grid Cell -> Grid Cell
 diagonalize = transpose . skew
 
-skew :: Grid -> Grid
+skew :: Grid Cell -> Grid Cell
 skew [] = []
 skew (l:ls) = l : skew (map indent ls)
   where
-    indent line = '_' : line
+    indent line = Indent : line
 
-findWord :: Grid -> Word -> Maybe Word
+findWord :: Grid Cell -> Word -> Maybe [Cell]
 findWord grid word =
   let lines = getLines grid
-      found = or $ map (findWordInLine word) lines
-  in if found then Just word else Nothing
+      foundWords = map (findWordInLine word) lines
+  in listToMaybe (catMaybes foundWords)
 
-findWords :: Grid -> [Word] -> [Word]
+findWords :: Grid Cell -> [Word] -> [[Cell]]
 findWords grid words =
   let foundWords = map (findWord grid) words
   in catMaybes foundWords
 
-findWordInLine :: Word -> String -> Bool
-findWordInLine = isInfixOf
+findWordInLine :: Word -> [Cell] -> Maybe [Cell]
+findWordInLine _ [] = Nothing
+findWordInLine word line =
+  let found = findWordInCellLinePrefix [] word line
+  in case found of
+    Nothing     -> findWordInLine word (tail line)
+    cs@(Just _) -> cs
 
+findWordInCellLinePrefix :: [Cell] -> String -> [Cell] -> Maybe [Cell]
+findWordInCellLinePrefix acc (x:xs) (c:cs) | x == cell2char c = findWordInCellLinePrefix (c:acc) xs cs
+findWordInCellLinePrefix acc [] _                             = Just <| reverse acc
+findWordInCellLinePrefix  _ _ _                               = Nothing
