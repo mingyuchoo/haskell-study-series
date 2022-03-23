@@ -6,18 +6,22 @@ module NamingConventions
     where
 
 import           Data.Kind (Constraint)
+import           Flow      ((<|))
 --------------------------------------------------------------------------------
 type Dollars :: *
 newtype Dollars = Dollars Int
 
-instance (Num Int) => Num Dollars where        -- `Num Int =>` needs `FlexibleContexts` pragma
+instance (Num Int) => Num Dollars where
+  abs (Dollars a) = Dollars (abs a)
+  negate (Dollars a) = Dollars (negate a)
   Dollars a + Dollars b = Dollars (a + b)
-  -- this needs `UndecidableInstances` pragma
-  --   because we didn't implement all of functions
+  Dollars a * Dollars b = Dollars (a * b)
+  signum = undefined
+  fromInteger = undefined
 
 --------------------------------------------------------------------------------
 type MyTypeConstructor :: * -> *
-data MyTypeConstructor a = MyDataConstructor a
+newtype MyTypeConstructor a = MyDataConstructor a
 
 
 -- :kind MyTypeClass :: * -> Constraint
@@ -25,8 +29,8 @@ data MyTypeConstructor a = MyDataConstructor a
 -- :kind MyTypeClass MyTypeConstructor :: Constraint
 -- :type name :: MyTypeClass a => a -> String
 type MyTypeClass :: * -> Constraint
-class MyTypeClass b where
-  name :: b -> String
+class MyTypeClass a where
+  name :: a -> String
 
 
 -- :type name :: MyTypeClass a => a -> String
@@ -34,18 +38,3 @@ class MyTypeClass b where
 instance (MyTypeClass a) => MyTypeClass (MyTypeConstructor a) where
   name (MyDataConstructor x) = "Instance of MyClassType"
 
-
---------------------------------------------------------------------------------
-func :: p -> p
-func x  = x
-
-func' :: p -> p
-func' y = y
-
-
---------------------------------------------------------------------------------
-solution :: IO ()
-solution = do
---  print $ name (MyDataConstructor "Haskell")
-  print $ 100 + 200
-  print $ (+) 100 200
