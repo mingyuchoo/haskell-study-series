@@ -21,19 +21,19 @@ description:         Please see the README on GitHub at <https://github.com/ming
 
 dependencies:
 - base >= 4.7 && < 5
+- flow
 
 library:
   source-dirs: src
 
 executables:
-  words:
+  words-exe:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
-    - -dynamic
     dependencies:
     - words
 
@@ -45,7 +45,6 @@ tests:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
-    - -dynamic
     dependencies:
     - words
     - hspec

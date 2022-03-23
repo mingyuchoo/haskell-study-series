@@ -1,8 +1,11 @@
 module Main
     where
 
-import           Data (grid)
-import           Lib  (outputGrid)
+import           Data
+import           Lib
 
 main :: IO ()
-main = outputGrid grid
+main =
+  let gwc = gridWithCoords grid
+  in outputGrid gwc
+ 

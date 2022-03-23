@@ -1,8 +1,9 @@
 module Example
     where
 
-import Control.Monad (guard)
-import Data (grid)
+import           Control.Monad (guard)
+import           Data          (grid)
+import           Flow
 
 coords :: [[(Integer, Integer)]]
 coords = [ [(0,0),(0,1),(0,2),(0,3),(0,4),(0,5),(0,6),(0,7)]
@@ -36,7 +37,7 @@ rows :: [[Integer]]
 rows = map repeat [0..]
 
 coordsInf :: [[(Integer, Integer)]]
-coordsInf = zipOverGrid rows cols
+coordsInf = undefined -- zipOverGrid rows cols
 
 repeat8 :: a -> [a]
 repeat8 = take 8 . repeat
@@ -47,11 +48,9 @@ cols8 = repeat8 [0..7]
 rows8 :: [[Integer]]
 rows8 = map repeat8 [0..7]
 
-zipOverGrid :: [[a]] -> [[b]] -> [[(a, b)]]
-zipOverGrid = zipWith zip
 
 grid8 :: [[(Integer, Integer)]]
-grid8 = zipOverGrid rows8 cols8
+grid8 = undefined -- zipOverGrid rows8 cols8
 
 foo1 :: Maybe String
 foo1 = Just 3 >>= (\x ->
