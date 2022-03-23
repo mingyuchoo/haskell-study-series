@@ -2,16 +2,23 @@
 
 module Lib
     ( Cell (Cell, Indent)
+    , Game (gameGrid, gameWords)
     , Grid
     , cell2char
+    , completed
     , findWord
     , findWordInCellLinePrefix
     , findWordInLine
     , findWords
+    , formatGame
     , formatGrid
     , gridWithCoords
+    , makeGame
     , outputGrid
+    , playGame
+    , score
     , skew
+    , totalWords
     , zipOverGrid
     , zipOverGridWith
     ) where
@@ -22,6 +29,12 @@ import           Data.Maybe (catMaybes, listToMaybe)
 import           Flow       ((<|))
 import           Prelude    hiding (Word)
 
+import qualified Data.Map   as M
+
+type Game :: *
+data Game = Game { gameGrid  :: Grid Cell
+                 , gameWords :: M.Map String (Maybe [Cell])
+                 } deriving (Show)
 type Cell :: *
 data Cell = Cell (Int, Int) Char
           | Indent
@@ -32,6 +45,47 @@ type Grid a = [[a]]
 
 type Word :: *
 type Word = String
+
+
+makeGame :: Grid Char -> [String] -> Game
+makeGame grid words =
+  let gwc = gridWithCoords grid
+      tuplify word = (word, Nothing)
+      list = map tuplify words
+      dict = M.fromList list
+  in Game gwc dict
+
+totalWords :: Game -> Int
+totalWords game = length . M.keys  <| gameWords game
+
+score :: Game -> Int
+score game = length . catMaybes . M.elems  <| gameWords game
+
+completed :: Game -> Bool
+completed game = score game == totalWords game
+
+playGame :: Game -> String -> Game
+playGame game word | not $ M.member word (gameWords game) = game
+playGame game word =
+  let grid = gameGrid game
+      foundWord = findWord grid word
+  in case foundWord of
+      Nothing -> game
+      Just cs ->
+        let dict = gameWords game
+            newDict = M.insert word foundWord dict
+        in game { gameWords = newDict }
+
+
+formatGame :: Game -> String
+formatGame game =
+  let grid = gameGrid game
+  in formatGrid grid
+     ++ "\n\n"
+     ++ (show <| score game)
+     ++ "/"
+     ++ (show <| totalWords game)
+
 
 zipOverGrid :: Grid a -> Grid b -> Grid (a,b)
 zipOverGrid = zipWith zip
