@@ -2,6 +2,7 @@
 
 module Lib
     ( Cell (Cell, Indent)
+    , Grid
     , cell2char
     , findWord
     , findWordInCellLinePrefix
@@ -16,7 +17,7 @@ module Lib
     ) where
 
 import           Data.Kind  ()
-import           Data.List  (isInfixOf, transpose)
+import           Data.List  (transpose)
 import           Data.Maybe (catMaybes, listToMaybe)
 import           Flow       ((<|))
 import           Prelude    hiding (Word)
@@ -37,7 +38,7 @@ zipOverGrid = zipWith zip
 
 zipOverGridWith :: (a -> b -> c) -> Grid a -> Grid b -> Grid c
 zipOverGridWith = zipWith . zipWith
--- /==/ zipOverGridWith f a b = (zipWith (zipWith f)) a b
+-- /== zipOverGridWith f a b = (zipWith (zipWith f)) a b
 
 coordsGrid :: Grid (Int, Int)
 coordsGrid =
@@ -46,7 +47,7 @@ coordsGrid =
   in zipOverGrid rows cols
 
 gridWithCoords :: Grid Char -> Grid Cell
-gridWithCoords grid = zipOverGridWith Cell coordsGrid grid
+gridWithCoords = zipOverGridWith Cell coordsGrid
 
 
 outputGrid :: Grid Cell -> IO ()

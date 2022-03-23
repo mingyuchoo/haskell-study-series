@@ -2,8 +2,7 @@ module Example
     where
 
 import           Control.Monad (guard)
-import           Data          (grid)
-import           Flow
+import           Flow          ()
 
 coords :: [[(Integer, Integer)]]
 coords = [ [(0,0),(0,1),(0,2),(0,3),(0,4),(0,5),(0,6),(0,7)]

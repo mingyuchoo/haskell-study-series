@@ -1,13 +1,22 @@
-import           Data
-import           Lib
-import           Test.Hspec
+import           Data (grid, languages)
+import           Lib ( cell2char
+                     , findWord
+                     , findWords
+                     , formatGrid
+                     , gridWithCoords
+                     , Cell
+                     , Grid
+                     )
+import           Test.Hspec (hspec, describe, it, shouldBe)
 
+gwc :: Grid Cell
 gwc = gridWithCoords grid
 
+testFindWord :: String -> IO ()
 testFindWord word =
-  let (Just result) = findWord gwc word
-      string = map cell2char result
-  in string `shouldBe` word
+  case findWord gwc word of
+    Nothing       -> return ()
+    (Just result) -> map cell2char result `shouldBe` word
 
 
 main :: IO ()
