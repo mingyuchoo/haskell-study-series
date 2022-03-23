@@ -1,18 +1,32 @@
 module Main
     where
 
-import           Data
-import           Flow
+import           Data          (grid, languages)
+import           Flow          ((<|))
 import           Lib
-import           System.IO
+    ( Game
+    , completed
+    , fillInBlanks
+    , formatGame
+    , makeGame
+    , playGame
+    )
+import           System.IO     (BufferMode (NoBuffering), hSetBuffering, stdout)
+import           System.Random (newStdGen)
 
+-- |
+--
 main :: IO ()
 main = do
-  let game = makeGame grid languages
+  gen <- newStdGen
+  let filledInGrid = fillInBlanks gen grid
+      game = makeGame filledInGrid languages
   hSetBuffering stdout NoBuffering
   playTurn game
 
 
+-- |
+--
 playTurn :: Game -> IO ()
 playTurn game = do
   putStrLn . formatGame <| game
