@@ -14,8 +14,14 @@ import           Chapter11.FunctorsApplicativeFunctorsAndMonoids
 import           Chapter12.AFistfulOfMonads
 import           Chapter13.ForAFewMonadsMore
 import           Lib
+import           System.IO
+    ( BufferMode (NoBuffering)
+    , hSetBuffering
+    , stdout
+    )
 --------------------------------------------------------------------------------
 main :: IO ()
 main = do
-    print "------------------------"
+  hSetBuffering stdout NoBuffering
+  print "------------------------"
 --------------------------------------------------------------------------------
