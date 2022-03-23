@@ -8,4 +8,3 @@ main :: IO ()
 main =
   let gwc = gridWithCoords grid
   in outputGrid gwc
- 
