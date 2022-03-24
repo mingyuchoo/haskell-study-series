@@ -2,7 +2,7 @@ module MyPrelude
     where
 
 --------------------------------------------------------------------------------
-import           Data.List ()
+import           Data.List (unzip)
 import           Flow      ()
 
 --------------------------------------------------------------------------------
@@ -54,6 +54,15 @@ reverse2 []   = []
 -- reverse2 (x:y:z:w:[]) = (w:z:y:x:[])
 reverse2 list = last list : reverse2 (init list)
 
+
+transpose1 :: [[a]] -> [[a]]
+transpose1 [] = []
+transpose1 ([] : xss) = transpose1 xss
+transpose1 ((x : xs) : xss) = combine x hds xs tls
+  where
+    (hds, tls) = unzip [(hd, tl) | hd : tl <- xss]
+    combine y h ys t = (y:h) : transpose1 (ys:t)
+    {-# NOINLINE combine #-}
 --------------------------------------------------------------------------------
 
 -- | head1
