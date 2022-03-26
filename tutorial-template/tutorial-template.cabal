@@ -25,6 +25,7 @@ source-repository head
 
 library
   exposed-modules:
+      BinaryTree
       Data.String.Strip
       Lib
       MyPrelude
