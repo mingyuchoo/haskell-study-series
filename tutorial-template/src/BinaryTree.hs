@@ -3,53 +3,267 @@
 module BinaryTree
     where
 
-import           Data.Kind ()
-import           Flow      ()
+import           Data.Kind   ()
+import           Data.Maybe  ()
+import           Debug.Trace (trace, traceShow)
+import           Flow        ()
+
+-- |
+--
+--
+f :: (Num a, Show a) => a -> a
+f x = traceShow ("before: " <> show x <> ", after: " <> show result) result
+  where
+    result = x + 1
+
+-- |
+--
+--
+g :: String -> String
+g x = trace ("DEBUG: reverse" <> show x) (reverse x)
+
+
+-- |
+--
+--
+length' :: [a] -> Int
+length' []     = 0
+length' (x:xs) = 1 + length' xs
+
+-- |
+--
+--
+reverse' :: [a] -> [a]
+reverse' []   = []
+reverse' list = last list : reverse' (init list)
+
+-- |
+--
+--
+head' :: [a] -> a
+head' []     = error "head': empty list"
+head' (x:xs) = x
+
+-- |
+--
+--
+tail' :: [a] -> [a]
+tail' []     = error "tail': empty list"
+tail' (x:[]) = []
+tail' (x:xs) = xs
+
+-- |
+--
+--
+init' :: [a] -> [a]
+init' []     = error "init': empty list"
+init' (x:[]) = []
+init' (x:xs) = x : init' xs
+
+-- |
+--
+--
+last' :: [a] -> a
+last' []     = error "last': empty list"
+last' (x:[]) = x
+last' (x:xs) = last' xs
+
+
+-- |
+--
+--
+take' :: Int -> [a] -> [a]
+take' _ [] = []
+take' n (x:xs) | n > 0 = x : take' (n-1) xs
+               | otherwise = []
+
+-- |
+--
+--
+drop' :: Int -> [a] -> [a]
+drop' _ [] = []
+drop' n (x:xs) | n > 0 = drop' (n-1) xs
+               | otherwise = x:xs
+
+
+-- |
+--
+--
+insert' :: (Ord a) => a -> [a] -> [a]
+insert' v [] = [v]
+insert' v list@(x:xs) | v < x = v : list
+                         | otherwise = x : insert' v xs
+
+
+-- |
+--
+--
+isort :: (Ord a) => [a] -> [a]
+isort []          = []
+isort [x]         = [x]
+isort list@(x:xs) = insert' x (isort xs)
+
+
+-- |
+--
+--
+merge' :: (Ord a) => [a] -> [a] -> [a]
+merge' [] second = second
+merge' first [] = first
+merge' first@(x:xs) second@(y:ys) | x < y = x : merge' xs second
+                                  | otherwise = y : merge' first ys
+
+
+-- |
+--
+--
+msort :: (Ord a) => [a] -> [a]
+msort [] = []
+msort [x] = [x]
+msort list@(x:xs) = merge' (msort l) (msort r)
+  where
+    half  = div (length list) 2
+    l  = take half list
+    r = drop half list
+
+-- -----------------------------------------------------------------------------
+
+-- |
+--
+--
+(-:) :: a -> (a -> b) -> b
+(-:) x f = f x
+
 
 -- |
 --
 --
 type Tree :: * -> *
-data Tree a = Leaf
-            | Branch a (Tree a) (Tree a)
+data Tree a = Empty
+            | Node a (Tree a) (Tree a)
             deriving (Show)
 
 -- |
 --
 --
-tree1 :: Tree Int
-tree1 = Branch 8
-         (Branch 3
-            (Branch 1 Leaf Leaf)
-            (Branch 6
-              (Branch 4 Leaf Leaf)
-              (Branch 7 Leaf Leaf)))
-         (Branch 10
-            (Branch 9 Leaf Leaf)
-            (Branch 14
-              (Branch 13 Leaf Leaf)
-              Leaf))
+t0 :: Tree Char
+t0 =
+   Node 'P'
+     (Node 'O'
+       (Node 'L'
+         (Node 'N' Empty Empty)
+         (Node 'T' Empty Empty))
+       (Node 'Y'
+         (Node 'S' Empty Empty)
+         (Node 'A' Empty Empty)))
+     (Node 'L'
+       (Node 'W'
+         (Node 'C' Empty Empty)
+         (Node 'R' Empty Empty))
+       (Node 'A'
+         (Node 'A' Empty Empty)
+         (Node 'C' Empty Empty)))
+
+-- |
+--
+--
+t1 :: Tree Int
+t1 = Node 8
+         (Node 3
+            (Node 1 Empty Empty)
+            (Node 6
+              (Node 4 Empty Empty)
+              (Node 7 Empty Empty)))
+         (Node 10
+            (Node 9 Empty Empty)
+            (Node 14
+              (Node 13 Empty Empty)
+              Empty))
+
+-- |
+--
+--
+t2 :: Tree Int
+t2 = Node 0
+          (Node 1
+            (Node 3
+              (Node 7 Empty Empty)
+              (Node 8 Empty Empty))
+            (Node 4
+              (Node 9 Empty Empty)
+              (Node 10 Empty Empty)))
+          (Node 2
+            (Node 5
+              (Node 11 Empty Empty)
+              Empty)
+            (Node 6 Empty Empty))
+-- |
+--
+--
+type Crumb :: * -> *
+data Crumb a = LCrumb a (Tree a)
+             | RCrumb a (Tree a)
+             deriving (Show)
+
+-- |
+--
+type Breadcrumbs :: * -> *
+type Breadcrumbs a = [Crumb a]
+
+-- |
+--
+--
+type Zipper :: * -> *
+type Zipper a = (Tree a, Breadcrumbs a)
+
+
+-- |
+--
+--
+singleton :: (Ord a, Show a) => a -> Tree a
+singleton v = Node v Empty Empty
+
+-- |
+--
+--
+insert :: (Ord a, Show a) => a -> Tree a -> Tree a
+insert x Empty = singleton x
+insert x (Node v l r) | x == v = Node v l r
+                             | x <  v = Node v (insert x l) r
+                             | x >  v = Node v l (insert x r)
+                             | otherwise = Node v l r
+
+-- |
+--
+--
+elemT :: (Ord a, Show a) => a -> Tree a -> Bool
+elemT x Empty = False
+elemT x (Node v l r) | x == v = True
+                               | x <  v = elemT x l
+                               | x >  v = elemT x r
+                               | otherwise = False
+
 
 -- |
 --
 --
 size :: Tree a -> Int
-size Leaf           = 0
-size (Branch _ l r) = 1 + size l + size r
+size Empty        = 0
+size (Node _ l r) = 1 + size l + size r
 
 -- |
 --
 --
 total :: (Num a) => Tree a -> a
-total Leaf           = 0
-total (Branch x l r) = x + total l + total r
+total Empty        = 0
+total (Node v l r) = v + total l + total r
 
 -- |
 --
 --
 maxDepth :: Tree a -> Int
-maxDepth Leaf           = 0
-maxDepth (Branch _ l r) = 1 + max' (maxDepth l) (maxDepth r)
+maxDepth Empty           = 0
+maxDepth (Node _ l r) = 1 + max' (maxDepth l) (maxDepth r)
   where
     max' :: Ord a => a -> a -> a
     max' x y | x > y     = x
@@ -58,44 +272,84 @@ maxDepth (Branch _ l r) = 1 + max' (maxDepth l) (maxDepth r)
 -- |
 --
 --
-toList :: Tree a -> [a]
-toList Leaf           = []
-toList (Branch x l r) = toList l ++ [x] ++ toList r
+preOrder :: (Ord a, Show a) => Tree a -> [a]
+preOrder Empty        = []
+preOrder (Node v l r) = v : preOrder l <> preOrder r
+
+
+-- |
+--
+--
+inOrder :: (Ord a, Show a) => Tree a -> [a]
+inOrder Empty        = []
+inOrder (Node v l r) = inOrder l <> [v] <> inOrder r
+
+-- |
+--
+--
+postOrder :: (Ord a, Show a) => Tree a -> [a]
+postOrder Empty        = []
+postOrder (Node v l r) = postOrder l <> postOrder r <> [v]
+
+-- |
+--
+--
+levelOrder :: (Ord a, Show a) => Tree a -> [a]
+levelOrder t = traversal [t]
+
+traversal :: [Tree a] -> [a]
+traversal []                    = []
+traversal [Empty]               = []
+traversal (Empty : xs)          = traversal xs
+traversal (x@(Node v l r) : xs) = v : traversal (xs <> [l, r])
 
 -- |
 --
 --
 map' :: (a -> b) -> Tree a -> Tree b
-map' _ Leaf           = Leaf
-map' f (Branch x l r) = Branch (f x) (map' f l) (map' f r)
-
-tree2 :: Tree (Int,String)
-tree2 = Branch (8,"8")
-         (Branch (3,"3")
-            (Branch (1,"1") Leaf Leaf)
-            (Branch (6,"6")
-              (Branch (4,"4") Leaf Leaf)
-              (Branch (7,"7") Leaf Leaf)))
-         (Branch (10,"10")
-            (Branch (9,"9") Leaf Leaf)
-            (Branch (14,"14")
-              (Branch (13,"13") Leaf Leaf)
-              Leaf))
--- |
---
---
-lookup' :: (Ord a) => Tree (a,b) -> a -> Maybe b
-lookup' Leaf _ = Nothing
-lookup' (Branch (k',v') l r) k | k == k'   = Just v'
-                               | k < k'    = lookup' l k
-                               | k > k'    = lookup' r k
-                               | otherwise = Nothing
+map' _ Empty        = Empty
+map' f (Node v l r) = Node (f v) (map' f l) (map' f r)
 
 -- |
 --
 --
-insert :: Ord a => Tree (a,b) -> a -> b -> Tree (a,b)
-insert Leaf k v = Branch (k,v) Leaf Leaf
-insert (Branch (k',v') l r) k v | k < k'    = Branch (k',v') (insert l k v)  r
-                                | k > k'    = Branch (k',v') l (insert r k v)
-                                | otherwise = Branch (k,v) l r
+modify :: (a -> a) -> Zipper a -> Zipper a
+modify f (Empty, breadcrumbs)      = (Empty, breadcrumbs)
+modify f (Node v l r, breadcrumbs) = (Node (f v) l r, breadcrumbs)
+
+
+-- |
+--
+--
+attach :: Tree a -> Zipper a -> Zipper a
+attach t (_, breadcrumbs) = (t, breadcrumbs)
+
+-- |
+--
+--
+goL :: Zipper a -> Zipper a
+goL (Empty, _)                = (Empty, [])
+goL (Node v l r, breadcrumbs) = (l, LCrumb v r:breadcrumbs)
+
+-- |
+--
+--
+goR :: Zipper a -> Zipper a
+goR (Empty, _)                = (Empty, [])
+goR (Node v l r, breadcrumbs) = (r, RCrumb v l:breadcrumbs)
+
+-- |
+--
+--
+goUp :: Zipper a -> Zipper a
+goUp (Empty, _)                  = (Empty, [])
+goUp (_, [])                     = (Empty, [])
+goUp (t, LCrumb v r:breadcrumbs) = (Node v t r, breadcrumbs)
+goUp (t, RCrumb v l:breadcrumbs) = (Node v l t, breadcrumbs)
+
+-- |
+--
+--
+topMost :: Zipper a -> Zipper a
+topMost (t, []) = (t, [])
+topMost zipper  = topMost (goUp zipper)
