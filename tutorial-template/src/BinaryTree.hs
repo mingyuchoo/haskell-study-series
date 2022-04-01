@@ -3,10 +3,11 @@
 module BinaryTree
     where
 
-import           Data.Kind   ()
-import           Data.Maybe  ()
-import           Debug.Trace (trace, traceShow)
-import           Flow        ()
+import           Control.Monad (guard)
+import           Data.Kind     ()
+import           Data.Maybe    ()
+import           Debug.Trace   (trace, traceShow)
+import           Flow          ()
 
 -- |
 --
@@ -125,6 +126,30 @@ msort list@(x:xs) = merge' (msort l) (msort r)
     half  = div (length list) 2
     l  = take half list
     r = drop half list
+
+
+-- |
+--
+--
+qsort :: (Ord a) => [a] -> [a]
+qsort [] = []
+qsort list@(x:xs) = qsort small <> mid <> qsort large
+  where
+    small = [y | y <- xs,   y <  x]
+    mid   = [y | y <- list, y == x]
+    large = [y | y <- xs,   y >  x]
+
+
+-- |
+--
+--
+qsort' :: (Ord a) => [a] -> [a]
+qsort' [] = []
+qsort' list@(x:xs) = qsort' small <> mid <> qsort' large
+  where
+    small = do { y <- xs;   guard (y <  x); return y }
+    mid   = do { y <- list; guard (y == x); return y }
+    large = do { y <- xs;   guard (y >  x); return y }
 
 -- -----------------------------------------------------------------------------
 
