@@ -20,16 +20,14 @@ extra-source-files:
 description: Please see the README on GitHub at <https://github.com/githubuser/learnyouahaskell#readme>
 
 dependencies:
-  - base >= 4.7 && < 5
-  - bytestring
-  - containers
-  - directory
-  - random
-  - mtl
-  - hspec
-  - doctest
-  - doctest-discover
-
+- base >= 4.7 && < 5
+- bytestring
+- containers
+- directory
+- flow
+- mtl
+- parallel
+- random
 
 library:
   source-dirs: src
@@ -39,19 +37,24 @@ executables:
     main: Main.hs
     source-dirs: app
     ghc-options:
-      - -threaded
-      - -rtsopts
-      - -with-rtsopts=-N4
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N4
     dependencies:
-      - learnyouahaskell
+    - learnyouahaskell
 
 tests:
   learnyouahaskell-test:
     main: Spec.hs
     source-dirs: test
     ghc-options:
-      - -threaded
-      - -rtsopts
-      - -with-rtsopts=-N4
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N4
     dependencies:
-      - learnyouahaskell
+    - learnyouahaskell
+    - hspec
+    - doctest
+    - doctest-discover

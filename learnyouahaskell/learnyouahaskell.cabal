@@ -50,10 +50,9 @@ library
     , bytestring
     , containers
     , directory
-    , doctest
-    , doctest-discover
-    , hspec
+    , flow
     , mtl
+    , parallel
     , random
   default-language: Haskell2010
 
@@ -63,17 +62,16 @@ executable learnyouahaskell-exe
       Paths_learnyouahaskell
   hs-source-dirs:
       app
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N4
+  ghc-options: -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base >=4.7 && <5
     , bytestring
     , containers
     , directory
-    , doctest
-    , doctest-discover
-    , hspec
+    , flow
     , learnyouahaskell
     , mtl
+    , parallel
     , random
   default-language: Haskell2010
 
@@ -87,7 +85,7 @@ test-suite learnyouahaskell-test
       Paths_learnyouahaskell
   hs-source-dirs:
       test
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N4
+  ghc-options: -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base >=4.7 && <5
     , bytestring
@@ -95,8 +93,10 @@ test-suite learnyouahaskell-test
     , directory
     , doctest
     , doctest-discover
+    , flow
     , hspec
     , learnyouahaskell
     , mtl
+    , parallel
     , random
   default-language: Haskell2010

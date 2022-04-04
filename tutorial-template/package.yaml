@@ -21,7 +21,9 @@ description:         Please see the README on GitHub at <https://github.com/ming
 
 dependencies:
 - base >= 4.7 && < 5
+- containers
 - flow
+- parallel
 
 library:
   source-dirs: src
@@ -31,10 +33,10 @@ executables:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
+    - -dynamic
     - -threaded
     - -rtsopts
-    - -with-rtsopts=-N
-    - -dynamic
+    - -with-rtsopts=-N4
     dependencies:
     - tutorial-template
 
@@ -43,10 +45,11 @@ tests:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
+    - -dynamic
     - -threaded
     - -rtsopts
-    - -with-rtsopts=-N
-    - -dynamic
+    - -with-rtsopts=-N4
+
     dependencies:
     - tutorial-template
     - hspec

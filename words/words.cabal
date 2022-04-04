@@ -36,6 +36,7 @@ library
       base >=4.7 && <5
     , containers
     , flow
+    , parallel
     , random
   default-language: Haskell2010
 
@@ -45,11 +46,12 @@ executable words-exe
       Paths_words
   hs-source-dirs:
       app
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base >=4.7 && <5
     , containers
     , flow
+    , parallel
     , random
     , words
   default-language: Haskell2010
@@ -61,12 +63,14 @@ test-suite words-test
       Paths_words
   hs-source-dirs:
       test
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base >=4.7 && <5
     , containers
     , flow
     , hspec
+    , hspec-discover
+    , parallel
     , random
     , words
   default-language: Haskell2010
