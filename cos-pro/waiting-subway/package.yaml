@@ -7,8 +7,8 @@ maintainer: "example@example.com"
 copyright: "2021 Author name here"
 
 extra-source-files:
-  - README.md
-  - ChangeLog.md
+- README.md
+- ChangeLog.md
 
 # Metadata used when publishing your package
 # synopsis:            Short description of your package
@@ -21,9 +21,9 @@ description: Please see the README on GitHub at <https://github.com/githubuser/w
 
 dependencies:
 - base >= 4.7 && < 5
-- hspec
-- doctest
-- doctest-discover
+- containers
+- flow
+- parallel
 
 library:
   source-dirs: src
@@ -33,19 +33,24 @@ executables:
     main: Main.hs
     source-dirs: app
     ghc-options:
-      - -threaded
-      - -rtsopts
-      - -with-rtsopts=-N
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N4
     dependencies:
-      - waiting-subway
+    - waiting-subway
 
 tests:
   waiting-subway-test:
     main: Spec.hs
     source-dirs: test
     ghc-options:
-      - -threaded
-      - -rtsopts
-      - -with-rtsopts=-N
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N4
     dependencies:
-      - waiting-subway
+    - waiting-subway
+    - doctest
+    - doctest-discover
+    - hspec
