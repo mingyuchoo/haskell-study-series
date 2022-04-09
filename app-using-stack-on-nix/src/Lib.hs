@@ -1,7 +1,9 @@
 module Lib
-    ( someFunc
-    ) where
+     where
 
+-- |
+--
+--
 someFunc :: IO ()
 someFunc = do
     _ <- putStrLn "----------------------"

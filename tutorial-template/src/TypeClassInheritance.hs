@@ -1,13 +1,13 @@
 {-# LANGUAGE StandaloneKindSignatures #-}
---------------------------------------------------------------------------------
+
 module TypeClassInheritance
     where
 
---------------------------------------------------------------------------------
+
 import           Data.Kind  (Constraint)
 import           Data.Maybe
 
---------------------------------------------------------------------------------
+
 -- 1. Algebraic Data Type (ADT)
 -- 2. Parametric Pohlymorphism
 -- 3. Data Type declaration
@@ -71,7 +71,7 @@ data TypeC a b = DataC0
                         , fieldC43 :: b }
                deriving (Show)
 
---------------------------------------------------------------------------------
+
 -- 1. Ad-hoc Polymorphism
 -- 2. Type Class Inheritance
 -- 3. Type Class declaration
@@ -115,7 +115,7 @@ type TypeClassC :: * -> Constraint
 class (TypeClassB c) => TypeClassC c where -- `c` is a type variable
     functionC :: c -> Either c c
 
---------------------------------------------------------------------------------
+
 
 -- | functionA TypeA
 --
@@ -276,7 +276,7 @@ instance TypeClassC (TypeC a b) where -- `(TypeC a b)` is a Data Type having two
                                       -- when call `functionA`, `x` should be
                                       --   a data or a value
 
---------------------------------------------------------------------------------
+
 
 -- | functionOne
 --
@@ -379,4 +379,4 @@ functionTwo x = x
 functionThree :: (TypeClassC c) => c -> c
 functionThree x = x
 
---------------------------------------------------------------------------------
+

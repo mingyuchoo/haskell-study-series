@@ -6,6 +6,7 @@ import           Flow          ()
 
 -- |
 --
+--
 coords :: [[(Integer, Integer)]]
 coords = [ [(0,0),(0,1),(0,2),(0,3),(0,4),(0,5),(0,6),(0,7)]
          , [(1,0),(1,1),(1,2),(1,3),(1,4),(1,5),(1,6),(1,7)]
@@ -19,6 +20,7 @@ coords = [ [(0,0),(0,1),(0,2),(0,3),(0,4),(0,5),(0,6),(0,7)]
 
 -- |
 --
+--
 coords2 :: [[(Integer, Integer)]]
 coords2 = [0..7] >>= (\row ->
           [ [0..7] >>= (\col ->
@@ -27,6 +29,7 @@ coords2 = [0..7] >>= (\row ->
 
 -- |
 --
+--
 coords3 :: [[(Integer, Integer)]]
 coords3 = do
   row <- [0..7]
@@ -34,44 +37,50 @@ coords3 = do
     col <- [0..7]
     return (row, col)
 
-
 -- |
+--
 --
 cols :: [[Integer]]
 cols = repeat [0..]
 
 -- |
 --
+--
 rows :: [[Integer]]
 rows = map repeat [0..]
 
 -- |
+--
 --
 coordsInf :: [[(Integer, Integer)]]
 coordsInf = undefined -- zipOverGrid rows cols
 
 -- |
 --
+--
 repeat8 :: a -> [a]
 repeat8 = take 8 . repeat
 
 -- |
+--
 --
 cols8 :: [[Integer]]
 cols8 = repeat8 [0..7]
 
 -- |
 --
+--
 rows8 :: [[Integer]]
 rows8 = map repeat8 [0..7]
 
-
 -- |
+--
 --
 grid8 :: [[(Integer, Integer)]]
 grid8 = undefined -- zipOverGrid rows8 cols8
 
 -- |
+--
 --
 foo1 :: Maybe String
 foo1 = Just 3 >>= (\x ->
@@ -79,6 +88,7 @@ foo1 = Just 3 >>= (\x ->
        Just (show x ++ y)))
 
 -- |
+--
 --
 foo2 :: Maybe String
 foo2 = do
@@ -109,14 +119,15 @@ mapped = do
 
 -- |
 --
+--
 filtered :: [Integer]
 filtered = do
   i <- [0..]
   guard (div2 i)
   return i
 
-
 -- |
+--
 --
 mappedAndFiltered ::  [Integer]
 mappedAndFiltered = do

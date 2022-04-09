@@ -5,6 +5,9 @@ import           Control.Exception (evaluate)
 import           Test.Hspec
 import           Test.QuickCheck
 
+-- |
+--
+--
 call :: IO ()
 call = hspec $ do
     describe "Given Prelude" $ do

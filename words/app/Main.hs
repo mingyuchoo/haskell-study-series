@@ -16,6 +16,7 @@ import           System.Random (newStdGen)
 
 -- |
 --
+--
 main :: IO ()
 main = do
   gen <- newStdGen
@@ -26,6 +27,7 @@ main = do
 
 
 -- |
+--
 --
 playTurn :: Game -> IO ()
 playTurn game = do

@@ -6,6 +6,7 @@ module Data
 
 -- |
 --
+--
 grid :: [String]
 grid = [ "__C________R___"
        , "__SI________U__"
@@ -21,8 +22,8 @@ grid = [ "__C________R___"
        , "________CN_____"
        ]
 
-
 -- |
+--
 --
 languages :: [String]
 languages = [ "BASIC"

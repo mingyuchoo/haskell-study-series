@@ -1,16 +1,22 @@
 {-# LANGUAGE FlexibleContexts         #-}
 {-# LANGUAGE StandaloneKindSignatures #-}
 {-# LANGUAGE UndecidableInstances     #-}
---------------------------------------------------------------------------------
+
 module NamingConventions
     where
 
 import           Data.Kind (Constraint)
 import           Flow      ((<|))
---------------------------------------------------------------------------------
+
+-- |
+--
+--
 type Dollars :: *
 newtype Dollars = Dollars Int
 
+-- |
+--
+--
 instance (Num Int) => Num Dollars where
   abs (Dollars a) = Dollars (abs a)
   negate (Dollars a) = Dollars (negate a)
@@ -19,11 +25,13 @@ instance (Num Int) => Num Dollars where
   signum = undefined
   fromInteger = undefined
 
---------------------------------------------------------------------------------
+-- |
+--
+--
 type MyTypeConstructor :: * -> *
 newtype MyTypeConstructor a = MyDataConstructor a
 
-
+-- |
 -- :kind MyTypeClass :: * -> Constraint
 -- :kind MyTypeClass Int :: Constraint
 -- :kind MyTypeClass MyTypeConstructor :: Constraint
@@ -33,6 +41,7 @@ class MyTypeClass a where
   name :: a -> String
 
 
+-- |
 -- :type name :: MyTypeClass a => a -> String
 -- :type name (MyDataConstructor "a") :: String
 instance (MyTypeClass a) => MyTypeClass (MyTypeConstructor a) where

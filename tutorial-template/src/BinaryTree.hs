@@ -23,7 +23,6 @@ f x = traceShow ("before: " <> show x <> ", after: " <> show result) result
 g :: String -> String
 g x = trace ("DEBUG: reverse" <> show x) (reverse x)
 
-
 -- |
 --
 --
@@ -69,7 +68,6 @@ last' []     = error "last': empty list"
 last' (x:[]) = x
 last' (x:xs) = last' xs
 
-
 -- |
 --
 --
@@ -86,7 +84,6 @@ drop' _ [] = []
 drop' n (x:xs) | n > 0 = drop' (n-1) xs
                | otherwise = x:xs
 
-
 -- |
 --
 --
@@ -94,7 +91,6 @@ insert' :: (Ord a) => a -> [a] -> [a]
 insert' v [] = [v]
 insert' v list@(x:xs) | v < x = v : list
                          | otherwise = x : insert' v xs
-
 
 -- |
 --
@@ -104,7 +100,6 @@ isort []          = []
 isort [x]         = [x]
 isort list@(x:xs) = insert' x (isort xs)
 
-
 -- |
 --
 --
@@ -113,7 +108,6 @@ merge' [] second = second
 merge' first [] = first
 merge' first@(x:xs) second@(y:ys) | x < y = x : merge' xs second
                                   | otherwise = y : merge' first ys
-
 
 -- |
 --
@@ -127,7 +121,6 @@ msort list@(x:xs) = merge' (msort l) (msort r)
     l  = take half list
     r = drop half list
 
-
 -- |
 --
 --
@@ -138,7 +131,6 @@ qsort list@(x:xs) = qsort small <> mid <> qsort large
     small = [y | y <- xs,   y <  x]
     mid   = [y | y <- list, y == x]
     large = [y | y <- xs,   y >  x]
-
 
 -- |
 --
@@ -151,14 +143,11 @@ qsort' list@(x:xs) = qsort' small <> mid <> qsort' large
     mid   = do { y <- list; guard (y == x); return y }
     large = do { y <- xs;   guard (y >  x); return y }
 
--- -----------------------------------------------------------------------------
-
 -- |
 --
 --
 (-:) :: a -> (a -> b) -> b
 (-:) x f = f x
-
 
 -- |
 --
@@ -222,6 +211,7 @@ t2 = Node 0
               (Node 11 Empty Empty)
               Empty)
             (Node 6 Empty Empty))
+
 -- |
 --
 --
@@ -240,7 +230,6 @@ type Breadcrumbs a = [Crumb a]
 --
 type Zipper :: * -> *
 type Zipper a = (Tree a, Breadcrumbs a)
-
 
 -- |
 --
@@ -267,7 +256,6 @@ elemT x (Node v l r) | x == v = True
                                | x <  v = elemT x l
                                | x >  v = elemT x r
                                | otherwise = False
-
 
 -- |
 --
