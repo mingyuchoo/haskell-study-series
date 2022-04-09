@@ -5,7 +5,9 @@ import qualified Data.Map    as M
 import           Debug.Trace ()
 import           System.IO   (BufferMode (NoBuffering), hSetBuffering, stdout)
 
-
+-- |
+--
+--
 someFunc :: IO ()
 someFunc = do
   hSetBuffering stdout NoBuffering

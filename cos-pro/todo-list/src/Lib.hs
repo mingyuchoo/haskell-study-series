@@ -47,6 +47,8 @@ import           System.IO
     )
 
 -- | application
+--
+--
 someFunc :: IO ()
 someFunc = do
     argList <- getArgs
@@ -58,6 +60,9 @@ someFunc = do
             args = tail argList
             (Just action) = lookup command dispatch
 
+-- |
+--
+--
 usage :: String
 usage = "Usage: stack run COMMAND FILENAME [ITEM]\n" ++
         "  COMMAND - add \"todo item\"\n" ++
@@ -66,6 +71,9 @@ usage = "Usage: stack run COMMAND FILENAME [ITEM]\n" ++
         " FILENAME - todo.txt"
 
 
+-- |
+--
+--
 dispatch :: [(String, [String] -> IO ())]
 dispatch = [ ("add", add)
            , ("view", view)
@@ -73,12 +81,16 @@ dispatch = [ ("add", add)
            ]
 
 -- | add todo item
+--
+--
 add :: [String] -> IO ()
 add [fileName, todoItem] = appendFile fileName (todoItem ++ "\n")
 add _ = putStrLn "The add command takes exactly two arguments."
 
 
 -- | view todo item
+--
+--
 view :: [String] -> IO ()
 view [fileName] = do
     contents <- readFile fileName
@@ -88,6 +100,8 @@ view [fileName] = do
 view _ = putStrLn "The view command takes exactly one argument."
 
 -- | remove todo item
+--
+--
 remove :: [String] -> IO ()
 remove [fileName, numberString] = do
     contents <- readFile fileName

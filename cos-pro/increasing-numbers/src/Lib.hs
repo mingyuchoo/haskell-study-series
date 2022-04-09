@@ -1,8 +1,9 @@
 module Lib
     where
 
--------------------------------------------------------------------------------
-
+-- |
+--
+--
 data TypeA = DataA0 deriving (Show)
 
 data TypeB a
@@ -23,8 +24,9 @@ data TypeD a
     | DataD3 a a a
   deriving (Show)
 
--------------------------------------------------------------------------------
-
+-- |
+--
+--
 class TypeClassA a where
   typeClassFunctionA :: a -> String
 
@@ -37,8 +39,9 @@ class TypeClassB a => TypeClassC a where
 class TypeClassC a => TypeClassD a where
   typeClassFunctionD :: a -> String
 
--------------------------------------------------------------------------------
-
+-- |
+--
+--
 instance TypeClassA TypeA where
   typeClassFunctionA x = "TypeClassA - TypeA"
 
@@ -51,8 +54,9 @@ instance TypeClassC TypeA where
 instance TypeClassD TypeA where
   typeClassFunctionD x = "TypeClassD - TypeA"
 
--------------------------------------------------------------------------------
-
+-- |
+--
+--
 instance (Num a) => TypeClassA (TypeB a) where
   typeClassFunctionA x = "TypeClassA - TypeB"
 
@@ -65,8 +69,9 @@ instance (Num a) => TypeClassC (TypeB a) where
 instance (Num a) => TypeClassD (TypeB a) where
   typeClassFunctionD x = "TypeClassD - TypeB"
 
--------------------------------------------------------------------------------
-
+-- |
+--
+--
 instance (Eq a) => TypeClassA (TypeC a) where
   typeClassFunctionA x = "TypeClassA - TypeC"
 
@@ -79,8 +84,9 @@ instance (Eq a) => TypeClassC (TypeC a) where
 instance (Eq a) => TypeClassD (TypeC a) where
   typeClassFunctionD x = "TypeClassD - TypeC"
 
--------------------------------------------------------------------------------
-
+-- |
+--
+--
 instance (Ord a) => TypeClassA (TypeD a) where
   typeClassFunctionA x = "TypeClassA - TypeD"
 
@@ -93,8 +99,9 @@ instance (Ord a) => TypeClassC (TypeD a) where
 instance (Ord a) => TypeClassD (TypeD a) where
   typeClassFunctionD x = "TypeClassD - TypeD"
 
--------------------------------------------------------------------------------
-
+-- |
+--
+--
 myFunctionA :: TypeA ->  String
 myFunctionA x = "TypeA - DataA0"
 
@@ -110,8 +117,9 @@ myFunctionD (DataD1 _) = "TypeD - DataD1"
 myFunctionD (DataD2 _ _) = "TypeD - DataD2"
 myFunctionD (DataD3 _ _ _) = "TypeD - DataD3"
 
-------------------------------------------------------------------------------
-
+-- |
+--
+--
 data Car
     = Car { company :: String
             , model :: String
@@ -126,13 +134,16 @@ data Passenger a b c
                   }
   deriving (Show)
 
-------------------------------------------------------------------------------
-
+-- |
+--
+--
 tellCar :: Car -> String
 tellCar Car {company = c, model = m, year = y} =
   "This " ++ c ++ " " ++ m ++ " was made in " ++ show y
 
-
+-- |
+--
+--
 tellPassenger :: (Show t) => Passenger String String t -> String
 tellPassenger (Passenger {name = n, gender = g, age = a}) =
   "This person is " ++ n ++ ", " ++ g ++ ", " ++ show a
@@ -141,7 +152,9 @@ tellPassenger (Passenger {name = n, gender = g, age = a}) =
 -- | Given a value
 -- | When run `doubleMe`
 -- | Then evaluate the result
-
+-- |
+--
+--
 doubleMe :: (Num a) => a -> a
 doubleMe x = x + x
 
@@ -152,46 +165,58 @@ dobuleMe' x = x ++ x
 -- | Given two values
 -- | When run `doubleUs`
 -- | Then evaluate the result
-
+-- |
+--
+--
 doubleUs :: (Num a) => a -> a -> a
 doubleUs x y = x*2 + y*2
 
 
-------------------------------------------------------------------------------
-
+-- |
+--
+--
 sum' :: (Num a) => [a] -> a -> a
 sum' [] y = y
 sum' [x] y = sum (x:[y])
 sum' (x:xs) y = sum ((sum' [x] y) : xs)
 
 
-
+-- |
+--
+--
 minimum' :: (Ord a) => [a] -> a
 minimum' [] = error "Error"
 minimum' [x] = x
 minimum' (x:xs) = min x (minimum' xs)
 
-
+-- |
+--
+--
 maximum' [] = error "maximum of empty list"
 maximum' [x] = x
 maximum' (x:xs) = max x (maximum' xs)
 
 
-
+-- |
+--
+--
 fib :: Integer -> Integer
 fib 0 = 0
 fib 1 = 1
 fib n = fib (n-1) + fib(n-2)
 
-
+-- |
+--
+--
 hundred :: (Eq a, Num a) => a -> a -> a
 hundred _ 0 = 0
 hundred x 1 = x
 hundred x y = x + (hundred x (y - 1))
 
 
-
-------------------------------------------------------------------------------
+-- |
+--
+--
 someFunc :: IO ()
 someFunc = do
 --   print $ tellPassenger (Passenger {name="Choo", gender="M", age=40})

@@ -1,6 +1,9 @@
 module Lib
     where
 
+-- |
+--
+--
 someFunc :: IO ()
 someFunc = putStrLn "someFunc"
 
@@ -18,6 +21,9 @@ When run solution
 Then it should be 2
 -}
 
+-- |
+--
+--
 solution :: Int -> Int -> Int
 solution = calc 0
   where
