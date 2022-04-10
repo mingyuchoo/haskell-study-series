@@ -4,14 +4,14 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 
-name:           coordinate
+name:           coordinate-manipulate
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/coordinate#readme>
-homepage:       https://github.com/githubuser/coordinate#readme
-bug-reports:    https://github.com/githubuser/coordinate/issues
-author:         Author name here
-maintainer:     example@example.com
-copyright:      2021 Author name here
+description:    Please see the README on GitHub at <https://github.com/mingyuchoo/coordinate-manipulate#readme>
+homepage:       https://github.com/mingyuchoo/coordinate-manipulate#readme
+bug-reports:    https://github.com/mingyuchoo/coordinate-manipulate/issues
+author:         mingyuchoo
+maintainer:     mingyuchoo@gmail.com
+copyright:      MIT License
 license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
@@ -21,13 +21,13 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/coordinate
+  location: https://github.com/mingyuchoo/coordinate-manipulate
 
 library
   exposed-modules:
       Lib
   other-modules:
-      Paths_coordinate
+      Paths_coordinate_manipulate
   hs-source-dirs:
       src
   build-depends:
@@ -37,36 +37,35 @@ library
     , parallel
   default-language: Haskell2010
 
-executable coordinate-exe
+executable coordinate-manipulate-exe
   main-is: Main.hs
   other-modules:
-      Paths_coordinate
+      Paths_coordinate_manipulate
   hs-source-dirs:
       app
   ghc-options: -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base >=4.7 && <5
     , containers
-    , coordinate
+    , coordinate-manipulate
     , flow
     , parallel
   default-language: Haskell2010
 
-test-suite coordinate-test
+test-suite coordinate-manipulate-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Paths_coordinate
+      Paths_coordinate_manipulate
   hs-source-dirs:
       test
   ghc-options: -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base >=4.7 && <5
     , containers
-    , coordinate
-    , doctest
-    , doctest-discover
+    , coordinate-manipulate
     , flow
     , hspec
+    , hspec-discover
     , parallel
   default-language: Haskell2010
