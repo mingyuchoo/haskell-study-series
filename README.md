@@ -20,3 +20,9 @@ $ cabal upload
 $ cabal install
 ```
 
+## Reformat using Stylish-haskell
+
+```bash
+$ stylish-haskell -ri **/*.hs
+```
+
