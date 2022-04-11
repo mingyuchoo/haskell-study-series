@@ -1,0 +1,10 @@
+module Lib
+    where
+
+someFunc :: IO ()
+someFunc = do
+  putStr "Input initial position> "
+  position <- getLine
+
+conv :: String -> (Int, Int)
+conv p | length p /= 2 = error "error: not correct length"
