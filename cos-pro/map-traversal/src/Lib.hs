@@ -48,11 +48,12 @@ scanFwd :: [Coord] -- ^ accumulate
         -> Coord   -- ^ source position
         -> [Coord] -- ^ target position
 scanFwd acc src@(x, y, d)
-  | valueOfFwd == 0 = trace "DEBUG 1> " getFwd (x, y, d) : acc
-  | null acc        = trace "DEBUG 2> " scanFwd [src] src
-  | otherwise       = trace "DEBUG 3> " scanFwd acc (x, y, newDirection d)
+  | null acc        = trace ("DEBUG 1> " <> show acc)  scanFwd [src] src
+  | valueOfFwd /= 0 = trace ("DEBUG 3> " <> show acc)  scanFwd acc (x, y, newDirection d)
+  | otherwise       = trace ("DEBUG 2> " <> show acc) $ do
+      getFwd (x, y, d) : acc
   where
-    valueOfFwd = cellAt matrix $ getFwd (x, y, d)
+    valueOfFwd = getValueAt matrix $ getFwd (x, y, d)
 
 -- |
 --
@@ -90,11 +91,19 @@ checkBwd (x, y, d) =
 -- |
 --
 --
-cellAt :: [[Int]] -- ^ matrix
-       -> Coord   -- ^ postion for a cell
-       -> Int     -- ^ value of the cell
-cellAt g (x, y, _) =
+getValueAt :: [[Int]] -- ^ matrix
+        -> Coord   -- ^ postion for a cell
+        -> Int     -- ^ value of the cell
+getValueAt g (x, y, _) =
   g !! x !! y
+
+-- |
+-- https://stackoverflow.com/questions/5852722/replace-individual-list-elements-in-haskell
+--
+setValueAt :: [[Int]] -- ^ matrix
+        -> Coord   -- ^ postion for a cell
+        -> Int     -- ^ value of the cell
+setValueAt g (x, y, _) = undefined
 
 -- |
 --
