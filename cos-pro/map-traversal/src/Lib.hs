@@ -3,9 +3,8 @@ module Lib
 
 import           Debug.Trace
 
--- |
---
---
+type Matrix = [[Int]]
+
 type Coord =
   ( Int -- ^ row
   , Int -- ^ column
@@ -19,24 +18,15 @@ someFunc :: IO ()
 someFunc =
   putStrLn "Hello, World"
 
--- |
---
---
-size :: (Int, Int) -- ^ size of matrix
+size :: (Int, Int)
 size =
   (4,4)
 
--- |
---
---
-init :: Coord -- ^ character information
-init =
+start :: Coord
+start =
   (1,1,0)
 
--- |
---
---
-matrix :: [[Int]] -- ^ values for matrix
+matrix :: Matrix
 matrix =
   [ [1,1,1,1]
   , [1,0,0,1]
@@ -44,22 +34,27 @@ matrix =
   , [1,1,1,1]
   ]
 
-scanFwd :: [Coord] -- ^ accumulate
-        -> Coord   -- ^ source position
-        -> [Coord] -- ^ target position
-scanFwd acc src@(x, y, d)
-  | null acc        = trace ("DEBUG 1> " <> show acc)  scanFwd [src] src
-  | valueOfFwd /= 0 = trace ("DEBUG 3> " <> show acc)  scanFwd acc (x, y, newDirection d)
-  | otherwise       = trace ("DEBUG 2> " <> show acc) $ do
-      getFwd (x, y, d) : acc
-  where
-    valueOfFwd = getValueAt matrix $ getFwd (x, y, d)
 
+checkNextDirection :: Matrix -> Coord -> (Int, Int)
+checkNextDirection m c@(x, y, _) =
+  let
+    next = newDirection $ snd $ checkDirection m c
+  in
+    checkDirection m (x, y, next)
+
+-- -----------------------------------------------------------------------------
 -- |
 --
 --
-getFwd :: Coord -- ^ character information
-       -> Coord -- ^ value of forward position
+checkDirection :: Matrix -> Coord -> (Int, Int)
+checkDirection m c =
+  getValueAt m $ getFwd c
+
+getValueAt :: Matrix -> Coord -> (Int, Int)
+getValueAt m (x, y, d) =
+  (m !! x !! y, d)
+
+getFwd :: Coord -> Coord
 getFwd (x, y, d) =
   (x+u, y+v, d)
   where
@@ -70,12 +65,9 @@ getFwd (x, y, d) =
       , ( 1, 0)
       , ( 0,-1)
       ]
+-- -----------------------------------------------------------------------------
 
--- |
---
---
-checkBwd :: Coord -- ^ character information
-         -> Coord -- ^ value of forward position
+checkBwd :: Coord -> Coord
 checkBwd (x, y, d) =
   (x+u, y+v, d)
   where
@@ -87,28 +79,15 @@ checkBwd (x, y, d) =
       , ( 0, 1)
       ]
 
+dirs :: Int -> [Int]
+dirs = mkSeq 4 []
+  where
+    mkSeq :: Int -> [Int] -> Int -> [Int]
+    mkSeq 0 l d = d : reverse l
+    mkSeq n l d = mkSeq (n-1) (newDirection d:l) (newDirection d)
 
--- |
---
---
-getValueAt :: [[Int]] -- ^ matrix
-        -> Coord   -- ^ postion for a cell
-        -> Int     -- ^ value of the cell
-getValueAt g (x, y, _) =
-  g !! x !! y
 
--- |
--- https://stackoverflow.com/questions/5852722/replace-individual-list-elements-in-haskell
---
-setValueAt :: [[Int]] -- ^ matrix
-        -> Coord   -- ^ postion for a cell
-        -> Int     -- ^ value of the cell
-setValueAt g (x, y, _) = undefined
 
--- |
---
---
-newDirection :: Int -- ^ current direction
-             -> Int -- ^ next direction
+newDirection :: Int -> Int
 newDirection x =
   mod (x + 3) 4
