@@ -24,6 +24,7 @@ dependencies:
 - containers
 - flow
 - parallel
+- lens
 
 library:
   source-dirs: src
