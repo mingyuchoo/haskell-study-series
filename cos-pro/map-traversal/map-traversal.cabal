@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       Lib
+      Recurs
   other-modules:
       Paths_map_traversal
   hs-source-dirs:
