@@ -31,10 +31,12 @@ library
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
+      array
+    , base >=4.7 && <5
     , containers
     , flow
     , parallel
+    , text
   default-language: Haskell2010
 
 executable freeze-drinks-exe
@@ -45,11 +47,13 @@ executable freeze-drinks-exe
       app
   ghc-options: -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.7 && <5
+      array
+    , base >=4.7 && <5
     , containers
     , flow
     , freeze-drinks
     , parallel
+    , text
   default-language: Haskell2010
 
 test-suite freeze-drinks-test
@@ -61,11 +65,13 @@ test-suite freeze-drinks-test
       test
   ghc-options: -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.7 && <5
+      array
+    , base >=4.7 && <5
     , containers
     , flow
     , freeze-drinks
     , hspec
     , hspec-discover
     , parallel
+    , text
   default-language: Haskell2010

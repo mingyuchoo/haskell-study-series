@@ -2,6 +2,7 @@ module MyPrelude
     where
 
 import           Data.List (unzip)
+import           Data.Maybe
 import           Flow      ()
 
 -- | length1
@@ -221,3 +222,39 @@ msort ls =
       let left  = take' (length1 ls `div` 2) ls
           right = drop' (length1 ls `div` 2) ls
       in merge' (msort left) (msort right)
+
+
+-- -----------------------------------------------------------------------------
+
+newtype Stack a = Stack [a]
+                deriving (Show)
+
+emptyS :: Stack a
+emptyS = Stack []
+
+push :: a -> Stack a -> Stack a
+push x (Stack xs) = Stack (x:xs)
+
+pop :: Stack a -> (Maybe a, Stack a)
+pop (Stack [])     = (Nothing, Stack [])
+pop (Stack (x:xs)) = (Just x, Stack xs)
+
+-- -----------------------------------------------------------------------------
+
+newtype Queue a = Queue [a]
+                deriving (Show)
+
+
+emptyQ :: Queue a
+emptyQ = Queue []
+
+
+enqueue :: a -> Queue a -> Queue a
+enqueue x (Queue xs) = Queue (xs <> [x])
+
+
+dequeue :: Queue a -> (Maybe a, Queue a)
+dequeue (Queue [])     = (Nothing, Queue [])
+dequeue (Queue (x:xs)) = (Just x, Queue xs)
+
+-- -----------------------------------------------------------------------------
