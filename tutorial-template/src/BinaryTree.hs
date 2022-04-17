@@ -282,7 +282,7 @@ maxDepth (Node _ l r) = 1 + max' (maxDepth l) (maxDepth r)
     max' x y | x > y     = x
              | otherwise = y
 
--- |
+-- | DFS(Depth-First Search): Pre-Order
 --
 --
 preOrder :: (Ord a, Show a) => Tree a -> [a]
@@ -290,21 +290,21 @@ preOrder Empty        = []
 preOrder (Node v l r) = v : preOrder l <> preOrder r
 
 
--- |
+-- | DFS(Depth-First Search): In-Order
 --
 --
 inOrder :: (Ord a, Show a) => Tree a -> [a]
 inOrder Empty        = []
 inOrder (Node v l r) = inOrder l <> [v] <> inOrder r
 
--- |
+-- | DFS(Depth-First Search): Post-Order
 --
 --
 postOrder :: (Ord a, Show a) => Tree a -> [a]
 postOrder Empty        = []
 postOrder (Node v l r) = postOrder l <> postOrder r <> [v]
 
--- |
+-- | BFS(Breadth-First Search): Level-Order
 --
 --
 levelOrder :: (Ord a, Show a) => Tree a -> [a]
