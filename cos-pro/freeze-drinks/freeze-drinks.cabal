@@ -25,6 +25,7 @@ source-repository head
 
 library
   exposed-modules:
+      Concepts
       Lib
   other-modules:
       Paths_freeze_drinks
@@ -35,6 +36,7 @@ library
     , base >=4.7 && <5
     , containers
     , flow
+    , lens
     , parallel
     , text
   default-language: Haskell2010
@@ -52,6 +54,7 @@ executable freeze-drinks-exe
     , containers
     , flow
     , freeze-drinks
+    , lens
     , parallel
     , text
   default-language: Haskell2010
@@ -72,6 +75,7 @@ test-suite freeze-drinks-test
     , freeze-drinks
     , hspec
     , hspec-discover
+    , lens
     , parallel
     , text
   default-language: Haskell2010

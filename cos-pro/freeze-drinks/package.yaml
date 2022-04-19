@@ -24,6 +24,7 @@ dependencies:
 - array
 - containers
 - flow
+- lens
 - parallel
 - text
 
