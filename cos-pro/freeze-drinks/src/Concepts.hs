@@ -56,14 +56,26 @@ visited1 =
   take (length graph1) [False, False ..]
 
 
-dfs1 :: [[Int]]  -> Int -> [Bool] -> Int
-dfs1 g i v =
-   undefined
-
-
 setVisit1 :: [Bool] -> Int -> [Bool]
 setVisit1 v i =
   v & element i .~ True
+
+
+length1 :: [a] -> Int
+length1 []     = 0
+length1 (x:xs) = 1 + length1 xs
+
+length2 :: [a] -> Int
+length2 l = foldl (\acc _ -> acc + 1) 0 l
+
+
+depth :: [Int] -> Int
+depth []     = 0 -- base case
+depth (x:xs) = depth xs
+
+depthIO :: [Int] -> IO ()
+depthIO []     = return ()
+depthIO (x:xs) = print x >> depthIO xs
 
 -- -----------------------------------------------------------------------------
 
