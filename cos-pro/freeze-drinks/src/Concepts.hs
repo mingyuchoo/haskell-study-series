@@ -1,7 +1,6 @@
 module Concepts
     where
 
-import           Control.Lens (element, (&), (.~))
 import           Data.Graph
 
 
@@ -39,45 +38,6 @@ graph' = buildG (0,7) [ (0,2)
 
 -- -----------------------------------------------------------------------------
 
-graph1 :: [[Int]]
-graph1 = [ []
-         , [2,3,8]
-         , [1,7]
-         , [1,4,5]
-         , [3,5]
-         , [3,4]
-         , [7]
-         , [2,6,8]
-         , [1,7]
-         ]
-
-visited1 :: [Bool]
-visited1 =
-  take (length graph1) [False, False ..]
-
-
-setVisit1 :: [Bool] -> Int -> [Bool]
-setVisit1 v i =
-  v & element i .~ True
-
-
-length1 :: [a] -> Int
-length1 []     = 0
-length1 (x:xs) = 1 + length1 xs
-
-length2 :: [a] -> Int
-length2 l = foldl (\acc _ -> acc + 1) 0 l
-
-
-depth :: [Int] -> Int
-depth []     = 0 -- base case
-depth (x:xs) = depth xs
-
-depthIO :: [Int] -> IO ()
-depthIO []     = return ()
-depthIO (x:xs) = print x >> depthIO xs
-
--- -----------------------------------------------------------------------------
 
 newtype Stack a =
   Stack [a] deriving (Show)

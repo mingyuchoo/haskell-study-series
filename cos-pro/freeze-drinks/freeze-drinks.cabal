@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       Concepts
+      Example
       Lib
   other-modules:
       Paths_freeze_drinks
