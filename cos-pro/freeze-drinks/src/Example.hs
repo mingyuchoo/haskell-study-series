@@ -1,9 +1,12 @@
 module Example
     where
 
-import           Control.Lens (element, (&), (.~))
--- -----------------------------------------------------------------------------
+import           Control.Lens           (element, (&), (.~))
+import           Data.List              ((\\))
+import           Debug.Trace
+import           System.Posix.Internals (lstat)
 
+-- -----------------------------------------------------------------------------
 graph :: [[Int]]
 graph = [ []
         , [2,3,8]
@@ -17,27 +20,60 @@ graph = [ []
         ]
 
 visit :: [Bool]
-visit = do
-  let v = take (length graph) [False, False ..]
-  v & element 1 .~ True
+visit =
+  let
+    v = take (length graph) [False, False ..]
+  in
+    v & element 1 .~ True
 
 
 setVisit :: [Bool] -> Int -> [Bool]
 setVisit v i =
   v & element i .~ True
 
+-- -----------------------------------------------------------------------------
+-- DFS(Depth-First Search)
 
-type Breadcrumb = ([Int], [Bool])
+type BreadcrumbD = ([Int], [Bool])
 
-driver :: Breadcrumb
-driver = dfs ([1], visit) (graph !! 1)
+dfsEval :: [Int]
+dfsEval =
+  let
+    lst = fst $ dfs ([1], visit) (graph !! 1)
+  in
+    reverse lst
 
-dfs :: Breadcrumb -> [Int] ->  Breadcrumb
-dfs f [] = f
-dfs f@(a, v) (x:xs)
-  | v !! x    = dfs f xs
-  | otherwise = dfs (dfs (x:a, visited) (graph !! x)) xs
+dfs :: BreadcrumbD -> [Int] ->  BreadcrumbD
+dfs b [] = b
+dfs b@(r, v) (x:xs)
+  | v !! x    = dfs b xs
+  | otherwise = dfs (dfs (x:r, visited) (graph !! x)) xs
                   where
                     visited = setVisit v x
+
+-- -----------------------------------------------------------------------------
+-- BFS(Breadth-First Search)
+
+type BreadcrumbB = ([Int], [Bool], [Int])
+
+bfsEval :: [Int]
+bfsEval =
+  let
+    (r, v, l) = bfs ([1], visit, graph !! 1)
+  in
+    reverse r
+
+
+bfs :: BreadcrumbB -> BreadcrumbB
+bfs b@(r, v, []) = b
+bfs b@(r, v, x:xs) =
+  let
+    xList = getToVisit v (graph !! x)
+  in
+    bfs (x:r, setVisit v x, xs ++ (xList \\ xs))
+
+
+getToVisit :: [Bool] -> [Int] -> [Int]
+getToVisit v = filter (\x -> not $ v !! x)
 
 -- -----------------------------------------------------------------------------
