@@ -16,8 +16,8 @@ graph = [ []
         , [1,7]
         ]
 
-visited :: [Bool]
-visited = do
+visit :: [Bool]
+visit = do
   let v = take (length graph) [False, False ..]
   v & element 1 .~ True
 
@@ -27,15 +27,17 @@ setVisit v i =
   v & element i .~ True
 
 
-depthIO :: [Bool] -> [Int] -> [Bool]
-depthIO v []            = v
-depthIO [] _            = []
-depthIO v (x:xs) = do
-  if v !! x
-  then depthIO v xs
-  else do
-    let visited = setVisit v x
-    -- print x
-    depthIO (depthIO visited (graph !! x)) xs
+type Breadcrumb = ([Int], [Bool])
+
+driver :: Breadcrumb
+driver = dfs ([1], visit) (graph !! 1)
+
+dfs :: Breadcrumb -> [Int] ->  Breadcrumb
+dfs f [] = f
+dfs f@(a, v) (x:xs)
+  | v !! x    = dfs f xs
+  | otherwise = dfs (dfs (x:a, visited) (graph !! x)) xs
+                  where
+                    visited = setVisit v x
 
 -- -----------------------------------------------------------------------------
