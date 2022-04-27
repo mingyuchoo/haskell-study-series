@@ -1,10 +1,9 @@
 module Example
     where
 
-import           Control.Lens           (element, (&), (.~))
-import           Data.List              ((\\))
+import           Control.Lens (element, (&), (.~))
+import           Data.List    ((\\))
 import           Debug.Trace
-import           System.Posix.Internals (lstat)
 
 -- -----------------------------------------------------------------------------
 graph :: [[Int]]
@@ -47,9 +46,7 @@ dfs :: BreadcrumbD -> [Int] ->  BreadcrumbD
 dfs b [] = b
 dfs b@(r, v) (x:xs)
   | v !! x    = dfs b xs
-  | otherwise = dfs (dfs (x:r, visited) (graph !! x)) xs
-                  where
-                    visited = setVisit v x
+  | otherwise = dfs (dfs (x:r, setVisit v x) (graph !! x)) xs
 
 -- -----------------------------------------------------------------------------
 -- BFS(Breadth-First Search)
@@ -59,7 +56,7 @@ type BreadcrumbB = ([Int], [Bool], [Int])
 bfsEval :: [Int]
 bfsEval =
   let
-    (r, v, l) = bfs ([1], visit, graph !! 1)
+    (r, _, _) = bfs ([1], visit, graph !! 1)
   in
     reverse r
 
@@ -68,12 +65,12 @@ bfs :: BreadcrumbB -> BreadcrumbB
 bfs b@(r, v, []) = b
 bfs b@(r, v, x:xs) =
   let
+    getToVisit :: [Bool] -> [Int] -> [Int]
+    getToVisit v = filter (\x -> not $ v !! x)
+
+    xList :: [Int]
     xList = getToVisit v (graph !! x)
   in
-    bfs (x:r, setVisit v x, xs ++ (xList \\ xs))
-
-
-getToVisit :: [Bool] -> [Int] -> [Int]
-getToVisit v = filter (\x -> not $ v !! x)
+    bfs (x:r, setVisit v x, xs <> (xList \\ xs))
 
 -- -----------------------------------------------------------------------------
