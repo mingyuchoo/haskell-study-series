@@ -14,39 +14,55 @@ someFunc = putStrLn "someFunc"
 -- 5. 모든 element 스캔하기
 -- -----------------------------------------------------------------------------
 
-matrix :: [[Int]]
+type Matrix = [[Int]]
+
+matrix :: Matrix
 matrix = [ [0,0,1]
          , [0,1,0]
          , [1,0,1]
          ]
 
+type Coordinate = (Int, Int)
 -- -----------------------------------------------------------------------------
 -- 1. 사방 탐색하기
 -- 3. 범위 밖이면 무시하기
 
-dirs :: [(Int, Int)]
+dirs :: [Coordinate]
 dirs = [ ( 0,-1) -- North
        , ( 0, 1) -- South
        , (-1, 0) -- West
        , ( 1, 0) -- East
        ]
 
-newPos :: Int -> Int -> [Int]
-newPos i j =
+getPos :: Coordinate -> [Coordinate]
+getPos p@(i,j) =
   let
+    rows = 3
+    cols = 3
     func (x, y)
-      | (i+x) < 0 = Nothing
-      | (j+y) < 0 = Nothing
-      | otherwise = Just $ matrix !! (i+x) !!(j+y)
+      | (i+x) < 0 || (i+x) >= rows = Nothing
+      | (j+y) < 0 || (j+y) >= cols = Nothing
+      | otherwise = Just (i+x, j+y)
   in
     mapMaybe func dirs
 
 -- -----------------------------------------------------------------------------
+-- 2. 방문하기
+drive :: (Matrix, [Coordinate], Bool) -> (Matrix, [Coordinate], Bool)
+drive v@(_, _, False) = v
+drive v@(_, [], _)    = v
+drive v@(m, c:cs, b)  = undefined
+
+
+
+-- -----------------------------------------------------------------------------
 -- 4. 방문 기록하기
 
-newMatrix :: Int -> Int -> Int -> [[Int]]
-newMatrix x y z = matrix & element x . element y .~ z
-
+visitMatrix :: Matrix -> Coordinate -> Matrix
+visitMatrix m (x,y) =
+  case m !! x !! y of
+    0 -> m & element x . element y .~ 2
+    _ -> m
 -- -----------------------------------------------------------------------------
 -- 5. 모든 element 스캔하기
 
