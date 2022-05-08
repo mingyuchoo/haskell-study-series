@@ -3,6 +3,8 @@ module Lib
 
 import           Control.Lens (element, (&), (.~))
 import           Data.Maybe   (mapMaybe)
+import           Debug.Trace
+
 someFunc :: IO ()
 someFunc = putStrLn "someFunc"
 
@@ -27,33 +29,36 @@ type Coordinate = (Int, Int)
 -- 1. 사방 탐색하기
 -- 3. 범위 밖이면 무시하기
 
-dirs :: [Coordinate]
-dirs = [ ( 0,-1) -- North
-       , ( 0, 1) -- South
-       , (-1, 0) -- West
-       , ( 1, 0) -- East
-       ]
-
-getPos :: Coordinate -> [Coordinate]
-getPos p@(i,j) =
+getPos :: Matrix -> Coordinate -> [Coordinate]
+getPos m p@(i,j) =
   let
     rows = 3
     cols = 3
+    dirs :: [Coordinate]
+    dirs = [ ( 0,-1) -- North
+           , ( 0, 1) -- South
+           , (-1, 0) -- West
+           , ( 1, 0) -- East
+           ]
     func (x, y)
       | (i+x) < 0 || (i+x) >= rows = Nothing
       | (j+y) < 0 || (j+y) >= cols = Nothing
-      | otherwise = Just (i+x, j+y)
+      | otherwise = case m !! (i+x) !! (j+y) of
+          0 -> Just (i+x, j+y)
+          _ -> Nothing
   in
     mapMaybe func dirs
 
 -- -----------------------------------------------------------------------------
 -- 2. 방문하기
-drive :: (Matrix, [Coordinate], Bool) -> (Matrix, [Coordinate], Bool)
-drive v@(_, _, False) = v
-drive v@(_, [], _)    = v
-drive v@(m, c:cs, b)  = undefined
 
+drive :: (Matrix, Bool)
+drive = visit' (matrix, True) [(0,0)]
 
+visit' :: (Matrix, Bool) ->  [Coordinate] -> (Matrix, Bool)
+visit' v@(_, False) _  = trace "DEBUG 1> " v
+visit' v@(_, _) []     = trace "DEBUG 2> " v
+visit' v@(m, b) (c:cs) = trace "DEBUG 3> " visit' (visit' (visitMatrix m c, b) (getPos m c)) cs
 
 -- -----------------------------------------------------------------------------
 -- 4. 방문 기록하기
