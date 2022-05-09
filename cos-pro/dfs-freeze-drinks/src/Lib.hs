@@ -52,13 +52,13 @@ getPos m p@(i,j) =
 -- -----------------------------------------------------------------------------
 -- 2. 방문하기
 
-drive :: (Matrix, Bool)
+drive :: Matrix
 drive = visit' (matrix, True) [(0,0)]
 
-visit' :: (Matrix, Bool) ->  [Coordinate] -> (Matrix, Bool)
-visit' v@(_, False) _  = trace "DEBUG 1> " v
-visit' v@(_, _) []     = trace "DEBUG 2> " v
-visit' v@(m, b) (c:cs) = trace "DEBUG 3> " visit' (visit' (visitMatrix m c, b) (getPos m c)) cs
+visit' :: Matrix ->  [Coordinate] -> Matrix
+visit' m _      = m
+visit' m []     = m
+visit' m (c:cs) = visit' (visit' (visitMatrix m c) (getPos m c)) cs
 
 -- -----------------------------------------------------------------------------
 -- 4. 방문 기록하기
