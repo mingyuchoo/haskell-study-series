@@ -1,12 +1,12 @@
+{-# LANGUAGE StandaloneKindSignatures #-}
 module Lib
     where
 
 import           Control.Lens (element, (&), (.~))
 import           Data.Maybe   (mapMaybe)
-import           Debug.Trace
 
 someFunc :: IO ()
-someFunc = putStrLn "someFunc"
+someFunc = print driver
 
 -- -----------------------------------------------------------------------------
 -- 1. 사방 탐색하기
@@ -16,6 +16,7 @@ someFunc = putStrLn "someFunc"
 -- 5. 모든 element 스캔하기
 -- -----------------------------------------------------------------------------
 
+type Matrix :: *
 type Matrix = [[Int]]
 
 matrix :: Matrix
@@ -24,6 +25,7 @@ matrix = [ [0,0,1]
          , [1,0,1]
          ]
 
+type Coordinate :: *
 type Coordinate = (Int, Int)
 -- -----------------------------------------------------------------------------
 -- 1. 사방 탐색하기
@@ -31,7 +33,8 @@ type Coordinate = (Int, Int)
 
 getPos :: Matrix -> Coordinate -> [Coordinate]
 getPos m p@(i,j) =
-  let
+    mapMaybe func dirs
+  where
     rows = 3
     cols = 3
     dirs :: [Coordinate]
@@ -46,50 +49,40 @@ getPos m p@(i,j) =
       | otherwise = case m !! (i+x) !! (j+y) of
           0 -> Just (i+x, j+y)
           _ -> Nothing
-  in
-    mapMaybe func dirs
+
+-- -----------------------------------------------------------------------------
+-- 5. 모든 element 스캔하기
+
+type Accumulate :: *
+type Accumulate = (Matrix, Int)
+
+driver :: Accumulate
+driver =
+  foldl fun (matrix, 0) [(i,j) | i <- [0..2], j <- [0..2]]
+  where
+    fun :: Accumulate -> (Int, Int) -> Accumulate
+    fun acc@(m, c) p =
+      if result
+        then (newM, c+1)
+        else (newM, c)
+      where
+        (newM, result) = travel m p
 
 -- -----------------------------------------------------------------------------
 -- 2. 방문하기
 
-drive :: Matrix
-drive = visit' (matrix, True) [(0,0)]
+travel :: Matrix -> (Int, Int) -> (Matrix, Bool)
+travel m p = visit' (m, False) [p]
 
-visit' :: Matrix ->  [Coordinate] -> Matrix
-visit' m _      = m
-visit' m []     = m
-visit' m (c:cs) = visit' (visit' (visitMatrix m c) (getPos m c)) cs
+visit' :: (Matrix, Bool) ->  [Coordinate] -> (Matrix, Bool)
+visit' v []            = v
+visit' v@(m, b) (c:cs) = visit' (visit' (visitMatrix v c) (getPos m c)) cs
 
 -- -----------------------------------------------------------------------------
 -- 4. 방문 기록하기
 
-visitMatrix :: Matrix -> Coordinate -> Matrix
-visitMatrix m (x,y) =
+visitMatrix :: (Matrix, Bool) -> Coordinate -> (Matrix, Bool)
+visitMatrix v@(m,b) (x,y) =
   case m !! x !! y of
-    0 -> m & element x . element y .~ 2
-    _ -> m
--- -----------------------------------------------------------------------------
--- 5. 모든 element 스캔하기
-
-a :: [[String]]
-a =  fmap (\x -> fmap (\y -> show y) x) matrix
-
-a' :: IO [[()]]
-a' = mapM (\x -> mapM (\y -> print y) x) matrix
-
-b :: String
-b = matrix >>= (\x -> x >>= (\y -> show y))
-
-b' :: String
-b' = do
-  x <- matrix
-  y <- x
-  show y
-
-
-c :: [String]
-c = do
-  x <- matrix
-  y <- x
-  return <$> show y
-
+    0 -> (m & element x . element y .~ 2, True)
+    _ -> (m, False)
