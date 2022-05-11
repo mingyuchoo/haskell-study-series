@@ -21,6 +21,12 @@ description:         Please see the README on GitHub at <https://github.com/ming
 
 dependencies:
 - base >= 4.7 && < 5
+- array
+- containers
+- flow
+- lens
+- parallel
+- text
 
 library:
   source-dirs: src
@@ -30,9 +36,10 @@ executables:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
+    - -dynamic
     - -threaded
     - -rtsopts
-    - -with-rtsopts=-N
+    - -with-rtsopts=-N4
     dependencies:
     - bfs-escape-maze
 
@@ -41,8 +48,11 @@ tests:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
+    - -dynamic
     - -threaded
     - -rtsopts
-    - -with-rtsopts=-N
+    - -with-rtsopts=-N4
     dependencies:
     - bfs-escape-maze
+    - hspec
+    - hspec-discover

@@ -31,7 +31,13 @@ library
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
+      array
+    , base >=4.7 && <5
+    , containers
+    , flow
+    , lens
+    , parallel
+    , text
   default-language: Haskell2010
 
 executable bfs-escape-maze-exe
@@ -40,10 +46,16 @@ executable bfs-escape-maze-exe
       Paths_bfs_escape_maze
   hs-source-dirs:
       app
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.7 && <5
+      array
+    , base >=4.7 && <5
     , bfs-escape-maze
+    , containers
+    , flow
+    , lens
+    , parallel
+    , text
   default-language: Haskell2010
 
 test-suite bfs-escape-maze-test
@@ -53,8 +65,16 @@ test-suite bfs-escape-maze-test
       Paths_bfs_escape_maze
   hs-source-dirs:
       test
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.7 && <5
+      array
+    , base >=4.7 && <5
     , bfs-escape-maze
+    , containers
+    , flow
+    , hspec
+    , hspec-discover
+    , lens
+    , parallel
+    , text
   default-language: Haskell2010
