@@ -3,7 +3,6 @@ module Example
 
 import           Control.Lens (element, (&), (.~))
 import           Data.List    ((\\))
-import           Debug.Trace
 
 -- -----------------------------------------------------------------------------
 graph :: [[Int]]
@@ -20,10 +19,9 @@ graph = [ []
 
 visit :: [Bool]
 visit =
-  let
+  v & element 1 .~ True
+  where
     v = take (length graph) [False, False ..]
-  in
-    v & element 1 .~ True
 
 
 setVisit :: [Bool] -> Int -> [Bool]
@@ -37,10 +35,9 @@ type BreadcrumbD = ([Int], [Bool])
 
 dfsEval :: [Int]
 dfsEval =
-  let
+  reverse lst
+  where
     lst = fst $ dfs ([1], visit) (graph !! 1)
-  in
-    reverse lst
 
 dfs :: BreadcrumbD -> [Int] ->  BreadcrumbD
 dfs b [] = b
@@ -55,22 +52,20 @@ type BreadcrumbB = ([Int], [Bool], [Int])
 
 bfsEval :: [Int]
 bfsEval =
-  let
+  reverse r
+  where
     (r, _, _) = bfs ([1], visit, graph !! 1)
-  in
-    reverse r
 
 
 bfs :: BreadcrumbB -> BreadcrumbB
-bfs b@(r, v, []) = b
-bfs b@(r, v, x:xs) =
-  let
+bfs b@(_, _, []) = b
+bfs (r, v, x:xs) =
+  bfs (x:r, setVisit v x, xs <> (xList \\ xs))
+  where
     getToVisit :: [Bool] -> [Int] -> [Int]
     getToVisit v = filter (\x -> not $ v !! x)
 
     xList :: [Int]
     xList = getToVisit v (graph !! x)
-  in
-    bfs (x:r, setVisit v x, xs <> (xList \\ xs))
 
 -- -----------------------------------------------------------------------------
