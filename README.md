@@ -1,8 +1,20 @@
 # haskell-setup-series
 
+## Basic Stack Commands
+
+```sh
+$ stack new <project-name>
+# or
+$ stack new <project-name> quanterall/basic
+
+$ stack build
+$ stack test
+$ stack run
+```
+
 ## Basic Cabal Commands
 
-```bash
+```sh
 $ mkdir <project>
 $ cd <project>
 $ cabal init
@@ -22,7 +34,7 @@ $ cabal install
 
 ## Reformat using Stylish-haskell
 
-```bash
+```sh
 $ stylish-haskell -ri **/*.hs
 ```
 
