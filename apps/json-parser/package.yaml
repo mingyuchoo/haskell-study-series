@@ -8,6 +8,7 @@ dependencies:
 - rio
 - http-client
 - http-client-tls
+- pretty-simple
 
 default-extensions:
 - ApplicativeDo
