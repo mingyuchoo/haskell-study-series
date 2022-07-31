@@ -20,10 +20,13 @@ extra-source-files:
 description: Please see the README on GitHub at <https://github.com/githubuser/parallel-using-par#readme>
 
 dependencies:
-- base >= 4.7 && < 5
+- base >= 4.9.1.0 && < 5
 - containers
 - flow
 - parallel # IMPORTANT
+
+default-extensions: []
+ghc-options: []
 
 library:
   source-dirs: src

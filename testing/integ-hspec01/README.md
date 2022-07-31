@@ -17,7 +17,7 @@ vim package.yaml
 ...
 
 dependencies:
-- base >= 4.7 && < 5
+- base >= 4.9.1.0 && < 5
 - hspec
 - QuickCheck
 ```
