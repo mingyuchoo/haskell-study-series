@@ -142,9 +142,9 @@ class Checkable a where
 -- 'TrafficLight'  is a `type constructor` if has zero arguments just called a `type` used as a `type variable`
 -- 'Red',...       are `data(value) constructors`
 instance Checkable TrafficLight where
-    same Red   Red   = if Red   == Red   then True else False
-    same Amber Amber = if Amber == Amber then True else False
-    same Green Green = if Green == Green then True else False
+    same Red   Red   = True
+    same Amber Amber = True
+    same Green Green = True
     same _     _     = False
 
 -- |
