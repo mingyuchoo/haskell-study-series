@@ -9,19 +9,19 @@
 
 ### Install `nix`
 
-```bash
+```sh
 $ curl -L https://nixos.org/nix/install | sh
 ```
 
 ### Install `stack` package to `nix`
 
-```bash
+```sh
 $ nix-env -f "<nixpkgs>" -iA stack
 ```
 
 ## Create a new project
 
-```bash
+```sh
 $ stack new <project-name> new-template
 ```
 
@@ -80,7 +80,7 @@ nix:
 
 ## Stack build and run
 
-```bash
+```sh
 $ stack build
 $ stack run
 ```

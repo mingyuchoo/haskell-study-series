@@ -4,14 +4,14 @@
 
 ### Make Haskell environment
 
-```bash
+```sh
 nix-collect-garbage
 nix-shell
 ```
 
 ### run commands
 
-```bash
+```sh
 cabal new-build
 cabal run <project-name>-exe
 ```

@@ -2,20 +2,20 @@
 
 ## Install hackages
 
-```bash
+```sh
 stack install HUnit
 ```
 
 ## Create a new project
 
-```bash
+```sh
 stack new <project-name>
 cd <project-name>
 ```
 
 ## Add hackages to project's package config file
 
-```bash
+```sh
 vim package.yaml
 ```
 
@@ -33,6 +33,6 @@ Please check test/*.hs files
 
 ## Run test
 
-```bash
+```sh
 stack test
 ```
