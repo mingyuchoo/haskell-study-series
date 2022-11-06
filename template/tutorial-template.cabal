@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.7.
+-- This file has been generated from package.yaml by hpack version 0.35.0.
 --
 -- see: https://github.com/sol/hpack
 
@@ -37,7 +37,7 @@ library
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
+      base >=4.9.1.0 && <5
     , containers
     , flow
     , parallel
@@ -51,7 +51,7 @@ executable tutorial-template-exe
       app
   ghc-options: -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.7 && <5
+      base >=4.9.1.0 && <5
     , containers
     , flow
     , parallel
@@ -68,7 +68,7 @@ test-suite tutorial-template-test
       test
   ghc-options: -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.7 && <5
+      base >=4.9.1.0 && <5
     , containers
     , doctest
     , doctest-discover
