@@ -30,8 +30,9 @@ library
       Paths_integ_hspec01
   hs-source-dirs:
       src
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      base >=4.7 && <5
+      base >=4.9.1.0 && <5
     , containers
     , flow
     , parallel
@@ -43,9 +44,9 @@ executable integ-hspec01-exe
       Paths_integ_hspec01
   hs-source-dirs:
       app
-  ghc-options: -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.7 && <5
+      base >=4.9.1.0 && <5
     , containers
     , flow
     , integ-hspec01
@@ -60,10 +61,10 @@ test-suite integ-hspec01-test
       Paths_integ_hspec01
   hs-source-dirs:
       test
-  ghc-options: -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       QuickCheck
-    , base >=4.7 && <5
+    , base >=4.9.1.0 && <5
     , containers
     , flow
     , hspec

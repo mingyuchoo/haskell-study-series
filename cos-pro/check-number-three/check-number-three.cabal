@@ -30,8 +30,9 @@ library
       Paths_check_number_three
   hs-source-dirs:
       src
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      base >=4.7 && <5
+      base >=4.9.1.0 && <5
     , containers
     , flow
     , parallel
@@ -43,9 +44,9 @@ executable check-number-three-exe
       Paths_check_number_three
   hs-source-dirs:
       app
-  ghc-options: -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.7 && <5
+      base >=4.9.1.0 && <5
     , check-number-three
     , containers
     , flow
@@ -59,9 +60,9 @@ test-suite check-number-three-test
       Paths_check_number_three
   hs-source-dirs:
       test
-  ghc-options: -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.7 && <5
+      base >=4.9.1.0 && <5
     , check-number-three
     , containers
     , flow

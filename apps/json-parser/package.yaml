@@ -70,7 +70,16 @@ ghc-options:
 # The library contains all of our application code. The executable
 # defined below is just a thin wrapper.
 default-extensions: []
-ghc-options: []
+ghc-options:
+- -Wall
+- -Wcompat
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wmissing-export-lists
+- -Wmissing-home-modules
+- -Wpartial-fields
+- -Wredundant-constraints
 
 library:
   source-dirs: src
