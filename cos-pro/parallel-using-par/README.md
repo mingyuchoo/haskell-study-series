@@ -20,7 +20,7 @@ tests:
 
 ## How to run
 
-```sh
+```bash
 
 stack run
 

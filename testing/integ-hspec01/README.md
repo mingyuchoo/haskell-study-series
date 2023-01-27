@@ -2,14 +2,14 @@
 
 ## Create a new project
 
-```sh
+```bash
 stack new <project-name>
 cd <project-name>
 ```
 
 ## Add hackages to project's package config file
 
-```sh
+```bash
 vim package.yaml
 ```
 
@@ -28,6 +28,6 @@ Please check test/*.hs files
 
 ## Run test
 
-```sh
+```bash
 stack test
 ```

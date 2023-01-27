@@ -29,12 +29,12 @@ $ sudo apt install -y \
   gconf2 \
   gconf-service \
   libappindicator1
-  
+
 ```
 
 ## Basic Stack Commands
 
-```sh
+```bash
 $ stack new <project-name>
 # or
 $ stack new <project-name> quanterall/basic
@@ -49,7 +49,7 @@ $ stack run
 
 ## Basic Cabal Commands
 
-```sh
+```bash
 $ mkdir <project>
 $ cd <project>
 $ cabal init
@@ -69,7 +69,7 @@ $ cabal install
 
 ## Reformat using Stylish-haskell
 
-```sh
+```bash
 $ stylish-haskell -ri **/*.hs
 ```
 

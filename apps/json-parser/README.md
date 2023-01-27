@@ -2,13 +2,13 @@
 
 Run this project with:
 
-```sh
+```bash
 $ stack run
 ```
 
 ## How create this project
 
-```sh
+```bash
 $ stack new <project-name> quanterall/basic
 ```
 
