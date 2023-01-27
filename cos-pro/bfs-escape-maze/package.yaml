@@ -2,7 +2,7 @@ name:                bfs-escape-maze
 version:             0.1.0.0
 github:              "mingyuchoo/bfs-escape-maze"
 license:             BSD3
-author:              "mingyuchoo"
+author:              "Mingyu Choo"
 maintainer:          "mingyuchoo@gmail.com"
 copyright:           "mingyuchoo"
 

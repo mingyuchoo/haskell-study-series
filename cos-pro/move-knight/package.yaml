@@ -2,9 +2,9 @@ name:                move-knight
 version:             0.1.0.0
 github:              "mingyuchoo/move-knight"
 license:             BSD3
-author:              "mingyuchoo"
+author:              "Mingyu Choo"
 maintainer:          "mingyuchoo@gmail.com"
-copyright:           "MIT License"
+copyright:           "Mingyu Choo"
 
 extra-source-files:
 - README.md

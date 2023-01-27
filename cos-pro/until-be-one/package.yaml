@@ -2,9 +2,9 @@ name:                until-be-one
 version:             0.1.0.0
 github:              "mingyuchoo/until-be-one"
 license:             BSD3
-author:              "mingyuchoo"
+author:              "Mingyu Choo"
 maintainer:          "mingyuchoo@gmail.com"
-copyright:           "MIT License"
+copyright:           "Mingyu Choo"
 
 extra-source-files:
 - README.md
