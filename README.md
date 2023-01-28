@@ -1,3 +1,8 @@
+<p align="center">
+  <a href="https://github.com/mingyuchoo/haskell-setup-series/issues"><img alt="Issues" src="https://img.shields.io/github/issues/mingyuchoo/haskell-setup-series?color=appveyor" /></a>
+  <a href="https://github.com/mingyuchoo/haskell-setup-series/pulls"><img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr/mingyuchoo/haskell-setup-series?color=appveyor" /></a>
+</p>
+
 # haskell-setup-series
 
 # Prerequsite
