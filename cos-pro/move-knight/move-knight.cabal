@@ -9,9 +9,9 @@ version:        0.1.0.0
 description:    Please see the README on GitHub at <https://github.com/mingyuchoo/move-knight#readme>
 homepage:       https://github.com/mingyuchoo/move-knight#readme
 bug-reports:    https://github.com/mingyuchoo/move-knight/issues
-author:         mingyuchoo
+author:         Mingyu Choo
 maintainer:     mingyuchoo@gmail.com
-copyright:      MIT License
+copyright:      Mingyu Choo
 license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
@@ -30,8 +30,9 @@ library
       Paths_move_knight
   hs-source-dirs:
       src
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      base >=4.7 && <5
+      base >=4.9.1.0 && <5
     , containers
     , flow
     , parallel
@@ -43,9 +44,9 @@ executable move-knight-exe
       Paths_move_knight
   hs-source-dirs:
       app
-  ghc-options: -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.7 && <5
+      base >=4.9.1.0 && <5
     , containers
     , flow
     , move-knight
@@ -59,9 +60,9 @@ test-suite move-knight-test
       Paths_move_knight
   hs-source-dirs:
       test
-  ghc-options: -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.7 && <5
+      base >=4.9.1.0 && <5
     , containers
     , flow
     , hspec

@@ -15,52 +15,7 @@ library
       Paths_json_parser
   hs-source-dirs:
       src
-  default-extensions:
-      ApplicativeDo
-      BangPatterns
-      BinaryLiterals
-      ConstraintKinds
-      DataKinds
-      DefaultSignatures
-      DeriveDataTypeable
-      DeriveFoldable
-      DeriveFunctor
-      DeriveGeneric
-      DeriveTraversable
-      DeriveLift
-      DerivingStrategies
-      DoAndIfThenElse
-      DuplicateRecordFields
-      EmptyDataDecls
-      EmptyCase
-      ExistentialQuantification
-      FlexibleContexts
-      FlexibleInstances
-      FunctionalDependencies
-      GADTs
-      GeneralizedNewtypeDeriving
-      InstanceSigs
-      KindSignatures
-      LambdaCase
-      MultiParamTypeClasses
-      MultiWayIf
-      NamedFieldPuns
-      NoImplicitPrelude
-      NumericUnderscores
-      OverloadedStrings
-      PartialTypeSignatures
-      PatternGuards
-      PolyKinds
-      RankNTypes
-      RecordWildCards
-      ScopedTypeVariables
-      StandaloneDeriving
-      TupleSections
-      TypeFamilies
-      TypeSynonymInstances
-      ViewPatterns
-      TypeApplications
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -Wwarn=deprecations -Werror=incomplete-patterns
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       aeson
     , base >=4.9.1.0 && <5
@@ -76,52 +31,7 @@ executable json-parser
       Paths_json_parser
   hs-source-dirs:
       app
-  default-extensions:
-      ApplicativeDo
-      BangPatterns
-      BinaryLiterals
-      ConstraintKinds
-      DataKinds
-      DefaultSignatures
-      DeriveDataTypeable
-      DeriveFoldable
-      DeriveFunctor
-      DeriveGeneric
-      DeriveTraversable
-      DeriveLift
-      DerivingStrategies
-      DoAndIfThenElse
-      DuplicateRecordFields
-      EmptyDataDecls
-      EmptyCase
-      ExistentialQuantification
-      FlexibleContexts
-      FlexibleInstances
-      FunctionalDependencies
-      GADTs
-      GeneralizedNewtypeDeriving
-      InstanceSigs
-      KindSignatures
-      LambdaCase
-      MultiParamTypeClasses
-      MultiWayIf
-      NamedFieldPuns
-      NoImplicitPrelude
-      NumericUnderscores
-      OverloadedStrings
-      PartialTypeSignatures
-      PatternGuards
-      PolyKinds
-      RankNTypes
-      RecordWildCards
-      ScopedTypeVariables
-      StandaloneDeriving
-      TupleSections
-      TypeFamilies
-      TypeSynonymInstances
-      ViewPatterns
-      TypeApplications
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -Wwarn=deprecations -Werror=incomplete-patterns -dynamic -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
     , base >=4.9.1.0 && <5
@@ -139,52 +49,7 @@ test-suite json-parser-test
       Paths_json_parser
   hs-source-dirs:
       test
-  default-extensions:
-      ApplicativeDo
-      BangPatterns
-      BinaryLiterals
-      ConstraintKinds
-      DataKinds
-      DefaultSignatures
-      DeriveDataTypeable
-      DeriveFoldable
-      DeriveFunctor
-      DeriveGeneric
-      DeriveTraversable
-      DeriveLift
-      DerivingStrategies
-      DoAndIfThenElse
-      DuplicateRecordFields
-      EmptyDataDecls
-      EmptyCase
-      ExistentialQuantification
-      FlexibleContexts
-      FlexibleInstances
-      FunctionalDependencies
-      GADTs
-      GeneralizedNewtypeDeriving
-      InstanceSigs
-      KindSignatures
-      LambdaCase
-      MultiParamTypeClasses
-      MultiWayIf
-      NamedFieldPuns
-      NoImplicitPrelude
-      NumericUnderscores
-      OverloadedStrings
-      PartialTypeSignatures
-      PatternGuards
-      PolyKinds
-      RankNTypes
-      RecordWildCards
-      ScopedTypeVariables
-      StandaloneDeriving
-      TupleSections
-      TypeFamilies
-      TypeSynonymInstances
-      ViewPatterns
-      TypeApplications
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -Wwarn=deprecations -Werror=incomplete-patterns -Wall
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wall
   build-depends:
       aeson
     , base >=4.9.1.0 && <5

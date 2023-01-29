@@ -9,9 +9,9 @@ version:        0.1.0.0
 description:    Please see the README on GitHub at <https://github.com/mingyuchoo/coordinate-travel#readme>
 homepage:       https://github.com/mingyuchoo/coordinate-travel#readme
 bug-reports:    https://github.com/mingyuchoo/coordinate-travel/issues
-author:         mingyuchoo
+author:         Mingyu Choo
 maintainer:     mingyuchoo@gmail.com
-copyright:      MIT License
+copyright:      Mingyu Choo
 license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
@@ -30,8 +30,9 @@ library
       Paths_coordinate_travel
   hs-source-dirs:
       src
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      base >=4.7 && <5
+      base >=4.9.1.0 && <5
     , containers
     , flow
     , parallel
@@ -43,9 +44,9 @@ executable coordinate-travel-exe
       Paths_coordinate_travel
   hs-source-dirs:
       app
-  ghc-options: -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.7 && <5
+      base >=4.9.1.0 && <5
     , containers
     , coordinate-travel
     , flow
@@ -59,9 +60,9 @@ test-suite coordinate-travel-test
       Paths_coordinate_travel
   hs-source-dirs:
       test
-  ghc-options: -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.7 && <5
+      base >=4.9.1.0 && <5
     , containers
     , coordinate-travel
     , flow
