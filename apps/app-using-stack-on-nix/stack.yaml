@@ -4,10 +4,6 @@
 # For advanced use and comprehensive documentation of the format, please see:
 # https://docs.haskellstack.org/en/stable/yaml_configuration/
 
-
-
-
-
 nix:
 
   # false by default. Must be present and set to `true` to enable Nix, except on
@@ -44,10 +40,6 @@ nix:
   # This creates a `nix-gc-symlinks` directory in the project `.stack-work`.
   # To revert that, just delete this `nix-gc-symlinks` directory.
   add-gc-roots: false
-
-
-
-
 
 # Resolver to choose a 'specific' stackage snapshot or a compiler version.
 # A snapshot resolver dictates the compiler version and the set of packages
