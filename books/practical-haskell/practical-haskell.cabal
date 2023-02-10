@@ -11,7 +11,7 @@ homepage:       https://github.com/mingyuchoo/practical-haskell#readme
 bug-reports:    https://github.com/mingyuchoo/practical-haskell/issues
 author:         Mingyu Choo
 maintainer:     mingyuchoo@gmail.com
-copyright:      2022 Mingyu Choo
+copyright:      2023 Mingyu Choo
 license:        BSD3
 license-file:   LICENSE
 build-type:     Simple

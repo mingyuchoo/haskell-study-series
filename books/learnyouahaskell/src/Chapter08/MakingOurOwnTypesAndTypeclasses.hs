@@ -400,7 +400,7 @@ instance Functor Tree where  -- `Tree` is a type constructor having only one typ
 
 -- |
 -- `j a` :: *
-  `a` :: *
+--  `a` :: *
 -- `j'   :: * -> *
 -- `t a j` :: *
 -- *`a` -> (* -> *)`j` -> *`t`
