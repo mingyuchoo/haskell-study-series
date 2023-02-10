@@ -4,7 +4,7 @@ github: "mingyuchoo/learnyouahaskell"
 license: BSD3
 author: "Mingyu Choo"
 maintainer: "mingyuchoo@gmail.com"
-copyright: "2022 Mingyu Choo"
+copyright: "2023 Mingyu Choo"
 
 extra-source-files:
   - README.md

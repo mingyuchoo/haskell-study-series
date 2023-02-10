@@ -4,7 +4,7 @@ github: "mingyuchoo/pizza-store"
 license: BSD3
 author: "mingyuchoo"
 maintainer: "mingyuchoo"
-copyright: "MIT License"
+copyright: "2023 Mingyu Choo"
 
 extra-source-files:
 - README.md
