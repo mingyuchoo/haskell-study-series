@@ -1,13 +1,12 @@
-{-# OPTIONS_GHC -fwarn-missing-signatures #-}
-
-{-# LANGUAGE StandaloneKindSignatures #-}
-
 module Chapter12.AFistfulOfMonads
     where
--------------------------------------------------------------------------------
+
 import           Control.Monad
 import           Data.Kind     (Constraint, Type)
--------------------------------------------------------------------------------
+
+
+-- |
+--
 chapter12 :: IO ()
 chapter12 = do
   print $ (*)  <$> Just 2         <*> Just 8
@@ -104,54 +103,75 @@ chapter12 = do
 
 
   return ()
--------------------------------------------------------------------------------
+
+
+-- |
+--
 applyMaybe :: Maybe a -> (a -> Maybe b) -> Maybe b
 applyMaybe Nothing  f = Nothing
 applyMaybe (Just x) f = f x
 
 
--------------------------------------------------------------------------------
+-- |
+--
 type Birds :: Type
 type Birds = Int
 
+
+-- |
+--
 type Pole :: Type
 type Pole  = (Birds,Birds)
 
 
--------------------------------------------------------------------------------
+-- |
+--
 landLeft :: Birds -> Pole -> Pole
 landLeft n (left,right) = (left + n,right)
 
+
+-- |
+--
 landRight :: Birds -> Pole -> Pole
 landRight n (left,right) = (left,right+1)
+
 
 -- | (-:) :: t1 -> (t1 -> t2) -> t2
 x -: f = f x
 
 
--------------------------------------------------------------------------------
+-- |
+--
 landLeft' :: Birds -> Pole -> Maybe Pole
 landLeft' n (left,right)
   | abs (left + n - right) < 4 = Just (left + n,right)
   | otherwise                    = Nothing
 
+
+-- |
+--
 landRight' :: Birds -> Pole -> Maybe Pole
 landRight' n (left,right)
   | abs (left - (right + n)) < 4 = Just (left, right + n )
   | otherwise                    = Nothing
 
 
--------------------------------------------------------------------------------
+-- |
+--
 banana :: Pole -> Maybe Pole
 banana _ = Nothing
 
 
--------------------------------------------------------------------------------
+-- |
+--
 foo :: Maybe String
 foo = Just 3   >>= (\x ->
       Just "!" >>= (\y ->
       Just (show x ++ y)))
 
+
+-- |
+--
 foo' :: Maybe String
 foo' = do
   x <- Just 3
@@ -159,14 +179,16 @@ foo' = do
   Just (show x ++ y)
 
 
--------------------------------------------------------------------------------
+-- |
+--
 marySue :: Maybe Bool
 marySue = do
   x <- Just 9
   Just (x > 8)
 
 
--------------------------------------------------------------------------------
+-- |
+--
 routine :: Maybe Pole
 routine = do
   start  <- return (0,0)
@@ -175,7 +197,8 @@ routine = do
   landLeft' 1 second
 
 
--------------------------------------------------------------------------------
+-- |
+--
 routine' :: Maybe Pole
 routine' = do
   start <- return (0,0)
@@ -185,23 +208,24 @@ routine' = do
   landLeft' 1 second
 
 
--------------------------------------------------------------------------------
+-- |
+--
 justH :: Maybe Char
 justH = do
   (x:xs) <- Just "hello"
   return x
 
 
-
--------------------------------------------------------------------------------
+-- |
+--
 wopwop :: Maybe Char
 wopwop = do
   (x:xs) <- Just ""
   return x
 
 
-
--------------------------------------------------------------------------------
+-- |
+--
 listOfTuples :: [(Int,Char)]
 listOfTuples = do
   n  <- [1,2]
@@ -209,8 +233,8 @@ listOfTuples = do
   return (n, ch)
 
 
-
--------------------------------------------------------------------------------
+-- |
+--
 sevensOnly :: [Int]
 sevensOnly = do
   x <- [1..50]
@@ -218,10 +242,14 @@ sevensOnly = do
   return x
 
 
--------------------------------------------------------------------------------
+-- |
+--
 type KnightPos :: Type
 type KnightPos = (Int,Int)
 
+
+-- |
+--
 moveKnight :: KnightPos -> [KnightPos]
 moveKnight (c,r) = do
   (c',r') <- [(c+2,r-1),(c+2,r+1),(c-2,r-1),(c-2,r+1)
@@ -231,6 +259,8 @@ moveKnight (c,r) = do
   return (c',r')
 
 
+-- |
+--
 moveKnight' :: KnightPos -> [KnightPos]
 moveKnight' (c,r) = filter onBoard
   [(c+2,r-1),(c+2,r+1),(c-2,r-1),(c-2,r+1)
@@ -239,6 +269,8 @@ moveKnight' (c,r) = filter onBoard
   where onBoard (c,r) = c `elem` [1..8] && r `elem` [1..8]
 
 
+-- |
+--
 in3 :: KnightPos -> [KnightPos]
 in3 start = do
   first  <- moveKnight start
@@ -246,15 +278,20 @@ in3 start = do
   moveKnight second
 
 
+-- |
+--
 in3' start = return start >>= moveKnight >>= moveKnight >>= moveKnight
 
 
+-- |
+--
 canReachIn3 :: KnightPos -> KnightPos -> Bool
 canReachIn3 start end = end `elem` in3 start
 
 
--------------------------------------------------------------------------------
+-- |
+--
 (<=<) :: (Monad m) => (b -> m c) -> (a -> m b) -> (a -> m c)
 f <=< g = (\x -> g x >>= f)
 
--------------------------------------------------------------------------------
+

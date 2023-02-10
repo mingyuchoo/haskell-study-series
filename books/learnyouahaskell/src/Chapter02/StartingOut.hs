@@ -1,11 +1,6 @@
-{-# OPTIONS_GHC -fwarn-missing-signatures #-}
-
-{-# LANGUAGE ExplicitForAll           #-}
-{-# LANGUAGE StandaloneKindSignatures #-}
-
 module Chapter02.StartingOut
     where
---------------------------------------------------------------------------------
+
 
 -- | doubleMe
 --
@@ -21,6 +16,7 @@ module Chapter02.StartingOut
 doubleMe :: Int -> Int
 doubleMe x = x + x
 
+
 -- | doubleUs
 -- >>> doubleUs 1 1
 -- 4
@@ -30,4 +26,3 @@ doubleMe x = x + x
 -- 10
 doubleUs :: Int -> Int -> Int
 doubleUs x y = x * 2 + y * 2
---------------------------------------------------------------------------------

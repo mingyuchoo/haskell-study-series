@@ -1,65 +1,57 @@
-{-# OPTIONS_GHC -fwarn-missing-signatures #-}
-
-{-# LANGUAGE ExplicitForAll           #-}
-{-# LANGUAGE StandaloneKindSignatures #-}
-
 module Chapter08.MakingOurOwnTypesAndTypeclasses
     where
---------------------------------------------------------------------------------
+
 import           Data.Kind (Constraint)
 import qualified Data.Map  as Map
 
---------------------------------------------------------------------------------
 
-{--
- -- Algebric data types intro
---}
-
---------------------------------------------------------------------------------
+-- |
+--
 type Point :: *
 data Point = Point Float Float
      deriving (Show)
 
---------------------------------------------------------------------------------
+
+-- |
+--
 type Shape :: *
 data Shape = Circle Point Float
            | Rectangle Point Point
      deriving (Show)
 
---------------------------------------------------------------------------------
+
 -- | area
+--
 area :: Shape -> Float -- function signature declaration
 area (Circle _ r)                            = pi * r ^ 2
 area (Rectangle (Point x1 y1) (Point x2 y2)) = (abs $ x2 - x1) * (abs $ y2 - y1)
 
---------------------------------------------------------------------------------
+
 -- | nudge
+--
 nudge :: Shape -> Float -> Float -> Shape
 nudge (Circle (Point x y) r) a b = Circle (Point (x + a) (y + b)) r
 nudge (Rectangle (Point x1 y1) (Point x2 y2)) a b =
   Rectangle (Point (x1 + a) (y1 + b)) (Point (x2 + a) (y2 + b))
 
---------------------------------------------------------------------------------
+
 -- | baseCircle
+--
 baseCircle :: Float -> Shape
 baseCircle r = Circle (Point 0 0) r
 
---------------------------------------------------------------------------------
+
 -- | baseRect
+--
 baseRect :: Float -> Float -> Shape
 baseRect width height = Rectangle (Point 0 0) (Point width height)
 
---------------------------------------------------------------------------------
-{--
- -- Record syntax
---}
 
---------------------------------------------------------------------------------
 type Person :: *
 data Person = Person String String Int Float String String
      deriving (Show)
 
---------------------------------------------------------------------------------
+
 -- firstName :: Person -> String
 -- firstName (Person firstname _ _ _ _ _) = firstname
 --
@@ -79,7 +71,8 @@ data Person = Person String String Int Float String String
 -- flavor (Person _ _ _ _ _ flavor) = flavor
 
 
---------------------------------------------------------------------------------
+-- |
+--
 type Person2 :: *
 data Person2 = Person2 { firstName2   :: String
                        , lastName2    :: String
@@ -90,7 +83,9 @@ data Person2 = Person2 { firstName2   :: String
                        }
      deriving (Show)
 
---------------------------------------------------------------------------------
+
+-- |
+--
 type Car :: *
 data Car = Car { company :: String
                , model   :: String
@@ -98,11 +93,12 @@ data Car = Car { company :: String
                }
      deriving (Show)
 
---------------------------------------------------------------------------------
+
+
+-- |
 -- tellCar :: Car -> String
 -- tellCar (Car { company = c, model = m, year = y}) =
 --   "This " ++ c ++ " " ++ m ++ " was made in " ++ show y
---------------------------------------------------------------------------------
 type Car2 :: * -> * -> * -> *
 data Car2 a b c = Car2 { company2 :: a
                        , model2   :: b
@@ -110,25 +106,39 @@ data Car2 a b c = Car2 { company2 :: a
                        }
      deriving (Show)
 
+-- |
+--
 tellCar2 :: (Show a) => Car2 String String a -> String
 tellCar2 (Car2 {company2 = c, model2 = m, year2 = y}) =
   "This " ++ c ++ " " ++ m ++ " was made in " ++ show y
 
---------------------------------------------------------------------------------
+-- |
+--
 type Vector :: * -> *
 data Vector a = Vector a a a
      deriving (Show)
 
+
+-- |
+--
 vplus :: (Num t) => Vector t -> Vector t -> Vector t
 (Vector i j k) `vplus` (Vector l m n) = Vector (i + l) (j + m) (k + n)
 
+
+-- |
+--
 vectMult :: (Num t) => Vector t -> t -> Vector t
 (Vector i j k) `vectMult` m = Vector (i * m) (j * m) (k * m)
 
+
+-- |
+--
 scalarMult :: (Num t) => Vector t -> Vector t -> t
 (Vector i j k) `scalarMult` (Vector l m n) = i * l + j * m + k * m
 
---------------------------------------------------------------------------------
+
+-- |
+--
 type Person3 :: *
 data Person3 = Person3 { firstName3 :: String
                        , lastName3  :: String
@@ -136,7 +146,9 @@ data Person3 = Person3 { firstName3 :: String
                        }
      deriving (Eq)
 
---------------------------------------------------------------------------------
+
+-- |
+--
 type Person4 :: *
 data Person4 = Person4 { firstName4 :: String
                        , lastName4  :: String
@@ -144,7 +156,9 @@ data Person4 = Person4 { firstName4 :: String
                        }
      deriving (Eq, Read, Show)
 
---------------------------------------------------------------------------------
+
+-- |
+--
 type Day :: *
 data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday deriving
      ( Bounded
@@ -155,9 +169,9 @@ data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday 
      , Show
      )
 
---------------------------------------------------------------------------------
+
+-- |
 -- Phone Book
---------------------------------------------------------------------------------
 type Name :: *
 type Name = String
 
@@ -167,6 +181,9 @@ type PhoneNumber = String
 type PhoneBook :: *
 type PhoneBook = [(Name, PhoneNumber)]
 
+
+-- |
+--
 phoneBook :: PhoneBook
 phoneBook = [ ("betty", "555-2938")
             , ("bonnie", "452-2928")
@@ -175,16 +192,21 @@ phoneBook = [ ("betty", "555-2938")
             , ("wendy", "939-8282")
             , ("penny", "853-2492") ]
 
+
+-- |
+--
 inPhoneBook :: Name -> PhoneNumber -> PhoneBook -> Bool
 inPhoneBook name pnumber pbook = (name, pnumber) `elem` pbook
 
---------------------------------------------------------------------------------
+-- |
+--
 type AssocList :: * -> * -> *
 type AssocList k v = [(k, v)]
 
---------------------------------------------------------------------------------
+
+
+-- |
 -- Locker
---------------------------------------------------------------------------------
 type LockerState :: *
 data LockerState = Taken | Free deriving (Eq, Show)
 
@@ -200,6 +222,8 @@ type LockerMessage = String
 type LockerMap :: *
 type LockerMap = Map.Map LockerID (LockerState, LockerPasscode)
 
+-- |
+--
 lockerLookup :: LockerID -> LockerMap -> Either LockerMessage LockerPasscode
 lockerLookup lockerId lockerMap =
     case Map.lookup lockerId lockerMap of
@@ -209,6 +233,8 @@ lockerLookup lockerId lockerMap =
               then Right passcode
               else Left $ "Locker " ++ show lockerId ++ " is already taken!"
 
+-- |
+--
 lockers :: LockerMap
 lockers = Map.fromList [ (100, (Taken, "ZD39I"))
                        , (101, (Free, "JAH3I"))
@@ -218,47 +244,53 @@ lockers = Map.fromList [ (100, (Taken, "ZD39I"))
                        , (105, (Taken, "88292"))
                        ]
 
---------------------------------------------------------------------------------
--- List Data Constructor
---------------------------------------------------------------------------------
 
+-- List Data Constructor
 -- data List a = Empty | Cons a (List a) deriving (Show, Read, Eq, Ord)
 -- data List a = Empty | Cons { listHead :: a, listTail :: List a}
 --   deriving (Show, Read, Eq, Ord)
 
-
+-- |
+--
 infixr 5 :-:
 type List :: * -> *
 data List a = Empty
             | a :-: (List a)
      deriving (Eq, Ord, Read, Show)
 
+-- |
 -- fixity
 infixr 5 .++
 (.++) :: List a -> List a -> List a
 Empty .++ ys      = ys
 (x :-: xs) .++ ys = x :-: (xs .++ ys)
 
---------------------------------------------------------------------------------
--- Tree
---------------------------------------------------------------------------------
 
+-- |
+-- Tree
 type Tree :: * -> *
 data Tree a = Nil
             | Node a (Tree a) (Tree a)
      deriving (Eq, Read, Show)
 
 
+-- |
+--
 singleton :: a -> Tree a
 singleton x = Node x Nil Nil
 
 
+-- |
+--
 treeInsert :: (Ord a) => a -> Tree a -> Tree a
 treeInsert x Nil = singleton x
 treeInsert x (Node a left right) | x == a = Node x left right
                                  | x < a  = Node a (treeInsert x left) right
                                  | x > a  = Node a left (treeInsert x right)
 
+
+-- |
+--
 infixr 5 *>>
 (*>>) :: (Ord a) => a -> Tree a -> Tree a
 x *>> Nil = singleton x
@@ -266,12 +298,18 @@ x *>> (Node a left right) | x == a = Node x left right
                           | x <  a = Node a (x *>> left) right
                           | x >  a = Node a left (x *>> right)
 
+
+-- |
+--
 treeElem :: (Ord a) => a -> Tree a -> Bool
 treeElem x Nil = False
 treeElem x (Node a left right) | x == a = True
                                | x < a  = treeElem x left
                                | x > a  = treeElem x right
 
+
+-- |
+--
 infixr 5 *??
 (*??) :: (Ord a) => a -> Tree a -> Bool
 x *?? Nil = False
@@ -279,94 +317,119 @@ x *?? (Node a left right) | x == a = True
                           | x <  a = x *?? left
                           | x >  a = x *?? right
 
---------------------------------------------------------------------------------
+
+-- |
 -- TrafficLight
---------------------------------------------------------------------------------
 type TrafficLight :: *
 data TrafficLight = Red | Yellow | Green
 
+
+-- |
+--
 instance Eq TrafficLight where
   Red == Red       = True
   Green == Green   = True
   Yellow == Yellow = True
   _ == _           = False
 
+
+-- |
+--
 instance Show TrafficLight where
   show Red    = "Red light"
   show Yellow = "Yellow light"
   show Green  = "Green light"
 
---------------------------------------------------------------------------------
+
+-- |
 -- Type class declaration and Instantiation of Type class
---------------------------------------------------------------------------------
 type YesNo :: * -> Constraint
 class YesNo a where    -- `a` is a type variable for concrete type
   yesno :: a -> Bool
 
+
+-- |
+--
 instance YesNo Int where
   yesno 0 = False
   yesno _ = True
 
+
+-- |
+--
 instance YesNo [a] where
   yesno [] = False
   yesno _  = True
 
+
+-- |
+--
 instance YesNo Bool where
   yesno = id
 
+
+-- |
+--
 instance YesNo (Maybe a) where
   yesno (Just _) = True
   yesno Nothing  = False
 
 
+-- |
+--
 yesnoIf :: (YesNo y) => y -> a -> a -> a
 yesnoIf yesnoVal yesResult noResult = if yesno yesnoVal
                                         then yesResult
                                         else noResult
 
 
---------------------------------------------------------------------------------
 -- Instantiations of Functor type class
 -- `f` is a type constructor having only one type variable
 --
 -- class Functor f where
 --    fmap :: (a -> b) -> f a -> f b
 --    ...
---------------------------------------------------------------------------------
 
+
+-- |
+--
 instance Functor Tree where  -- `Tree` is a type constructor having only one type variable
   fmap f Nil = Nil
   fmap f (Node x leftsub rightsub) =
     Node (f x) (fmap f leftsub) (fmap f rightsub)
 
-{-
-*****************
-`j a` :: *
+-- |
+-- `j a` :: *
   `a` :: *
-`j'   :: * -> *
-`t a j` :: *
-*`a` -> (* -> *)`j` -> *`t`
--}
+-- `j'   :: * -> *
+-- `t a j` :: *
+-- *`a` -> (* -> *)`j` -> *`t`
 type Tofu :: (* -> (* -> *) -> *) -> Constraint
 class Tofu t where
   tofu :: j a -> t a j
 
-{- ***************** -}
+-- |
+--
 type Frank :: * -> (* -> *) -> *
 data Frank a b = Frank { frankField :: b a
                        }
      deriving (Show)
 
 
+-- |
+--
 instance Tofu Frank where
   tofu x = Frank x
 
+
+-- |
+--
 type Barry :: (* -> *) -> * -> * -> *
 data Barry t k p = Barry { yabba :: p
                          , dabba :: t k
                          }
 
+-- |
+--
 instance Functor (Barry a b) where
   fmap f (Barry {yabba = x, dabba = y}) = Barry {yabba = f x, dabba = y}
-
---------------------------------------------------------------------------------

@@ -1,10 +1,10 @@
-name: learnyouahaskell
-version: 0.1.0.0
-github: "mingyuchoo/learnyouahaskell"
-license: BSD3
-author: "Mingyu Choo"
-maintainer: "mingyuchoo@gmail.com"
-copyright: "2023 Mingyu Choo"
+name:         learnyouahaskell
+version:      0.1.0.0
+github:       "mingyuchoo/learnyouahaskell"
+license:      BSD3
+author:       "Mingyu Choo"
+maintainer:   "mingyuchoo@gmail.com"
+copyright:    "2023 Mingyu Choo"
 
 extra-source-files:
   - README.md
@@ -29,7 +29,11 @@ dependencies:
 - parallel
 - random
 
-default-extensions: []
+default-extensions:
+- ExplicitForAll
+- OverloadedStrings
+- StandaloneKindSignatures
+
 ghc-options:
 - -Wall
 - -Wcompat
@@ -38,8 +42,11 @@ ghc-options:
 - -Wincomplete-uni-patterns
 - -Wmissing-export-lists
 - -Wmissing-home-modules
+- -Wmissing-signatures
 - -Wpartial-fields
 - -Wredundant-constraints
+- -Wunused-binds
+- -Wunused-imports
 
 library:
   source-dirs: src

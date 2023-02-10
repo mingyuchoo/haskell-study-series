@@ -11,7 +11,7 @@ homepage:       https://github.com/mingyuchoo/learnyouahaskell#readme
 bug-reports:    https://github.com/mingyuchoo/learnyouahaskell/issues
 author:         Mingyu Choo
 maintainer:     mingyuchoo@gmail.com
-copyright:      2022 Mingyu Choo
+copyright:      2023 Mingyu Choo
 license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
@@ -40,12 +40,15 @@ library
       Chapter11.FunctorsApplicativeFunctorsAndMonoids
       Chapter12.AFistfulOfMonads
       Chapter13.ForAFewMonadsMore
-      Lib
   other-modules:
       Paths_learnyouahaskell
   hs-source-dirs:
       src
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  default-extensions:
+      ExplicitForAll
+      OverloadedStrings
+      StandaloneKindSignatures
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wmissing-signatures -Wpartial-fields -Wredundant-constraints -Wunused-binds -Wunused-imports
   build-depends:
       base >=4.9.1.0 && <5
     , bytestring
@@ -63,7 +66,11 @@ executable learnyouahaskell-exe
       Paths_learnyouahaskell
   hs-source-dirs:
       app
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  default-extensions:
+      ExplicitForAll
+      OverloadedStrings
+      StandaloneKindSignatures
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wmissing-signatures -Wpartial-fields -Wredundant-constraints -Wunused-binds -Wunused-imports -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base >=4.9.1.0 && <5
     , bytestring
@@ -86,7 +93,11 @@ test-suite learnyouahaskell-test
       Paths_learnyouahaskell
   hs-source-dirs:
       test
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  default-extensions:
+      ExplicitForAll
+      OverloadedStrings
+      StandaloneKindSignatures
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wmissing-signatures -Wpartial-fields -Wredundant-constraints -Wunused-binds -Wunused-imports -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base >=4.9.1.0 && <5
     , bytestring

@@ -1,9 +1,3 @@
-{-# OPTIONS_GHC -fwarn-missing-signatures #-}
-
-{-# LANGUAGE ExplicitForAll           #-}
-{-# LANGUAGE OverloadedStrings        #-}
-{-# LANGUAGE StandaloneKindSignatures #-}
-
 module Chapter09.InputAndOutput
     where
 
@@ -50,21 +44,24 @@ import           System.Random
     , randoms
     )
 
---------------------------------------------------------------------------------
+
 -- | evaludate functions
+--
 someFunc :: IO ()
 someFunc = do
     putStrLn "----------------------------"
 
---------------------------------------------------------------------------------
+
 -- | make factorial number
+--
 factorial :: Int -> Int
 factorial n | n == 0 = 0
             | n == 1 = 1
             | otherwise = n * factorial (n - 1)
 
---------------------------------------------------------------------------------
+
 -- | use case of `getLine`
+--
 askName :: IO ()
 askName = do
     _ <- putStrLn "What's your first name?"
@@ -79,8 +76,9 @@ askName = do
         ", how are you?"
     return ()
 
---------------------------------------------------------------------------------
+
 -- |
+--
 makeReverse :: IO ()
 makeReverse = do
     line <- getLine
@@ -91,11 +89,13 @@ makeReverse = do
              return ()
 
 -- |
+--
 reverseWords :: String -> String
 reverseWords = unwords . map reverse . words
 
---------------------------------------------------------------------------------
+
 -- | use cases of `return`
+--
 assertReturn :: IO ()
 assertReturn = do
     _ <- return ()
@@ -110,8 +110,9 @@ assertReturn = do
     _ <- putStrLn $ c ++ " " ++ d
     return ()
 
---------------------------------------------------------------------------------
+
 -- | example of `when`
+--
 exampleWhen :: IO ()
 exampleWhen = do
     input <- getLine
@@ -124,7 +125,7 @@ exampleWhen = do
         then putStrLn input
         else return ()
 
---------------------------------------------------------------------------------
+
 -- | example of `sequence`
 --  sequence :: (Traversable t, Monad m) => t (m a) -> m (t a)
 exampleSequence :: IO ()
@@ -138,8 +139,9 @@ exampleSequence = do
     c <- getLine
     print [a,b,c]
 
---------------------------------------------------------------------------------
+
 -- | example of `mapM` and `mapM_`
+--
 exampleMapM :: IO ()
 exampleMapM = do
     _ <- sequence $ map print [1,2,3,4,5]
@@ -148,8 +150,9 @@ exampleMapM = do
     return ()
 
 
---------------------------------------------------------------------------------
+
 -- | example of `forever`
+--
 exampleForever :: IO ()
 exampleForever = do
     forever $ do
@@ -157,8 +160,9 @@ exampleForever = do
         input <- getLine
         putStrLn $ map toUpper input
 
---------------------------------------------------------------------------------
+
 -- | example of `forM`
+--
 exampleForM :: IO ()
 exampleForM = do
     colors <- forM [1,2,3,4] (\a -> do
@@ -169,27 +173,37 @@ exampleForM = do
     mapM putStrLn colors
     return ()
 
---------------------------------------------------------------------------------
+
 -- | withFile
+--
 withFile' :: FilePath -> IOMode -> (Handle -> IO a) -> IO a
 withFile' path mode f = do
     handle <- openFile path mode
     result <- f handle
     hClose handle
     return result
---------------------------------------------------------------------------------
+
 -- | todoList
+--
 todoList = do
   (command:args) <- getArgs
   let (Just action) = lookup command dispatch
   action args
 
+-- |
+--
 dispatch :: [(String, [String] -> IO ())]
 dispatch = [("add", add), ("view", view), ("remove", remove)]
 
+
+-- |
+--
 add :: [String] -> IO ()
 add [fileName, todoItem] = appendFile fileName (todoItem ++ "\n")
 
+
+-- |
+--
 view :: [String] -> IO ()
 view [fileName] = do
   contents <- readFile fileName
@@ -198,6 +212,9 @@ view [fileName] = do
         zipWith (\n line -> show n ++ " - " ++ line) [0 ..] todoTasks
   putStr $ unlines numberedTasks
 
+
+-- |
+--
 remove :: [String] -> IO ()
 remove [fileName, numberString] = do
   handle <- openFile fileName ReadMode
@@ -212,10 +229,8 @@ remove [fileName, numberString] = do
   removeFile fileName
   renameFile tempName fileName
 
---------------------------------------------------------------------------------
+
 -- | random
-
-
 -- |
 threeCoins :: StdGen -> (Bool, Bool, Bool)
 threeCoins gen =
@@ -225,12 +240,14 @@ threeCoins gen =
   in  (firstCoin, secondCoin, thirdCoin)
 
 -- |
+--
 randoms' :: (RandomGen g, Random a) => g -> [a]
 randoms' gen =
   let (value, newGen) = random gen
   in   value:randoms' newGen
 
 -- |
+--
 finiteRandoms :: forall g a n. (RandomGen g, Random a, Eq n, Num n)
               => n -> g -> ([a], g)
 finiteRandoms 0 gen = ([], gen)
@@ -240,6 +257,7 @@ finiteRandoms n gen =
     in (value:restOfList, finalGen)
 
 -- |
+--
 askForNumber :: StdGen -> IO ()
 askForNumber gen = do
     let (randomNumber, newGen) = randomR (1, 10) gen :: (Int, StdGen)
@@ -254,29 +272,36 @@ askForNumber gen = do
 
 
 
---------------------------------------------------------------------------------
--- | Bytestrings
 
+-- | Bytestrings
+--
 doCopyFile = do
     (fileName1:fileName2:_) <- getArgs
     copyFile fileName1 fileName2
 
+-- |
+--
 copyFile' :: FilePath -> FilePath -> IO ()
 copyFile' source dest = do
     contents <- B.readFile source
     B.writeFile dest contents
---------------------------------------------------------------------------------
--- | Exception
 
+-- | Exception
+--
 doCatchException :: IO ()
 doCatchException = catch action handler
 
+-- |
+--
 action :: IO ()
 action = do
     (fileName:_) <- getArgs
     contents <- readFile fileName
     putStrLn $ "The file has " ++ show (length (lines contents)) ++ " lines!"
 
+
+-- |
+--
 handler :: IOError -> IO ()
 handler e | isDoesNotExistError e =
                 case ioeGetFileName e of

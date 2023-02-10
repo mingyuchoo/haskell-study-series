@@ -5,6 +5,8 @@ import           Chapter04.SyntaxInFunctions
 import           Test.Hspec
 
 
+-- |
+--
 spec :: Spec
 spec = do
   describe "Gvien `lucky` function" $ do

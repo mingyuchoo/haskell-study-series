@@ -4,6 +4,9 @@ module Chapter03.TypesAndTypeclassesSpec
 import           Chapter03.TypesAndTypeclasses
 import           Test.Hspec
 
+
+-- |
+--
 spec :: Spec
 spec = do
   describe "Given `removeNonUppercase` function`" $ do

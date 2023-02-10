@@ -1,11 +1,6 @@
-{-# OPTIONS_GHC -fwarn-missing-signatures #-}
-
-{-# LANGUAGE ExplicitForAll           #-}
-{-# LANGUAGE StandaloneKindSignatures #-}
-
 module Chapter03.TypesAndTypeclasses
     where
---------------------------------------------------------------------------------
+
 
 -- | removeNonUppercase
 -- >>> removeNonUppercase "Hello, Haskell!"
@@ -15,6 +10,7 @@ module Chapter03.TypesAndTypeclasses
 --
 removeNonUppercase :: [Char] -> [Char]
 removeNonUppercase st = [c | c <- st, c `elem` ['A' .. 'Z']]
+
 
 -- | addThree
 -- >>> addThree 1 1 1
@@ -26,11 +22,10 @@ removeNonUppercase st = [c | c <- st, c `elem` ['A' .. 'Z']]
 addThree :: Int -> Int -> Int -> Int
 addThree x y z = x + y + z -- function pattern matching
 
+
 -- | circumference
 -- >>> circumference 4.0
 -- 25.132741228718345
 --
 circumference :: Double -> Double
 circumference r = 2 * pi * r
-
---------------------------------------------------------------------------------

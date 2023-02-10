@@ -1,17 +1,9 @@
-{-# OPTIONS_GHC -fwarn-missing-signatures #-}
-{-# OPTIONS_GHC -fwarn-unused-binds #-}
-{-# OPTIONS_GHC -fwarn-unused-imports #-}
-
-{-# LANGUAGE ExplicitForAll           #-}
 {-# LANGUAGE NoImplicitPrelude        #-}
-{-# LANGUAGE OverloadedStrings        #-}
-{-# LANGUAGE StandaloneKindSignatures #-}
 
---------------------------------------------------------------------------------
 module Chapter10.FunctionallySolvingProblems
     where
 
---------------------------------------------------------------------------------
+
 import           Control.Exception (catch)
 import           Data.Kind         (Type)
 import           Data.List
@@ -53,12 +45,14 @@ import           Prelude
     , (<=)
     )
 import           System.IO.Error   (IOError (..), isEOFError)
---------------------------------------------------------------------------------
+
 -- |
+--
 doSolveRPN :: IO()
 doSolveRPN = action `catch` handler
 
 -- |
+--
 action :: IO ()
 action = do
     print $ solveRPN "10 4 3 + 2 * -"
@@ -69,6 +63,7 @@ action = do
     return ()
 
 -- |
+--
 solveRPN :: String -> Double
 solveRPN = head . foldl foldingFunction [] . words
   where
@@ -82,13 +77,13 @@ solveRPN = head . foldl foldingFunction [] . words
     foldingFunction xs ns          = read ns:xs
 
 -- |
+--
 handler :: IOError -> IO ()
 handler e | isEOFError e = putStrLn "EOF Error!"
           | otherwise    = putStrLn "Woops, had some trouble!"
 
---------------------------------------------------------------------------------
+-- |
 -- Heathrow to London
-
 type Section :: Type -> Type
 data Section a = Section { getA :: a
                          , getB :: a
@@ -107,6 +102,7 @@ type Path = [(Label,Int)]
 
 
 -- |
+--
 roadStep :: (Path,Path) -> Section Int -> (Path,Path)
 roadStep (pathA,pathB) (Section a b c) =
     let
@@ -130,6 +126,7 @@ roadStep (pathA,pathB) (Section a b c) =
 
 
 -- |
+--
 optimalPath :: RoadSystem -> Path
 optimalPath roadSystem =
     let
@@ -141,6 +138,7 @@ optimalPath roadSystem =
 
 
 -- |
+--
 groupOf :: Int -> [a] -> [[a]]
 groupOf 0 _  = undefined
 groupOf _ [] = []
@@ -148,6 +146,7 @@ groupOf n xs = take n xs : groupOf n (drop n xs)
 
 
 -- | execution
+--
 findOptimalPath :: IO ()
 findOptimalPath = do
     let path = optimalPath heathrowToLondon
@@ -170,6 +169,7 @@ findOptimalPath = do
 
 
 -- | heathrowToLondon
+--
 heathrowToLondon :: RoadSystem
 heathrowToLondon = [ Section 50 10 30
                    , Section 5 90 20
