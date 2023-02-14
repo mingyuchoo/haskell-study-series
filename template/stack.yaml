@@ -79,14 +79,11 @@ nix:
   # Empty by default. The list of packages you want to be
   # available in the nix-shell at build time (with `stack
   # build`) and run time (with `stack exec`).
-  packages:
-  - zlib
-  - glpk
-  - pcre
+  #packages: [ zlib, glpk, pcre ]
 
   # Unset by default. You cannot set this option if `packages:`
   # is already present and not empty.
-  #shell-file: shell.nix
+  shell-file: default.nix
 
   # A list of strings, empty by default. Additional options that
   # will be passed verbatim to the `nix-shell` command.
