@@ -4,7 +4,7 @@ module Concepts
 import           Data.Graph
 
 
--- -----------------------------------------------------------------------------
+
 graph :: Graph
 (graph, _, _) = graphFromEdges [ (0,0,[1,2])
                                , (1,1,[0,6])
@@ -36,7 +36,7 @@ graph' = buildG (0,7) [ (0,2)
                       , (7,0)
                       ]
 
--- -----------------------------------------------------------------------------
+
 
 
 newtype Stack a =
@@ -62,7 +62,7 @@ pop :: Stack a -> (Maybe a, Stack a)
 pop (Stack [])     = (Nothing, Stack [])
 pop (Stack (x:xs)) = (Just x, Stack xs)
 
--- -----------------------------------------------------------------------------
+
 
 newtype Queue a =
   Queue [a] deriving (Show)
@@ -89,4 +89,4 @@ deque :: Queue a -> (Maybe a, Queue a)
 deque (Queue [])     = (Nothing, Queue [])
 deque (Queue (x:xs)) = (Just x, Queue xs)
 
--- -----------------------------------------------------------------------------
+

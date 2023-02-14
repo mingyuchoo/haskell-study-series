@@ -4,7 +4,7 @@ module Example
 import           Control.Lens (element, (&), (.~))
 import           Data.List    ((\\))
 
--- -----------------------------------------------------------------------------
+
 graph :: [[Int]]
 graph = [ []
         , [2,3,8]
@@ -28,7 +28,7 @@ setVisit :: [Bool] -> Int -> [Bool]
 setVisit v i =
   v & element i .~ True
 
--- -----------------------------------------------------------------------------
+
 -- DFS(Depth-First Search)
 
 type BreadcrumbD = ([Int], [Bool])
@@ -45,7 +45,7 @@ dfs b@(r, v) (x:xs)
   | v !! x    = dfs b xs
   | otherwise = dfs (dfs (x:r, setVisit v x) (graph !! x)) xs
 
--- -----------------------------------------------------------------------------
+
 -- BFS(Breadth-First Search)
 
 type BreadcrumbB = ([Int], [Bool], [Int])
@@ -68,4 +68,4 @@ bfs (r, v, x:xs) =
     xList :: [Int]
     xList = getToVisit v (graph !! x)
 
--- -----------------------------------------------------------------------------
+
