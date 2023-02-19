@@ -1,22 +1,21 @@
-# default.nix
 let
   pkgs = import <nixpkgs> {};
-  compilerVersion = "ghc925";
-  compiler = pkgs.haskell.packages."${compilerVersion}";
 in
-  compiler.developPackage {
-  root = ./.;
-  modifier = drv:
-    pkgs.haskell.lib.addBuildTools drv (
-      with pkgs.haskellPackages;
-      [ stack
-        cabal-install
-        stylish-haskell
-        haskell-language-server
-        hindent
-        hlint
-        hoogle
-        ghcid
-      ]
-    );
-}
+  pkgs.stdenv.mkDerivation {
+    name = "haskell";
+    buildInputs = [
+      pkgs.haskell.compiler.ghc94
+      pkgs.haskellPackages.cabal-install
+      pkgs.haskellPackages.haskell-language-server
+      pkgs.haskellPackages.stack
+      pkgs.haskellPackages.stylish-haskell
+      pkgs.haskellPackages.ghci
+      pkgs.haskellPackages.ghcid
+      pkgs.haskellPackages.hindent
+      pkgs.haskellPackages.hlint
+      pkgs.haskellPackages.hoogle
+    ];
+    shellHook = ''
+      echo "Welcome to nix-shell for Haskell!"
+    '';
+  }
