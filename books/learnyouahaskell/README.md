@@ -11,5 +11,9 @@ $ stack build
 $ stack build --fast --file-watch --ghc-options "-j4 +RTS -A128m -n2m -RTS"
 
 $ stack test
+# or
+# test automatically
+$ ghcid -c="stack ghci test/Spec.hs"
+
 $ stack run
 ```
