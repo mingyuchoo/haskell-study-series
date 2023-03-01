@@ -4,7 +4,8 @@ in
   pkgs.stdenv.mkDerivation {
     name = "haskell";
     buildInputs = [
-      pkgs.haskell.compiler.ghc94
+      pkgs.direnv
+      pkgs.haskell.compiler.ghc925
       pkgs.haskellPackages.cabal-install
       pkgs.haskellPackages.haskell-language-server
       pkgs.haskellPackages.stack
@@ -16,6 +17,8 @@ in
       pkgs.haskellPackages.hoogle
     ];
     shellHook = ''
+      export EDITOR=emacs
+      eval "$(direnv hook bash)"
       echo "Welcome to nix-shell for Haskell!"
     '';
   }
