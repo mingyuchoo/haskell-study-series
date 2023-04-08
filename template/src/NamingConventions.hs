@@ -1,5 +1,4 @@
 {-# LANGUAGE FlexibleContexts         #-}
-{-# LANGUAGE StandaloneKindSignatures #-}
 {-# LANGUAGE UndecidableInstances     #-}
 
 module NamingConventions

@@ -2,7 +2,6 @@
 
 {-# LANGUAGE ExplicitForAll           #-}
 {-# LANGUAGE NoImplicitPrelude        #-}
-{-# LANGUAGE StandaloneKindSignatures #-}
 
 module Lib
     ( someFunc
