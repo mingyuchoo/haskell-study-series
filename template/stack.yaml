@@ -83,7 +83,10 @@ nix:
 
   # Unset by default. You cannot set this option if `packages:`
   # is already present and not empty.
-  shell-file: default.nix
+  packages:
+  - zlib
+  - glpk
+  - pcre
 
   # A list of strings, empty by default. Additional options that
   # will be passed verbatim to the `nix-shell` command.
