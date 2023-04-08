@@ -34,8 +34,11 @@ ghc-options:
 - -Wincomplete-uni-patterns
 - -Wmissing-export-lists
 - -Wmissing-home-modules
+- -Wmissing-signatures
 - -Wpartial-fields
 - -Wredundant-constraints
+- -Wunused-binds
+- -Wunused-imports
 
 library:
   source-dirs: src
