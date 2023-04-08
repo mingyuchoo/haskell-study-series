@@ -36,7 +36,9 @@ library
       Paths_tutorial_template
   hs-source-dirs:
       src
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  default-extensions:
+      StandaloneKindSignatures
+  ghc-options: -Wall -O2
   build-depends:
       base >=4.9.1.0 && <5
     , containers
@@ -50,7 +52,9 @@ executable tutorial-template-exe
       Paths_tutorial_template
   hs-source-dirs:
       app
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  default-extensions:
+      StandaloneKindSignatures
+  ghc-options: -Wall -O2 -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base >=4.9.1.0 && <5
     , containers
@@ -67,7 +71,9 @@ test-suite tutorial-template-test
       Paths_tutorial_template
   hs-source-dirs:
       test
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  default-extensions:
+      StandaloneKindSignatures
+  ghc-options: -Wall -O2 -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base >=4.9.1.0 && <5
     , containers
