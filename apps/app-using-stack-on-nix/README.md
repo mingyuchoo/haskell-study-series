@@ -91,5 +91,8 @@ $ stack test --file-watch --watch-all
 # test automatically
 $ ghcid -c="stack ghci test/Spec.hs"
 
+# https://docs.haskellstack.org/en/stable/build_command/
+$ stack test --coverage --file-watch --haddock
+
 $ stack run
 ```
