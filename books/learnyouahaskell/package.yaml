@@ -36,17 +36,7 @@ default-extensions:
 
 ghc-options:
 - -Wall
-- -Wcompat
-- -Widentities
-- -Wincomplete-record-updates
-- -Wincomplete-uni-patterns
-- -Wmissing-export-lists
-- -Wmissing-home-modules
-- -Wmissing-signatures
-- -Wpartial-fields
-- -Wredundant-constraints
-- -Wunused-binds
-- -Wunused-imports
+- -O2
 
 library:
   source-dirs: src
