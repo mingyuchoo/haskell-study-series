@@ -3,7 +3,7 @@ module TypeClassInheritance
     where
 
 
-import           Data.Kind  (Constraint)
+import           Data.Kind  (Constraint, Type)
 import           Data.Maybe
 
 

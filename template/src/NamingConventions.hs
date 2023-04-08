@@ -4,7 +4,7 @@
 module NamingConventions
     where
 
-import           Data.Kind (Constraint)
+import           Data.Kind (Constraint, Type)
 import           Flow      ((<|))
 
 -- |

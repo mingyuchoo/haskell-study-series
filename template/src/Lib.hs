@@ -25,7 +25,7 @@ module Lib
     , yesnoIf
     ) where
 
-import           Data.Kind (Constraint)
+import           Data.Kind (Constraint, Type)
 
 -- |
 -- https://wiki.haskell.org/Constructor

@@ -1,7 +1,7 @@
 module Chapter08.MakingOurOwnTypesAndTypeclasses
     where
 
-import           Data.Kind (Constraint)
+import           Data.Kind (Constraint, Type)
 import qualified Data.Map  as Map
 
 

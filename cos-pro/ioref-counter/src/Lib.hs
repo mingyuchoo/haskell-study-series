@@ -4,7 +4,7 @@ module Lib
 
 import           Data.Functor ((<&>))
 import           Data.IORef   (IORef, modifyIORef, newIORef, readIORef)
-import           Data.Kind    (Constraint)
+import           Data.Kind    (Constraint, Type)
 
 -- |
 --
