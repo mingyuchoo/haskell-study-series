@@ -3,10 +3,9 @@ module BinaryTree
     where
 
 import           Control.Monad (guard)
-import           Data.Kind     ()
+import           Data.Kind     (Constraint, Type)
 import           Data.Maybe    ()
 import           Debug.Trace   (trace, traceShow)
-import           Flow          ()
 
 -- |
 --

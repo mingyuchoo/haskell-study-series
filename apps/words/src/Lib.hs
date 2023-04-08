@@ -28,7 +28,6 @@ import           Data.Char     (toLower)
 import           Data.Kind     ()
 import           Data.List     (transpose)
 import           Data.Maybe    (catMaybes, listToMaybe)
-import           Flow          ((<|))
 import           Prelude       hiding (Word)
 import           System.Random (Random (randomRs), RandomGen (split))
 
@@ -77,13 +76,13 @@ makeGame grid words =
 --
 --
 totalWords :: Game -> Int
-totalWords game = length . M.keys  <| gameWords game
+totalWords game = length . M.keys  $ gameWords game
 
 -- |
 --
 --
 score :: Game -> Int
-score game = length . catMaybes . M.elems  <| gameWords game
+score game = length . catMaybes . M.elems  $ gameWords game
 
 -- |
 --
@@ -112,9 +111,9 @@ playGame game word =
 formatGame :: Game -> String
 formatGame game = formatGameGrid game
                   ++ "\n\n"
-                  ++ (show <| score game)
+                  ++ (show $ score game)
                   ++ "/"
-                  ++ (show <| totalWords game)
+                  ++ (show $ totalWords game)
 
 -- |
 --
@@ -262,5 +261,5 @@ findWordInLine word line =
 --
 findWordInCellLinePrefix :: [Cell] -> String -> [Cell] -> Maybe [Cell]
 findWordInCellLinePrefix acc (x:xs) (c:cs) | x == cell2char c = findWordInCellLinePrefix (c:acc) xs cs
-findWordInCellLinePrefix acc [] _                             = Just <| reverse acc
+findWordInCellLinePrefix acc [] _                             = Just $ reverse acc
 findWordInCellLinePrefix  _ _ _                               = Nothing
