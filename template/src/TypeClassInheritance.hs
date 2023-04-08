@@ -13,27 +13,27 @@ import           Data.Maybe
 
 
 -- `TypeA` is a Data Type
--- (o) :kind TypeA    :: *
+-- (o) :kind TypeA    :: Type
 -- (o) :type DataA0   :: TypeA
 -- (o) :type DataA1   :: String -> TypeA
 -- (x) :type DataA1 String  <<error>>
 -- (o) :type DataA1 "A1" :: TypeA
 -- (o) :type fieldA11 :: TypeA -> String
-type TypeA :: *
+type TypeA :: Type
 data TypeA  = DataA0                         -- `DataA0` is a Data Constructor
             | DataA1 { fieldA11 :: String }  -- `DataA1` is a Data Constructor
             deriving (Show)
 
 
 -- `TypeB a` is a Data Type having `a` type variable
--- (o) :kind TypeB    :: * -> *
+-- (o) :kind TypeB    :: Type -> Type
 -- (o) :type DataB0   :: TypeB a
 -- (o) :type DataB1   :: String -> TypeB a
 -- (o) :type DataB2   :: a -> a -> TypeB a
 -- (o) :type fieldB11 :: TypeB a -> String
 -- (o) :type fieldB21 :: TypeB a -> a
 -- (o) :type fieldB22 :: TypeB a -> a
-type TypeB :: * -> *
+type TypeB :: Type -> Type
 data TypeB a = DataB0                        -- `DataB0` is a Data Constructor
              | DataB1 { fieldB11 :: String } -- `DataB1` is a Data Constructor
              | DataB2 { fieldB21 :: a        -- `a` is a type variable but when fieldB22 is called,
@@ -42,7 +42,7 @@ data TypeB a = DataB0                        -- `DataB0` is a Data Constructor
 
 
 -- `TypeC a b` is a Data Type having `a and b` type variables
--- (o) :kind TypeC  :: * -> * -> *
+-- (o) :kind TypeC  :: Type -> Type -> Type
 -- (o) :type DataC0 :: Type C a b
 -- (o) :type DataC1 :: String -> TypeC a b
 -- (o) :type DataC2 :: String -> a -> TypeC a b
@@ -57,7 +57,7 @@ data TypeB a = DataB0                        -- `DataB0` is a Data Constructor
 -- (o) :type fieldC41 :: TypeC a b -> String
 -- (o) :type fieldC42 :: TypeC a b -> a
 -- (o) :type fieldC43 :: TypeC a b -> b
-type TypeC :: * -> * -> *
+type TypeC :: Type -> Type -> Type
 data TypeC a b = DataC0
                | DataC1 { fieldC11 :: String }
                | DataC2 { fieldC21 :: String
@@ -77,40 +77,40 @@ data TypeC a b = DataC0
 
 
 -- `TypeCassA a` is a Type Class having `a` type variable
--- (o) :kind TypeClassA :: * -> Constraint
+-- (o) :kind TypeClassA :: Type -> Constraint
 -- (o) :kind TypeClassA Char :: Constraint
 -- (o) :kind TypeClassA Int  :: Constraint
 -- (o) :kind TypeClassA TypeA :: Constraint
 -- (o) :kind TypeClassA (TypeB Int) :: Constraint
 -- (o) :kind TypeClassA (TypeC Int String) :: Constraint
 -- (o) :type functionA :: TypeClassA a => a -> a
-type TypeClassA :: * -> Constraint
+type TypeClassA :: Type -> Constraint
 class TypeClassA a where                   -- `a` is a type variable
     functionA :: a -> a
 
 
 -- `TypeCassB b` is a Type Class having `b` type variable which inheriting `TypeClassA b`
--- (o) :kind TypeClassB :: * -> Constraint
+-- (o) :kind TypeClassB :: Type -> Constraint
 -- (o) :kind TypeClassB Char :: Constraint
 -- (o) :kind TypeClassB Int  :: Constraint
 -- (o) :kind TypeClassB TypeA :: Constraint
 -- (o) :kind TypeClassB (TypeB Int) :: Constraint
 -- (o) :kind TypeClassB (TypeC Int String) :: Constraint
 -- (o) :type functionB :: TypeClassB b => b -> Maybe b
-type TypeClassB :: * -> Constraint
+type TypeClassB :: Type -> Constraint
 class (TypeClassA b) => TypeClassB b where -- `b` is a type variable
     functionB :: b -> Maybe b
 
 
 -- `TypeCassC c` is a Type Class having `c` type variable which inheriting `TypeClassB c`
--- (o) :kind TypeClassC :: * -> Constraint
+-- (o) :kind TypeClassC :: Type -> Constraint
 -- (o) :kind TypeClassC Char :: Constraint
 -- (o) :kind TypeClassC Int  :: Constraint
 -- (o) :kind TypeClassC TypeA :: Constraint
 -- (o) :kind TypeClassC (TypeB Int) :: Constraint
 -- (o) :kind TypeClassC (TypeC Int String) :: Constraint
 -- (o) :type functionC :: TypeClassC c => c -> Either c c
-type TypeClassC :: * -> Constraint
+type TypeClassC :: Type -> Constraint
 class (TypeClassB c) => TypeClassC c where -- `c` is a type variable
     functionC :: c -> Either c c
 

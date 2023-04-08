@@ -9,7 +9,7 @@ import           Data.Kind    (Constraint, Type)
 -- |
 --
 --
-type Counter :: * -> *
+type Counter :: Type -> Type
 newtype Counter a = Counter { counter :: IORef a }
 
 

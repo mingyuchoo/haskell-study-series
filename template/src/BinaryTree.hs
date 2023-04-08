@@ -151,7 +151,7 @@ qsort' list@(x:xs) = qsort' small <> mid <> qsort' large
 -- |
 --
 --
-type Tree :: * -> *
+type Tree :: Type -> Type
 data Tree a = Empty
             | Node a (Tree a) (Tree a)
             deriving (Show)
@@ -214,20 +214,20 @@ t2 = Node 0
 -- |
 --
 --
-type Crumb :: * -> *
+type Crumb :: Type -> Type
 data Crumb a = LCrumb a (Tree a)
              | RCrumb a (Tree a)
              deriving (Show)
 
 -- |
 --
-type Breadcrumbs :: * -> *
+type Breadcrumbs :: Type -> Type
 type Breadcrumbs a = [Crumb a]
 
 -- |
 --
 --
-type Zipper :: * -> *
+type Zipper :: Type -> Type
 type Zipper a = (Tree a, Breadcrumbs a)
 
 -- |

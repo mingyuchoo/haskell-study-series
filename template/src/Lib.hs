@@ -32,23 +32,23 @@ import           Data.Kind (Constraint, Type)
 --
 
 -- |
--- :kind MyTypeConstructor :: *
+-- :kind MyTypeConstructor :: Type
 -- :type MyDataConstructor :: MyTypeConstructor
-type MyTypeConstructor :: *
+type MyTypeConstructor :: Type
 data MyTypeConstructor = MyDataConstructor
                        deriving (Show)
 
 -- |
--- :kind MyTypeClass :: * -> Constraint
+-- :kind MyTypeClass :: Type -> Constraint
 -- :type myTypeClassFunction :: MyTypeClass myTypeVariable => myTypeVariable -> String
-type MyTypeClass :: * -> Constraint
+type MyTypeClass :: Type -> Constraint
 class MyTypeClass myTypeVariable where
   myTypeClassFunction :: myTypeVariable -> String
 
 -- |
--- :kind MyTypeClass :: * -> Constraint
+-- :kind MyTypeClass :: Type -> Constraint
 -- :type myTypeClassFunction :: MyTypeClass myTypeVariable => myTypeVariable -> String
--- :kind MyTypeConstructor :: *
+-- :kind MyTypeConstructor :: Type
 instance MyTypeClass MyTypeConstructor where
   myTypeClassFunction MyDataConstructor = "MyValue"
 
@@ -65,28 +65,28 @@ myOtherFunction x = "MyValue"
 
 -- |
 -- Location, in two dimesions.
--- :kind Located             :: * -> Constraint
+-- :kind Located             :: Type -> Constraint
 -- :kind Located Int         :: Constraint
 -- :kind Located (Maybe Int) :: Constraint
 -- :type getLocation :: Located a => a -> (Int, Int)
-type Located :: * -> Constraint
+type Located :: Type -> Constraint
 class Located a where
   getLocation :: a -> (Int, Int)
 
 -- |
--- :kind Movable :: * -> Constraint
+-- :kind Movable :: Type -> Constraint
 -- :type setLocation :: Movable a => (Int, Int) -> a -> a
-type Movable :: * -> Constraint
+type Movable :: Type -> Constraint
 class (Located a) => Movable a where
   setLocation :: (Int, Int) -> a -> a
 
 -- |
 -- An example type, with accompanying instances.
--- :kind NamedPoint :: *
+-- :kind NamedPoint :: Type
 --            ^-- This is Type Constructor
 -- :type NamedPoint :: String -> Int -> Int -> NamedPoint
 --            ^-- This is Data Constructor
-type NamedPoint :: *
+type NamedPoint :: Type
 data NamedPoint = NamedPoint { pointName :: String
                              , pointX    :: Int
                              , pointY    :: Int }
@@ -94,16 +94,16 @@ data NamedPoint = NamedPoint { pointName :: String
 
 
 -- |
--- :kind NamedPoint :: *
--- :kind Located :: * -> Constraint
+-- :kind NamedPoint :: Type
+-- :kind Located :: Type -> Constraint
 -- :type getLocation :: Located p => p -> (Int, Int)
 -- :type getLocation (NamedPoint "a" 1 1) :: (Int, Int)
 instance Located NamedPoint where
   getLocation p = (pointX p, pointY p)
 
 -- |
--- :kind NamedPoint :: *
--- :kind Movable :: * -> Constraint
+-- :kind NamedPoint :: Type
+-- :kind Movable :: Type -> Constraint
 -- :kind Movable NamedPoint :: Constraint
 -- :type setLocation :: Movable a => (Int, Int) a -> a
 -- :type setLocation (1, 1) :: Movable a => a -> a
@@ -123,7 +123,7 @@ move (dx, dy) p = setLocation (x + dx, y + dy) p where
 -- |
 -- 'TrafficLight' is a `type constructor` if has zero arguments just called a `type`
 -- 'Red',...      are `data(value) constructors` if has zero arguments just called a `constant`
-type TrafficLight :: *
+type TrafficLight :: Type
 data TrafficLight = Red
                   | Amber
                   | Green
@@ -132,7 +132,7 @@ data TrafficLight = Red
 -- |
 -- 'Checkable' is a `type class` or just a `class`
 -- 'a'         is a `type variable`
-type Checkable :: * -> Constraint
+type Checkable :: Type -> Constraint
 class Checkable a where
     same :: a -> a -> Bool
 
@@ -156,7 +156,7 @@ checkIf x y  = same x y                         -- 'x', 'y' are `bind variables`
 -- |
 --
 --
-type YesNo :: * -> Constraint
+type YesNo :: Type -> Constraint
 class YesNo a where
   yesno :: a -> Bool
 
@@ -187,7 +187,7 @@ instance YesNo Bool where
   yesno = id
 
 -- |
--- :kind YesNo :: * -> Constraint
+-- :kind YesNo :: Type -> Constraint
 -- :kind YesNo (Maybe Int) :: Constraint
 -- >>> yesno Nothing
 -- False
@@ -198,8 +198,8 @@ instance YesNo (Maybe a) where
   yesno (Just _) = True
 
 -- |
--- :kind TrafficLight :: *
--- :kind YesNo :: * -> Constraint
+-- :kind TrafficLight :: Type
+-- :kind YesNo :: Type -> Constraint
 -- :kind YesNo TrafficLight :: Constraint
 -- :type yesno :: YesNo a => a -> Bool
 -- :type yesno Red :: Bool
@@ -226,13 +226,13 @@ yesnoIf yesnoVal yesResult noResult = if yesno yesnoVal
 -- |
 -- 'Mammal'  is a `type constructor` if has zero arguments just called a `type`
 -- 'Bat',... are `data(value) constructors` if has zero arguments just called a `constant`
-type Mammal :: *
+type Mammal :: Type
 data Mammal = Bat
             | Dolphin
             | Elephant
             | Human
 
-type Mammal2 :: *
+type Mammal2 :: Type
 data Mammal2 = Bat2
             | Dolphin2
             | Elephant2
@@ -242,7 +242,7 @@ data Mammal2 = Bat2
 -- |
 -- 'Move' is a `type class` or just a `class`
 -- 'a'    is a `type variable`
-type Move :: * -> Constraint
+type Move :: Type -> Constraint
 class Move a where
   swim :: a -> Bool
   walk :: a -> Bool
@@ -291,7 +291,7 @@ instance Move Mammal2 where
 -- |
 -- 'Week'       is a `type constructor` if has zero arguments just called a `type`
 -- 'Monday',... are `data(value) constructors` if has zero arguments just called a `constant`
-type Week :: *
+type Week :: Type
 data Week = Sunday
           | Monday
           | Tuesday
@@ -304,7 +304,7 @@ data Week = Sunday
 -- 'Shape'      is a `type constructor` if has zero arguments just called a `type`
 -- 'Circle',... are `data(value) constructors` if has zero arguments just called a `constant`
 --
-type Shape :: *
+type Shape :: Type
 data Shape = Circle    Float Float Float
            | Rectangle Float Float Float Float
 

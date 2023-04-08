@@ -37,14 +37,14 @@ import qualified Data.Map      as M
 -- |
 --
 --
-type Game :: *
+type Game :: Type
 data Game = Game { gameGrid  :: Grid Cell
                  , gameWords :: M.Map String (Maybe [Cell])
                  } deriving (Show)
 -- |
 --
 --
-type Cell :: *
+type Cell :: Type
 data Cell = Cell (Int, Int) Char
           | Indent
           deriving (Eq, Ord, Show)
@@ -52,13 +52,13 @@ data Cell = Cell (Int, Int) Char
 -- |
 --
 --
-type Grid :: * -> *
+type Grid :: Type -> Type
 type Grid a = [[a]]
 
 -- |
 --
 --
-type Word :: *
+type Word :: Type
 type Word = String
 
 

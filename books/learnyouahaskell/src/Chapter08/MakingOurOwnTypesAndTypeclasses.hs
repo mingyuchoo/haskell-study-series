@@ -7,14 +7,14 @@ import qualified Data.Map  as Map
 
 -- |
 --
-type Point :: *
+type Point :: Type
 data Point = Point Float Float
      deriving (Show)
 
 
 -- |
 --
-type Shape :: *
+type Shape :: Type
 data Shape = Circle Point Float
            | Rectangle Point Point
      deriving (Show)
@@ -47,7 +47,7 @@ baseRect :: Float -> Float -> Shape
 baseRect width height = Rectangle (Point 0 0) (Point width height)
 
 
-type Person :: *
+type Person :: Type
 data Person = Person String String Int Float String String
      deriving (Show)
 
@@ -73,7 +73,7 @@ data Person = Person String String Int Float String String
 
 -- |
 --
-type Person2 :: *
+type Person2 :: Type
 data Person2 = Person2 { firstName2   :: String
                        , lastName2    :: String
                        , age2         :: Int
@@ -86,7 +86,7 @@ data Person2 = Person2 { firstName2   :: String
 
 -- |
 --
-type Car :: *
+type Car :: Type
 data Car = Car { company :: String
                , model   :: String
                , year    :: Int
@@ -99,7 +99,7 @@ data Car = Car { company :: String
 -- tellCar :: Car -> String
 -- tellCar (Car { company = c, model = m, year = y}) =
 --   "This " ++ c ++ " " ++ m ++ " was made in " ++ show y
-type Car2 :: * -> * -> * -> *
+type Car2 :: Type -> Type -> Type -> Type
 data Car2 a b c = Car2 { company2 :: a
                        , model2   :: b
                        , year2    :: c
@@ -114,7 +114,7 @@ tellCar2 (Car2 {company2 = c, model2 = m, year2 = y}) =
 
 -- |
 --
-type Vector :: * -> *
+type Vector :: Type -> Type
 data Vector a = Vector a a a
      deriving (Show)
 
@@ -139,7 +139,7 @@ scalarMult :: (Num t) => Vector t -> Vector t -> t
 
 -- |
 --
-type Person3 :: *
+type Person3 :: Type
 data Person3 = Person3 { firstName3 :: String
                        , lastName3  :: String
                        , age3       :: Int
@@ -149,7 +149,7 @@ data Person3 = Person3 { firstName3 :: String
 
 -- |
 --
-type Person4 :: *
+type Person4 :: Type
 data Person4 = Person4 { firstName4 :: String
                        , lastName4  :: String
                        , age4       :: Int
@@ -159,7 +159,7 @@ data Person4 = Person4 { firstName4 :: String
 
 -- |
 --
-type Day :: *
+type Day :: Type
 data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday deriving
      ( Bounded
      , Enum
@@ -172,13 +172,13 @@ data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday 
 
 -- |
 -- Phone Book
-type Name :: *
+type Name :: Type
 type Name = String
 
-type PhoneNumber :: *
+type PhoneNumber :: Type
 type PhoneNumber = String
 
-type PhoneBook :: *
+type PhoneBook :: Type
 type PhoneBook = [(Name, PhoneNumber)]
 
 
@@ -200,26 +200,26 @@ inPhoneBook name pnumber pbook = (name, pnumber) `elem` pbook
 
 -- |
 --
-type AssocList :: * -> * -> *
+type AssocList :: Type -> Type -> Type
 type AssocList k v = [(k, v)]
 
 
 
 -- |
 -- Locker
-type LockerState :: *
+type LockerState :: Type
 data LockerState = Taken | Free deriving (Eq, Show)
 
-type LockerID :: *
+type LockerID :: Type
 type LockerID = Int
 
-type LockerPasscode :: *
+type LockerPasscode :: Type
 type LockerPasscode = String
 
-type LockerMessage :: *
+type LockerMessage :: Type
 type LockerMessage = String
 
-type LockerMap :: *
+type LockerMap :: Type
 type LockerMap = Map.Map LockerID (LockerState, LockerPasscode)
 
 -- |
@@ -253,7 +253,7 @@ lockers = Map.fromList [ (100, (Taken, "ZD39I"))
 -- |
 --
 infixr 5 :-:
-type List :: * -> *
+type List :: Type -> Type
 data List a = Empty
             | a :-: (List a)
      deriving (Eq, Ord, Read, Show)
@@ -268,7 +268,7 @@ Empty .++ ys      = ys
 
 -- |
 -- Tree
-type Tree :: * -> *
+type Tree :: Type -> Type
 data Tree a = Nil
             | Node a (Tree a) (Tree a)
      deriving (Eq, Read, Show)
@@ -320,7 +320,7 @@ x *?? (Node a left right) | x == a = True
 
 -- |
 -- TrafficLight
-type TrafficLight :: *
+type TrafficLight :: Type
 data TrafficLight = Red | Yellow | Green
 
 
@@ -343,7 +343,7 @@ instance Show TrafficLight where
 
 -- |
 -- Type class declaration and Instantiation of Type class
-type YesNo :: * -> Constraint
+type YesNo :: Type -> Constraint
 class YesNo a where    -- `a` is a type variable for concrete type
   yesno :: a -> Bool
 
@@ -399,10 +399,10 @@ instance Functor Tree where  -- `Tree` is a type constructor having only one typ
     Node (f x) (fmap f leftsub) (fmap f rightsub)
 
 -- |
--- `j a` :: *
---  `a` :: *
--- `j'   :: * -> *
--- `t a j` :: *
+-- `j a` :: Type
+--  `a` :: Type
+-- `j'   :: Type -> Type
+-- `t a j` :: Type
 -- *`a` -> (* -> *)`j` -> *`t`
 type Tofu :: (* -> (* -> *) -> *) -> Constraint
 class Tofu t where
@@ -410,7 +410,7 @@ class Tofu t where
 
 -- |
 --
-type Frank :: * -> (* -> *) -> *
+type Frank :: Type -> (* -> *) -> *
 data Frank a b = Frank { frankField :: b a
                        }
      deriving (Show)

@@ -10,7 +10,7 @@ import           Flow      ((<|))
 -- |
 --
 --
-type Dollars :: *
+type Dollars :: Type
 newtype Dollars = Dollars Int
 
 -- |
@@ -27,15 +27,15 @@ instance (Num Int) => Num Dollars where
 -- |
 --
 --
-type MyTypeConstructor :: * -> *
+type MyTypeConstructor :: Type -> Type
 newtype MyTypeConstructor a = MyDataConstructor a
 
 -- |
--- :kind MyTypeClass :: * -> Constraint
+-- :kind MyTypeClass :: Type -> Constraint
 -- :kind MyTypeClass Int :: Constraint
 -- :kind MyTypeClass MyTypeConstructor :: Constraint
 -- :type name :: MyTypeClass a => a -> String
-type MyTypeClass :: * -> Constraint
+type MyTypeClass :: Type -> Constraint
 class MyTypeClass a where
   name :: a -> String
 

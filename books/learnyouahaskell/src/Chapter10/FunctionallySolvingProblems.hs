@@ -91,13 +91,13 @@ data Section a = Section { getA :: a
                          }
      deriving (Show)
 
-type RoadSystem :: *
+type RoadSystem :: Type
 type RoadSystem = [Section Int]
 
-type Label :: *
+type Label :: Type
 data Label = A | B | C deriving (Show)
 
-type Path :: *
+type Path :: Type
 type Path = [(Label,Int)]
 
 
