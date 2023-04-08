@@ -25,7 +25,9 @@ dependencies:
 - flow
 - parallel
 
-default-extensions: []
+default-extensions:
+- StandaloneKindSignatures
+
 ghc-options:
 - -Wall
 - -Wcompat

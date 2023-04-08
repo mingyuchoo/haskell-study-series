@@ -26,7 +26,9 @@ dependencies:
 - parallel
 - random
 
-default-extensions: []
+default-extensions:
+- StandaloneKindSignatures
+
 ghc-options:
 - -Wall
 - -Wcompat

@@ -28,7 +28,9 @@ dependencies:
 - parallel
 - text
 
-default-extensions: []
+default-extensions:
+- StandaloneKindSignatures
+
 ghc-options:
 - -Wall
 - -Wcompat
