@@ -172,7 +172,7 @@ instance YesNo Int where
 -- |
 -- >>> yesno []
 -- False
--- >>> yesno [1,2,3,4,]
+-- >>> yesno [1,2,3,4]
 -- True
 instance (Eq a) => YesNo [a] where
   yesno x | x == [] = False
@@ -191,7 +191,7 @@ instance YesNo Bool where
 -- :kind YesNo (Maybe Int) :: Constraint
 -- >>> yesno Nothing
 -- False
--- >>> yesno Just 1
+-- >>> yesno (Just 1)
 -- True
 instance YesNo (Maybe a) where
   yesno Nothing  = False
