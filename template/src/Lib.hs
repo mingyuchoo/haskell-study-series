@@ -40,17 +40,17 @@ data MyTypeConstructor = MyDataConstructor
 
 -- |
 -- :kind MyTypeClass :: Type -> Constraint
--- :type myTypeClassFunction :: MyTypeClass myTypeVariable => myTypeVariable -> String
+-- :type myTypeClassMethod :: MyTypeClass myTypeVariable => myTypeVariable -> String
 type MyTypeClass :: Type -> Constraint
 class MyTypeClass myTypeVariable where
-  myTypeClassFunction :: myTypeVariable -> String
+  myTypeClassMethod :: myTypeVariable -> String
 
 -- |
 -- :kind MyTypeClass :: Type -> Constraint
--- :type myTypeClassFunction :: MyTypeClass myTypeVariable => myTypeVariable -> String
+-- :type myTypeClassMethod :: MyTypeClass myTypeVariable => myTypeVariable -> String
 -- :kind MyTypeConstructor :: Type
 instance MyTypeClass MyTypeConstructor where
-  myTypeClassFunction MyDataConstructor = "MyValue"
+  myTypeClassMethod MyDataConstructor = "MyValue"
 
 -- |
 --
