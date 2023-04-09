@@ -38,7 +38,7 @@ library
       src
   default-extensions:
       StandaloneKindSignatures
-  ghc-options: -Wall -O2
+  ghc-options: -Wall -O2 -haddock
   build-depends:
       base >=4.9.1.0 && <5
     , containers
@@ -54,7 +54,7 @@ executable tutorial-template-exe
       app
   default-extensions:
       StandaloneKindSignatures
-  ghc-options: -Wall -O2 -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base >=4.9.1.0 && <5
     , containers
@@ -73,7 +73,7 @@ test-suite tutorial-template-test
       test
   default-extensions:
       StandaloneKindSignatures
-  ghc-options: -Wall -O2 -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base >=4.9.1.0 && <5
     , containers

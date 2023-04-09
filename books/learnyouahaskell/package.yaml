@@ -37,6 +37,7 @@ default-extensions:
 ghc-options:
 - -Wall
 - -O2
+- -haddock
 
 library:
   source-dirs: src
