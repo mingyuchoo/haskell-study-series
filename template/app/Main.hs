@@ -46,3 +46,4 @@ loop3 = do
   putStr "If you want to continue, answer \"yes\": "
   x <- getLine
   if x == "yes" then loop1 else return ()
+

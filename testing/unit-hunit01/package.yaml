@@ -1,14 +1,15 @@
-name:                unit-hunit01
-version:             0.1.0.0
-github:              "mingyuchoo/unit-hunit01"
-license:             BSD3
-author:              "Mingyu Choo"
-maintainer:          "mingyuchoo@gmail.com"
-copyright:           "2023 Mingyu Choo"
+---
+name: unit-hunit01
+version: 0.1.0.0
+github: "mingyuchoo/unit-hunit01"
+license: BSD3
+author: "Mingyu Choo"
+maintainer: "mingyuchoo@gmail.com"
+copyright: "2023 Mingyu Choo"
 
 extra-source-files:
-- README.md
-- ChangeLog.md
+  - README.md
+  - ChangeLog.md
 
 # Metadata used when publishing your package
 # synopsis:            Short description of your package
@@ -17,46 +18,46 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/mingyuchoo/unit-hunit01#readme>
+description: Please see the README on GitHub at <https://github.com/mingyuchoo/unit-hunit01#readme>
 
 dependencies:
-- base >= 4.9.1.0 && < 5
-- containers
-- flow
-- parallel
+  - base >= 4.9.1.0 && < 5
+  - containers
+  - flow
+  - parallel
 
 default-extensions:
-- StandaloneKindSignatures
+  - StandaloneKindSignatures
 
 ghc-options:
-- -Wall
-- -O2
-- -haddock
+  - -Wall
+  - -O2
+  - -haddock
 
 library:
   source-dirs: src
 
 executables:
   unit-hunit01-exe:
-    main:                Main.hs
-    source-dirs:         app
+    main: Main.hs
+    source-dirs: app
     ghc-options:
-    - -dynamic
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N4
+      - -dynamic
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N4
     dependencies:
-    - unit-hunit01
+      - unit-hunit01
 
 tests:
   unit-hunit01-test:
-    main:                Spec.hs
-    source-dirs:         test
+    main: Spec.hs
+    source-dirs: test
     ghc-options:
-    - -dynamic
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N4
+      - -dynamic
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N4
     dependencies:
-    - unit-hunit01
-    - HUnit
+      - unit-hunit01
+      - HUnit

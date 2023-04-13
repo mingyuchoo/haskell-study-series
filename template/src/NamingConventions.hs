@@ -1,5 +1,5 @@
-{-# LANGUAGE FlexibleContexts         #-}
-{-# LANGUAGE UndecidableInstances     #-}
+{-# LANGUAGE FlexibleContexts     #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module NamingConventions
     where

@@ -1,4 +1,3 @@
-
 module Lib
     ( Checkable
     , Located (..)
@@ -55,7 +54,7 @@ instance MyTypeClass MyTypeConstructor where
 -- |
 --
 --
-myOtherFunction :: (MyTypeClass myTypeVariable) => myTypeVariable -> String
+myOtherFunction :: MyTypeClass myTypeVariable => myTypeVariable -> String
 myOtherFunction x = "MyValue"
 
 -- |
@@ -116,7 +115,7 @@ instance Movable NamedPoint where
 -- This works for any movable, including NamedPoint.
 -- >>> move (1, 1) (NamedPoint "a" 2 2)
 -- NamedPoint {pointName = "a", pointX = 3, pointY = 3}
-move :: (Movable a) => (Int, Int) -> a -> a
+move :: Movable a => (Int, Int) -> a -> a
 move (dx, dy) p = setLocation (x + dx, y + dy) p where
                     (x, y) = getLocation p
 
@@ -149,7 +148,7 @@ instance Checkable TrafficLight where
 -- |
 -- 'Checkable'     is a `type class constraint` in a function declaration
 -- 'a'             is a `type variable`         in a function declaration
-checkIf :: (Checkable a) => a -> a -> Bool
+checkIf :: Checkable a => a -> a -> Bool
 checkIf x y  = same x y                         -- 'x', 'y' are `bind variables`
 
 
@@ -174,7 +173,7 @@ instance YesNo Int where
 -- False
 -- >>> yesno [1,2,3,4]
 -- True
-instance (Eq a) => YesNo [a] where
+instance Eq a => YesNo [a] where
   yesno x | x == [] = False
           | otherwise = True
 
@@ -215,7 +214,7 @@ instance YesNo TrafficLight where
 -- |
 --
 --
-yesnoIf :: (YesNo a) => a -> b -> b -> b
+yesnoIf :: YesNo a => a -> b -> b -> b
 yesnoIf yesnoVal yesResult noResult = if yesno yesnoVal
                                         then yesResult
                                         else noResult
@@ -234,10 +233,10 @@ data Mammal = Bat
 
 type Mammal2 :: Type
 data Mammal2 = Bat2
-            | Dolphin2
-            | Elephant2
-            | Human2
-            deriving (Eq)
+             | Dolphin2
+             | Elephant2
+             | Human2
+             deriving (Eq)
 
 -- |
 -- 'Move' is a `type class` or just a `class`

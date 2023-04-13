@@ -1,4 +1,3 @@
-
 module BinaryTree
     where
 
@@ -85,7 +84,7 @@ drop' n (x:xs) | n > 0 = drop' (n-1) xs
 -- |
 --
 --
-insert' :: (Ord a) => a -> [a] -> [a]
+insert' :: Ord a => a -> [a] -> [a]
 insert' v [] = [v]
 insert' v list@(x:xs) | v < x = v : list
                          | otherwise = x : insert' v xs
@@ -93,7 +92,7 @@ insert' v list@(x:xs) | v < x = v : list
 -- |
 --
 --
-isort :: (Ord a) => [a] -> [a]
+isort :: Ord a => [a] -> [a]
 isort []          = []
 isort [x]         = [x]
 isort list@(x:xs) = insert' x (isort xs)
@@ -101,7 +100,7 @@ isort list@(x:xs) = insert' x (isort xs)
 -- |
 --
 --
-merge' :: (Ord a) => [a] -> [a] -> [a]
+merge' :: Ord a => [a] -> [a] -> [a]
 merge' [] second = second
 merge' first [] = first
 merge' first@(x:xs) second@(y:ys) | x < y = x : merge' xs second
@@ -110,7 +109,7 @@ merge' first@(x:xs) second@(y:ys) | x < y = x : merge' xs second
 -- |
 --
 --
-msort :: (Ord a) => [a] -> [a]
+msort :: Ord a => [a] -> [a]
 msort [] = []
 msort [x] = [x]
 msort list@(x:xs) = merge' (msort l) (msort r)
@@ -122,7 +121,7 @@ msort list@(x:xs) = merge' (msort l) (msort r)
 -- |
 --
 --
-qsort :: (Ord a) => [a] -> [a]
+qsort :: Ord a => [a] -> [a]
 qsort [] = []
 qsort list@(x:xs) = qsort small <> mid <> qsort large
   where
@@ -133,7 +132,7 @@ qsort list@(x:xs) = qsort small <> mid <> qsort large
 -- |
 --
 --
-qsort' :: (Ord a) => [a] -> [a]
+qsort' :: Ord a => [a] -> [a]
 qsort' [] = []
 qsort' list@(x:xs) = qsort' small <> mid <> qsort' large
   where

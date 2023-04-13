@@ -29,7 +29,7 @@ resolver: lts-20.17
 #   - auto-update
 #   - wai
 packages:
-- .
+  - .
 # Dependency packages to be pulled from upstream that are not in the resolver.
 # These entries can reference officially published versions as well as
 # forks / in-progress versions pinned to a git hash. For example:
@@ -66,7 +66,6 @@ packages:
 # compiler-check: newer-minor
 
 nix:
-
   # false by default. Must be present and set to `true` to enable Nix, except on
   # NixOS where it is enabled by default (see #3938).  You can set set it in your
   # `$HOME/.stack/config.yaml` to enable Nix for all your projects without having
@@ -84,9 +83,9 @@ nix:
   # Unset by default. You cannot set this option if `packages:`
   # is already present and not empty.
   packages:
-  - zlib
-  - glpk
-  - pcre
+    - zlib
+    - glpk
+    - pcre
 
   # A list of strings, empty by default. Additional options that
   # will be passed verbatim to the `nix-shell` command.
@@ -104,4 +103,3 @@ nix:
   # This creates a `nix-gc-symlinks` directory in the project `.stack-work`.
   # To revert that, just delete this `nix-gc-symlinks` directory.
   add-gc-roots: false
-

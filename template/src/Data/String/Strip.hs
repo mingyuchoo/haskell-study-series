@@ -1,4 +1,5 @@
-module Data.String.Strip where
+module Data.String.Strip
+    where
 
 import           Data.Char
 
