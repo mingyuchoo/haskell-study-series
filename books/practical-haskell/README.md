@@ -1,5 +1,4 @@
-# practical-haskell
-
+# README
 ## Basic Stack Commands
 
 ```bash

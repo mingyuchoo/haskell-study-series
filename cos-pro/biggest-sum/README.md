@@ -1,5 +1,4 @@
-# biggest-sum
-
+# README
 ## Basic Stack Commands
 
 ```bash

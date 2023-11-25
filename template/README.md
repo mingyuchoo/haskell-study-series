@@ -1,5 +1,4 @@
-# tutorial-template
-
+# README
 ## Basic Stack Commands
 
 ```bash

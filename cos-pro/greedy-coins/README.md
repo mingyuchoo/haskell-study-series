@@ -1,5 +1,4 @@
-# greedy-coins
-
+# README
 ## Basic Stack Commands
 
 ```bash

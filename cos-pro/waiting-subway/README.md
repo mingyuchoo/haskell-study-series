@@ -1,5 +1,4 @@
-# waiting-subway
-
+# README
 ## Basic Stack Commands
 
 ```bash

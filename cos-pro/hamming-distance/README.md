@@ -1,5 +1,4 @@
-# hamming-distance
-
+# README
 ## Basic Stack Commands
 
 ```bash

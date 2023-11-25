@@ -1,5 +1,4 @@
-# freeze-drinks
-
+# README
 ## Basic Stack Commands
 
 ```bash

@@ -1,5 +1,4 @@
-# visitor-pattern
-
+# README
 ## Basic Stack Commands
 
 ```bash

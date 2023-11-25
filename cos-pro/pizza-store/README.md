@@ -1,5 +1,4 @@
-# pizza-store
-
+# README
 ## Basic Stack Commands
 
 ```bash

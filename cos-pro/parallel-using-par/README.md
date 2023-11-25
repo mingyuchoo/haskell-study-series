@@ -1,5 +1,4 @@
-# parallel-using-par
-
+# README
 ## Basic Stack Commands
 
 ```bash

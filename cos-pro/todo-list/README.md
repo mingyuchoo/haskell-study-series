@@ -1,5 +1,4 @@
-# todo-list
-
+# README
 ## Basic Stack Commands
 
 ```bash

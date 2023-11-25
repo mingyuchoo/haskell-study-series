@@ -1,5 +1,4 @@
-# optional
-
+# README
 ## Basic Stack Commands
 
 ```bash

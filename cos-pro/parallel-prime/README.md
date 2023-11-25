@@ -1,5 +1,4 @@
-# parallel-prime
-
+# README
 ## Basic Stack Commands
 
 ```bash

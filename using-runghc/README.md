@@ -1,5 +1,4 @@
-# using-runghc
-
+# README
 ## Template
 
 ```haskell

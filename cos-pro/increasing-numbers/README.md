@@ -1,5 +1,4 @@
-# increasing-numbers
-
+# README
 ## Basic Stack Commands
 
 ```bash

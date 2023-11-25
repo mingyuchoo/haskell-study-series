@@ -1,5 +1,4 @@
-# check-number-three
-
+# README
 ## Basic Stack Commands
 
 ```bash

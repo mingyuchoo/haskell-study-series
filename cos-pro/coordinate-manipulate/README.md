@@ -1,5 +1,4 @@
-# coordinate-manipulate
-
+# README
 ## Basic Stack Commands
 
 ```bash

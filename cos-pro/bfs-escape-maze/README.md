@@ -1,5 +1,4 @@
-# bfs-escape-maze
-
+# README
 ## Basic Stack Commands
 
 ```bash

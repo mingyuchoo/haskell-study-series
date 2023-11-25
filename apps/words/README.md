@@ -1,5 +1,4 @@
-# words
-
+# README
 ## How to build & run using Nix
 
 ### Make Haskell environment

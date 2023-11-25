@@ -1,5 +1,4 @@
-# Used Haskell Types & Functions & Typeclasses
-
+# README
 import Data.List
 
 - head

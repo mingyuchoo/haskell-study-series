@@ -1,5 +1,4 @@
-# app-using-stack-on-nix
-
+# README
 ## Reference
 
 - <https://docs.haskellstack.org/en/stable/nix_integration/>

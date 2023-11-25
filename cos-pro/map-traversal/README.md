@@ -1,5 +1,4 @@
-# map-traversal
-
+# README
 ## Basic Stack Commands
 
 ```bash

@@ -1,5 +1,4 @@
-# Used Types & Functions & Typeclasses
-
+# README
 import Data.Char
 
 - putChar
@@ -45,7 +44,7 @@ import Data.Char
 - getProgName
 - lookup
 - delete
- 
+
 import System.Random
 
 - random
