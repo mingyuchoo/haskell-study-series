@@ -4,7 +4,7 @@
   <a href="https://github.com/mingyuchoo/haskell-setup-series/pulls"><img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr/mingyuchoo/haskell-setup-series?color=appveyor" /></a>
 </p>
 
-# haskell-setup-series
+# README
 
 ## How to make dev. environment
 
