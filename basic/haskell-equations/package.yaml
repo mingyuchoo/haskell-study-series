@@ -1,0 +1,11 @@
+name: haskell-equations
+dependencies:
+  - base >= 4.17 && < 5
+library:
+  source-dirs: src
+executables:
+  haskell-equations:
+    main:        Main.hs
+    source-dirs: app
+    dependencies:
+      - haskell-equations
