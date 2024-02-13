@@ -2,39 +2,76 @@ module Lib
     ( someFunc
     ) where
 
-{-
-
-Q: Draw below
-
-*****
-****
-***
-**
-*
-
- -}
 
 someFunc :: IO ()
 someFunc = do
   let
     count = 5
-  putStr $ solution1 count
-  putStr $ solution2 count
-  putStr $ solution3 count
+  putStr $ triangle1 count
+  putStr $ triangle2 count
+  putStr $ triangle2' count
+  putStr $ triangle3 count
+  putStr $ upsideDownTriangle1 count
+  putStr $ upsideDownTriangle2 count
+  putStr $ upsideDownTriangle3 count
 
 
-solution1 :: Int -> String
-solution1 0 = ""
-solution1 n = replicate n '*' ++ "\n" ++ solution1 (n-1)
+{- Q: Draw a triangle (n = 5)
+ ----
+ *
+ **
+ ***
+ ****
+ *****
+ -}
+
+-- NOT GOOD
+triangle1 :: Int -> String
+triangle1 0 = ""
+triangle1 n = triangle1 (n - 1) ++ replicate n '*' ++ "\n"
+
+-- NOT GOOD
+triangle2 :: Int -> String
+triangle2 n =
+  case n of
+    0 -> ""
+    _ -> triangle1 (n - 1) ++ replicate n '*' ++ "\n"
+
+triangle2' :: Int -> String
+triangle2' n =
+  case () of
+    _ | n > 0     -> triangle1 (n - 1) ++ replicate n '*' ++ "\n"
+      | otherwise -> ""
 
 
-solution2 :: Int -> String
-solution2 n =
-  case n of 0 -> ""
-            _ -> replicate n '*' ++ "\n" ++ solution2 (n-1)
+triangle3 :: Int -> String
+triangle3 n
+  | n > 0 = triangle3 (n - 1) ++ replicate n '*' ++ "\n"
+  | otherwise = ""
 
 
-solution3 :: Int -> String
-solution3 n
-  | n > 0 = replicate n '*' ++ "\n" ++ solution3 (n-1)
+{- Q: Draw a upside down triangle (n = 5)
+ ----
+ *****
+ ****
+ ***
+ **
+ *
+ -}
+
+upsideDownTriangle1 :: Int -> String
+upsideDownTriangle1 0 = ""
+upsideDownTriangle1 n = replicate n '*' ++ "\n" ++ upsideDownTriangle1 (n-1)
+
+
+upsideDownTriangle2 :: Int -> String
+upsideDownTriangle2 n =
+  case n of
+    0 -> ""
+    _ -> replicate n '*' ++ "\n" ++ upsideDownTriangle2 (n-1)
+
+
+upsideDownTriangle3 :: Int -> String
+upsideDownTriangle3 n
+  | n > 0 = replicate n '*' ++ "\n" ++ upsideDownTriangle3 (n-1)
   | otherwise = ""
