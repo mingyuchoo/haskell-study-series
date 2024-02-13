@@ -160,14 +160,8 @@ data Person4 = Person4 { firstName4 :: String
 -- |
 --
 type Day :: Type
-data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday deriving
-     ( Bounded
-     , Enum
-     , Eq
-     , Ord
-     , Read
-     , Show
-     )
+data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday
+     deriving (Bounded, Enum, Eq, Ord, Read, Show)
 
 
 -- |
@@ -208,7 +202,8 @@ type AssocList k v = [(k, v)]
 -- |
 -- Locker
 type LockerState :: Type
-data LockerState = Taken | Free deriving (Eq, Show)
+data LockerState = Taken | Free
+     deriving (Eq, Show)
 
 type LockerID :: Type
 type LockerID = Int
@@ -227,11 +222,11 @@ type LockerMap = Map.Map LockerID (LockerState, LockerPasscode)
 lockerLookup :: LockerID -> LockerMap -> Either LockerMessage LockerPasscode
 lockerLookup lockerId lockerMap =
     case Map.lookup lockerId lockerMap of
-        Nothing -> Left $ "Locker number " ++ show lockerId ++ " doesn't exist!"
-        Just (state, passcode) ->
-            if state /= Taken
-              then Right passcode
-              else Left $ "Locker " ++ show lockerId ++ " is already taken!"
+      Nothing -> Left $ "Locker number " ++ show lockerId ++ " doesn't exist!"
+      Just (state, passcode) ->
+        if state /= Taken
+        then Right passcode
+        else Left $ "Locker " ++ show lockerId ++ " is already taken!"
 
 -- |
 --
@@ -378,9 +373,10 @@ instance YesNo (Maybe a) where
 -- |
 --
 yesnoIf :: (YesNo y) => y -> a -> a -> a
-yesnoIf yesnoVal yesResult noResult = if yesno yesnoVal
-                                        then yesResult
-                                        else noResult
+yesnoIf yesnoVal yesResult noResult =
+  if yesno yesnoVal
+  then yesResult
+  else noResult
 
 
 -- Instantiations of Functor type class

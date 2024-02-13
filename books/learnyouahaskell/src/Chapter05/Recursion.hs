@@ -21,8 +21,9 @@ maximum'' :: (Ord a) => [a] -> a
 maximum'' [] = error "maximum of empty list"
 maximum'' [x] = x
 maximum'' (x:xs) | x > maxTail = x
-                 | otherwise   = maxTail where
-                                   maxTail = maximum' xs
+                 | otherwise   = maxTail
+  where
+    maxTail = maximum' xs
 
 
 -- | maximum'''
@@ -85,4 +86,3 @@ elem' :: (Eq a) => a -> [a] -> Bool
 elem' a []                 = False
 elem' a (x:xs) | a == x    = True
                | otherwise = elem' a xs
-

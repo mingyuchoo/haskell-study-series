@@ -129,9 +129,11 @@ filter' f (x:xs) | f x       = x : filter' f xs
 quicksort :: (Ord a) => [a] -> [a]
 quicksort [] = []
 quicksort (x:xs) =
-  let smallerSorted = quicksort (filter (<= x) xs)
-      biggerSorted  = quicksort (filter (> x) xs)
-   in smallerSorted ++ [x] ++ biggerSorted
+  let
+    smallerSorted = quicksort (filter (<= x) xs)
+    biggerSorted  = quicksort (filter (> x) xs)
+   in
+    smallerSorted ++ [x] ++ biggerSorted
 
 -- | largestDivisible
 --
@@ -159,8 +161,9 @@ chain n | even n = n : chain (n `div` 2)
 -- 66
 --
 numLongChains :: Int
-numLongChains = length (filter isLong (map chain [1 .. 100])) where
-                  isLong xs = length xs > 15
+numLongChains = length (filter isLong (map chain [1 .. 100]))
+  where
+    isLong xs = length xs > 15
 
 
 -- | addThree'
@@ -210,8 +213,8 @@ elem' y ys =
   foldl
     (\acc x ->
        if x == y
-         then True
-         else acc)
+       then True
+       else acc)
     False
     ys
 
@@ -244,6 +247,8 @@ oddSquareSum' = sum . takeWhile (< 10000) . filter odd . map (^ 2) $ [1 ..]
 --
 oddSquareSum'' :: Integer
 oddSquareSum'' =
-  let oddSquares = filter odd $ map (^ 2) [1 ..]
-      belowLimit = takeWhile (< 10000) oddSquares
-    in sum belowLimit
+  let
+    oddSquares = filter odd $ map (^ 2) [1 ..]
+    belowLimit = takeWhile (< 10000) oddSquares
+  in
+    sum belowLimit

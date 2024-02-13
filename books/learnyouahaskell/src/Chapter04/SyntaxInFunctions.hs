@@ -123,12 +123,10 @@ head' (x:_) = x
 -- "The list is empty"
 --
 tell :: (Show a) => [a] -> String
-tell [] = "The list is empty"
-tell (x:[]) = "The list has one element: " ++ show x
+tell []       = "The list is empty"
+tell (x:[])   = "The list has one element: " ++ show x
 tell (x:y:[]) = "The list has two elements: " ++ show x ++ " and " ++ show y
-tell (x:y:_) =
-  "This list is long, The first two elements are: " ++
-  show x ++ " and " ++ show y
+tell (x:y:_)  = "This list is long, The first two elements are: " ++ show x ++ " and " ++ show y
 
 
 -- | length'
@@ -168,8 +166,8 @@ bmiTell :: (RealFloat a) => a -> a -> String
 bmiTell weight height
   | bmi <= skinny = "You're underweight, you emo, you!"
   | bmi <= normal = "You're supposedly normal. Pffft, I bet you're ugly!"
-  | bmi <= fat = "You're fat! Lose some weight, fatty!"
-  | otherwise = "You're a whale, congratulations!"
+  | bmi <= fat    = "You're fat! Lose some weight, fatty!"
+  | otherwise     = "You're a whale, congratulations!"
   where
     bmi = weight / height ^ 2
     skinny = 18.5
@@ -210,8 +208,8 @@ max' x y
 --
 myCompare :: (Ord a) => a -> a -> Ordering
 myCompare x y
-  | x > y = GT
-  | x == y = EQ
+  | x > y     = GT
+  | x == y    = EQ
   | otherwise = LT
 
 
@@ -232,9 +230,11 @@ initials firstname lastname = [f] ++ ". " ++ [l] ++ "."
 --
 cylinder :: Floating a => a -> a -> a
 cylinder r h =
-  let sideArea = 2 * pi * r * h
-      topArea = pi * r ^ 2
-   in sideArea + 2 * topArea
+  let
+    sideArea = 2 * pi * r * h
+    topArea  = pi * r ^ 2
+   in
+    sideArea + 2 * topArea
 
 
 -- | head''
