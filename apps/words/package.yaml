@@ -1,26 +1,20 @@
 name:                words
 version:             0.1.0.0
-github:              "mingyuchoo/words"
-license:             BSD3
-author:              "Mingyu Choo"
-maintainer:          "mingyuchoo@gmail.com"
-copyright:           "2023 Mingyu Choo"
+github:              mingyuchoo/words
+license:             MIT
+author:              Mingyu Choo
+maintainer:          mingyuchoo@gmail.com
+copyright:           Mingyu Choo 2024
+synopsis:            Short description of your package
+category:            CLI
+description:         Please see the README on GitHub at <https://github.com/mingyuchoo/words#readme>
 
 extra-source-files:
 - README.md
-- ChangeLog.md
-
-# Metadata used when publishing your package
-# synopsis:            Short description of your package
-# category:            Example
-
-# To avoid duplicated efforts in documentation and dealing with the
-# complications of embedding Haddock markup inside cabal files, it is
-# common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/mingyuchoo/words#readme>
+- CHANGELOG.md
 
 dependencies:
-- base >= 4.9.1.0 && < 5
+- base >= 4.18 && < 5
 - containers
 - flow
 - parallel
@@ -33,6 +27,8 @@ ghc-options:
 - -Wall
 - -O2
 - -haddock
+
+language: GHC2021
 
 library:
   source-dirs: src
@@ -61,4 +57,5 @@ tests:
     dependencies:
     - words
     - hspec
-    - hspec-discover
+    - doctest
+    - doctest-discover

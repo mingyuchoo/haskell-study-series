@@ -1,23 +1,25 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.35.1.
+-- This file has been generated from package.yaml by hpack version 0.36.0.
 --
 -- see: https://github.com/sol/hpack
 
 name:           words
 version:        0.1.0.0
+synopsis:       Short description of your package
 description:    Please see the README on GitHub at <https://github.com/mingyuchoo/words#readme>
+category:       CLI
 homepage:       https://github.com/mingyuchoo/words#readme
 bug-reports:    https://github.com/mingyuchoo/words/issues
 author:         Mingyu Choo
 maintainer:     mingyuchoo@gmail.com
-copyright:      2023 Mingyu Choo
-license:        BSD3
+copyright:      Mingyu Choo 2024
+license:        MIT
 license-file:   LICENSE
 build-type:     Simple
 extra-source-files:
     README.md
-    ChangeLog.md
+    CHANGELOG.md
 
 source-repository head
   type: git
@@ -32,14 +34,16 @@ library
       Paths_words
   hs-source-dirs:
       src
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  default-extensions:
+      StandaloneKindSignatures
+  ghc-options: -Wall -O2 -haddock
   build-depends:
-      base >=4.9.1.0 && <5
+      base >=4.18 && <5
     , containers
     , flow
     , parallel
     , random
-  default-language: Haskell2010
+  default-language: GHC2021
 
 executable words-exe
   main-is: Main.hs
@@ -47,15 +51,17 @@ executable words-exe
       Paths_words
   hs-source-dirs:
       app
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  default-extensions:
+      StandaloneKindSignatures
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.9.1.0 && <5
+      base >=4.18 && <5
     , containers
     , flow
     , parallel
     , random
     , words
-  default-language: Haskell2010
+  default-language: GHC2021
 
 test-suite words-test
   type: exitcode-stdio-1.0
@@ -64,14 +70,17 @@ test-suite words-test
       Paths_words
   hs-source-dirs:
       test
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  default-extensions:
+      StandaloneKindSignatures
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.9.1.0 && <5
+      base >=4.18 && <5
     , containers
+    , doctest
+    , doctest-discover
     , flow
     , hspec
-    , hspec-discover
     , parallel
     , random
     , words
-  default-language: Haskell2010
+  default-language: GHC2021

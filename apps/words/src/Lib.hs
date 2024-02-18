@@ -25,7 +25,7 @@ module Lib
     ) where
 
 import           Data.Char     (toLower)
-import           Data.Kind     ()
+import           Data.Kind     (Type)
 import           Data.List     (transpose)
 import           Data.Maybe    (catMaybes, listToMaybe)
 import           Prelude       hiding (Word)
