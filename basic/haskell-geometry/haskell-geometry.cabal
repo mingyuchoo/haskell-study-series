@@ -1,4 +1,4 @@
-cabal-version: 2.2
+cabal-version: 1.12
 
 -- This file has been generated from package.yaml by hpack version 0.36.0.
 --
@@ -6,13 +6,15 @@ cabal-version: 2.2
 
 name:           haskell-geometry
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/haskell-geometry#readme>
-homepage:       https://github.com/githubuser/haskell-geometry#readme
-bug-reports:    https://github.com/githubuser/haskell-geometry/issues
-author:         Author name here
-maintainer:     example@example.com
-copyright:      2024 Author name here
-license:        BSD-3-Clause
+synopsis:       Short description of your package
+description:    Please see the README on GitHub at <https://github.com/mingyuchoo/haskell-geometry#readme>
+category:       CLI
+homepage:       https://github.com/mingyuchoo/haskell-geometry#readme
+bug-reports:    https://github.com/mingyuchoo/haskell-geometry/issues
+author:         Mingyu Choo
+maintainer:     mingyuchoo@gmail.com
+copyright:      Mingyu Choo 2024
+license:        MIT
 license-file:   LICENSE
 build-type:     Simple
 extra-source-files:
@@ -21,47 +23,59 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/haskell-geometry
+  location: https://github.com/mingyuchoo/haskell-geometry
 
 library
   exposed-modules:
       Lib
   other-modules:
       Paths_haskell_geometry
-  autogen-modules:
-      Paths_haskell_geometry
   hs-source-dirs:
       src
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  default-extensions:
+      StandaloneKindSignatures
+  ghc-options: -Wall -O2 -haddock
   build-depends:
-      base >=4.7 && <5
-  default-language: Haskell2010
+      base >=4.18 && <5
+    , containers
+    , flow
+    , parallel
+  default-language: GHC2021
 
 executable haskell-geometry-exe
   main-is: Main.hs
   other-modules:
       Paths_haskell_geometry
-  autogen-modules:
-      Paths_haskell_geometry
   hs-source-dirs:
       app
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  default-extensions:
+      StandaloneKindSignatures
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.7 && <5
+      base >=4.18 && <5
+    , containers
+    , flow
     , haskell-geometry
-  default-language: Haskell2010
+    , parallel
+  default-language: GHC2021
 
 test-suite haskell-geometry-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
       Paths_haskell_geometry
-  autogen-modules:
-      Paths_haskell_geometry
   hs-source-dirs:
       test
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  default-extensions:
+      StandaloneKindSignatures
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.7 && <5
+      base >=4.18 && <5
+    , containers
+    , doctest
+    , doctest-discover
+    , flow
     , haskell-geometry
-  default-language: Haskell2010
+    , hspec
+    , parallel
+  default-language: GHC2021

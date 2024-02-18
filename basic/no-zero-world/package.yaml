@@ -1,37 +1,33 @@
 name:                no-zero-world
 version:             0.1.0.0
-github:              "mingyuchoo/no-zero-world"
-license:             BSD-3-Clause
-author:              "Mingyu Choo"
-maintainer:          "mingyuchoo@gmail.com"
-copyright:           "Mingyu Choo 2024"
+github:              mingyuchoo/no-zero-world
+license:             MIT
+author:              Mingyu Choo
+maintainer:          mingyuchoo@gmail.com
+copyright:           Mingyu Choo 2024
+synopsis:            Short description of your package
+category:            CLI
+description:         Please see the README on GitHub at <https://github.com/mingyuchoo/no-zero-world#readme>
 
 extra-source-files:
 - README.md
 - CHANGELOG.md
 
-# Metadata used when publishing your package
-# synopsis:            Short description of your package
-# category:            CLI
-
-# To avoid duplicated efforts in documentation and dealing with the
-# complications of embedding Haddock markup inside cabal files, it is
-# common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/mingyuchoo/no-zero-world#readme>
-
 dependencies:
-- base >= 4.7 && < 5
+- base >= 4.18 && < 5
+- containers
+- flow
+- parallel
+
+default-extensions:
+- StandaloneKindSignatures
 
 ghc-options:
 - -Wall
-- -Wcompat
-- -Widentities
-- -Wincomplete-record-updates
-- -Wincomplete-uni-patterns
-- -Wmissing-export-lists
-- -Wmissing-home-modules
-- -Wpartial-fields
-- -Wredundant-constraints
+- -O2
+- -haddock
+
+language: GHC2021
 
 library:
   source-dirs: src
@@ -41,9 +37,10 @@ executables:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
+    - -dynamic
     - -threaded
     - -rtsopts
-    - -with-rtsopts=-N
+    - -with-rtsopts=-N4
     dependencies:
     - no-zero-world
 
@@ -52,8 +49,12 @@ tests:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
+    - -dynamic
     - -threaded
     - -rtsopts
-    - -with-rtsopts=-N
+    - -with-rtsopts=-N4
     dependencies:
     - no-zero-world
+    - hspec
+    - doctest
+    - doctest-discover

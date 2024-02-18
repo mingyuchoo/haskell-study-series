@@ -3,11 +3,19 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages: []
-snapshots:
+packages:
 - completed:
-    sha256: 2fdd7d3e54540062ef75ca0a73ca3a804c527dbf8a4cadafabf340e66ac4af40
-    size: 712469
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/22/11.yaml
+    hackage: flow-2.0.0.4@sha256:c0b4ff962f463760112d70b6d85cc7583222505e988b5d043997db9d608713f3,1305
+    pantry-tree:
+      sha256: d2e4c616d648b5b002cc636438d88621bc6acb7f7ee9187c52894368ab5c8ba8
+      size: 355
   original:
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/22/11.yaml
+    hackage: flow-2.0.0.4@sha256:c0b4ff962f463760112d70b6d85cc7583222505e988b5d043997db9d608713f3,1305
+- completed:
+    hackage: parallel-3.2.2.0@sha256:b993406e98fe9126eff4a69d28e7e361037dd1c0892a9fd6c26e1f92eb9c4fa4,1926
+    pantry-tree:
+      sha256: a4b7712b272e1f5da4b160820fff47ba24ed2732af3b2581f3094ea8422a9b8c
+      size: 392
+  original:
+    hackage: parallel-3.2.2.0@sha256:b993406e98fe9126eff4a69d28e7e361037dd1c0892a9fd6c26e1f92eb9c4fa4,1926
+snapshots: []
