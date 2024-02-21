@@ -13,7 +13,7 @@ homepage:       https://github.com/mingyuchoo/words#readme
 bug-reports:    https://github.com/mingyuchoo/words/issues
 author:         Mingyu Choo
 maintainer:     mingyuchoo@gmail.com
-copyright:      Mingyu Choo 2024
+copyright:      2024, Mingyu Choo
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple

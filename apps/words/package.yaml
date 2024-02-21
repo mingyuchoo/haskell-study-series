@@ -4,7 +4,7 @@ github:              mingyuchoo/words
 license:             MIT
 author:              Mingyu Choo
 maintainer:          mingyuchoo@gmail.com
-copyright:           Mingyu Choo 2024
+copyright:           2024, Mingyu Choo
 synopsis:            Short description of your package
 category:            CLI
 description:         Please see the README on GitHub at <https://github.com/mingyuchoo/words#readme>

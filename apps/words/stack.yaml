@@ -4,15 +4,9 @@ resolver: lts-22.11
 packages:
 - .
 
-extra-deps:
-- flow
-- parallel
-- random-1.2.1.2@sha256:32397de181e20ccaacf806ec70de9308cf044f089a2be37c936f3f8967bde867,6460
-- splitmix-0.1.0.5@sha256:bac0ae8d46a04e410666b0c8081cff63f060f29157983b569ca86ddb6e6e0dc6,6557
-
-flags: {}
-
 extra-package-dbs: []
+extra-deps: []
+flags: {}
 
 nix:
   enable: true
