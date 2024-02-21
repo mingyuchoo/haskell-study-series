@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.4.
+-- This file has been generated from package.yaml by hpack version 0.36.0.
 --
 -- see: https://github.com/sol/hpack
 
@@ -11,7 +11,7 @@ homepage:       https://github.com/mingyuchoo/coordinate-travel#readme
 bug-reports:    https://github.com/mingyuchoo/coordinate-travel/issues
 author:         Mingyu Choo
 maintainer:     mingyuchoo@gmail.com
-copyright:      Mingyu Choo
+copyright:      2023 Mingyu Choo
 license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
@@ -30,13 +30,15 @@ library
       Paths_coordinate_travel
   hs-source-dirs:
       src
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  default-extensions:
+      StandaloneKindSignatures
+  ghc-options: -Wall -O2 -haddock
   build-depends:
-      base >=4.9.1.0 && <5
+      base >=4.18 && <5
     , containers
     , flow
     , parallel
-  default-language: GHC2021
+  default-language: Haskell2010
 
 executable coordinate-travel-exe
   main-is: Main.hs
@@ -44,14 +46,16 @@ executable coordinate-travel-exe
       Paths_coordinate_travel
   hs-source-dirs:
       app
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  default-extensions:
+      StandaloneKindSignatures
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.9.1.0 && <5
+      base >=4.18 && <5
     , containers
     , coordinate-travel
     , flow
     , parallel
-  default-language: GHC2021
+  default-language: Haskell2010
 
 test-suite coordinate-travel-test
   type: exitcode-stdio-1.0
@@ -60,13 +64,15 @@ test-suite coordinate-travel-test
       Paths_coordinate_travel
   hs-source-dirs:
       test
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  default-extensions:
+      StandaloneKindSignatures
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.9.1.0 && <5
+      base >=4.18 && <5
     , containers
     , coordinate-travel
     , flow
     , hspec
     , hspec-discover
     , parallel
-  default-language: GHC2021
+  default-language: Haskell2010
