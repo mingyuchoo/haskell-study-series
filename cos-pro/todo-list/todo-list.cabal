@@ -37,7 +37,7 @@ library
     , directory
     , flow
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2021
 
 executable todo-list-exe
   main-is: Main.hs
@@ -53,7 +53,7 @@ executable todo-list-exe
     , flow
     , parallel
     , todo-list
-  default-language: Haskell2010
+  default-language: GHC2021
 
 test-suite todo-list-test
   type: exitcode-stdio-1.0
@@ -72,4 +72,4 @@ test-suite todo-list-test
     , hspec-discover
     , parallel
     , todo-list
-  default-language: Haskell2010
+  default-language: GHC2021

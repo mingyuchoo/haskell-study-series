@@ -36,7 +36,7 @@ library
     , containers
     , flow
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2021
 
 executable keep-biggest-card-exe
   main-is: Main.hs
@@ -51,7 +51,7 @@ executable keep-biggest-card-exe
     , flow
     , keep-biggest-card
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2021
 
 test-suite keep-biggest-card-test
   type: exitcode-stdio-1.0
@@ -69,4 +69,4 @@ test-suite keep-biggest-card-test
     , hspec-discover
     , keep-biggest-card
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2021

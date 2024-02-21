@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.35.1.
+-- This file has been generated from package.yaml by hpack version 0.36.0.
 --
 -- see: https://github.com/sol/hpack
 
@@ -48,7 +48,7 @@ library
       ExplicitForAll
       OverloadedStrings
       StandaloneKindSignatures
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wmissing-signatures -Wpartial-fields -Wredundant-constraints -Wunused-binds -Wunused-imports
+  ghc-options: -Wall -O2 -haddock
   build-depends:
       base >=4.9.1.0 && <5
     , bytestring
@@ -58,7 +58,7 @@ library
     , mtl
     , parallel
     , random
-  default-language: Haskell2010
+  default-language: GHC2021
 
 executable learnyouahaskell-exe
   main-is: Main.hs
@@ -70,7 +70,7 @@ executable learnyouahaskell-exe
       ExplicitForAll
       OverloadedStrings
       StandaloneKindSignatures
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wmissing-signatures -Wpartial-fields -Wredundant-constraints -Wunused-binds -Wunused-imports -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base >=4.9.1.0 && <5
     , bytestring
@@ -81,7 +81,7 @@ executable learnyouahaskell-exe
     , mtl
     , parallel
     , random
-  default-language: Haskell2010
+  default-language: GHC2021
 
 test-suite learnyouahaskell-test
   type: exitcode-stdio-1.0
@@ -97,7 +97,7 @@ test-suite learnyouahaskell-test
       ExplicitForAll
       OverloadedStrings
       StandaloneKindSignatures
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wmissing-signatures -Wpartial-fields -Wredundant-constraints -Wunused-binds -Wunused-imports -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base >=4.9.1.0 && <5
     , bytestring
@@ -111,4 +111,4 @@ test-suite learnyouahaskell-test
     , mtl
     , parallel
     , random
-  default-language: Haskell2010
+  default-language: GHC2021

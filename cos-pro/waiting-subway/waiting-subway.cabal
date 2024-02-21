@@ -36,7 +36,7 @@ library
     , containers
     , flow
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2021
 
 executable waiting-subway-exe
   main-is: Main.hs
@@ -51,7 +51,7 @@ executable waiting-subway-exe
     , flow
     , parallel
     , waiting-subway
-  default-language: Haskell2010
+  default-language: GHC2021
 
 test-suite waiting-subway-test
   type: exitcode-stdio-1.0
@@ -70,4 +70,4 @@ test-suite waiting-subway-test
     , hspec
     , parallel
     , waiting-subway
-  default-language: Haskell2010
+  default-language: GHC2021

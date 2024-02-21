@@ -36,7 +36,7 @@ library
     , containers
     , flow
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2021
 
 executable check-number-three-exe
   main-is: Main.hs
@@ -51,7 +51,7 @@ executable check-number-three-exe
     , containers
     , flow
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2021
 
 test-suite check-number-three-test
   type: exitcode-stdio-1.0
@@ -69,4 +69,4 @@ test-suite check-number-three-test
     , hspec
     , hspec-discover
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2021

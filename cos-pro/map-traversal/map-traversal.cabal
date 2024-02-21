@@ -38,7 +38,7 @@ library
     , flow
     , lens
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2021
 
 executable map-traversal-exe
   main-is: Main.hs
@@ -54,7 +54,7 @@ executable map-traversal-exe
     , lens
     , map-traversal
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2021
 
 test-suite map-traversal-test
   type: exitcode-stdio-1.0
@@ -73,4 +73,4 @@ test-suite map-traversal-test
     , lens
     , map-traversal
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2021

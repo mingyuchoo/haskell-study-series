@@ -26,3 +26,13 @@ doubleMe x = x + x
 -- 10
 doubleUs :: Int -> Int -> Int
 doubleUs x y = x * 2 + y * 2
+
+-- | doubleSmallNumber x
+-- >>> doubleSmallNumber 1
+-- 2
+-- >>> doubleSmallNumber 101
+-- 101
+doubleSmallNumber :: Int -> Int
+doubleSmallNumber x = if x > 100
+                      then x
+                      else x*2
