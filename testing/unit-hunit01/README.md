@@ -39,7 +39,7 @@ vim package.yaml
 ...
 
 dependencies:
-- base >= 4.9.1.0 && < 5
+- base >= 4.18 && < 5
 - HUnit
 ```
 
