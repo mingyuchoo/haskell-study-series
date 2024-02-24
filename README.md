@@ -27,7 +27,7 @@ $ stack build --fast --file-watch --ghc-options "-j4 +RTS -A128m -n2m -RTS"
 $ stack test --file-watch --watch-all
 # or
 # test automatically
-$ ghcid -c="stack ghci test/Spec.hs"
+$ ghcid --command "stack ghci test/Spec.hs"
 
 # https://docs.haskellstack.org/en/stable/build_command/
 $ stack test --coverage --fast --file-watch --watch-all --haddock
