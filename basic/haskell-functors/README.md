@@ -1,4 +1,4 @@
-# functor-usecase
+# haskell-functors
 
 ## How to build
 

@@ -1,13 +1,13 @@
-name:                functor-usecase
+name:                haskell-functors
 version:             0.1.0.0
-github:              mingyuchoo/functor-usecase
+github:              mingyuchoo/haskell-functors
 license:             MIT
 author:              Mingyu Choo
 maintainer:          mingyuchoo@gmail.com
 copyright:           Mingyu Choo 2024
 synopsis:            Short description of your package
 category:            CLI
-description:         Please see the README on GitHub at <https://github.com/mingyuchoo/functor-usecase#readme>
+description:         Please see the README on GitHub at <https://github.com/mingyuchoo/haskell-functors#readme>
 
 extra-source-files:
 - README.md
@@ -33,7 +33,7 @@ library:
   source-dirs: src
 
 executables:
-  functor-usecase-exe:
+  haskell-functors-exe:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
@@ -42,10 +42,10 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N4
     dependencies:
-    - functor-usecase
+    - haskell-functors
 
 tests:
-  functor-usecase-test:
+  haskell-functors-test:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
@@ -54,7 +54,7 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N4
     dependencies:
-    - functor-usecase
+    - haskell-functors
     - hspec
     - doctest
     - doctest-discover

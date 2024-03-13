@@ -4,13 +4,13 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 
-name:           functor-usecase
+name:           haskell-functors
 version:        0.1.0.0
 synopsis:       Short description of your package
-description:    Please see the README on GitHub at <https://github.com/mingyuchoo/functor-usecase#readme>
+description:    Please see the README on GitHub at <https://github.com/mingyuchoo/haskell-functors#readme>
 category:       CLI
-homepage:       https://github.com/mingyuchoo/functor-usecase#readme
-bug-reports:    https://github.com/mingyuchoo/functor-usecase/issues
+homepage:       https://github.com/mingyuchoo/haskell-functors#readme
+bug-reports:    https://github.com/mingyuchoo/haskell-functors/issues
 author:         Mingyu Choo
 maintainer:     mingyuchoo@gmail.com
 copyright:      Mingyu Choo 2024
@@ -23,13 +23,13 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/mingyuchoo/functor-usecase
+  location: https://github.com/mingyuchoo/haskell-functors
 
 library
   exposed-modules:
       Lib
   other-modules:
-      Paths_functor_usecase
+      Paths_haskell_functors
   hs-source-dirs:
       src
   default-extensions:
@@ -42,10 +42,10 @@ library
     , parallel
   default-language: GHC2021
 
-executable functor-usecase-exe
+executable haskell-functors-exe
   main-is: Main.hs
   other-modules:
-      Paths_functor_usecase
+      Paths_haskell_functors
   hs-source-dirs:
       app
   default-extensions:
@@ -55,15 +55,15 @@ executable functor-usecase-exe
       base >=4.18 && <5
     , containers
     , flow
-    , functor-usecase
+    , haskell-functors
     , parallel
   default-language: GHC2021
 
-test-suite functor-usecase-test
+test-suite haskell-functors-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Paths_functor_usecase
+      Paths_haskell_functors
   hs-source-dirs:
       test
   default-extensions:
@@ -75,7 +75,7 @@ test-suite functor-usecase-test
     , doctest
     , doctest-discover
     , flow
-    , functor-usecase
+    , haskell-functors
     , hspec
     , parallel
   default-language: GHC2021
