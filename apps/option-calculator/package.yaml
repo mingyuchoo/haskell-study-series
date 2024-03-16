@@ -1,0 +1,59 @@
+name:                option-calculator
+version:             0.1.0.0
+github:              mingyuchoo/option-calculator
+license:             MIT
+author:              Mingyu Choo
+maintainer:          mingyuhcoo@gmail.com
+copyright:           2024, Mingyu Choo
+synopsis:            Short description of your package
+category:            CLI
+description:         Please see the README on GitHub at <https://github.com/mingyuchoo/option-calculator#readme>
+
+extra-source-files:
+- README.md
+- CHANGELOG.md
+
+dependencies:
+- base >= 4.18 && < 5
+- statistics
+
+default-extensions:
+- StandaloneKindSignatures
+- TypeApplications
+
+ghc-options:
+- -Wall
+- -O2
+- -haddock
+
+language: GHC2021
+
+library:
+  source-dirs: src
+
+executables:
+  option-calculator-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N4
+    dependencies:
+    - option-calculator
+
+tests:
+  option-calculator-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N4
+    dependencies:
+    - option-calculator
+    - hspec
+    - doctest
+    - doctest-discover
