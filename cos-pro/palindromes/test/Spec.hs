@@ -20,11 +20,3 @@ spec = do
         it "should be succeeded" $ do
           isPalindrome "bob" `shouldBe` True
           isPalindrome "hello" `shouldBe` False
-      context "when use `ignoreCase` function" $ do
-        it "should be succeeded" $ do
-          ignoreCase "abcdefg" `shouldBe` "abcdefg"
-          ignoreCase "aBcDeFg" `shouldBe` "abcdefg"
-          ignoreCase "ABCDEFG" `shouldBe` "abcdefg"
-      context "when use `makeWord` function" $ do
-        it "should be succededed" $ do
-          makeWord "madam, I'm Adam!" `shouldBe` "madamImAdam"

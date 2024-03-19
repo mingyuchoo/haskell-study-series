@@ -1,40 +1,53 @@
 module Lib
-    where
+    ( isPalindrome
+    ) where
 
-import           Data.Char
+import           Data.Char (isPunctuation, toLower)
 
-isPalindrome :: String -> Bool
-isPalindrome x =
-  x == myReverse x
+isPalindrome :: String -> Maybe Bool
+isPalindrome = isOwnReverseMaybe . rejectEmpty . normalize
 
-myReverse :: [Char] -> [Char]
-myReverse [] = []
-myReverse xs = myReverse (tail xs) ++ head xs : []
+rejectEmpty :: String -> Maybe String
+rejectEmpty x =
+  case x of
+    "" -> Nothing
+    _  -> Just x
 
-maybePalindrome :: String -> Maybe Bool
-maybePalindrome "" = Nothing
-maybePalindrome x  = Just $ isPalindrome x
+normalize :: String -> String
+normalize =
+  filter notPunctuation . filter notSpace . allLowerCase
 
-verbose :: String -> String
-verbose x =
-  case maybePalindrome x of
-    Nothing    -> "Please enter a word."
-    Just False -> "Sorry, this is not a palindrome."
-    Just True  -> "Yay, it's a palindrome!"
+isOwnReverseMaybe :: Maybe String -> Maybe Bool
+isOwnReverseMaybe maybeX =
+  case maybeX of
+    Nothing -> Nothing
+    Just x  -> Just (isOwnReverse x)
 
-ignoreCase :: String -> String
-ignoreCase = map toLower
+isOwnReverse :: String -> Bool
+isOwnReverse x =
+  let
+    len = length x
+    (l, r)= (0, len - 1)
+  in
+    all (\i -> x !! i == x !! (r - i)) [l .. r]
 
-makeWord :: String -> String
-makeWord = filter isAlphabet
-  where
-    isAlphabet :: Char  -> Bool
-    isAlphabet c | c `elem` ['a' .. 'z'] = True
-                 | c `elem` ['A' .. 'Z'] = True
-                 | otherwise = False
+nonemptyPal :: String -> Maybe Bool
+nonemptyPal x =
+  case x of
+    "" -> Nothing
+    _  -> Just (isOwnReverse x)
 
-someFunc :: IO ()
-someFunc = do
-  putStr "Input a word to check if it is a palindrome: "
-  x <- getLine
-  print $ maybePalindrome $ makeWord $ ignoreCase x
+allLowerCase :: String -> String
+allLowerCase = map toLower
+
+isPalindromeIgnoriingCase :: String -> Bool
+isPalindromeIgnoriingCase = isOwnReverse . allLowerCase
+
+isPalindromePhrase :: String -> Bool
+isPalindromePhrase = isOwnReverse . filter notSpace
+
+notSpace :: Char -> Bool
+notSpace = (/= ' ')
+
+notPunctuation :: Char -> Bool
+notPunctuation = not . isPunctuation
