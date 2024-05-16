@@ -1,0 +1,96 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.36.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           web-crawler
+version:        0.1.0.0
+synopsis:       Short description of your package
+description:    Please see the README on GitHub at <https://github.com/mingyuchoo/web-crawler#readme>
+category:       CLI
+homepage:       https://github.com/mingyuchoo/web-crawler#readme
+bug-reports:    https://github.com/mingyuchoo/web-crawler/issues
+author:         Mingyu Choo
+maintainer:     mingyuchoo@gmail.com
+copyright:      2024, Mingyu Choo
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/mingyuchoo/web-crawler
+
+library
+  exposed-modules:
+      Lib
+  other-modules:
+      Paths_web_crawler
+  hs-source-dirs:
+      src
+  default-extensions:
+      StandaloneKindSignatures
+      TypeApplications
+  ghc-options: -Wall -O2 -haddock
+  build-depends:
+      base >=4.18 && <5
+    , bytestring
+    , containers
+    , flow
+    , http-conduit
+    , parallel
+    , tagsoup
+    , text
+  default-language: GHC2021
+
+executable web-crawler-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_web_crawler
+  hs-source-dirs:
+      app
+  default-extensions:
+      StandaloneKindSignatures
+      TypeApplications
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  build-depends:
+      base >=4.18 && <5
+    , bytestring
+    , containers
+    , flow
+    , http-conduit
+    , parallel
+    , tagsoup
+    , text
+    , web-crawler
+  default-language: GHC2021
+
+test-suite web-crawler-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_web_crawler
+  hs-source-dirs:
+      test
+  default-extensions:
+      StandaloneKindSignatures
+      TypeApplications
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  build-depends:
+      base >=4.18 && <5
+    , bytestring
+    , containers
+    , doctest
+    , doctest-discover
+    , flow
+    , hspec
+    , http-conduit
+    , parallel
+    , tagsoup
+    , text
+    , web-crawler
+  default-language: GHC2021
