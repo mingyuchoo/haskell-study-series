@@ -13,7 +13,7 @@ module Chapter02.StartingOut
 -- >>> doubleMe 100
 -- 200
 --
-doubleMe :: Int -> Int
+doubleMe :: (Num a) => a -> a
 doubleMe x = x + x
 
 
@@ -24,15 +24,16 @@ doubleMe x = x + x
 -- 6
 -- >>> doubleUs 2 3
 -- 10
-doubleUs :: Int -> Int -> Int
+doubleUs :: (Num a) => a -> a -> a
 doubleUs x y = x * 2 + y * 2
+
 
 -- | doubleSmallNumber x
 -- >>> doubleSmallNumber 1
 -- 2
 -- >>> doubleSmallNumber 101
 -- 101
-doubleSmallNumber :: Int -> Int
+doubleSmallNumber :: (Ord a, Num a) => a -> a
 doubleSmallNumber x = if x > 100
                       then x
                       else x*2

@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.35.1.
+-- This file has been generated from package.yaml by hpack version 0.36.0.
 --
 -- see: https://github.com/sol/hpack
 
@@ -30,13 +30,15 @@ library
       Paths_practical_haskell
   hs-source-dirs:
       src
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  default-extensions:
+      StandaloneKindSignatures
+  ghc-options: -Wall -O2 -haddock
   build-depends:
-      base >=4.9.1.0 && <5
+      base >=4.18 && <5
     , containers
     , flow
     , parallel
-  default-language: GHC2021
+  default-language: Haskell2010
 
 executable practical-haskell-exe
   main-is: Main.hs
@@ -44,14 +46,16 @@ executable practical-haskell-exe
       Paths_practical_haskell
   hs-source-dirs:
       app
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  default-extensions:
+      StandaloneKindSignatures
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.9.1.0 && <5
+      base >=4.18 && <5
     , containers
     , flow
     , parallel
     , practical-haskell
-  default-language: GHC2021
+  default-language: Haskell2010
 
 test-suite practical-haskell-test
   type: exitcode-stdio-1.0
@@ -62,9 +66,11 @@ test-suite practical-haskell-test
       Paths_practical_haskell
   hs-source-dirs:
       test
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  default-extensions:
+      StandaloneKindSignatures
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.9.1.0 && <5
+      base >=4.18 && <5
     , containers
     , doctest
     , doctest-discover
@@ -72,4 +78,4 @@ test-suite practical-haskell-test
     , hspec
     , parallel
     , practical-haskell
-  default-language: GHC2021
+  default-language: Haskell2010

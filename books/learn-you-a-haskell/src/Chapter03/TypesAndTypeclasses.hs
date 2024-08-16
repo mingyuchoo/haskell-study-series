@@ -9,7 +9,7 @@ module Chapter03.TypesAndTypeclasses
 -- ""
 --
 removeNonUppercase :: [Char] -> [Char]
-removeNonUppercase st = [c | c <- st, c `elem` ['A' .. 'Z']]
+removeNonUppercase s = [c | c <- s, c `elem` ['A'..'Z']]
 
 
 -- | addThree
@@ -19,7 +19,7 @@ removeNonUppercase st = [c | c <- st, c `elem` ['A' .. 'Z']]
 -- 6
 -- >>> addThree (-1) (-2) 3
 -- 0
-addThree :: Int -> Int -> Int -> Int
+addThree :: (Num a) => a -> a -> a -> a
 addThree x y z = x + y + z -- function pattern matching
 
 
@@ -27,5 +27,5 @@ addThree x y z = x + y + z -- function pattern matching
 -- >>> circumference 4.0
 -- 25.132741228718345
 --
-circumference :: Double -> Double
+circumference :: (Floating a) => a -> a
 circumference r = 2 * pi * r
