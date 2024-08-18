@@ -15,8 +15,8 @@ equation1 =
 
     compare :: Int -> Maybe Int
     compare x
-      | x >= 100 = Nothing
+      | x      >= 100     = Nothing
       | left x == right x = Just x
-      | otherwise = compare (x + 1)
+      | otherwise         = compare (x + 1)
   in
     compare 0
