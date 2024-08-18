@@ -1,8 +1,9 @@
 module Lib
     where
 
-
+--
 -- 2s + 10 = s + 15
+--
 equation1 :: Maybe Int
 equation1 =
   let
