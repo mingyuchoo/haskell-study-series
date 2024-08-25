@@ -23,6 +23,6 @@ convertTag input = case parse parseTitle "" input of
 
 parseTitle :: Parser String
 parseTitle = do
-  _ <- string "<제목>"
+  _       <- string "<제목>"
   content <- manyTill anyChar (try (string "</제목>"))
-  return $ "<MainTitle>" ++ content ++ "</MainTitle>"
+  return $ "<MainTitle>" <> content <> "</MainTitle>"
