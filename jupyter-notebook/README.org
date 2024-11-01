@@ -1,0 +1,27 @@
+* README
+** How to use Jupyter Notebook with Haskell
+*** Prerequisites
+For Ubuntu
+- Install Libraries
+#+begin_src shell
+  sudo apt install -y libtinfo-dev \
+                      libzmq3-dev \
+                      libcairo2-dev \
+                      libpango1.0-dev \
+                      libmagic-dev \
+                      libblas-dev \
+                      liblapack-dev
+#+end_src
+- Install Python3
+- Install GHCUp
+*** Install IHaskell
+#+begin_src shell
+  stack install ihasekll
+#+end_src
+*** Run Jupyter Notebook
+#+begin_src shell
+  stack exec jupyter --notebook
+#+end_src
+** References
+- [[IHaskell][https://github.com/IHaskell/IHaskell]]
+- [[IHaskell Notebook][https://notebook.community/gibiansky/IHaskell/notebooks/IHaskell]]
