@@ -3,7 +3,7 @@
 ## How to create a project
 
 ```bash
-stack new <project-name> mingyuchoo/nix-template
+stack new {project-name} mingyuchoo/nix-template
 ```
 
 ## How to build

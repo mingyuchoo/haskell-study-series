@@ -15,9 +15,9 @@ $ nix develop
 ## Basic Stack Commands
 
 ```bash
-$ stack new <project-name>
+$ stack new {project-name}
 # or
-$ stack new <project-name> quanterall/basic
+$ stack new {project-name} quanterall/basic
 
 $ stack build --test --file-watch --watch-all
 # or
@@ -38,8 +38,8 @@ $ stack run
 ## Basic Cabal Commands
 
 ```bash
-$ mkdir <project>
-$ cd <project>
+$ mkdir {project-name}
+$ cd {project-name}
 $ cabal init
 
 ...

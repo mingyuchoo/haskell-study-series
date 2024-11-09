@@ -3,9 +3,9 @@
 ## Basic Stack Commands
 
 ```bash
-$ stack new <project-name>
+$ stack new {project-name}
 # or
-$ stack new <project-name> quanterall/basic
+$ stack new {project-name} quanterall/basic
 
 $ stack build --test --file-watch --watch-all
 # or
