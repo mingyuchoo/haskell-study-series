@@ -1,11 +1,12 @@
-resolver: lts-22.11
+# https://www.stackage.org/lts-22.43
+resolver: lts-22.43
 
 packages:
 - .
 
+extra-package-dbs: []
 extra-deps: []
 flags: {}
-extra-package-dbs: []
 
 #nix:
 #  enable: true
