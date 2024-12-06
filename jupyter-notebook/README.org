@@ -18,9 +18,13 @@ For Ubuntu
 #+begin_src shell
   stack install ihasekll
 #+end_src
+*** Install IHaskell as a kernel on Jupyter Notebook
+#+begin_src shell
+  ihaskell install --stack
+#+end_src
 *** Run Jupyter Notebook
 #+begin_src shell
-  stack exec jupyter --notebook
+  jupyter notebook
 #+end_src
 ** References
 - [[IHaskell][https://github.com/IHaskell/IHaskell]]
