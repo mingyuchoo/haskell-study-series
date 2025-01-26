@@ -12,7 +12,7 @@ For Ubuntu
                       libblas-dev \
                       liblapack-dev
 #+end_src
-- Install Python3 and set `.venv` up
+- Install Python3 and set ~.venv~ up
 - Install GHCUp
 *** Install IHaskell
 #+begin_src shell
