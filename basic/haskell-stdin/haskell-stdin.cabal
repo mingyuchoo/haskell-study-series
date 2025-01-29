@@ -1,4 +1,4 @@
-cabal-version: 1.12
+cabal-version: 3.0
 
 -- This file has been generated from package.yaml by hpack version 0.36.0.
 --
@@ -13,7 +13,7 @@ homepage:       https://github.com/mingyuchoo/haskell-stdin#readme
 bug-reports:    https://github.com/mingyuchoo/haskell-stdin/issues
 author:         Mingyu Choo
 maintainer:     mingyuchoo@gmail.com
-copyright:      2024, Mingyu Choo
+copyright:      2025, Mingyu Choo
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple
@@ -36,11 +36,11 @@ library
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock
   build-depends:
-      base >=4.18 && <5
+      base >=4.19 && <5
     , containers
     , flow
     , parallel
-  default-language: GHC2021
+  default-language: Haskell2010
 
 executable haskell-stdin-exe
   main-is: Main.hs
@@ -52,12 +52,12 @@ executable haskell-stdin-exe
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.18 && <5
+      base >=4.19 && <5
     , containers
     , flow
     , haskell-stdin
     , parallel
-  default-language: GHC2021
+  default-language: Haskell2010
 
 test-suite haskell-stdin-test
   type: exitcode-stdio-1.0
@@ -70,7 +70,7 @@ test-suite haskell-stdin-test
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.18 && <5
+      base >=4.19 && <5
     , containers
     , doctest
     , doctest-discover
@@ -78,4 +78,4 @@ test-suite haskell-stdin-test
     , haskell-stdin
     , hspec
     , parallel
-  default-language: GHC2021
+  default-language: Haskell2010

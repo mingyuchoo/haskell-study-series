@@ -1,4 +1,4 @@
-cabal-version: 1.12
+cabal-version: 3.0
 
 -- This file has been generated from package.yaml by hpack version 0.36.0.
 --
@@ -50,7 +50,7 @@ library
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock
   build-depends:
-      base >=4.18 && <5
+      base >=4.19 && <5
     , bytestring
     , containers
     , directory
@@ -72,7 +72,7 @@ executable learnyouahaskell-exe
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.18 && <5
+      base >=4.19 && <5
     , bytestring
     , containers
     , directory
@@ -99,7 +99,7 @@ test-suite learnyouahaskell-test
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.18 && <5
+      base >=4.19 && <5
     , bytestring
     , containers
     , directory

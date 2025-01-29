@@ -1,4 +1,4 @@
-cabal-version: 1.12
+cabal-version: 3.0
 
 -- This file has been generated from package.yaml by hpack version 0.36.0.
 --
@@ -13,7 +13,7 @@ homepage:       https://github.com/mingyuchoo/words#readme
 bug-reports:    https://github.com/mingyuchoo/words/issues
 author:         Mingyu Choo
 maintainer:     mingyuchoo@gmail.com
-copyright:      2024, Mingyu Choo
+copyright:      2025, Mingyu Choo
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple
@@ -38,12 +38,12 @@ library
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock
   build-depends:
-      base >=4.18 && <5
+      base >=4.19 && <5
     , containers
     , flow
     , parallel
     , random
-  default-language: GHC2021
+  default-language: Haskell2010
 
 executable words-exe
   main-is: Main.hs
@@ -55,13 +55,13 @@ executable words-exe
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.18 && <5
+      base >=4.19 && <5
     , containers
     , flow
     , parallel
     , random
     , words
-  default-language: GHC2021
+  default-language: Haskell2010
 
 test-suite words-test
   type: exitcode-stdio-1.0
@@ -74,7 +74,7 @@ test-suite words-test
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.18 && <5
+      base >=4.19 && <5
     , containers
     , doctest
     , doctest-discover
@@ -83,4 +83,4 @@ test-suite words-test
     , parallel
     , random
     , words
-  default-language: GHC2021
+  default-language: Haskell2010

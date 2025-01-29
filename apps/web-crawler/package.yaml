@@ -4,7 +4,7 @@ github: mingyuchoo/web-crawler
 license: MIT
 author: Mingyu Choo
 maintainer: mingyuchoo@gmail.com
-copyright: 2024, Mingyu Choo
+copyright: 2025, Mingyu Choo
 synopsis: Short description of your package
 category: CLI
 description: Please see the README on GitHub at <https://github.com/mingyuchoo/web-crawler#readme>
@@ -12,7 +12,7 @@ extra-source-files:
   - README.md
   - CHANGELOG.md
 dependencies:
-  - base >= 4.18 && < 5
+  - base >= 4.19 && < 5
   - bytestring
   - containers
   - flow
@@ -27,7 +27,7 @@ ghc-options:
   - -Wall
   - -O2
   - -haddock
-language: GHC2021
+language: Haskell2010
 library:
   source-dirs: src
 executables:

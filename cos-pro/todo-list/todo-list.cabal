@@ -1,4 +1,4 @@
-cabal-version: 1.12
+cabal-version: 3.0
 
 -- This file has been generated from package.yaml by hpack version 0.34.4.
 --
@@ -32,12 +32,12 @@ library
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      base >=4.9.1.0 && <5
+      base >=4.19 && <5
     , containers
     , directory
     , flow
     , parallel
-  default-language: GHC2021
+  default-language: Haskell2010
 
 executable todo-list-exe
   main-is: Main.hs
@@ -47,13 +47,13 @@ executable todo-list-exe
       app
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.9.1.0 && <5
+      base >=4.19 && <5
     , containers
     , directory
     , flow
     , parallel
     , todo-list
-  default-language: GHC2021
+  default-language: Haskell2010
 
 test-suite todo-list-test
   type: exitcode-stdio-1.0
@@ -64,7 +64,7 @@ test-suite todo-list-test
       test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.9.1.0 && <5
+      base >=4.19 && <5
     , containers
     , directory
     , flow
@@ -72,4 +72,4 @@ test-suite todo-list-test
     , hspec-discover
     , parallel
     , todo-list
-  default-language: GHC2021
+  default-language: Haskell2010

@@ -1,4 +1,4 @@
-cabal-version: 1.12
+cabal-version: 3.0
 
 -- This file has been generated from package.yaml by hpack version 0.36.0.
 --
@@ -36,7 +36,7 @@ library
   ghc-options: -Wall -O2 -haddock
   build-depends:
       array
-    , base >=4.18 && <5
+    , base >=4.19 && <5
     , containers
     , flow
     , lens
@@ -55,7 +55,7 @@ executable bfs-escape-maze-exe
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       array
-    , base >=4.18 && <5
+    , base >=4.19 && <5
     , bfs-escape-maze
     , containers
     , flow
@@ -76,7 +76,7 @@ test-suite bfs-escape-maze-test
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       array
-    , base >=4.18 && <5
+    , base >=4.19 && <5
     , bfs-escape-maze
     , containers
     , flow

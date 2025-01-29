@@ -1,4 +1,4 @@
-cabal-version: 1.12
+cabal-version: 3.0
 
 -- This file has been generated from package.yaml by hpack version 0.36.0.
 --
@@ -36,11 +36,11 @@ library
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock
   build-depends:
-      base >=4.18 && <5
+      base >=4.19 && <5
     , containers
     , flow
     , parallel
-  default-language: GHC2021
+  default-language: Haskell2010
 
 executable haskell-geometry-exe
   main-is: Main.hs
@@ -52,12 +52,12 @@ executable haskell-geometry-exe
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.18 && <5
+      base >=4.19 && <5
     , containers
     , flow
     , haskell-geometry
     , parallel
-  default-language: GHC2021
+  default-language: Haskell2010
 
 test-suite haskell-geometry-test
   type: exitcode-stdio-1.0
@@ -70,7 +70,7 @@ test-suite haskell-geometry-test
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.18 && <5
+      base >=4.19 && <5
     , containers
     , doctest
     , doctest-discover
@@ -78,4 +78,4 @@ test-suite haskell-geometry-test
     , haskell-geometry
     , hspec
     , parallel
-  default-language: GHC2021
+  default-language: Haskell2010

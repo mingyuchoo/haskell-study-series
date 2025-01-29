@@ -1,4 +1,4 @@
-cabal-version: 1.12
+cabal-version: 3.0
 
 -- This file has been generated from package.yaml by hpack version 0.34.4.
 --
@@ -32,11 +32,11 @@ library
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      base >=4.9.1.0 && <5
+      base >=4.19 && <5
     , containers
     , flow
     , parallel
-  default-language: GHC2021
+  default-language: Haskell2010
 
 executable parallel-prime-exe
   main-is: Main.hs
@@ -46,12 +46,12 @@ executable parallel-prime-exe
       app
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.9.1.0 && <5
+      base >=4.19 && <5
     , containers
     , flow
     , parallel
     , parallel-prime
-  default-language: GHC2021
+  default-language: Haskell2010
 
 test-suite parallel-prime-test
   type: exitcode-stdio-1.0
@@ -62,7 +62,7 @@ test-suite parallel-prime-test
       test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.9.1.0 && <5
+      base >=4.19 && <5
     , containers
     , doctest
     , doctest-discover
@@ -70,4 +70,4 @@ test-suite parallel-prime-test
     , hspec
     , parallel
     , parallel-prime
-  default-language: GHC2021
+  default-language: Haskell2010
