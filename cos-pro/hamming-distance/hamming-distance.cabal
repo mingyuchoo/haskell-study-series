@@ -12,7 +12,7 @@ bug-reports:    https://github.com/mingyuchoo/hamming-distance/issues
 author:         Mingyu Choo
 maintainer:     mingyuchoo@gmail.com
 copyright:      2022 Mingyu Choo
-license:        BSD3
+license:        BSD-3-Clause
 license-file:   LICENSE
 build-type:     Simple
 extra-source-files:

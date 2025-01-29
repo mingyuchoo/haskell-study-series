@@ -1,7 +1,7 @@
 name: pizza-store
 version: 0.1.0.0
 github: "mingyuchoo/pizza-store"
-license: BSD3
+license: BSD-3-Clause
 author: "mingyuchoo"
 maintainer: "mingyuchoo"
 copyright: "2023 Mingyu Choo"

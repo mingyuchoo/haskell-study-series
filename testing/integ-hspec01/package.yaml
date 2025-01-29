@@ -2,7 +2,7 @@
 name: integ-hspec01
 version: 0.1.0.0
 github: "mingyuchoo/integ-hspec01"
-license: BSD3
+license: BSD-3-Clause
 author: "Mingyu Choo"
 maintainer: "mingyuchoo@gmail.com"
 copyright: "2023 Mingyu Choo"
