@@ -9,10 +9,10 @@ version:        0.1.0.0
 description:    Please see the README on GitHub at <https://github.com/mingyuchoo/pizza-store#readme>
 homepage:       https://github.com/mingyuchoo/pizza-store#readme
 bug-reports:    https://github.com/mingyuchoo/pizza-store/issues
-author:         mingyuchoo
-maintainer:     mingyuchoo
-copyright:      MIT License
-license:        BSD-3-Clause
+author:         Mingyu Choo
+maintainer:     mingyuchoo@gmail.com
+copyright:      2025, Mingyu Choo
+license:        BSD 3-Clause License
 license-file:   LICENSE
 build-type:     Simple
 extra-source-files:

@@ -12,9 +12,9 @@ category:       CLI
 homepage:       https://github.com/mingyuchoo/haskell-dynamic-typing#readme
 bug-reports:    https://github.com/mingyuchoo/haskell-dynamic-typing/issues
 author:         Mingyu Choo
-maintainer:     mingyuhcoo@gmail.com
+maintainer:     mingyuhcoo@gmail.com 
 copyright:      2025, Mingyu Choo
-license:        MIT
+license:        BSD 3-Clause
 license-file:   LICENSE
 build-type:     Simple
 extra-source-files:

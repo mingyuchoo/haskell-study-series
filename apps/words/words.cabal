@@ -12,9 +12,9 @@ category:       CLI
 homepage:       https://github.com/mingyuchoo/words#readme
 bug-reports:    https://github.com/mingyuchoo/words/issues
 author:         Mingyu Choo
-maintainer:     mingyuchoo@gmail.com
+maintainer:     mingyuchoo@gmail.com@gmail.com
 copyright:      2025, Mingyu Choo
-license:        MIT
+license:        BSD 3-Clause
 license-file:   LICENSE
 build-type:     Simple
 extra-source-files:

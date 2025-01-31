@@ -1,7 +1,7 @@
 name:                no-zero-world
 version:             0.1.0.0
 github:              mingyuchoo/no-zero-world
-license:             MIT
+license:             BSD 3-Clause
 author:              Mingyu Choo
 maintainer:          mingyuchoo@gmail.com
 copyright:           Mingyu Choo 2024
