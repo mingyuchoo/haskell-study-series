@@ -1,31 +1,31 @@
-name:                haskell-geometry
-version:             0.1.0.0
-github:              mingyuchoo/haskell-geometry
-license:             BSD 3-Clause
-author:              Mingyu Choo
-maintainer:          mingyuchoo@gmail.com
-copyright:           Mingyu Choo 2024
-synopsis:            Short description of your package
-category:            CLI
-description:         Please see the README on GitHub at <https://github.com/mingyuchoo/haskell-geometry#readme>
+name: haskell-geometry
+version: 0.1.0.0
+github: mingyuchoo/haskell-geometry
+license: BSD-3-Clause
+author: Mingyu Choo
+maintainer: mingyuchoo@gmail.com
+copyright: Mingyu Choo 2024
+synopsis: Short description of your package
+category: CLI
+description: Please see the README on GitHub at <https://github.com/mingyuchoo/haskell-geometry#readme>
 
 extra-source-files:
-- README.md
-- CHANGELOG.md
+  - README.md
+  - CHANGELOG.md
 
 dependencies:
-- base >= 4.19 && < 5
-- containers
-- flow
-- parallel
+  - base >= 4.19 && < 5
+  - containers
+  - flow
+  - parallel
 
 default-extensions:
-- StandaloneKindSignatures
+  - StandaloneKindSignatures
 
 ghc-options:
-- -Wall
-- -O2
-- -haddock
+  - -Wall
+  - -O2
+  - -haddock
 
 language: Haskell2010
 
@@ -34,27 +34,27 @@ library:
 
 executables:
   haskell-geometry-exe:
-    main:                Main.hs
-    source-dirs:         app
+    main: Main.hs
+    source-dirs: app
     ghc-options:
-    - -dynamic
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N4
+      - -dynamic
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N4
     dependencies:
-    - haskell-geometry
+      - haskell-geometry
 
 tests:
   haskell-geometry-test:
-    main:                Spec.hs
-    source-dirs:         test
+    main: Spec.hs
+    source-dirs: test
     ghc-options:
-    - -dynamic
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N4
+      - -dynamic
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N4
     dependencies:
-    - haskell-geometry
-    - hspec
-    - doctest
-    - doctest-discover
+      - haskell-geometry
+      - hspec
+      - doctest
+      - doctest-discover

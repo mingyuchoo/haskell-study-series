@@ -1,38 +1,38 @@
-name:                haskell-monitoring-server
-version:             0.1.0.0
-github:              mingyuchoo/haskell-monitoring-server
-license:             BSD 3-Clause
-author:              Mingyu Choo
-maintainer:          mingyuhcoo@gmail.com
-copyright:           2025, Mingyu Choo
-synopsis:            Short description of your package
-category:            CLI
-description:         Please see the README on GitHub at <https://github.com/mingyuchoo/haskell-monitoring-server#readme>
+name: haskell-monitoring-server
+version: 0.1.0.0
+github: mingyuchoo/haskell-monitoring-server
+license: BSD-3-Clause
+author: Mingyu Choo
+maintainer: mingyuhcoo@gmail.com
+copyright: 2025, Mingyu Choo
+synopsis: Short description of your package
+category: CLI
+description: Please see the README on GitHub at <https://github.com/mingyuchoo/haskell-monitoring-server#readme>
 
 extra-source-files:
-- README.md
-- CHANGELOG.md
+  - README.md
+  - CHANGELOG.md
 
 dependencies:
-- async
-- base >= 4.19 && < 5
-- bytestring
-- containers
-- flow
-- network
-- parallel
-- safe-exceptions
-- signal
-- stm
+  - async
+  - base >= 4.19 && < 5
+  - bytestring
+  - containers
+  - flow
+  - network
+  - parallel
+  - safe-exceptions
+  - signal
+  - stm
 
 default-extensions:
-- StandaloneKindSignatures
-- TypeApplications
+  - StandaloneKindSignatures
+  - TypeApplications
 
 ghc-options:
-- -Wall
-- -O2
-- -haddock
+  - -Wall
+  - -O2
+  - -haddock
 
 language: Haskell2010
 
@@ -41,27 +41,27 @@ library:
 
 executables:
   haskell-monitoring-server-exe:
-    main:                Main.hs
-    source-dirs:         app
+    main: Main.hs
+    source-dirs: app
     ghc-options:
-    - -dynamic
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N4
+      - -dynamic
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N4
     dependencies:
-    - haskell-monitoring-server
+      - haskell-monitoring-server
 
 tests:
   haskell-monitoring-server-test:
-    main:                Spec.hs
-    source-dirs:         test
+    main: Spec.hs
+    source-dirs: test
     ghc-options:
-    - -dynamic
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N4
+      - -dynamic
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N4
     dependencies:
-    - haskell-monitoring-server
-    - hspec
-    - doctest
-    - doctest-discover
+      - haskell-monitoring-server
+      - hspec
+      - doctest
+      - doctest-discover
