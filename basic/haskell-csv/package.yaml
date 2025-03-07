@@ -1,0 +1,64 @@
+name:                haskell-csv
+version:             0.1.0.0
+github:              mingyuchoo/haskell-csv
+license:             BSD-3-Clause
+author:              Mingyu Choo
+maintainer:          mingyuchoo@gmail.com
+copyright:           2025, Mingyu Choo
+synopsis:            Short description of your package
+category:            CLI
+description:         Please see the README on GitHub at <https://github.com/mingyuchoo/haskell-csv#readme>
+
+extra-source-files:
+- README.md
+- CHANGELOG.md
+
+dependencies:
+- base >= 4.19 && < 5
+- containers
+- flow
+- parallel
+- bytestring
+- directory
+- cassava
+- vector
+
+default-extensions:
+- StandaloneKindSignatures
+
+ghc-options:
+- -Wall
+- -O2
+- -haddock
+
+language: Haskell2010
+
+library:
+  source-dirs: src
+
+executables:
+  haskell-csv-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N4
+    dependencies:
+    - haskell-csv
+
+tests:
+  haskell-csv-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N4
+    dependencies:
+    - haskell-csv
+    - hspec
+    - doctest
+    - doctest-discover
