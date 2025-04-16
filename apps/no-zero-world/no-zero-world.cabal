@@ -14,7 +14,7 @@ bug-reports:    https://github.com/mingyuchoo/no-zero-world/issues
 author:         Mingyu Choo
 maintainer:     mingyuchoo@gmail.com@gmail.com
 copyright:      Mingyu Choo 2024
-license:        BSD 3-Clause
+license:        BSD-3-Clause
 license-file:   LICENSE
 build-type:     Simple
 extra-source-files:

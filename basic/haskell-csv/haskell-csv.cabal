@@ -1,18 +1,18 @@
-cabal-version: 3.0
+cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.36.0.
+-- This file has been generated from package.yaml by hpack version 0.37.0.
 --
 -- see: https://github.com/sol/hpack
 
-name:           palindromes
+name:           haskell-csv
 version:        0.1.0.0
 synopsis:       Short description of your package
-description:    Please see the README on GitHub at <https://github.com/mingyuchoo/palindromes#readme>
+description:    Please see the README on GitHub at <https://github.com/mingyuchoo/haskell-csv#readme>
 category:       CLI
-homepage:       https://github.com/mingyuchoo/palindromes#readme
-bug-reports:    https://github.com/mingyuchoo/palindromes/issues
+homepage:       https://github.com/mingyuchoo/haskell-csv#readme
+bug-reports:    https://github.com/mingyuchoo/haskell-csv/issues
 author:         Mingyu Choo
-maintainer:     mingyuhcoo@gmail.com
+maintainer:     mingyuchoo@gmail.com
 copyright:      2025, Mingyu Choo
 license:        BSD-3-Clause
 license-file:   LICENSE
@@ -23,62 +23,77 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/mingyuchoo/palindromes
+  location: https://github.com/mingyuchoo/haskell-csv
 
 library
   exposed-modules:
       Lib
   other-modules:
-      Paths_palindromes
+      Paths_haskell_csv
+  autogen-modules:
+      Paths_haskell_csv
   hs-source-dirs:
       src
   default-extensions:
       StandaloneKindSignatures
-      TypeApplications
   ghc-options: -Wall -O2 -haddock
   build-depends:
       base >=4.19 && <5
+    , bytestring
+    , cassava
     , containers
+    , directory
     , flow
     , parallel
+    , vector
   default-language: Haskell2010
 
-executable palindromes-exe
+executable haskell-csv-exe
   main-is: Main.hs
   other-modules:
-      Paths_palindromes
+      Paths_haskell_csv
+  autogen-modules:
+      Paths_haskell_csv
   hs-source-dirs:
       app
   default-extensions:
       StandaloneKindSignatures
-      TypeApplications
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base >=4.19 && <5
+    , bytestring
+    , cassava
     , containers
+    , directory
     , flow
-    , palindromes
+    , haskell-csv
     , parallel
+    , vector
   default-language: Haskell2010
 
-test-suite palindromes-test
+test-suite haskell-csv-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Paths_palindromes
+      Paths_haskell_csv
+  autogen-modules:
+      Paths_haskell_csv
   hs-source-dirs:
       test
   default-extensions:
       StandaloneKindSignatures
-      TypeApplications
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base >=4.19 && <5
+    , bytestring
+    , cassava
     , containers
+    , directory
     , doctest
     , doctest-discover
     , flow
+    , haskell-csv
     , hspec
-    , palindromes
     , parallel
+    , vector
   default-language: Haskell2010

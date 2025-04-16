@@ -1,17 +1,17 @@
-name:                haskell-transactions
-version:             0.1.0.0
-github:              mingyuchoo/haskell-transactions
-license:             BSD 3-Clause
-author:              Mingyu Choo
-maintainer:          mingyuhcoo@gmail.com
-copyright:           2025, Mingyu Choo
-synopsis:            Short description of your package
-category:            CLI
-description:         Please see the README on GitHub at <https://github.com/mingyuchoo/haskell-transactions#readme>
+name: haskell-transactions
+version: 0.1.0.0
+github: mingyuchoo/haskell-transactions
+license: BSD-3-Clause
+author: Mingyu Choo
+maintainer: mingyuhcoo@gmail.com
+copyright: 2025, Mingyu Choo
+synopsis: Short description of your package
+category: CLI
+description: Please see the README on GitHub at <https://github.com/mingyuchoo/haskell-transactions#readme>
 
 extra-source-files:
-- README.md
-- CHANGELOG.md
+  - README.md
+  - CHANGELOG.md
 
 dependencies:
 - base
@@ -21,13 +21,13 @@ dependencies:
 
 
 default-extensions:
-- StandaloneKindSignatures
-- TypeApplications
+  - StandaloneKindSignatures
+  - TypeApplications
 
 ghc-options:
-- -Wall
-- -O2
-- -haddock
+  - -Wall
+  - -O2
+  - -haddock
 
 language: Haskell2010
 
@@ -36,27 +36,27 @@ library:
 
 executables:
   haskell-transactions-exe:
-    main:                Main.hs
-    source-dirs:         app
+    main: Main.hs
+    source-dirs: app
     ghc-options:
-    - -dynamic
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N4
+      - -dynamic
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N4
     dependencies:
-    - haskell-transactions
+      - haskell-transactions
 
 tests:
   haskell-transactions-test:
-    main:                Spec.hs
-    source-dirs:         test
+    main: Spec.hs
+    source-dirs: test
     ghc-options:
-    - -dynamic
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N4
+      - -dynamic
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N4
     dependencies:
-    - haskell-transactions
-    - hspec
-    - doctest
-    - doctest-discover
+      - haskell-transactions
+      - hspec
+      - doctest
+      - doctest-discover
