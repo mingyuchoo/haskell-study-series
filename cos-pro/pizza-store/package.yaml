@@ -20,7 +20,7 @@ extra-source-files:
 description: Please see the README on GitHub at <https://github.com/mingyuchoo/pizza-store#readme>
 
 dependencies:
-- base >= 4.19 && < 5
+- base
 - containers
 - flow
 - parallel
