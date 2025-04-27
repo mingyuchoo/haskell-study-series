@@ -39,8 +39,8 @@ graph' = buildG (0,7) [ (0,2)
 
 
 
-newtype Stack a =
-  Stack [a] deriving (Show)
+newtype Stack a = Stack [a]
+     deriving (Show)
 
 emptyS :: Stack a
 emptyS = Stack []
@@ -64,8 +64,8 @@ pop (Stack (x:xs)) = (Just x, Stack xs)
 
 
 
-newtype Queue a =
-  Queue [a] deriving (Show)
+newtype Queue a = Queue [a]
+     deriving (Show)
 
 
 emptyQ :: Queue a

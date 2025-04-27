@@ -3,7 +3,9 @@ module Lib
     ) where
 
 import           Control.Exception.Safe (displayException, tryAny)
+
 import           Data.Foldable          (fold)
+
 import           System.Directory       (getPermissions, writable)
 import           System.Environment     (getEnv)
 import           System.IO              (hPutStr, stderr, stdout)
@@ -12,7 +14,8 @@ data Level = Info | Error
 
 data Event = Event Level String
 
-data Log = Log { record :: Event -> IO () }
+data Log = Log { record :: Event -> IO ()
+               }
 
 consoleLog = Log $ \(Event level message) -> hPutStr (standardStream level) (message <> "\n")
   where

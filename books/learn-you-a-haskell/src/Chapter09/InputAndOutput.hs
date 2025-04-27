@@ -3,46 +3,26 @@ module Chapter09.InputAndOutput
 
 import           Control.Exception    (catch)
 import           Control.Monad        (forM, forever, when)
+
 import           Data.Bool            (Bool (..), not)
 import qualified Data.ByteString      as S
 import qualified Data.ByteString.Lazy as B
 import           Data.Char
 import           Data.Eq              (Eq (..))
 import           Data.List            (delete, null, take)
+
 import           System.Directory     (copyFile, removeFile, renameFile)
 import           System.Environment   (getArgs)
-import           System.IO
-    ( Handle (..)
-    , IO (..)
-    , IOMode (..)
-    , getLine
-    , hClose
-    , hGetContents
-    , hPutStr
-    , openFile
-    , openTempFile
-    , print
-    , putStrLn
-    , readFile
-    )
-import           System.IO.Error
-    ( IOError (..)
-    , ioError
-    , ioeGetFileName
-    , isDoesNotExistError
-    , isFullError
-    , isIllegalOperation
-    )
-import           System.Random
-    ( Random
-    , RandomGen
-    , StdGen (..)
-    , getStdGen
-    , mkStdGen
-    , random
-    , randomR
-    , randoms
-    )
+import           System.IO            (Handle (..), IO (..), IOMode (..),
+                                       getLine, hClose, hGetContents, hPutStr,
+                                       openFile, openTempFile, print, putStrLn,
+                                       readFile)
+import           System.IO.Error      (IOError (..), ioError, ioeGetFileName,
+                                       isDoesNotExistError, isFullError,
+                                       isIllegalOperation)
+import           System.Random        (Random, RandomGen, StdGen (..),
+                                       getStdGen, mkStdGen, random, randomR,
+                                       randoms)
 
 
 -- | evaludate functions

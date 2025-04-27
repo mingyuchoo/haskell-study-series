@@ -1,9 +1,10 @@
 module Lib
     where
 
-import Data.Int
-import Control.Parallel
-import Control.Parallel.Strategies
+import           Control.Parallel
+import           Control.Parallel.Strategies
+
+import           Data.Int
 
 -------------------------------------------------------------------------------
 -- $ ./parallel +RTS -N4

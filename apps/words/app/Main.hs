@@ -2,15 +2,12 @@ module Main
     where
 
 import           Data          (grid, languages)
+
 import           Flow          ((<|))
-import           Lib
-    ( Game
-    , completed
-    , fillInBlanks
-    , formatGame
-    , makeGame
-    , playGame
-    )
+
+import           Lib           (Game, completed, fillInBlanks, formatGame,
+                                makeGame, playGame)
+
 import           System.IO     (BufferMode (NoBuffering), hSetBuffering, stdout)
 import           System.Random (newStdGen)
 

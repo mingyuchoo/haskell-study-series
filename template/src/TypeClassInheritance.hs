@@ -19,9 +19,10 @@ import           Data.Maybe
 -- (o) :type DataA1 "A1" :: TypeA
 -- (o) :type fieldA11 :: TypeA -> String
 type TypeA :: Type
-data TypeA  = DataA0                         -- `DataA0` is a Data Constructor
-            | DataA1 { fieldA11 :: String }  -- `DataA1` is a Data Constructor
-            deriving (Show)
+data TypeA = DataA0 -- `DataA0` is a Data Constructor
+           | DataA1 { fieldA11 :: String
+                    } -- `DataA1` is a Data Constructor
+     deriving (Show)
 
 
 -- `TypeB a` is a Data Type having `a` type variable
@@ -33,11 +34,15 @@ data TypeA  = DataA0                         -- `DataA0` is a Data Constructor
 -- (o) :type fieldB21 :: TypeB a -> a
 -- (o) :type fieldB22 :: TypeB a -> a
 type TypeB :: Type -> Type
-data TypeB a = DataB0                        -- `DataB0` is a Data Constructor
-             | DataB1 { fieldB11 :: String } -- `DataB1` is a Data Constructor
-             | DataB2 { fieldB21 :: a        -- `a` is a type variable but when fieldB22 is called,
-                      , fieldB22 :: a }      --   `a` is used to a value of the type
-             deriving (Show)
+data TypeB a = DataB0 -- `DataB0` is a Data Constructor
+             | DataB1 { fieldB11 :: String
+                      } -- `DataB1` is a Data Constructor
+             | DataB2 { fieldB21 :: a
+                        -- `a` is a type variable but when fieldB22 is called,
+                      , fieldB22 :: a
+                      }
+             --   `a` is used to a value of the type
+     deriving (Show)
 
 
 -- `TypeC a b` is a Data Type having `a and b` type variables
@@ -58,16 +63,20 @@ data TypeB a = DataB0                        -- `DataB0` is a Data Constructor
 -- (o) :type fieldC43 :: TypeC a b -> b
 type TypeC :: Type -> Type -> Type
 data TypeC a b = DataC0
-               | DataC1 { fieldC11 :: String }
+               | DataC1 { fieldC11 :: String
+                        }
                | DataC2 { fieldC21 :: String
-                        , fieldC22 :: a }
+                        , fieldC22 :: a
+                        }
                | DataC3 { fieldC31 :: String
                         , fieldC32 :: b
-                        , fieldC33 :: b }
+                        , fieldC33 :: b
+                        }
                | DataC4 { fieldC41 :: String
                         , fieldC42 :: a
-                        , fieldC43 :: b }
-               deriving (Show)
+                        , fieldC43 :: b
+                        }
+     deriving (Show)
 
 
 -- 1. Ad-hoc Polymorphism

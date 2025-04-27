@@ -3,6 +3,7 @@ module Lib
     ) where
 
 import           Crypto.Hash
+
 import           Data.ByteString        (ByteString)
 import qualified Data.ByteString.Base16 as B16
 import           Data.ByteString.Char8  (pack)

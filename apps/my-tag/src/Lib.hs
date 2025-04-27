@@ -3,6 +3,7 @@ module Lib
     ) where
 
 import           System.IO          ()
+
 import           Text.Parsec        (anyChar, manyTill, parse, string, try)
 import           Text.Parsec.String (Parser)
 

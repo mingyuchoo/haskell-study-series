@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -fwarn-missing-signatures #-}
 
-{-# LANGUAGE ExplicitForAll           #-}
-{-# LANGUAGE NoImplicitPrelude        #-}
+{-# LANGUAGE ExplicitForAll    #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 
 module Lib
     ( someFunc
@@ -9,41 +9,18 @@ module Lib
 
 import           Control.Exception  (bracketOnError)
 import           Control.Monad      (mapM, mapM_, (>>))
-import           Data.List
-    ( delete
-    , head
-    , lines
-    , lookup
-    , tail
-    , unlines
-    , zipWith
-    )
-import           Prelude
-    ( IO (..)
-    , Maybe (..)
-    , String (..)
-    , read
-    , return
-    , show
-    , (!!)
-    , ($)
-    , (++)
-    )
+
+import           Data.List          (delete, head, lines, lookup, tail, unlines,
+                                     zipWith)
+
+import           Prelude            (IO (..), Maybe (..), String (..), read,
+                                     return, show, (!!), ($), (++))
+
 import           System.Directory   (removeFile, renameFile)
 import           System.Environment (getArgs, getProgName)
-import           System.IO
-    ( IOMode (..)
-    , appendFile
-    , getLine
-    , hClose
-    , hGetContents
-    , hPutStr
-    , openFile
-    , openTempFile
-    , putStr
-    , putStrLn
-    , readFile
-    )
+import           System.IO          (IOMode (..), appendFile, getLine, hClose,
+                                     hGetContents, hPutStr, openFile,
+                                     openTempFile, putStr, putStrLn, readFile)
 
 -- | application
 --

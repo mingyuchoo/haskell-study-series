@@ -51,7 +51,7 @@ maxmin (x:xs) =
 data Client = GovOrg String
             | Company String Integer Person String
             | Individual Person Bool
-            deriving Show
+     deriving (Show)
 
 -- | ClientR
 --
@@ -64,26 +64,27 @@ data ClientR = GovOrgR { clientRName :: String
                         }
              | IndividualR { person :: PersonR
                            }
-             deriving Show
+     deriving (Show)
 
 
 -- | Person
 --
 data Person = Person String String Gender
-    deriving Show
+     deriving (Show)
 
 
 -- | PersonR
 --
 data PersonR = PersonR { firstName :: String
                        , lastName  :: String
-                       } deriving Show
+                       }
+     deriving (Show)
 
 
 -- | Gender
 --
 data Gender = Male | Female | Unknown
-    deriving Show
+     deriving (Show)
 
 
 -- | clientName
@@ -164,5 +165,7 @@ nameInCapitials p@(PersonR { firstName = "" }) = p
 -- | ConnType
 --
 data ConnType = TCP | UDP
-data UseProxy = NoProxy | Proxy String
-data TimeOut = NoTimeOut | TimeOut Integer
+data UseProxy = NoProxy
+              | Proxy String
+data TimeOut = NoTimeOut
+             | TimeOut Integer

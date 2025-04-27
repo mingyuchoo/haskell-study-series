@@ -3,6 +3,7 @@ module Data.String.StripSpec
     ) where
 
 import           Data.String.Strip
+
 import           Test.Hspec
 
 -- |

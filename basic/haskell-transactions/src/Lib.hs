@@ -6,9 +6,11 @@ import           Control.Concurrent          (forkIO, threadDelay)
 import           Control.Concurrent.STM.TVar
 import           Control.Monad               (forever)
 import           Control.Monad.STM
+
 import           Data.Foldable               (asum, forM_, for_)
 import qualified Data.Sequence               as Seq
 import           Data.Traversable            (for)
+
 import           System.Random.MWC           (createSystemRandom, uniformR)
 
 

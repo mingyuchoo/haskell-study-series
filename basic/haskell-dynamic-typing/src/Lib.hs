@@ -4,6 +4,7 @@ module Lib
 
 import           Data.Dynamic  (Dynamic, dynTypeRep, fromDynamic, toDyn)
 import           Data.Foldable (asum, for_)
+
 import           Flow          ((<|))
 
 

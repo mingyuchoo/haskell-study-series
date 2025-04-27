@@ -7,6 +7,7 @@ module Chapter2Spec
 
 
 import           Chapter2
+
 import           Test.Hspec
 
 

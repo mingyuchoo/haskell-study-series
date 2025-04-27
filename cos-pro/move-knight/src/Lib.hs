@@ -3,6 +3,7 @@ module Lib
 
 import qualified Data.Map   as M
 import           Data.Maybe (mapMaybe)
+
 import           Flow       ((<|))
 
 type Position = (Int, Int)

@@ -8,6 +8,7 @@ import           Control.Concurrent.Async
 import           Control.Concurrent.STM
 import           Control.Exception.Safe
 import           Control.Monad             (forever, when)
+
 import qualified Data.ByteString           as BS
 import qualified Data.ByteString.Char8
 import           Data.Foldable             (asum, find, for_)
@@ -15,21 +16,21 @@ import           Data.Kind                 (Type)
 import           Data.Maybe                (mapMaybe)
 import           Data.Ratio                (Ratio, (%))
 import qualified Data.Sequence             as Seq
+
 import qualified Network.Socket            as S
 import           Network.Socket.ByteString (recv, sendAll)
+
 import           System.Environment
 import           System.Exit
 import           System.Signal
 
 type EventReport :: Type
-data EventReport = Success
-                 | Failure
-                 deriving Eq
+data EventReport = Success | Failure
+     deriving (Eq)
 
 type SystemStatus :: Type
-data SystemStatus = Okay
-                  | Alarm
-                  deriving Eq
+data SystemStatus = Okay | Alarm
+     deriving (Eq)
 
 
 someFunc :: IO ()

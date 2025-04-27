@@ -2,6 +2,7 @@ module Chapter12.AFistfulOfMonads
     where
 
 import           Control.Monad
+
 import           Data.Kind     (Constraint, Type)
 
 

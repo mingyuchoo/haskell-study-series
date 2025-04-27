@@ -3,7 +3,9 @@ module Main
     ) where
 
 import           Data.String (String)
+
 import           Lib         (isPalindrome)
+
 import           System.IO
 
 main :: IO ()

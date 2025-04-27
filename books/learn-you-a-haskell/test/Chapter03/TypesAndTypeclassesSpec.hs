@@ -2,6 +2,7 @@ module Chapter03.TypesAndTypeclassesSpec
     where
 
 import           Chapter03.TypesAndTypeclasses
+
 import           Test.Hspec
 
 

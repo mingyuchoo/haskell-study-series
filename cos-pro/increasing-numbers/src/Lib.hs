@@ -4,25 +4,23 @@ module Lib
 -- |
 --
 --
-data TypeA = DataA0 deriving (Show)
+data TypeA = DataA0
+     deriving (Show)
 
-data TypeB a
-    = DataB0
-    | DataB1 a
-  deriving (Show)
+data TypeB a = DataB0
+             | DataB1 a
+     deriving (Show)
 
-data TypeC a
-    = DataC0
-    | DataC1 a
-    | DataC2 a a
-  deriving (Show)
+data TypeC a = DataC0
+             | DataC1 a
+             | DataC2 a a
+     deriving (Show)
 
-data TypeD a
-    = DataD0
-    | DataD1 a
-    | DataD2 a a
-    | DataD3 a a a
-  deriving (Show)
+data TypeD a = DataD0
+             | DataD1 a
+             | DataD2 a a
+             | DataD3 a a a
+     deriving (Show)
 
 -- |
 --
@@ -109,30 +107,28 @@ myFunctionB :: TypeB t ->  String
 myFunctionB (DataB1 _) = "TypeB - DataB1"
 
 myFunctionC :: TypeC t ->  String
-myFunctionC (DataC1 _) = "TypeC - DataC1"
+myFunctionC (DataC1 _)   = "TypeC - DataC1"
 myFunctionC (DataC2 _ _) = "TypeC - DataC2"
 
 myFunctionD :: TypeD t ->  String
-myFunctionD (DataD1 _) = "TypeD - DataD1"
-myFunctionD (DataD2 _ _) = "TypeD - DataD2"
+myFunctionD (DataD1 _)     = "TypeD - DataD1"
+myFunctionD (DataD2 _ _)   = "TypeD - DataD2"
 myFunctionD (DataD3 _ _ _) = "TypeD - DataD3"
 
 -- |
 --
 --
-data Car
-    = Car { company :: String
-            , model :: String
-            , year :: Int
-            }
-  deriving (Show)
+data Car = Car { company :: String
+               , model   :: String
+               , year    :: Int
+               }
+     deriving (Show)
 
-data Passenger a b c
-    = Passenger { name :: a
-                  , gender :: b
-                  , age :: c
-                  }
-  deriving (Show)
+data Passenger a b c = Passenger { name   :: a
+                                 , gender :: b
+                                 , age    :: c
+                                 }
+     deriving (Show)
 
 -- |
 --
@@ -176,8 +172,8 @@ doubleUs x y = x*2 + y*2
 --
 --
 sum' :: (Num a) => [a] -> a -> a
-sum' [] y = y
-sum' [x] y = sum (x:[y])
+sum' [] y     = y
+sum' [x] y    = sum (x:[y])
 sum' (x:xs) y = sum ((sum' [x] y) : xs)
 
 
@@ -185,15 +181,15 @@ sum' (x:xs) y = sum ((sum' [x] y) : xs)
 --
 --
 minimum' :: (Ord a) => [a] -> a
-minimum' [] = error "Error"
-minimum' [x] = x
+minimum' []     = error "Error"
+minimum' [x]    = x
 minimum' (x:xs) = min x (minimum' xs)
 
 -- |
 --
 --
-maximum' [] = error "maximum of empty list"
-maximum' [x] = x
+maximum' []     = error "maximum of empty list"
+maximum' [x]    = x
 maximum' (x:xs) = max x (maximum' xs)
 
 

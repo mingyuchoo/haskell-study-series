@@ -4,6 +4,7 @@ module Main
 
 
 import           Lib
+
 import           System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
 
 

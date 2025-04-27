@@ -2,6 +2,7 @@ module Chapter02.StartingOutSpec
     where
 
 import           Chapter02.StartingOut
+
 import           Test.Hspec
 
 

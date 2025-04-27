@@ -15,7 +15,7 @@ module Lib
 toNum :: String -> Maybe Int
 toNum s = case reads s of
     [(n,"")] -> Just n
-    _ -> Nothing
+    _        -> Nothing
 
 -- |
 --
@@ -44,7 +44,7 @@ toBinOp "+" = Just addOp
 toBinOp "-" = Just subOp
 toBinOp "*" = Just mulOp
 toBinOp "/" = Just divOp
-toBinOp _ = Nothing
+toBinOp _   = Nothing
 
 
 -- |

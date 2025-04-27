@@ -2,8 +2,10 @@ module BinaryTree
     where
 
 import           Control.Monad (guard)
+
 import           Data.Kind     (Constraint, Type)
 import           Data.Maybe    ()
+
 import           Debug.Trace   (trace, traceShow)
 
 -- |
@@ -152,7 +154,7 @@ qsort' list@(x:xs) = qsort' small <> mid <> qsort' large
 type Tree :: Type -> Type
 data Tree a = Empty
             | Node a (Tree a) (Tree a)
-            deriving (Show)
+     deriving (Show)
 
 -- |
 --
@@ -215,7 +217,7 @@ t2 = Node 0
 type Crumb :: Type -> Type
 data Crumb a = LCrumb a (Tree a)
              | RCrumb a (Tree a)
-             deriving (Show)
+     deriving (Show)
 
 -- |
 --

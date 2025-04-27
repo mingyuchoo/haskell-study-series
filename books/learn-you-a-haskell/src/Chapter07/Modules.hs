@@ -3,28 +3,10 @@ module Chapter07.Modules
 
 
 import           Data.Char (chr, digitToInt, isDigit, ord)
-import           Data.List
-    ( any
-    , find
-    , foldl'
-    , group
-    , isInfixOf
-    , isPrefixOf
-    , length
-    , nub
-    , sort
-    , tails
-    , words
-    )
-import qualified Data.Map  as Map
-    ( Map
-    , fromList
-    , fromListWith
-    , insert
-    , lookup
-    , map
-    , size
-    )
+import           Data.List (any, find, foldl', group, isInfixOf, isPrefixOf,
+                            length, nub, sort, tails, words)
+import qualified Data.Map  as Map (Map, fromList, fromListWith, insert, lookup,
+                                   map, size)
 
 
 -- | 리스트가 가지고 있는 요소들 가운데

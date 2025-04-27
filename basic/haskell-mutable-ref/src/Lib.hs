@@ -2,14 +2,10 @@ module Lib
     ( someFunc
     ) where
 
-import           Control.Concurrent.STM.TVar
-    ( modifyTVar
-    , modifyTVar'
-    , newTVar
-    , readTVar
-    , writeTVar
-    )
+import           Control.Concurrent.STM.TVar (modifyTVar, modifyTVar', newTVar,
+                                              readTVar, writeTVar)
 import           Control.Monad.STM           (atomically)
+
 import           Data.Foldable               (for_)
 
 someFunc :: IO ()

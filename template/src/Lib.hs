@@ -35,7 +35,7 @@ import           Data.Kind (Constraint, Type)
 -- :type MyDataConstructor :: MyTypeConstructor
 type MyTypeConstructor :: Type
 data MyTypeConstructor = MyDataConstructor
-                       deriving (Show)
+     deriving (Show)
 
 -- |
 -- :kind MyTypeClass :: Type -> Constraint
@@ -88,8 +88,9 @@ class (Located a) => Movable a where
 type NamedPoint :: Type
 data NamedPoint = NamedPoint { pointName :: String
                              , pointX    :: Int
-                             , pointY    :: Int }
-                deriving (Show)
+                             , pointY    :: Int
+                             }
+     deriving (Show)
 
 
 -- |
@@ -123,10 +124,8 @@ move (dx, dy) p = setLocation (x + dx, y + dy) p where
 -- 'TrafficLight' is a `type constructor` if has zero arguments just called a `type`
 -- 'Red',...      are `data(value) constructors` if has zero arguments just called a `constant`
 type TrafficLight :: Type
-data TrafficLight = Red
-                  | Amber
-                  | Green
-                  deriving (Eq, Show)
+data TrafficLight = Red | Amber | Green
+     deriving (Eq, Show)
 
 -- |
 -- 'Checkable' is a `type class` or just a `class`
@@ -226,17 +225,11 @@ yesnoIf yesnoVal yesResult noResult = if yesno yesnoVal
 -- 'Mammal'  is a `type constructor` if has zero arguments just called a `type`
 -- 'Bat',... are `data(value) constructors` if has zero arguments just called a `constant`
 type Mammal :: Type
-data Mammal = Bat
-            | Dolphin
-            | Elephant
-            | Human
+data Mammal = Bat | Dolphin | Elephant | Human
 
 type Mammal2 :: Type
-data Mammal2 = Bat2
-             | Dolphin2
-             | Elephant2
-             | Human2
-             deriving (Eq)
+data Mammal2 = Bat2 | Dolphin2 | Elephant2 | Human2
+     deriving (Eq)
 
 -- |
 -- 'Move' is a `type class` or just a `class`
@@ -291,20 +284,14 @@ instance Move Mammal2 where
 -- 'Week'       is a `type constructor` if has zero arguments just called a `type`
 -- 'Monday',... are `data(value) constructors` if has zero arguments just called a `constant`
 type Week :: Type
-data Week = Sunday
-          | Monday
-          | Tuesday
-          | Wednesday
-          | Thursday
-          | Friday
-          | Saturday
+data Week = Sunday | Monday | Tuesday | Wednesday | Thursday | Friday | Saturday
 
 -- |
 -- 'Shape'      is a `type constructor` if has zero arguments just called a `type`
 -- 'Circle',... are `data(value) constructors` if has zero arguments just called a `constant`
 --
 type Shape :: Type
-data Shape = Circle    Float Float Float
+data Shape = Circle Float Float Float
            | Rectangle Float Float Float Float
 
 -- |

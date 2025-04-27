@@ -8,14 +8,15 @@ module Lib
 
 import           Data.Hashable (Hashable (hash))
 import           Data.Word     (Word8)
+
 import           GHC.Generics  (Generic)
 
 data Color = Color { red   :: Word8
                    , green :: Word8
                    , blue  :: Word8
                    }
-             deriving stock (Show, Eq, Generic)
-             deriving anyclass (Hashable)
+     deriving stock (Eq, Generic, Show)
+     deriving anyclass (Hashable)
 
 someFunc :: IO ()
 someFunc =

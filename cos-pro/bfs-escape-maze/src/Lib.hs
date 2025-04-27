@@ -2,8 +2,10 @@ module Lib
     where
 
 import           Control.Lens (element, (&), (.~))
+
 import           Data.Kind    (Type)
 import           Data.Maybe   (mapMaybe)
+
 import           Flow         ((<|))
 
 someFunc :: IO ()

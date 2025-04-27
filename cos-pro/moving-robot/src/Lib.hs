@@ -9,7 +9,7 @@ move 'L' (x,y) = (x-1,y)
 move 'R' (x,y) = (x+1,y)
 move 'U' (x,y) = (x,y+1)
 move 'D' (x,y) = (x,y-1)
-move _  _ = error "Error"
+move _  _      = error "Error"
 
 -- |
 --

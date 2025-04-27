@@ -2,6 +2,7 @@ module Example
     where
 
 import           Control.Monad (guard)
+
 import           Flow          ()
 
 -- |

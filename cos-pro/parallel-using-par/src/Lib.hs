@@ -1,6 +1,7 @@
-module Lib where
+module Lib
+    where
 
-import Control.Parallel
+import           Control.Parallel
 
 -- |
 --

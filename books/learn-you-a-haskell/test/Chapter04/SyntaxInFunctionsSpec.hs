@@ -2,6 +2,7 @@ module Chapter04.SyntaxInFunctionsSpec
     where
 
 import           Chapter04.SyntaxInFunctions
+
 import           Test.Hspec
 
 

@@ -3,6 +3,7 @@ module MyPrelude
 
 import           Data.List  (unzip)
 import           Data.Maybe
+
 import           Flow       ()
 
 -- | length1
@@ -227,7 +228,7 @@ msort ls =
 -- -----------------------------------------------------------------------------
 
 newtype Stack a = Stack [a]
-                deriving (Show)
+     deriving (Show)
 
 emptyS :: Stack a
 emptyS = Stack []
@@ -242,7 +243,7 @@ pop (Stack (x:xs)) = (Just x, Stack xs)
 -- -----------------------------------------------------------------------------
 
 newtype Queue a = Queue [a]
-                deriving (Show)
+     deriving (Show)
 
 
 emptyQ :: Queue a

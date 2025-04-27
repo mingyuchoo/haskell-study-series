@@ -4,15 +4,18 @@ module Lib
     ( someFunc
     ) where
 
+import           Control.Exception    (IOException, tryJust)
+import           Control.Monad        (unless)
+
 import qualified Data.ByteString.Lazy as B
-import Data.Csv
-import System.IO
-import System.IO.Error
-import Text.Printf  -- Optional, for formatted output
-import Control.Exception (tryJust, IOException)
-import Control.Monad (unless)
-import System.Directory (doesFileExist)
-import qualified Data.Vector as V
+import           Data.Csv
+import qualified Data.Vector          as V
+
+import           System.Directory     (doesFileExist)
+import           System.IO
+import           System.IO.Error
+
+import           Text.Printf
 
 -- Main 로직
 someFunc :: FilePath -> IO ()
@@ -51,11 +54,11 @@ loadAndParseCSV filePath = do
 
 
 -- CSV 파일의 각 행을 나타내는 데이터 타입 정의 (필요에 따라 조정)
-data Person = Person {
-    name :: String,
-    age :: Int,
-    city :: String
-    } deriving (Show)  -- 들여쓰기 수정
+data Person = Person { name :: String
+                     , age  :: Int
+                     , city :: String
+                     }
+     deriving (Show)
 
 -- FromNamedRecord 인스턴스 정의 (헤더를 기반으로 파싱)
 instance FromNamedRecord Person where

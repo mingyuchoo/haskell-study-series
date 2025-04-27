@@ -4,13 +4,14 @@ module Lib
     ( someFunc
     ) where
 
+import qualified Data.ByteString.Lazy as BL
 import           Data.Text            (Text)
 import           Data.Text.Encoding   (decodeUtf8)
-import           Network.HTTP.Conduit (simpleHttp)
-import           Text.HTML.TagSoup
-
-import qualified Data.ByteString.Lazy as BL
 import qualified Data.Text.IO         as TIO
+
+import           Network.HTTP.Conduit (simpleHttp)
+
+import           Text.HTML.TagSoup
 
 
 -- 메인 함수

@@ -8,24 +8,24 @@ module Lib
     ) where
 
 import qualified Data.Map.Strict        as Map
+
 import           Flow                   ((<|))
-import           Generics.Deriving.Enum (GEnum (genum))
+
 import           GHC.Generics           (Generic)
 
-data Product = Basic
-             | Standard
-             | Pro
-             deriving stock (Generic, Show)
-             deriving anyclass GEnum
+import           Generics.Deriving.Enum (GEnum (genum))
 
-data Frequency = Monthly
-               | Annual
-               deriving stock (Generic, Show)
-               deriving anyclass GEnum
+data Product = Basic | Standard | Pro
+     deriving stock (Generic, Show)
+     deriving anyclass (GEnum)
+
+data Frequency = Monthly | Annual
+     deriving stock (Generic, Show)
+     deriving anyclass (GEnum)
 
 data Bill = Bill Product Frequency
-          deriving stock (Generic, Show)
-          deriving anyclass GEnum
+     deriving stock (Generic, Show)
+     deriving anyclass (GEnum)
 
 encodeProduct :: Product -> String
 encodeProduct = \case

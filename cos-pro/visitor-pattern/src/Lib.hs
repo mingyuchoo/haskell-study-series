@@ -1,4 +1,5 @@
-module Lib where
+module Lib
+    where
 
 -- $ ./Visitor
 -- 1 + (2 + 3)^2
@@ -6,9 +7,9 @@ module Lib where
 -- |
 --
 --
-data Expr a = Plus (Expr a) (Expr a)  -- 덧셈 식
-            | Square (Expr a)         -- 제곱 식
-            | Number a                -- 숫자 식
+data Expr a = Plus (Expr a) (Expr a) -- 덧셈 식
+            | Square (Expr a) -- 제곱 식
+            | Number a
 
 -- |
 --

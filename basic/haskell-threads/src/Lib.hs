@@ -5,12 +5,11 @@ module Lib
 import           Control.Concurrent          (forkIO)
 import           Control.Concurrent.STM.TVar (modifyTVar', newTVar, readTVar)
 import           Control.Monad.STM           (atomically, check)
+
 import           Data.Foldable               (for_)
-import           System.IO
-    ( BufferMode (LineBuffering)
-    , hSetBuffering
-    , stdout
-    )
+
+import           System.IO                   (BufferMode (LineBuffering),
+                                              hSetBuffering, stdout)
 
 someFunc :: IO ()
 someFunc = do

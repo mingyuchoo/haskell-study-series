@@ -1,49 +1,21 @@
-{-# LANGUAGE NoImplicitPrelude        #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 
 module Chapter10.FunctionallySolvingProblems
     where
 
 
 import           Control.Exception (catch)
+
 import           Data.Kind         (Type)
-import           Data.List
-    ( concat
-    , drop
-    , foldl
-    , head
-    , lines
-    , map
-    , reverse
-    , sum
-    , take
-    , words
-    , (++)
-    )
-import           Prelude
-    ( Double (..)
-    , IO (..)
-    , Int (..)
-    , Show (..)
-    , String (..)
-    , fst
-    , getContents
-    , log
-    , otherwise
-    , print
-    , putStrLn
-    , read
-    , return
-    , snd
-    , undefined
-    , ($)
-    , (*)
-    , (**)
-    , (+)
-    , (-)
-    , (.)
-    , (/)
-    , (<=)
-    )
+import           Data.List         (concat, drop, foldl, head, lines, map,
+                                    reverse, sum, take, words, (++))
+
+import           Prelude           (Double (..), IO (..), Int (..), Show (..),
+                                    String (..), fst, getContents, log,
+                                    otherwise, print, putStrLn, read, return,
+                                    snd, undefined, ($), (*), (**), (+), (-),
+                                    (.), (/), (<=))
+
 import           System.IO.Error   (IOError (..), isEOFError)
 
 -- |
@@ -95,7 +67,8 @@ type RoadSystem :: Type
 type RoadSystem = [Section Int]
 
 type Label :: Type
-data Label = A | B | C deriving (Show)
+data Label = A | B | C
+     deriving (Show)
 
 type Path :: Type
 type Path = [(Label,Int)]

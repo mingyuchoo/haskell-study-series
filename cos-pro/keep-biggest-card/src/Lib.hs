@@ -2,6 +2,7 @@ module Lib
     where
 
 import           Data.List (sort, transpose)
+
 import           Flow      ((<|))
 
 someFunc :: IO ()

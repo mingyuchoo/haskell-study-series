@@ -27,11 +27,12 @@ module Lib
 import           Data.Char     (toLower)
 import           Data.Kind     (Type)
 import           Data.List     (transpose)
-import           Data.Maybe    (catMaybes, listToMaybe)
-import           Prelude       hiding (Word)
-import           System.Random (Random (randomRs), RandomGen (split))
-
 import qualified Data.Map      as M
+import           Data.Maybe    (catMaybes, listToMaybe)
+
+import           Prelude       hiding (Word)
+
+import           System.Random (Random (randomRs), RandomGen (split))
 
 -- |
 --
@@ -39,14 +40,15 @@ import qualified Data.Map      as M
 type Game :: Type
 data Game = Game { gameGrid  :: Grid Cell
                  , gameWords :: M.Map String (Maybe [Cell])
-                 } deriving (Show)
+                 }
+     deriving (Show)
 -- |
 --
 --
 type Cell :: Type
 data Cell = Cell (Int, Int) Char
           | Indent
-          deriving (Eq, Ord, Show)
+     deriving (Eq, Ord, Show)
 
 -- |
 --
