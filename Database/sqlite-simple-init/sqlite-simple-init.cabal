@@ -1,0 +1,118 @@
+cabal-version: 2.2
+
+-- This file has been generated from package.yaml by hpack version 0.38.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           sqlite-simple-init
+version:        0.1.0.0
+synopsis:       Short description of your package
+description:    Please see the README on GitHub at <https://github.com/mingyuchoo/sqlite-simple-init#readme>
+category:       Web
+homepage:       https://github.com/mingyuchoo/sqlite-simple-init#readme
+bug-reports:    https://github.com/mingyuchoo/sqlite-simple-init/issues
+author:         Mingyu Choo
+maintainer:     mingyuchoo@gmail.com
+copyright:      Mingyu Choo
+license:        BSD-3-Clause
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/mingyuchoo/sqlite-simple-init
+
+library
+  exposed-modules:
+      Lib
+      Domain.UserModel
+      Application.UserService
+      Infrastructure.Repository.UserRepository
+      Infrastructure.Web.Server
+  other-modules:
+      Paths_sqlite_simple_init
+  autogen-modules:
+      Paths_sqlite_simple_init
+  hs-source-dirs:
+      src
+  default-extensions:
+      OverloadedStrings
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  build-depends:
+      aeson
+    , base
+    , containers
+    , directory
+    , flow
+    , http-types
+    , parallel
+    , scotty
+    , sqlite-simple
+    , text
+    , time
+    , wai
+    , wai-cors
+    , wai-extra
+  default-language: Haskell2010
+
+executable sqlite-simple-init-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_sqlite_simple_init
+  autogen-modules:
+      Paths_sqlite_simple_init
+  hs-source-dirs:
+      app
+  default-extensions:
+      OverloadedStrings
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  build-depends:
+      aeson
+    , base
+    , containers
+    , directory
+    , flow
+    , http-types
+    , parallel
+    , scotty
+    , sqlite-simple
+    , sqlite-simple-init
+    , text
+    , time
+    , wai
+    , wai-cors
+    , wai-extra
+  default-language: Haskell2010
+
+test-suite sqlite-simple-init-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_sqlite_simple_init
+  autogen-modules:
+      Paths_sqlite_simple_init
+  hs-source-dirs:
+      test
+  default-extensions:
+      OverloadedStrings
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  build-depends:
+      aeson
+    , base
+    , containers
+    , directory
+    , flow
+    , http-types
+    , parallel
+    , scotty
+    , sqlite-simple
+    , sqlite-simple-init
+    , text
+    , time
+    , wai
+    , wai-cors
+    , wai-extra
+  default-language: Haskell2010

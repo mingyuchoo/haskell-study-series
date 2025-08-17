@@ -1,0 +1,99 @@
+name:                openai-haskell-agent
+version:             0.1.0.0
+github:              "mingyuchoo/openai-haskell-agent"
+license:             BSD-3-Clause
+author:              "Mingyu Choo"
+maintainer:          "mingyuchoo@gmail.com"
+copyright:           "Mingyu Choo 2025"
+
+extra-source-files:
+- README.md
+- CHANGELOG.md
+
+synopsis:            Short description of your package
+category:            A
+description:         Please see the README on GitHub at <https://github.com/mingyuchoo/openai-haskell-agent#readme>
+
+dependencies:
+- base
+- flow
+- text
+- time
+- aeson
+- bytestring
+- http-client
+- http-client-tls
+- http-types
+- transformers
+- containers
+- mtl
+- stm
+- async
+- dotenv
+- servant
+- servant-server
+- servant-client
+- servant-event-stream
+- wai
+- wai-cors
+- wai-eventsource
+- wai-extra
+- warp
+- wai-logger
+- uuid
+- lens
+- lens-aeson
+- microlens
+- unordered-containers
+- vector
+
+default-extensions:
+  - StandaloneKindSignatures
+  - TypeApplications
+
+ghc-options:
+  - -Wall
+  - -O2
+  - -haddock
+
+language: Haskell2010
+
+library:
+  source-dirs: src
+  exposed-modules:
+    - Domain.Entities.Message
+    - Domain.Entities.Chat
+    - Domain.Interfaces.ChatService
+    - Domain.Interfaces.HttpClient
+    - Application.Interfaces.ChatApplicationService
+    - Application.Services.ChatService
+    - Application.Services.ChatApplicationService
+    - Infrastructure.Http.HttpClient
+    - Infrastructure.OpenAI.OpenAIService
+    - Presentation.Api.ApiHandler
+    - Presentation.Server.Server
+
+executables:
+  openai-haskell-agent-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - openai-haskell-agent
+
+tests:
+  openai-haskell-agent-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - openai-haskell-agent
+    - hspec
+    - doctest
+    - doctest-discover

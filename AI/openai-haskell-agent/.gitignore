@@ -1,0 +1,5 @@
+.stack-work/
+*~
+
+# Environment variables
+.env

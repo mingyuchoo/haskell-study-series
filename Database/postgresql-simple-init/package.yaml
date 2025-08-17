@@ -1,0 +1,60 @@
+name:                postgresql-simple-init
+version:             0.1.0.0
+github:              "mingyuchoo/postgresql-simple-init"
+license:             BSD-3-Clause
+author:              "Mingyu Choo"
+maintainer:          "mingyuchoo@gmail.com"
+copyright:           "Mingyu Choo"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+synopsis:            Short description of your package
+category:            Web
+description:         Please see the README on GitHub at <https://github.com/mingyuchoo/postgresql-simple-init#readme>
+
+dependencies:
+- base
+- postgresql-simple
+
+default-extensions:
+- OverloadedStrings
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wmissing-export-lists
+- -Wmissing-home-modules
+- -Wpartial-fields
+- -Wredundant-constraints
+
+library:
+  source-dirs: src
+
+executables:
+  postgresql-simple-init-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - postgresql-simple-init
+
+tests:
+  postgresql-simple-init-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - postgresql-simple-init

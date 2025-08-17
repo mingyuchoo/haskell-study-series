@@ -1,0 +1,78 @@
+name:                sqlite-simple-init
+version:             0.1.0.0
+github:              "mingyuchoo/sqlite-simple-init"
+license:             BSD-3-Clause
+author:              "Mingyu Choo"
+maintainer:          "mingyuchoo@gmail.com"
+copyright:           "Mingyu Choo"
+
+extra-source-files:
+- README.md
+- CHANGELOG.md
+
+synopsis:            Short description of your package
+category:            Web
+description:         Please see the README on GitHub at <https://github.com/mingyuchoo/sqlite-simple-init#readme>
+
+dependencies:
+- base
+- sqlite-simple
+- containers
+- flow
+- parallel
+- time
+- scotty
+- aeson
+- wai
+- wai-cors
+- wai-extra
+- http-types
+- text
+- directory
+
+default-extensions:
+- OverloadedStrings
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wmissing-export-lists
+- -Wmissing-home-modules
+- -Wpartial-fields
+- -Wredundant-constraints
+
+library:
+  source-dirs: src
+  exposed-modules:
+  - Lib
+  - Domain.UserModel
+  - Application.UserService
+  - Infrastructure.Repository.UserRepository
+  - Infrastructure.Web.Server
+
+executables:
+  sqlite-simple-init-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N4
+    dependencies:
+    - sqlite-simple-init
+
+tests:
+  sqlite-simple-init-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N4
+    dependencies:
+    - sqlite-simple-init

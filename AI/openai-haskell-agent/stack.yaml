@@ -1,0 +1,36 @@
+# https://www.stackage.org/lts-23.19
+resolver: lts-23.19
+
+packages:
+- .
+
+extra-package-dbs: []
+extra-deps:
+- servant-event-stream-0.3.0.1
+- wai-eventsource-3.0.0
+flags: {}
+
+docker:
+  enable: true
+  stack-exe: host
+  container-name: "openai-haskell-agent"
+  repo: fpco/stack-build:lts-23.19
+  set-user: true
+  auto-pull: true
+  detach: false
+  persist: false
+  run-args:
+    - "--cpus=16"
+    - "--memory=32g"
+
+# nix:
+#   enable: true
+#   pure: true
+#   packages:
+#   - zlib
+#   - glpk
+#   - pcre
+#   #shell-file: shell.nix
+#   nix-shell-options: []
+#   path: []
+#   add-gc-roots: false

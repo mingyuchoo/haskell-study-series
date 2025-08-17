@@ -1,0 +1,446 @@
+/***************************************
+ * OpenAI Chat Web App - GruvBox Dark Hard Theme
+ * 
+ * A hierarchical CSS structure following
+ * a top-down approach with logical grouping
+ ***************************************/
+
+/***************************************
+ * 1. CSS Variables
+ ***************************************/
+:root {
+    /* GruvBox Dark Hard Theme Colors */
+    --gruvbox-dark-bg0-hard: #1d2021;
+    --gruvbox-dark-bg0: #282828;
+    --gruvbox-dark-bg0-soft: #32302f;
+    --gruvbox-dark-bg1: #3c3836;
+    --gruvbox-dark-bg2: #504945;
+    --gruvbox-dark-bg3: #665c54;
+    --gruvbox-dark-bg4: #7c6f64;
+    
+    --gruvbox-dark-fg0: #fbf1c7;
+    --gruvbox-dark-fg1: #ebdbb2;
+    --gruvbox-dark-fg2: #d5c4a1;
+    --gruvbox-dark-fg3: #bdae93;
+    --gruvbox-dark-fg4: #a89984;
+    
+    /* GruvBox Accent Colors */
+    --gruvbox-red: #cc241d;
+    --gruvbox-green: #98971a;
+    --gruvbox-yellow: #d79921;
+    --gruvbox-blue: #458588;
+    --gruvbox-purple: #b16286;
+    --gruvbox-aqua: #689d6a;
+    --gruvbox-orange: #d65d0e;
+    
+    /* GruvBox Bright Colors */
+    --gruvbox-bright-red: #fb4934;
+    --gruvbox-bright-green: #b8bb26;
+    --gruvbox-bright-yellow: #fabd2f;
+    --gruvbox-bright-blue: #83a598;
+    --gruvbox-bright-purple: #d3869b;
+    --gruvbox-bright-aqua: #8ec07c;
+    --gruvbox-bright-orange: #fe8019;
+    
+    /* Layout Variables */
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 16px;
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 12px;
+    --spacing-lg: 16px;
+    --spacing-xl: 20px;
+    --spacing-xxl: 24px;
+    
+    /* Typography */
+    --font-size-sm: 14px;
+    --font-size-md: 16px;
+    --font-size-lg: 20px;
+    --font-size-xl: 22px;
+    --font-size-xxl: 28px;
+}
+
+/***************************************
+ * 2. Base Styles
+ ***************************************/
+body {
+    font-family: 'IBM Plex Sans KR', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--gruvbox-dark-bg0-hard);
+    color: var(--gruvbox-dark-fg1);
+    line-height: 1.6;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Typography */
+h1, h2, h3 {
+    margin: 0;
+}
+
+h1 {
+    font-size: var(--font-size-xxl);
+    color: var(--gruvbox-orange);
+}
+
+h2 {
+    font-size: var(--font-size-xl);
+    color: var(--gruvbox-yellow);
+}
+
+h3 {
+    font-size: var(--font-size-lg);
+    color: var(--gruvbox-aqua);
+}
+
+/***************************************
+ * 3. Layout Components
+ ***************************************/
+.container {
+    max-width: 1200px;
+    width: 90%;
+    margin: 0 auto;
+    padding: var(--spacing-xl);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    background-color: var(--gruvbox-dark-bg1);
+    color: var(--gruvbox-dark-fg0);
+    padding: 15px 0;
+    text-align: center;
+    border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+    margin-bottom: 0;
+}
+
+.chat-container {
+    background-color: var(--gruvbox-dark-bg0);
+    border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/***************************************
+ * 4. Welcome Message
+ ***************************************/
+.welcome-message {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-xl);
+    background-color: var(--gruvbox-dark-bg0-soft);
+    border-radius: var(--border-radius-md);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.welcome-message h2 {
+    margin-top: 0;
+    color: var(--gruvbox-yellow);
+    font-size: var(--font-size-xl);
+}
+
+.welcome-message p {
+    color: var(--gruvbox-dark-fg2);
+    margin-bottom: 0;
+}
+
+/***************************************
+ * 5. Chat Messages Area
+ ***************************************/
+.chat-messages {
+    flex: 1;
+    height: 500px;
+    overflow-y: auto;
+    margin-bottom: var(--spacing-xl);
+    padding: 15px;
+    border: 1px solid var(--gruvbox-dark-bg2);
+    border-radius: var(--border-radius-md);
+    background-color: var(--gruvbox-dark-bg0);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Common Message Styles */
+.message {
+    margin-bottom: 15px;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    max-width: 80%;
+    word-wrap: break-word;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* User Message */
+.user-message {
+    background-color: var(--gruvbox-blue);
+    color: var(--gruvbox-dark-fg0);
+    align-self: flex-end;
+    text-align: right;
+    border-bottom-right-radius: var(--border-radius-sm);
+    border-top-left-radius: var(--border-radius-lg);
+    border-bottom-left-radius: var(--border-radius-lg);
+}
+
+/* Assistant Message */
+.assistant-message {
+    background-color: var(--gruvbox-dark-bg2);
+    color: var(--gruvbox-dark-fg1);
+    align-self: flex-start;
+    text-align: left;
+    border-bottom-left-radius: var(--border-radius-sm);
+    border-top-right-radius: var(--border-radius-lg);
+    border-bottom-right-radius: var(--border-radius-lg);
+}
+
+.assistant-message.error {
+    background-color: var(--gruvbox-dark-bg1);
+    border-color: var(--gruvbox-red);
+    color: var(--gruvbox-bright-red);
+}
+
+/***************************************
+ * 6. Markdown Styling in Messages
+ ***************************************/
+.assistant-message h1, 
+.assistant-message h2, 
+.assistant-message h3 {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    font-weight: bold;
+}
+
+.assistant-message h1 {
+    font-size: 1.5em;
+}
+
+.assistant-message h2 {
+    font-size: 1.3em;
+}
+
+.assistant-message h3 {
+    font-size: 1.1em;
+}
+
+.assistant-message p {
+    margin: 0.5em 0;
+}
+
+.assistant-message code {
+    font-family: 'IBM Plex Mono', monospace;
+    background-color: var(--gruvbox-dark-bg1);
+    color: var(--gruvbox-bright-green);
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+.assistant-message pre {
+    background-color: var(--gruvbox-dark-bg1);
+    padding: 10px;
+    border-radius: 5px;
+    overflow-x: auto;
+    margin: 0.5em 0;
+}
+
+.assistant-message pre code {
+    background-color: transparent;
+    padding: 0;
+}
+
+.assistant-message ul, 
+.assistant-message ol {
+    margin: 0.5em 0;
+    padding-left: 1.5em;
+}
+
+.assistant-message a {
+    color: var(--gruvbox-bright-blue);
+    text-decoration: none;
+}
+
+.assistant-message a:hover {
+    text-decoration: underline;
+}
+
+/***************************************
+ * 7. Chat Input Area
+ ***************************************/
+.chat-input {
+    display: flex;
+    margin-top: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: var(--spacing-lg) var(--spacing-lg);
+    border: 1px solid var(--gruvbox-dark-bg2);
+    border-right: none;
+    border-radius: var(--border-radius-md) 0 0 var(--border-radius-md);
+    font-size: var(--font-size-md);
+    outline: none;
+    transition: border-color 0.3s;
+    background-color: var(--gruvbox-dark-bg1);
+    color: var(--gruvbox-dark-fg1);
+}
+
+.chat-input input:focus {
+    border-color: var(--gruvbox-bright-yellow);
+}
+
+.chat-input button {
+    padding: var(--spacing-lg) var(--spacing-xxl);
+    background-color: var(--gruvbox-bright-green);
+    color: var(--gruvbox-dark-bg0-hard);
+    border: none;
+    border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+    cursor: pointer;
+    font-size: var(--font-size-md);
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.chat-input button:hover {
+    background-color: var(--gruvbox-green);
+    transform: translateY(-1px);
+}
+
+.chat-input button:active {
+    transform: translateY(1px);
+}
+
+/***************************************
+ * 8. Status Indicators
+ ***************************************/
+.status {
+    text-align: center;
+    color: var(--gruvbox-dark-fg4);
+    font-size: var(--font-size-sm);
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-sm);
+    background-color: var(--gruvbox-dark-bg0-soft);
+    border-radius: var(--border-radius-md);
+    transition: all 0.3s;
+}
+
+.status-ready {
+    color: var(--gruvbox-aqua);
+}
+
+.status-thinking {
+    color: var(--gruvbox-bright-yellow);
+}
+
+.status-error {
+    color: var(--gruvbox-bright-red);
+}
+
+/***************************************
+ * 9. Typing Indicator
+ ***************************************/
+.typing-indicator {
+    display: flex;
+    padding: 10px 15px;
+    background-color: var(--gruvbox-dark-bg2);
+    border-radius: 18px;
+    max-width: 80px;
+    margin-bottom: 15px;
+    align-self: flex-start;
+}
+
+.typing-indicator span {
+    height: 8px;
+    width: 8px;
+    background-color: var(--gruvbox-bright-yellow);
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 2px;
+    animation: bounce 1.5s infinite ease-in-out;
+}
+
+.typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+/***************************************
+ * 10. Animations
+ ***************************************/
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+/***************************************
+ * 11. Responsive Design
+ ***************************************/
+/* Large screens */
+@media (max-width: 1200px) {
+    .container {
+        max-width: 95%;
+    }
+}
+
+/* Medium screens */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+        width: 95%;
+    }
+    
+    h1 {
+        font-size: var(--font-size-xl);
+    }
+    
+    .chat-messages {
+        height: 450px;
+    }
+    
+    .message {
+        max-width: 85%;
+    }
+}
+
+/* Small screens */
+@media (max-width: 480px) {
+    .container {
+        padding: 10px;
+        width: 100%;
+    }
+    
+    .chat-messages {
+        height: 350px;
+        padding: 10px;
+    }
+    
+    .message {
+        max-width: 90%;
+        padding: 10px 12px;
+    }
+    
+    .chat-input input {
+        padding: var(--spacing-md);
+    }
+    
+    .chat-input button {
+        padding: var(--spacing-md) var(--spacing-lg);
+    }
+}
