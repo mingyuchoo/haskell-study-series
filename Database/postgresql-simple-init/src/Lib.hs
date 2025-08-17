@@ -25,9 +25,18 @@ localPG = defaultConnectInfo { connectHost = "127.0.0.1"
                              , connectPassword = "postgres"
                              }
 
+-- Ensure the required table exists
+initDB :: Connection -> IO ()
+initDB conn = do
+    let q = "CREATE TABLE IF NOT EXISTS test (id INT PRIMARY KEY, name TEXT NOT NULL)"
+    _ <- execute_ conn q
+    pure ()
+
 someFunc :: IO ()
 someFunc = do
     conn <- connect localPG
+    -- Initialize schema if missing
+    initDB conn
 
     cid <- createTest conn
     putStrLn $ "New Test: " ++ (show cid)

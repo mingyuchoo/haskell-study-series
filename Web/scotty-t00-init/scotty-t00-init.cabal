@@ -1,6 +1,6 @@
-cabal-version: 3.16
+cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.36.0.
+-- This file has been generated from package.yaml by hpack version 0.38.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -28,6 +28,8 @@ library
       Lib
   other-modules:
       Paths_scotty_t00_init
+  autogen-modules:
+      Paths_scotty_t00_init
   hs-source-dirs:
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
@@ -42,6 +44,8 @@ library
 executable scotty-t00-init-exe
   main-is: Main.hs
   other-modules:
+      Paths_scotty_t00_init
+  autogen-modules:
       Paths_scotty_t00_init
   hs-source-dirs:
       app
@@ -59,6 +63,8 @@ test-suite scotty-t00-init-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      Paths_scotty_t00_init
+  autogen-modules:
       Paths_scotty_t00_init
   hs-source-dirs:
       test
