@@ -1,4 +1,4 @@
-# Changelog for `haskell-threads`
+# Changelog for `threads`
 
 All notable changes to this project will be documented in this file.
 

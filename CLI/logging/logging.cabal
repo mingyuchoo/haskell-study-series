@@ -7,10 +7,10 @@ cabal-version: 3.16
 name:                   logging
 version:        0.1.0.0
 synopsis:       Short description of your package
-description:    Please see the README on GitHub at <https://github.com/mingyuchoo/haskell-logging#readme>
+description:    Please see the README on GitHub at <https://github.com/mingyuchoo/logging#readme>
 category:       CLI
-homepage:       https://github.com/mingyuchoo/haskell-logging#readme
-bug-reports:    https://github.com/mingyuchoo/haskell-logging/issues
+homepage:       https://github.com/mingyuchoo/logging#readme
+bug-reports:    https://github.com/mingyuchoo/logging/issues
 author:         Mingyu Choo
 maintainer:     mingyuhcoo@gmail.com
 copyright:      2025, Mingyu Choo
@@ -23,7 +23,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/mingyuchoo/haskell-logging
+  location: https://github.com/mingyuchoo/logging
 
 library
   exposed-modules:
@@ -42,7 +42,7 @@ library
     , safe-exceptions
   default-language: Haskell2010
 
-executable haskell-logging-exe
+executable logging-exe
   main-is: Main.hs
   other-modules:
       Paths_haskell_logging
@@ -55,11 +55,11 @@ executable haskell-logging-exe
   build-depends:
       base
     , directory
-    , haskell-logging
+    , logging
     , safe-exceptions
   default-language: Haskell2010
 
-test-suite haskell-logging-test
+test-suite logging-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
@@ -75,7 +75,7 @@ test-suite haskell-logging-test
     , directory
     , doctest
     , doctest-discover
-    , haskell-logging
+    , logging
     , hspec
     , safe-exceptions
   default-language: Haskell2010

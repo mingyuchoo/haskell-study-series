@@ -1,4 +1,4 @@
-# haskell-transactions
+# transactions
 
 ## How to create a project
 

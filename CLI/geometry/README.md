@@ -1,1 +1,1 @@
-# haskell-geometry
+# geometry

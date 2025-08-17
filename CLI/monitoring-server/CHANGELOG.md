@@ -1,4 +1,4 @@
-# Changelog for `haskell-monitoring-server`
+# Changelog for `monitoring-server`
 
 All notable changes to this project will be documented in this file.
 

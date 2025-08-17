@@ -1,4 +1,4 @@
-# haskell-monitoring-server
+# monitoring-server
 
 ## How to create a project
 

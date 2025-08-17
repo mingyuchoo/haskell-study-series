@@ -1,4 +1,4 @@
-# haskell-logging
+# logging
 
 ## How to create a project
 

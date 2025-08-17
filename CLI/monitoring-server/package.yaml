@@ -1,13 +1,13 @@
-name: haskell-monitoring-server
+name: monitoring-server
 version: 0.1.0.0
-github: mingyuchoo/haskell-monitoring-server
+github: mingyuchoo/monitoring-server
 license: BSD-3-Clause
 author: Mingyu Choo
 maintainer: mingyuhcoo@gmail.com
 copyright: 2025, Mingyu Choo
 synopsis: Short description of your package
 category: CLI
-description: Please see the README on GitHub at <https://github.com/mingyuchoo/haskell-monitoring-server#readme>
+description: Please see the README on GitHub at <https://github.com/mingyuchoo/monitoring-server#readme>
 
 extra-source-files:
   - README.md
@@ -40,7 +40,7 @@ library:
   source-dirs: src
 
 executables:
-  haskell-monitoring-server-exe:
+  monitoring-server-exe:
     main: Main.hs
     source-dirs: app
     ghc-options:
@@ -49,10 +49,10 @@ executables:
       - -rtsopts
       - -with-rtsopts=-N4
     dependencies:
-      - haskell-monitoring-server
+      - monitoring-server
 
 tests:
-  haskell-monitoring-server-test:
+  monitoring-server-test:
     main: Spec.hs
     source-dirs: test
     ghc-options:
@@ -61,7 +61,7 @@ tests:
       - -rtsopts
       - -with-rtsopts=-N4
     dependencies:
-      - haskell-monitoring-server
+      - monitoring-server
       - hspec
       - doctest
       - doctest-discover

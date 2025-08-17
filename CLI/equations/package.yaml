@@ -1,11 +1,11 @@
-name: haskell-equations
+name: equations
 dependencies:
   - base
 library:
   source-dirs: src
 executables:
-  haskell-equations:
+  equations:
     main:        Main.hs
     source-dirs: app
     dependencies:
-      - haskell-equations
+      - equations

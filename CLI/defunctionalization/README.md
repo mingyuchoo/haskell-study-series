@@ -1,4 +1,4 @@
-# haskell-defunctionalization
+# defunctionalization
 
 ## How to create a project
 

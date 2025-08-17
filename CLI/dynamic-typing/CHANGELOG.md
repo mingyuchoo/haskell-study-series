@@ -1,4 +1,4 @@
-# Changelog for `haskell-dynamic-typing`
+# Changelog for `dynamic-typing`
 
 All notable changes to this project will be documented in this file.
 

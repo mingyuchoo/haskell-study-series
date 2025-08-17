@@ -7,10 +7,10 @@ cabal-version: 3.16
 name:                   stdin
 version:        0.1.0.0
 synopsis:       Short description of your package
-description:    Please see the README on GitHub at <https://github.com/mingyuchoo/haskell-stdin#readme>
+description:    Please see the README on GitHub at <https://github.com/mingyuchoo/stdin#readme>
 category:       CLI
-homepage:       https://github.com/mingyuchoo/haskell-stdin#readme
-bug-reports:    https://github.com/mingyuchoo/haskell-stdin/issues
+homepage:       https://github.com/mingyuchoo/stdin#readme
+bug-reports:    https://github.com/mingyuchoo/stdin/issues
 author:         Mingyu Choo
 maintainer:     mingyuchoo@gmail.com
 copyright:      2025, Mingyu Choo
@@ -23,7 +23,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/mingyuchoo/haskell-stdin
+  location: https://github.com/mingyuchoo/stdin
 
 library
   exposed-modules:
@@ -42,7 +42,7 @@ library
     , parallel
   default-language: Haskell2010
 
-executable haskell-stdin-exe
+executable stdin-exe
   main-is: Main.hs
   other-modules:
       Paths_haskell_stdin
@@ -55,11 +55,11 @@ executable haskell-stdin-exe
       base
     , containers
     , flow
-    , haskell-stdin
+    , stdin
     , parallel
   default-language: Haskell2010
 
-test-suite haskell-stdin-test
+test-suite stdin-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
@@ -75,7 +75,7 @@ test-suite haskell-stdin-test
     , doctest
     , doctest-discover
     , flow
-    , haskell-stdin
+    , stdin
     , hspec
     , parallel
   default-language: Haskell2010

@@ -1,4 +1,4 @@
-# haskell-threads
+# threads
 
 ## How to create a project
 

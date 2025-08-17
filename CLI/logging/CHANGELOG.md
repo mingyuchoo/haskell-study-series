@@ -1,4 +1,4 @@
-# Changelog for `haskell-logging`
+# Changelog for `logging`
 
 All notable changes to this project will be documented in this file.
 

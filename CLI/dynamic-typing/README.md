@@ -1,4 +1,4 @@
-# haskell-dynamic-typing
+# dynamic-typing
 
 ## How to create a project
 

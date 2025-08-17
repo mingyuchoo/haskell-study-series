@@ -1,13 +1,13 @@
-name: haskell-defunctionalization
+name: defunctionalization
 version: 0.1.0.0
-github: mingyuchoo/haskell-defunctionalization
+github: mingyuchoo/defunctionalization
 license: BSD-3-Clause
 author: Mingyu Choo
 maintainer: mingyuhcoo@gmail.com
 copyright: 2025, Mingyu Choo
 synopsis: Short description of your package
 category: CLI
-description: Please see the README on GitHub at <https://github.com/mingyuchoo/haskell-defunctionalization#readme>
+description: Please see the README on GitHub at <https://github.com/mingyuchoo/defunctionalization#readme>
 
 extra-source-files:
   - README.md
@@ -34,7 +34,7 @@ library:
   source-dirs: src
 
 executables:
-  haskell-defunctionalization-exe:
+  defunctionalization-exe:
     main: Main.hs
     source-dirs: app
     ghc-options:
@@ -43,10 +43,10 @@ executables:
       - -rtsopts
       - -with-rtsopts=-N4
     dependencies:
-      - haskell-defunctionalization
+      - defunctionalization
 
 tests:
-  haskell-defunctionalization-test:
+  defunctionalization-test:
     main: Spec.hs
     source-dirs: test
     ghc-options:
@@ -55,7 +55,7 @@ tests:
       - -rtsopts
       - -with-rtsopts=-N4
     dependencies:
-      - haskell-defunctionalization
+      - defunctionalization
       - hspec
       - doctest
       - doctest-discover

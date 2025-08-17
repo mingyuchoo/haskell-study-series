@@ -1,4 +1,4 @@
-# Changelog for `haskell-geometry`
+# Changelog for `geometry`
 
 All notable changes to this project will be documented in this file.
 

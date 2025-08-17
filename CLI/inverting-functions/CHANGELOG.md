@@ -1,4 +1,4 @@
-# Changelog for `haskell-inverting-functions`
+# Changelog for `inverting-functions`
 
 All notable changes to this project will be documented in this file.
 

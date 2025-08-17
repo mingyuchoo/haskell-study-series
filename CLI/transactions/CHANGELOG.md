@@ -1,4 +1,4 @@
-# Changelog for `haskell-transactions`
+# Changelog for `transactions`
 
 All notable changes to this project will be documented in this file.
 

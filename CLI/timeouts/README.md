@@ -1,4 +1,4 @@
-# haskell-timeouts
+# timeouts
 
 ## How to create a project
 

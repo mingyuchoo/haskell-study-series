@@ -1,4 +1,4 @@
-# Changelog for `haskell-hashing`
+# Changelog for `hashing`
 
 All notable changes to this project will be documented in this file.
 

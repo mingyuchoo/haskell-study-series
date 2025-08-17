@@ -1,4 +1,4 @@
-# haskell-mutable-ref
+# mutable-ref
 
 ## How to create a project
 

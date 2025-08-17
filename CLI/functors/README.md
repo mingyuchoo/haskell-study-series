@@ -1,4 +1,4 @@
-# haskell-functors
+# functors
 
 ## How to build
 

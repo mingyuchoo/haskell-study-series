@@ -1,13 +1,13 @@
-name: haskell-hashing
+name: hashing
 version: 0.1.0.0
-github: mingyuchoo/haskell-hashing
+github: mingyuchoo/hashing
 license: BSD-3-Clause
 author: Mingyu Choo
 maintainer: mingyuhcoo@gmail.com
 copyright: 2025, Mingyu Choo
 synopsis: Short description of your package
 category: CLI
-description: Please see the README on GitHub at <https://github.com/mingyuchoo/haskell-hashing#readme>
+description: Please see the README on GitHub at <https://github.com/mingyuchoo/hashing#readme>
 
 extra-source-files:
   - README.md
@@ -35,7 +35,7 @@ library:
   source-dirs: src
 
 executables:
-  haskell-hashing-exe:
+  hashing-exe:
     main: Main.hs
     source-dirs: app
     ghc-options:
@@ -44,10 +44,10 @@ executables:
       - -rtsopts
       - -with-rtsopts=-N4
     dependencies:
-      - haskell-hashing
+      - hashing
 
 tests:
-  haskell-hashing-test:
+  hashing-test:
     main: Spec.hs
     source-dirs: test
     ghc-options:
@@ -56,7 +56,7 @@ tests:
       - -rtsopts
       - -with-rtsopts=-N4
     dependencies:
-      - haskell-hashing
+      - hashing
       - hspec
       - doctest
       - doctest-discover

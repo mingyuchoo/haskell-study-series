@@ -1,4 +1,4 @@
-# haskell-csv
+# csv
 
 ## How to create a project
 

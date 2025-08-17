@@ -1,13 +1,13 @@
-name: haskell-logging
+name: logging
 version: 0.1.0.0
-github: mingyuchoo/haskell-logging
+github: mingyuchoo/logging
 license: BSD-3-Clause
 author: Mingyu Choo
 maintainer: mingyuhcoo@gmail.com
 copyright: 2025, Mingyu Choo
 synopsis: Short description of your package
 category: CLI
-description: Please see the README on GitHub at <https://github.com/mingyuchoo/haskell-logging#readme>
+description: Please see the README on GitHub at <https://github.com/mingyuchoo/logging#readme>
 
 extra-source-files:
   - README.md
@@ -33,7 +33,7 @@ library:
   source-dirs: src
 
 executables:
-  haskell-logging-exe:
+  logging-exe:
     main: Main.hs
     source-dirs: app
     ghc-options:
@@ -42,10 +42,10 @@ executables:
       - -rtsopts
       - -with-rtsopts=-N4
     dependencies:
-      - haskell-logging
+      - logging
 
 tests:
-  haskell-logging-test:
+  logging-test:
     main: Spec.hs
     source-dirs: test
     ghc-options:
@@ -54,7 +54,7 @@ tests:
       - -rtsopts
       - -with-rtsopts=-N4
     dependencies:
-      - haskell-logging
+      - logging
       - hspec
       - doctest
       - doctest-discover

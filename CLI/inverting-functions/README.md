@@ -1,4 +1,4 @@
-# haskell-inverting-functions
+# inverting-functions
 
 ## How to create a project
 

@@ -1,4 +1,4 @@
-# haskell-stdin
+# stdin
 
 ## How to create a project
 

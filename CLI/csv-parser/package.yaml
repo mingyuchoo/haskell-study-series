@@ -1,13 +1,13 @@
-name:                haskell-csv
+name:                csv-parser
 version:             0.1.0.0
-github:              mingyuchoo/haskell-csv
+github:              mingyuchoo/csv-parser
 license:             BSD-3-Clause
 author:              Mingyu Choo
 maintainer:          mingyuchoo@gmail.com
 copyright:           2025, Mingyu Choo
 synopsis:            Short description of your package
 category:            CLI
-description:         Please see the README on GitHub at <https://github.com/mingyuchoo/haskell-csv#readme>
+description:         Please see the README on GitHub at <https://github.com/mingyuchoo/csv-parser#readme>
 
 extra-source-files:
 - README.md
@@ -37,7 +37,7 @@ library:
   source-dirs: src
 
 executables:
-  haskell-csv-exe:
+  csv-parser-exe:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
@@ -46,10 +46,10 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N4
     dependencies:
-    - haskell-csv
+    - csv-parser
 
 tests:
-  haskell-csv-test:
+  csv-parser-test:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
@@ -58,7 +58,7 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N4
     dependencies:
-    - haskell-csv
+    - csv-parser
     - hspec
     - doctest
     - doctest-discover

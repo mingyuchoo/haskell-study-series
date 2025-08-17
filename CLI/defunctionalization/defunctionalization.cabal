@@ -7,10 +7,10 @@ cabal-version: 3.16
 name:                   defunctionalization
 version:        0.1.0.0
 synopsis:       Short description of your package
-description:    Please see the README on GitHub at <https://github.com/mingyuchoo/haskell-defunctionalization#readme>
+description:    Please see the README on GitHub at <https://github.com/mingyuchoo/defunctionalization#readme>
 category:       CLI
-homepage:       https://github.com/mingyuchoo/haskell-defunctionalization#readme
-bug-reports:    https://github.com/mingyuchoo/haskell-defunctionalization/issues
+homepage:       https://github.com/mingyuchoo/defunctionalization#readme
+bug-reports:    https://github.com/mingyuchoo/defunctionalization/issues
 author:         Mingyu Choo
 maintainer:     mingyuhcoo@gmail.com
 copyright:      2025, Mingyu Choo
@@ -23,7 +23,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/mingyuchoo/haskell-defunctionalization
+  location: https://github.com/mingyuchoo/defunctionalization
 
 library
   exposed-modules:
@@ -43,7 +43,7 @@ library
     , parallel
   default-language: Haskell2010
 
-executable haskell-defunctionalization-exe
+executable defunctionalization-exe
   main-is: Main.hs
   other-modules:
       Paths_haskell_defunctionalization
@@ -57,11 +57,11 @@ executable haskell-defunctionalization-exe
       base
     , containers
     , flow
-    , haskell-defunctionalization
+    , defunctionalization
     , parallel
   default-language: Haskell2010
 
-test-suite haskell-defunctionalization-test
+test-suite defunctionalization-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
@@ -78,7 +78,7 @@ test-suite haskell-defunctionalization-test
     , doctest
     , doctest-discover
     , flow
-    , haskell-defunctionalization
+    , defunctionalization
     , hspec
     , parallel
   default-language: Haskell2010

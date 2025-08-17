@@ -67,7 +67,7 @@ decodeReport :: Char -> Maybe EventReport
 decodeReport c = find (\r -> encodeReport r == c) [Failure, Success]
 
 serverAddress :: S.SockAddr
-serverAddress = S.SockAddrUnix "\0haskell-phrasebook/monitoring"
+serverAddress = S.SockAddrUnix "\0phrasebook/monitoring"
 
 openSocket :: IO S.Socket
 openSocket = S.socket S.AF_UNIX S.Stream S.defaultProtocol

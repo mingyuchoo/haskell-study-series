@@ -1,4 +1,4 @@
-# Changelog for `haskell-csv`
+# Changelog for `csv-parser`
 
 All notable changes to this project will be documented in this file.
 

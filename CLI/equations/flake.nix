@@ -18,7 +18,7 @@
         overlays = [ self.overlay ];
       });
 
-      packageName = "haskell-equations";
+      packageName = "equations";
     in
     {
       overlay = (final: prev: {
@@ -45,7 +45,7 @@
             buildInputs = with haskellPackages; [
               direnv
               cabal-install
-              haskell-language-server
+              language-server
               ghcid
               lsp-hasekll
             ];

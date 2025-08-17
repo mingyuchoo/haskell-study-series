@@ -1,16 +1,16 @@
-cabal-version: 3.16
+cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.37.0.
+-- This file has been generated from package.yaml by hpack version 0.38.1.
 --
 -- see: https://github.com/sol/hpack
 
-name:                   csv
+name:           csv-parser
 version:        0.1.0.0
 synopsis:       Short description of your package
-description:    Please see the README on GitHub at <https://github.com/mingyuchoo/haskell-csv#readme>
+description:    Please see the README on GitHub at <https://github.com/mingyuchoo/csv-parser#readme>
 category:       CLI
-homepage:       https://github.com/mingyuchoo/haskell-csv#readme
-bug-reports:    https://github.com/mingyuchoo/haskell-csv/issues
+homepage:       https://github.com/mingyuchoo/csv-parser#readme
+bug-reports:    https://github.com/mingyuchoo/csv-parser/issues
 author:         Mingyu Choo
 maintainer:     mingyuchoo@gmail.com
 copyright:      2025, Mingyu Choo
@@ -23,22 +23,22 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/mingyuchoo/haskell-csv
+  location: https://github.com/mingyuchoo/csv-parser
 
 library
   exposed-modules:
       Lib
   other-modules:
-      Paths_haskell_csv
+      Paths_csv_parser
   autogen-modules:
-      Paths_haskell_csv
+      Paths_csv_parser
   hs-source-dirs:
       src
   default-extensions:
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock
   build-depends:
-      base
+      base >=4.19 && <5
     , bytestring
     , cassava
     , containers
@@ -48,51 +48,51 @@ library
     , vector
   default-language: Haskell2010
 
-executable haskell-csv-exe
+executable csv-parser-exe
   main-is: Main.hs
   other-modules:
-      Paths_haskell_csv
+      Paths_csv_parser
   autogen-modules:
-      Paths_haskell_csv
+      Paths_csv_parser
   hs-source-dirs:
       app
   default-extensions:
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base
+      base >=4.19 && <5
     , bytestring
     , cassava
     , containers
+    , csv-parser
     , directory
     , flow
-    , haskell-csv
     , parallel
     , vector
   default-language: Haskell2010
 
-test-suite haskell-csv-test
+test-suite csv-parser-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Paths_haskell_csv
+      Paths_csv_parser
   autogen-modules:
-      Paths_haskell_csv
+      Paths_csv_parser
   hs-source-dirs:
       test
   default-extensions:
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base
+      base >=4.19 && <5
     , bytestring
     , cassava
     , containers
+    , csv-parser
     , directory
     , doctest
     , doctest-discover
     , flow
-    , haskell-csv
     , hspec
     , parallel
     , vector

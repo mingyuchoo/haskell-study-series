@@ -1,4 +1,4 @@
-# Changelog for `haskell-mutable-ref`
+# Changelog for `mutable-ref`
 
 All notable changes to this project will be documented in this file.
 

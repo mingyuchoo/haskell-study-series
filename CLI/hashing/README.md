@@ -1,4 +1,4 @@
-# haskell-hashing
+# hashing
 
 ## How to create a project
 

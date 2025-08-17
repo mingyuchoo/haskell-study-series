@@ -12,10 +12,7 @@ import           Data.Csv
 import qualified Data.Vector          as V
 
 import           System.Directory     (doesFileExist)
-import           System.IO
 import           System.IO.Error
-
-import           Text.Printf
 
 -- Main 로직
 someFunc :: FilePath -> IO ()
