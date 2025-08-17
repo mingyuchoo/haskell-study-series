@@ -12,7 +12,7 @@ category:       CLI
 homepage:       https://github.com/mingyuchoo/no-zero-world#readme
 bug-reports:    https://github.com/mingyuchoo/no-zero-world/issues
 author:         Mingyu Choo
-maintainer:     mingyuchoo@gmail.com@gmail.com
+maintainer:     mingyuchoo@gmail.com
 copyright:      Mingyu Choo 2024
 license:        BSD-3-Clause
 license-file:   LICENSE
@@ -36,7 +36,7 @@ library
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock
   build-depends:
-      base >=4.19 && <5
+      base
     , containers
     , flow
     , parallel
@@ -52,7 +52,7 @@ executable no-zero-world-exe
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.19 && <5
+      base
     , containers
     , flow
     , no-zero-world
@@ -70,7 +70,7 @@ test-suite no-zero-world-test
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.19 && <5
+      base
     , containers
     , doctest
     , doctest-discover

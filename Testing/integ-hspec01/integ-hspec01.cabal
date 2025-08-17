@@ -10,7 +10,7 @@ description:    Please see the README on GitHub at <https://github.com/mingyucho
 homepage:       https://github.com/mingyuchoo/integ-hspec01#readme
 bug-reports:    https://github.com/mingyuchoo/integ-hspec01/issues
 author:         Mingyu Choo
-maintainer:     mingyuchoo@gmail.com@gmail.com
+maintainer:     mingyuchoo@gmail.com
 copyright:      2023 Mingyu Choo
 license:        BSD-3-Clause
 license-file:   LICENSE
@@ -34,7 +34,7 @@ library
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock
   build-depends:
-      base >=4.19 && <5
+      base
     , containers
     , flow
     , parallel
@@ -50,7 +50,7 @@ executable integ-hspec01-exe
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.19 && <5
+      base
     , containers
     , flow
     , integ-hspec01
@@ -70,7 +70,7 @@ test-suite integ-hspec01-test
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       QuickCheck
-    , base >=4.19 && <5
+    , base
     , containers
     , flow
     , hspec

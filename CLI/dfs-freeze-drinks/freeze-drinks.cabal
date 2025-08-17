@@ -10,7 +10,7 @@ description:    Please see the README on GitHub at <https://github.com/mingyucho
 homepage:       https://github.com/mingyuchoo/freeze-drinks#readme
 bug-reports:    https://github.com/mingyuchoo/freeze-drinks/issues
 author:         Mingyu Choo
-maintainer:     mingyuchoo@gmail.com@gmail.com
+maintainer:     mingyuchoo@gmail.com
 copyright:      Mingyu Choo
 license:        BSD-3-Clause
 license-file:   LICENSE
@@ -35,7 +35,7 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       array
-    , base >=4.19 && <5
+    , base
     , containers
     , flow
     , lens
@@ -52,7 +52,7 @@ executable freeze-drinks-exe
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       array
-    , base >=4.19 && <5
+    , base
     , containers
     , flow
     , freeze-drinks
@@ -71,7 +71,7 @@ test-suite freeze-drinks-test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       array
-    , base >=4.19 && <5
+    , base
     , containers
     , flow
     , freeze-drinks

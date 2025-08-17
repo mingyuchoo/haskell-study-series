@@ -12,7 +12,7 @@ category:       CLI
 homepage:       https://github.com/mingyuchoo/web-crawler#readme
 bug-reports:    https://github.com/mingyuchoo/web-crawler/issues
 author:         Mingyu Choo
-maintainer:     mingyuchoo@gmail.com@gmail.com
+maintainer:     mingyuchoo@gmail.com
 copyright:      2025, Mingyu Choo
 license:        BSD-3-Clause
 license-file:   LICENSE
@@ -37,7 +37,7 @@ library
       TypeApplications
   ghc-options: -Wall -O2 -haddock
   build-depends:
-      base >=4.19 && <5
+      base
     , bytestring
     , containers
     , flow
@@ -58,7 +58,7 @@ executable web-crawler-exe
       TypeApplications
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.19 && <5
+      base
     , bytestring
     , containers
     , flow
@@ -81,7 +81,7 @@ test-suite web-crawler-test
       TypeApplications
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.19 && <5
+      base
     , bytestring
     , containers
     , doctest

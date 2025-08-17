@@ -1,4 +1,4 @@
-.PHONY: test coverage install update-stack-yaml
+.PHONY: test coverage install update-stack-yaml run migrate migrate-esq run-cache run-esq
 
 # Extract project name from directory path
 PROJECT_NAME := $(shell basename $(CURDIR))
@@ -34,7 +34,23 @@ ghcid: setup
 	ghcid --command "stack ghci test/Spec.hs"
 
 run: setup
-	time stack exec $(PROJECT_NAME)-exe
+	# Run basic server
+	time stack exec run-server
+
+# Run server variants
+run-cache: setup
+	# Requires redis-server running
+	stack exec run-server -- cache
+
+run-esq: setup
+	stack exec run-server -- esq
+
+# Database migrations
+migrate: setup
+	stack exec migrate-db
+
+migrate-esq: setup
+	stack exec migrate-db -- esq
 
 release: setup
 	stack build -j4 --ghc-options "-j16 +RTS -A256m -RTS" --docker

@@ -38,7 +38,7 @@ library
   ghc-options: -Wall -O2 -haddock
   build-depends:
       aeson
-    , base >=4.19 && <5
+    , base
     , bytestring
     , containers
     , flow
@@ -61,7 +61,7 @@ executable warp-t01-json-exe
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       aeson
-    , base >=4.19 && <5
+    , base
     , bytestring
     , containers
     , flow
@@ -86,7 +86,7 @@ test-suite warp-t01-json-test
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       aeson
-    , base >=4.19 && <5
+    , base
     , bytestring
     , containers
     , doctest

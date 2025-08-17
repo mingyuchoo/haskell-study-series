@@ -12,7 +12,7 @@ category:       CLI
 homepage:       https://github.com/mingyuchoo/words#readme
 bug-reports:    https://github.com/mingyuchoo/words/issues
 author:         Mingyu Choo
-maintainer:     mingyuchoo@gmail.com@gmail.com
+maintainer:     mingyuchoo@gmail.com
 copyright:      2025, Mingyu Choo
 license:        BSD-3-Clause
 license-file:   LICENSE
@@ -38,7 +38,7 @@ library
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock
   build-depends:
-      base >=4.19 && <5
+      base
     , containers
     , flow
     , parallel
@@ -55,7 +55,7 @@ executable words-exe
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.19 && <5
+      base
     , containers
     , flow
     , parallel
@@ -74,7 +74,7 @@ test-suite words-test
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.19 && <5
+      base
     , containers
     , doctest
     , doctest-discover

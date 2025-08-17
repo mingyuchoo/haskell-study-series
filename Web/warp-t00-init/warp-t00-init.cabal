@@ -10,7 +10,7 @@ description:    Please see the README on GitHub at <https://github.com/mingyucho
 homepage:       https://github.com/mingyuchoo/warp-t00-init#readme
 bug-reports:    https://github.com/mingyuchoo/warp-t00-init/issues
 author:         Mingyu Choo
-maintainer:     mingyuchoo@gmail.com@gmail.com
+maintainer:     mingyuchoo@gmail.com
 copyright:      2023 Mingyu Choo
 license:        BSD-3-Clause
 license-file:   LICENSE
@@ -32,7 +32,7 @@ library
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      base >=4.19 && <5
+      base
     , containers
     , flow
     , http-types
@@ -49,7 +49,7 @@ executable warp-t00-init-exe
       app
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -O2 -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.19 && <5
+      base
     , containers
     , flow
     , http-types
@@ -68,7 +68,7 @@ test-suite warp-t00-init-test
       test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.19 && <5
+      base
     , containers
     , flow
     , hspec

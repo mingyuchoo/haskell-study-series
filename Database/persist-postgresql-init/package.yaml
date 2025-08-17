@@ -67,6 +67,7 @@ executables:
   migrate-db:
     main:                MigrateDB.hs
     source-dirs:         app
+    other-modules:       []
     ghc-options:
     - -dynamic
     - -threaded
@@ -77,6 +78,7 @@ executables:
   run-server:
     main:                RunServer.hs
     source-dirs:         app
+    other-modules:       []
     ghc-options:
     - -dynamic
     - -threaded

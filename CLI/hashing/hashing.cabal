@@ -37,7 +37,7 @@ library
       TypeApplications
   ghc-options: -Wall -O2 -haddock
   build-depends:
-      base >=4.19 && <5
+      base
     , containers
     , flow
     , hashable
@@ -55,7 +55,7 @@ executable haskell-hashing-exe
       TypeApplications
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.19 && <5
+      base
     , containers
     , flow
     , hashable
@@ -75,7 +75,7 @@ test-suite haskell-hashing-test
       TypeApplications
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.19 && <5
+      base
     , containers
     , doctest
     , doctest-discover

@@ -10,7 +10,7 @@ description:    Please see the README on GitHub at <https://github.com/mingyucho
 homepage:       https://github.com/mingyuchoo/giving-the-change#readme
 bug-reports:    https://github.com/mingyuchoo/giving-the-change/issues
 author:         Mingyu Choo
-maintainer:     mingyuchoo@gmail.com@gmail.com
+maintainer:     mingyuchoo@gmail.com
 copyright:      2023 Mingyu Choo
 license:        BSD-3-Clause
 license-file:   LICENSE
@@ -34,7 +34,7 @@ library
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock
   build-depends:
-      base >=4.19 && <5
+      base
   default-language: Haskell2010
 
 executable giving-the-change-exe
@@ -47,7 +47,7 @@ executable giving-the-change-exe
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.19 && <5
+      base
     , giving-the-change
   default-language: Haskell2010
 
@@ -62,7 +62,7 @@ test-suite giving-the-change-test
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.19 && <5
+      base
     , doctest
     , doctest-discover
     , giving-the-change

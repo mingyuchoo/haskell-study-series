@@ -45,6 +45,46 @@ to get it working on your system.
 
 ## Running the Code
 
+### Build
+
+Build the library and executables:
+
+```bash
+stack build
+# or fast build
+stack build --fast -j4 --ghc-options "-j16 +RTS -A256m -RTS"
+```
+
+### Quick Run (executables)
+
+This project provides two executables:
+
+- `migrate-db` — runs database migrations
+- `run-server` — runs the web server
+
+Run migrations:
+
+```bash
+# Persistent-based migration
+stack exec migrate-db
+
+# Esqueleto-based migration
+stack exec migrate-db -- esq
+```
+
+Run the server:
+
+```bash
+# Basic server
+stack exec run-server
+
+# Cache server (requires a running redis-server)
+stack exec run-server -- cache
+
+# Esqueleto server
+stack exec run-server -- esq
+```
+
 ### [Part 1: Persistent](https://www.mmhaskell.com/real-world/databases)
 
 The code for this part can be run pretty easily through GHCI. The main thing is you need your Postgres server to be up

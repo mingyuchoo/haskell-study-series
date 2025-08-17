@@ -5,7 +5,8 @@ packages:
 - .
 
 extra-package-dbs: []
-extra-deps: []
+extra-deps:
+- hpack-0.38.1
 flags: {}
 
 #nix:

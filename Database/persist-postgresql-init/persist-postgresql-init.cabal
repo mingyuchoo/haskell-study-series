@@ -1,6 +1,6 @@
-cabal-version: 3.16
+cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.38.0.
+-- This file has been generated from package.yaml by hpack version 0.38.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -82,12 +82,6 @@ executable migrate-db
   hs-source-dirs:
       app
   main-is: MigrateDB.hs
-  other-modules:
-      MigrateDBEsq
-      RunServer
-      Paths_persist_postgresql_init
-  autogen-modules:
-      Paths_persist_postgresql_init
   default-extensions:
       DataKinds
       DerivingStrategies
@@ -129,12 +123,6 @@ executable run-server
   hs-source-dirs:
       app
   main-is: RunServer.hs
-  other-modules:
-      MigrateDB
-      MigrateDBEsq
-      Paths_persist_postgresql_init
-  autogen-modules:
-      Paths_persist_postgresql_init
   default-extensions:
       DataKinds
       DerivingStrategies

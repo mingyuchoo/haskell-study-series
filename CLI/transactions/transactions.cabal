@@ -37,7 +37,7 @@ library
       TypeApplications
   ghc-options: -Wall -O2 -haddock
   build-depends:
-      base >=4.19 && <5
+      base
     , containers
     , mwc-random
     , stm
@@ -54,7 +54,7 @@ executable haskell-transactions-exe
       TypeApplications
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.19 && <5
+      base
     , containers
     , haskell-transactions
     , mwc-random
@@ -73,7 +73,7 @@ test-suite haskell-transactions-test
       TypeApplications
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.19 && <5
+      base
     , containers
     , doctest
     , doctest-discover

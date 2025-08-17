@@ -37,7 +37,7 @@ library
       TypeApplications
   ghc-options: -Wall -O2 -haddock
   build-depends:
-      base >=4.19 && <5
+      base
     , containers
     , flow
     , generic-deriving
@@ -55,7 +55,7 @@ executable haskell-inverting-functions-exe
       TypeApplications
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.19 && <5
+      base
     , containers
     , flow
     , generic-deriving
@@ -75,7 +75,7 @@ test-suite haskell-inverting-functions-test
       TypeApplications
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.19 && <5
+      base
     , containers
     , doctest
     , doctest-discover
