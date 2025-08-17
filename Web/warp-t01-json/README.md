@@ -11,7 +11,7 @@ stack new <project-name> mingyuchoo/new-template
 ```bash
 stack build
 # or
-stack build --fast --file-watch --ghc-options "-j4 +RTS -A128m -n2m -RTS"
+stack build --fast -j4 --ghc-options "-j16 +RTS -A256m -RTS"
 ```
 
 ## How to test as watch mode

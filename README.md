@@ -22,7 +22,7 @@ $ stack new {project-name} quanterall/basic
 $ stack build --test --file-watch --watch-all
 # or
 # build more faster
-$ stack build --fast --file-watch --ghc-options "-j4 +RTS -A128m -n2m -RTS"
+$ stack build --fast -j4 --ghc-options "-j16 +RTS -A256m -RTS"
 
 $ stack test --file-watch --watch-all
 # or

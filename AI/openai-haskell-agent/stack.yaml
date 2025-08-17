@@ -1,5 +1,5 @@
-# https://www.stackage.org/lts-23.19
-resolver: lts-23.19
+# https://www.stackage.org/lts-24.4
+resolver: lts-24.4
 
 packages:
 - .
@@ -14,7 +14,7 @@ docker:
   enable: true
   stack-exe: host
   container-name: "openai-haskell-agent"
-  repo: fpco/stack-build:lts-23.19
+  repo: fpco/stack-build:lts-24.4
   set-user: true
   auto-pull: true
   detach: false

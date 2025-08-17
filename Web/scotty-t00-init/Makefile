@@ -16,7 +16,7 @@ setup: update-stack-yaml
 	stack test --only-dependencies
 
 build: setup
-	stack build --fast --file-watch --ghc-options "-j4 +RTS -A128m -n2m -RTS"
+	stack build --fast -j4 --ghc-options "-j16 +RTS -A256m -RTS"
 
 test: setup
 	stack test --fast
@@ -37,7 +37,7 @@ run: setup
 	time stack exec $(PROJECT_NAME)-exe
 
 release: setup
-	stack build --docker --flag $(PROJECT_NAME):static
+	stack build -j4 --ghc-options "-j16 +RTS -A256m -RTS" --docker
 
 docker-build: release
 	docker build --build-arg PROJECT_NAME=$(PROJECT_NAME) -t $(PROJECT_NAME):latest -f Dockerfile .

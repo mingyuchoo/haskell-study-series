@@ -17,7 +17,7 @@ setup: update-stack-yaml
 	stack test --only-dependencies
 
 build: setup
-	stack build --fast --file-watch -j4 --ghc-options "-j16 +RTS -A256m -RTS"
+	stack build --fast -j4 --ghc-options "-j16 +RTS -A256m -RTS"
 
 test: setup
 	stack test --fast

@@ -1,6 +1,6 @@
-cabal-version: 3.0
+cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.36.0.
+-- This file has been generated from package.yaml by hpack version 0.37.0.
 --
 -- see: https://github.com/sol/hpack
 
@@ -10,7 +10,7 @@ description:    Please see the README on GitHub at <https://github.com/mingyucho
 homepage:       https://github.com/mingyuchoo/bfs-escape-maze#readme
 bug-reports:    https://github.com/mingyuchoo/bfs-escape-maze/issues
 author:         Mingyu Choo
-maintainer:     mingyuchoo@gmail.com@gmail.com
+maintainer:     mingyuchoo@gmail.com
 copyright:      2023 Mingyu Choo
 license:        BSD-3-Clause
 license-file:   LICENSE
@@ -29,6 +29,8 @@ library
       Lib
   other-modules:
       Paths_bfs_escape_maze
+  autogen-modules:
+      Paths_bfs_escape_maze
   hs-source-dirs:
       src
   default-extensions:
@@ -36,7 +38,7 @@ library
   ghc-options: -Wall -O2 -haddock
   build-depends:
       array
-    , base >=4.19 && <5
+    , base
     , containers
     , flow
     , lens
@@ -48,6 +50,8 @@ executable bfs-escape-maze-exe
   main-is: Main.hs
   other-modules:
       Paths_bfs_escape_maze
+  autogen-modules:
+      Paths_bfs_escape_maze
   hs-source-dirs:
       app
   default-extensions:
@@ -55,7 +59,7 @@ executable bfs-escape-maze-exe
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       array
-    , base >=4.19 && <5
+    , base
     , bfs-escape-maze
     , containers
     , flow
@@ -69,6 +73,8 @@ test-suite bfs-escape-maze-test
   main-is: Spec.hs
   other-modules:
       Paths_bfs_escape_maze
+  autogen-modules:
+      Paths_bfs_escape_maze
   hs-source-dirs:
       test
   default-extensions:
@@ -76,7 +82,7 @@ test-suite bfs-escape-maze-test
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       array
-    , base >=4.19 && <5
+    , base
     , bfs-escape-maze
     , containers
     , flow
