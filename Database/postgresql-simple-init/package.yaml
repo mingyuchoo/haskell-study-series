@@ -8,7 +8,7 @@ copyright:           "Mingyu Choo"
 
 extra-source-files:
 - README.md
-- ChangeLog.md
+- CHANGELOG.md
 
 synopsis:            Short description of your package
 category:            Web

@@ -13,7 +13,6 @@ COPY README.md CHANGELOG.md LICENSE ./
 COPY src/ src/
 COPY app/ app/
 COPY test/ test/
-COPY static/ static/
 
 # 프로젝트 설정 및 의존성 설치
 RUN stack setup --no-docker && stack build --dependencies-only --no-docker
