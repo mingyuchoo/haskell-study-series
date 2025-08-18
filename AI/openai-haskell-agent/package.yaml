@@ -33,7 +33,6 @@ dependencies:
 - servant
 - servant-server
 - servant-client
-- servant-event-stream
 - wai
 - wai-cors
 - wai-eventsource

@@ -5,19 +5,26 @@
 
 packages:
 - completed:
-    hackage: servant-event-stream-0.3.0.1@sha256:48fc343d057fce6307a5b5c1fce56129e591fe7e983813b3484b2871edcc88b7,1351
-    pantry-tree:
-      sha256: 5ab6c8f69aed7ef103bfb8cdc653b031125869d3aed4cfaad4a05ab01831643c
-      size: 388
-  original:
-    hackage: servant-event-stream-0.3.0.1
-- completed:
     hackage: wai-eventsource-3.0.0@sha256:3400431f33ece0545bbb3c79b5faf335ae7f89cfc9c601abe4f6ed05e3dd9571,598
     pantry-tree:
       sha256: 4a88eb047ed181e503384762da9b759c0603a6b9b9d2b36024677363d78c9462
       size: 160
   original:
     hackage: wai-eventsource-3.0.0
+- completed:
+    hackage: dotenv-0.12.0.0@sha256:2f25615cec37ff9a66a48ef0ebf2ac96ae989911d0c26c6796fc2f5247bdd665,4702
+    pantry-tree:
+      sha256: 31c08eb6dbd41eda9f0141dcb4cf8071e7650c6d97e4163d04f760e5a6fb4f79
+      size: 1303
+  original:
+    hackage: dotenv-0.12.0.0@sha256:2f25615cec37ff9a66a48ef0ebf2ac96ae989911d0c26c6796fc2f5247bdd665,4702
+- completed:
+    hackage: data-default-class-0.1.2.2@sha256:51400ed341ec87e86a4acf83301c6890e1fc67708e2d0ac519d48e0a14f54c15,1309
+    pantry-tree:
+      sha256: b9c5a48d3097caa28ec1e1a562e57cc3d0ad8802798430a216e575bf8b9b0ec8
+      size: 225
+  original:
+    hackage: data-default-class-0.1.2.2@sha256:51400ed341ec87e86a4acf83301c6890e1fc67708e2d0ac519d48e0a14f54c15,1309
 snapshots:
 - completed:
     sha256: b96cc8b203559fdd1c1617ebd71e90ea04a2db0d71b416717a2a1d1539d5d5c9
