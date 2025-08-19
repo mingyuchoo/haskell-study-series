@@ -1,10 +1,10 @@
-cabal-version: 3.16
+cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.36.0.
+-- This file has been generated from package.yaml by hpack version 0.38.1.
 --
 -- see: https://github.com/sol/hpack
 
-name:                   logging
+name:           logging
 version:        0.1.0.0
 synopsis:       Short description of your package
 description:    Please see the README on GitHub at <https://github.com/mingyuchoo/logging#readme>
@@ -29,7 +29,9 @@ library
   exposed-modules:
       Lib
   other-modules:
-      Paths_haskell_logging
+      Paths_logging
+  autogen-modules:
+      Paths_logging
   hs-source-dirs:
       src
   default-extensions:
@@ -45,7 +47,9 @@ library
 executable logging-exe
   main-is: Main.hs
   other-modules:
-      Paths_haskell_logging
+      Paths_logging
+  autogen-modules:
+      Paths_logging
   hs-source-dirs:
       app
   default-extensions:
@@ -63,7 +67,9 @@ test-suite logging-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Paths_haskell_logging
+      Paths_logging
+  autogen-modules:
+      Paths_logging
   hs-source-dirs:
       test
   default-extensions:
@@ -75,7 +81,7 @@ test-suite logging-test
     , directory
     , doctest
     , doctest-discover
-    , logging
     , hspec
+    , logging
     , safe-exceptions
   default-language: Haskell2010
