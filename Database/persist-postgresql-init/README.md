@@ -14,7 +14,8 @@ setup: The program 'pg_config' is required but it could not be found
 On Linux, you'll want at least the following packages:
 
 ```bash
->> sudo apt install postgresql postgresql-contrib libpq-dev
+>> sudo apt-get update
+>> sudo apt-get install postgresql-server-dev-all libpq-dev
 ```
 
 On Windows and MacOS, you should be able to use the [downloads here](https://postgresql.org/download).
