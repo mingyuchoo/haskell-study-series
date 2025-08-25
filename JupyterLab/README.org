@@ -3,7 +3,7 @@
 *** Prerequisites
 For Ubuntu
 - Install Libraries
-#+begin_src shell
+#+BEGIN_SRC shell
   sudo apt install -y libtinfo-dev \
                       libzmq3-dev \
                       libcairo2-dev \
@@ -11,21 +11,21 @@ For Ubuntu
                       libmagic-dev \
                       libblas-dev \
                       liblapack-dev
-#+end_src
+#+END_SRC
 - Install Python3 and set ~.venv~ up
 - Install GHCUp
 *** Install IHaskell
-#+begin_src shell
+#+BEGIN_SRC shell
   stack install ihasekll
-#+end_src
+#+END_SRC
 *** Install IHaskell as a kernel on Jupyter Notebook
-#+begin_src shell
+#+BEGIN_SRC shell
   ihaskell install --stack
-#+end_src
+#+END_SRC
 *** Run Jupyter Notebook
-#+begin_src shell
+#+BEGIN_SRC shell
   jupyter notebook
-#+end_src
+#+END_SRC
 ** References
 - [[IHaskell][https://github.com/IHaskell/IHaskell]]
 - [[IHaskell Notebook][https://notebook.community/gibiansky/IHaskell/notebooks/IHaskell]]
