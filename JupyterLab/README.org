@@ -22,9 +22,12 @@ For Ubuntu
 #+BEGIN_SRC shell
   ihaskell install --stack
 #+END_SRC
-*** Run Jupyter Notebook
+*** Run Jupyter Lab
 #+BEGIN_SRC shell
-  jupyter notebook
+  uv venv --python 3.14
+  source .venv/bin/activate
+  uv install jupyberlab
+  jupyter lab
 #+END_SRC
 ** References
 - [[IHaskell][https://github.com/IHaskell/IHaskell]]
