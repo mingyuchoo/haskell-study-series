@@ -9,11 +9,15 @@ clean:
 	stack clean
 
 update-stack-yaml:
-	sed -i 's/container-name: ".*"/container-name: "$(PROJECT_NAME)"/g' stack.yaml
-	sed -i 's/ARG PROJECT_NAME=.*/ARG PROJECT_NAME=$(PROJECT_NAME)/g' Dockerfile
+	sed -i '' 's/container-name: ".*"/container-name: "$(PROJECT_NAME)"/g' stack.yaml
+	sed -i '' 's/ARG PROJECT_NAME=.*/ARG PROJECT_NAME=$(PROJECT_NAME)/g' Dockerfile
+
 setup: update-stack-yaml
 	stack setup
 	stack test --only-dependencies
+
+format: setup
+	stylish-haskell --config .stylish-haskell.yaml -r -i ./**/*.hs
 
 build: setup
 	stack build --fast -j4 --ghc-options "-j16 +RTS -A256m -RTS"
