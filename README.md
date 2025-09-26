@@ -12,6 +12,26 @@
 $ nix develop
 ```
 
+## Basic Cabal Commands
+
+```bash
+$ mkdir {project-name}
+$ cd {project-name}
+$ cabal init
+
+...
+
+$ cabal install —only-dependencies
+$ cabal update
+$ cabal configure
+$ cabal check
+$ cabal build
+$ cabal run
+$ cabal sdist
+$ cabal upload
+$ cabal install
+```
+
 ## Basic Stack Commands
 
 ```bash
@@ -33,28 +53,20 @@ $ ghcid --command "stack ghci test/Spec.hs"
 $ stack test --coverage --fast --file-watch --watch-all --haddock
 
 $ stack run
-```
+````
 
-## Basic Cabal Commands
+## Install Haskell applications using Stack
 
 ```bash
-$ mkdir {project-name}
-$ cd {project-name}
-$ cabal init
-
-...
-
-$ cabal install —only-dependencies
-$ cabal update
-$ cabal configure
-$ cabal check
-$ cabal build
-$ cabal run
-$ cabal sdist
-$ cabal upload
-$ cabal install
+stack install \
+  ghcid       \
+  hindent     \
+  hlint       \
+  hoogle      \
+  ihaskell    \
+  ormolu      \
+  stylish-haskell
 ```
-
 ## Reformat using Stylish-haskell
 
 ```bash
