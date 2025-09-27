@@ -1,0 +1,8 @@
+cradle:
+  stack:
+    - path: ./src
+      component: sqlite-simple-init:lib
+    - path: ./app
+      component: sqlite-simple-init:exe:sqlite-simple-init-exe
+    - path: ./test
+      component: sqlite-simple-init:test:sqlite-simple-init-test
