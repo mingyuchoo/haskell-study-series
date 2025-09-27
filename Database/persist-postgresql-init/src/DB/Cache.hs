@@ -1,3 +1,4 @@
+{-# LANGUAGE PatternGuards #-}
 module DB.Cache
     where
 
@@ -22,11 +23,12 @@ cacheUser redisInfo uid user = do
 fetchUserRedis :: RedisInfo -> Int64 -> IO (Maybe User)
 fetchUserRedis redisInfo uid = do
   eResult <- try (runRedisAction redisInfo $ get (pack . show $ uid)) :: IO (Either SomeException (Either Reply (Maybe ByteString)))
-  case eResult of
-    Left _ -> return Nothing
-    Right result -> case result of
-      Right (Just userString) -> return $ Just (read . unpack $ userString)
-      _                       -> return Nothing
+  return $ toUser eResult
+  where
+    toUser eResult
+      | Left _ <- eResult = Nothing
+      | Right (Right (Just userString)) <- eResult = Just (read . unpack $ userString)
+      | otherwise = Nothing
 
 deleteUserCache :: RedisInfo -> Int64 -> IO ()
 deleteUserCache redisInfo uid = do

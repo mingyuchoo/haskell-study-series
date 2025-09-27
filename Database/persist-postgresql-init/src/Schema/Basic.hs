@@ -18,7 +18,7 @@ import           Data.Aeson
 import           Data.Aeson.Types
 import           Data.Text           (Text)
 import           Database.Persist    (Entity (..))
-import           Database.Persist.Sql (fromSqlKey)
+import           Database.Persist.Sql (fromSqlKey, toSqlKey)
 import qualified Database.Persist.TH as PTH
 
 PTH.share [PTH.mkPersist PTH.sqlSettings, PTH.mkMigrate "migrateAll"] [PTH.persistLowerCase|
@@ -28,7 +28,7 @@ PTH.share [PTH.mkPersist PTH.sqlSettings, PTH.mkMigrate "migrateAll"] [PTH.persi
     age Int
     occupation Text
     UniqueEmail email
-    deriving Show Read
+    deriving Show Read Eq
 |]
 
 instance ToJSON (Entity User) where
@@ -50,6 +50,13 @@ instance ToJSON User where
 
 instance FromJSON User where
   parseJSON = withObject "User" parseUser
+
+-- Needed for decoding list endpoints with Servant Client
+instance FromJSON (Entity User) where
+  parseJSON = withObject "User Entity" $ \o -> do
+    user <- parseUser o
+    uid  <- o .: "id"
+    return $ Entity (toSqlKey uid) user
 
 parseUser :: Object -> Parser User
 parseUser o = do
@@ -79,3 +86,12 @@ instance FromJSON UpdateUser where
     uuAge        <- o .:? "age"
     uuOccupation <- o .:? "occupation"
     return UpdateUser {..}
+
+-- Needed to send PATCH request bodies from Servant Client
+instance ToJSON UpdateUser where
+  toJSON UpdateUser{..} = object $ concat
+    [ maybe [] (pure . ("name" .=)) uuName
+    , maybe [] (pure . ("email" .=)) uuEmail
+    , maybe [] (pure . ("age" .=)) uuAge
+    , maybe [] (pure . ("occupation" .=)) uuOccupation
+    ]

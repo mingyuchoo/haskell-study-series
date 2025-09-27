@@ -21,6 +21,7 @@ import           Database.Persist            (Entity)
 import           Network.Wai.Handler.Warp    (run)
 import           Servant.API
 import           Servant.Server
+import           Servant.Client               (ClientM, client)
 
 -- API matches Server.Basic
 
@@ -103,3 +104,20 @@ runServer = do
   -- Ensure DB schema exists before serving
   migrateDB localConnString
   run 8000 (serve usersAPI (usersServer localConnString localRedisInfo))
+
+-- Servant clients for tests
+rootApiListClient :: ClientM [Text]
+fetchUserClient :: Int64 -> ClientM User
+createUserClient :: User -> ClientM Int64
+listUsersClient :: ClientM [Entity User]
+putUserClient :: Int64 -> User -> ClientM NoContent
+patchUserClient :: Int64 -> UpdateUser -> ClientM NoContent
+deleteUserClient :: Int64 -> ClientM NoContent
+( rootApiListClient
+  :<|> fetchUserClient
+  :<|> createUserClient
+  :<|> listUsersClient
+  :<|> putUserClient
+  :<|> patchUserClient
+  :<|> deleteUserClient
+  ) = client usersAPI

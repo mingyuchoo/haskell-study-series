@@ -9,6 +9,9 @@ import           System.Environment (getArgs)
 main :: IO ()
 main = do
   args <- getArgs
-  if null args || head args /= "esq"
-    then migrateDB localConnString
-    else E.migrateDB localConnString
+  choose args
+  where
+    choose :: [String] -> IO ()
+    choose as
+      | null as || head as /= "esq" = migrateDB localConnString
+      | otherwise                   = E.migrateDB localConnString

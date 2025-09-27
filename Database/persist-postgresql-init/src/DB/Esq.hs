@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE PatternGuards #-}
 
 module DB.Esq
     where
@@ -60,9 +61,10 @@ replaceUserPG connString uid user = runAction connString action
     key = toSqlKey uid
     action = do
       mExisting <- get key
-      case mExisting of
-        Nothing   -> pure False
-        Just _old -> replace key user >> pure True
+      handleReplace mExisting
+    handleReplace x
+      | Nothing <- x = pure False
+      | Just _  <- x = replace key user >> pure True
 
 -- Partially update fields for PATCH /users/{id}. Returns True if user existed and was updated.
 patchUserPG :: PGInfo -> Int64 -> UserPatch -> IO Bool
@@ -71,18 +73,20 @@ patchUserPG connString uid up = runAction connString action
     key = toSqlKey uid
     action = do
       mExisting <- get key
-      case mExisting of
-        Nothing -> pure False
-        Just _  -> do
+      handlePatch mExisting
+    handlePatch x
+      | Nothing <- x = pure False
+      | Just _  <- x =
           let sets = catMaybes
                 [ (UserName =.)       <$> upName up
                 , (UserEmail =.)      <$> upEmail up
                 , (UserAge =.)        <$> upAge up
                 , (UserOccupation =.) <$> upOccupation up
                 ]
-          case sets of
-            []   -> pure True -- nothing to update but treat as success
-            _    -> update key sets >> pure True
+          in handleSets sets
+    handleSets s
+      | [] <- s = pure True -- nothing to update but treat as success
+      | _  <- s = update key s >> pure True
 
 deleteUserPG :: PGInfo -> Int64 -> IO ()
 deleteUserPG connString uid = runAction connString (delete userKey)

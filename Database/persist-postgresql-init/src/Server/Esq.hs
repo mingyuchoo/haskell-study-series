@@ -46,37 +46,37 @@ rootApiListHandler = pure
   , "PATCH /users/{id}"
   , "DELETE /users/{id}"
   ]
-
 fetchUsersHandler :: PGInfo -> Int64 -> Handler User
 fetchUsersHandler pgInfo uid = do
   maybeUser <- liftIO $ fetchUserPG pgInfo uid
   case maybeUser of
     Just user -> return user
-    Nothing -> Handler $ (throwE $ err401 { errBody = "Could not find user with that ID" })
+    Nothing -> Handler $ throwE (err401 { errBody = "Could not find user with that ID" })
 
 replaceUserHandler :: PGInfo -> Int64 -> User -> Handler NoContent
 replaceUserHandler pgInfo uid user = do
   replaced <- liftIO $ replaceUserPG pgInfo uid user
-  if replaced
-    then pure NoContent
-    else Handler $ throwE $ err404 { errBody = "User not found" }
+  let result
+        | replaced  = pure NoContent
+        | otherwise = Handler $ throwE (err404 { errBody = "User not found" })
+  result
 
 patchUserHandler :: PGInfo -> Int64 -> UserPatch -> Handler NoContent
 patchUserHandler pgInfo uid patchBody = do
   updated <- liftIO $ patchUserPG pgInfo uid patchBody
-  if updated
-    then pure NoContent
-    else Handler $ throwE $ err404 { errBody = "User not found" }
+  let result
+        | updated   = pure NoContent
+        | otherwise = Handler $ throwE (err404 { errBody = "User not found" })
+  result
 
 createUserHandler :: PGInfo -> User -> Handler Int64
 createUserHandler pgInfo user = do
   result <- liftIO $ (try (createUserPG pgInfo user) :: IO (Either SqlError Int64))
   case result of
     Right newId -> pure newId
-    Left e ->
-      if sqlState e == "23505"
-        then Handler $ throwE $ err409 { errBody = "Email already exists" }
-        else Handler $ throwE $ err500 { errBody = "Database error" }
+    Left e
+      | sqlState e == "23505" -> Handler $ throwE (err409 { errBody = "Email already exists" })
+      | otherwise              -> Handler $ throwE (err500 { errBody = "Database error" })
 
 listUsersHandler :: PGInfo -> Handler [Entity User]
 listUsersHandler pgInfo = liftIO $ fetchAllUsersPG pgInfo

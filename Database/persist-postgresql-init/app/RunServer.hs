@@ -11,8 +11,10 @@ import           System.Environment (getArgs)
 main :: IO ()
 main = do
   args <- getArgs
-  if null args
-    then putStrLn "Running Basic Server" >> B.runServer
-    else if head args == "cache"
-      then putStrLn "Running Cache Server" >> C.runServer
-        else putStrLn "Running Esqueleto Server" >> E.runServer
+  choose args
+  where
+    choose :: [String] -> IO ()
+    choose [] = putStrLn "Running Basic Server" >> B.runServer
+    choose (a:_)
+      | a == "cache" = putStrLn "Running Cache Server" >> C.runServer
+      | otherwise    = putStrLn "Running Esqueleto Server" >> E.runServer
