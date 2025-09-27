@@ -1,13 +1,12 @@
 module TestUtils
     where
 
-import           Cache.Core                  (RedisInfo, localRedisInfo)
-
 import           Control.Concurrent          (ThreadId, forkIO, threadDelay)
 import           Control.Monad.Logger        (runStdoutLoggingT)
 import           Control.Monad.Reader        (runReaderT)
 
 import           DB.Basic                    (PGInfo, localConnString)
+import           DB.Cache                    (RedisInfo, localRedisInfo)
 
 import           Database.Persist.Postgresql (runMigrationSilent,
                                               withPostgresqlConn)

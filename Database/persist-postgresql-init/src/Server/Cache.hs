@@ -6,25 +6,40 @@ module Server.Cache
     where
 
 import           Schema.Basic
-import           Cache.Core
-import           Control.Monad.IO.Class     (liftIO)
-import           Control.Monad.Trans.Except (throwE)
-import           Data.Int                   (Int64)
-import           Data.Proxy                 (Proxy (..))
-import           DB.Basic                   (PGInfo, fetchUserPG, createUserPG,
-                                             localConnString)
-import           Network.Wai.Handler.Warp   (run)
+import           DB.Cache
+import           Control.Monad.IO.Class      (liftIO)
+import           Control.Monad.Trans.Except  (throwE)
+import           Data.Int                    (Int64)
+import           Data.Proxy                  (Proxy (..))
+import           Data.Text                   (Text)
+import           DB.Basic                    (PGInfo, createUserPG,
+                                              fetchAllUsersPG, fetchUserPG,
+                                              localConnString, migrateDB)
+import           Database.Persist            (Entity)
+import           Network.Wai.Handler.Warp    (run)
 import           Servant.API
-import           Servant.Client
 import           Servant.Server
 
-type UsersAPI =
-       "users" :> Capture "userid" Int64 :> Get '[JSON] User
+-- API matches Server.Basic
+
+type FullAPI =
+       Get '[JSON] [Text]
+  :<|> "users" :> Capture "userid" Int64 :> Get '[JSON] User
   :<|> "users" :> ReqBody '[JSON] User :> Post '[JSON] Int64
+  :<|> "users" :> Get '[JSON] [Entity User]
 
-usersAPI :: Proxy UsersAPI
-usersAPI = Proxy :: Proxy UsersAPI
+usersAPI :: Proxy FullAPI
+usersAPI = Proxy :: Proxy FullAPI
 
+rootApiListHandler :: Handler [Text]
+rootApiListHandler = pure
+  [ "/"
+  , "POST /users"
+  , "GET /users"
+  , "GET /users/{id}"
+  ]
+
+-- Redis-backed fetch for a user by id
 fetchUsersHandler :: PGInfo -> RedisInfo -> Int64 -> Handler User
 fetchUsersHandler pgInfo redisInfo uid = do
   maybeCachedUser <- liftIO $ fetchUserRedis redisInfo uid
@@ -39,14 +54,18 @@ fetchUsersHandler pgInfo redisInfo uid = do
 createUserHandler :: PGInfo -> User -> Handler Int64
 createUserHandler pgInfo user = liftIO $ createUserPG pgInfo user
 
-usersServer :: PGInfo -> RedisInfo -> Server UsersAPI
+listUsersHandler :: PGInfo -> Handler [Entity User]
+listUsersHandler pgInfo = liftIO $ fetchAllUsersPG pgInfo
+
+usersServer :: PGInfo -> RedisInfo -> Server FullAPI
 usersServer pgInfo redisInfo =
+  rootApiListHandler :<|>
   (fetchUsersHandler pgInfo redisInfo) :<|>
-  (createUserHandler pgInfo)
+  (createUserHandler pgInfo) :<|>
+  (listUsersHandler pgInfo)
 
 runServer :: IO ()
-runServer = run 8000 (serve usersAPI (usersServer localConnString localRedisInfo))
-
-fetchUserClient :: Int64 -> ClientM User
-createUserClient :: User -> ClientM Int64
-(fetchUserClient :<|> createUserClient) = client (Proxy :: Proxy UsersAPI)
+runServer = do
+  -- Ensure DB schema exists before serving
+  migrateDB localConnString
+  run 8000 (serve usersAPI (usersServer localConnString localRedisInfo))

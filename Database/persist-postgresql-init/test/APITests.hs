@@ -1,11 +1,10 @@
 module Main
     where
 
-import           Cache.Core
-
 import           Control.Concurrent (killThread)
 
 import           DB.Basic
+import           DB.Cache
 
 import           Data.Either        (isLeft)
 import           Data.Int           (Int64)

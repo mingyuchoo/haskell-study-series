@@ -27,8 +27,8 @@ source-repository head
 
 library
   exposed-modules:
-      Cache.Core
       DB.Basic
+      DB.Cache
       DB.Esq
       Samples.Objects
       Schema.Basic

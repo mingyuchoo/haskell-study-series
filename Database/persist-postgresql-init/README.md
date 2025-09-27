@@ -27,7 +27,7 @@ app/
   MigrateDBEsq.hs     # Run DB migrations for Esqueleto schema
   RunServer.hs        # Entry point to run Basic/Cache/Esq servers
 src/
-  Cache/Core.hs       # Redis cache helpers for User
+  DB/Cache.hs       # Redis cache helpers for User
   DB/Basic.hs         # Persistent-based DB helpers (User)
   DB/Esq.hs           # Esqueleto-based DB helpers (User, Article)
   Samples/Objects.hs  # Sample in-memory objects for quick examples
@@ -82,7 +82,7 @@ make docker-down
 The code expects the following default connection strings:
 
 - PostgreSQL: `host=127.0.0.1 port=5432 user=postgres dbname=postgres password=postgres` (see `DB/Basic.hs` and `DB/Esq.hs`)
-- Redis: `defaultConnectInfo` (see `Cache/Core.hs`)
+- Redis: `defaultConnectInfo` (see `DB/Cache.hs`)
 
 ## Build, Run, Test
 
