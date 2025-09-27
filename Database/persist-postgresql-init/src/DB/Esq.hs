@@ -2,6 +2,21 @@
 {-# LANGUAGE PatternGuards #-}
 
 module DB.Esq
+    ( PGInfo
+    , localConnString
+    , fetchAllUsersPG
+    , fetchArticlePG
+    , fetchArticlesByAuthorPG
+    , fetchRecentArticlesPG
+    , fetchUserPG
+    , migrateDB
+    , patchUserPG
+    , replaceUserPG
+    , createUserPG
+    , createArticlePG
+    , deleteArticlePG
+    , deleteUserPG
+    )
     where
 
 import           Control.Monad.Logger        (LogLevel (..), LoggingT,
@@ -10,7 +25,7 @@ import           Control.Monad.Logger        (LogLevel (..), LoggingT,
 import           Control.Monad.Reader        (runReaderT)
 import           Data.Int                    (Int64)
 import           Data.Maybe                  (catMaybes, listToMaybe)
-import           Database.Esqueleto          (InnerJoin (..), desc, from, limit,
+import           Database.Esqueleto.Legacy  (InnerJoin (..), desc, from, limit,
                                               on, orderBy, select, val, where_,
                                               (==.), (^.))
 import           Database.Persist            (Entity, delete, entityVal, get,
@@ -18,7 +33,6 @@ import           Database.Persist            (Entity, delete, entityVal, get,
 import           Database.Persist.Postgresql (ConnectionString, SqlPersistT,
                                               runMigration, withPostgresqlConn)
 import           Database.Persist.Sql        (fromSqlKey, toSqlKey)
-
 import           Schema.Esq
 
 type PGInfo = ConnectionString

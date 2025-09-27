@@ -1,5 +1,6 @@
 module Main
-    where
+    ( main
+    ) where
 
 import           DB.Esq (localConnString, migrateDB)
 

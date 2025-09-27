@@ -1,5 +1,6 @@
 module Main
-    where
+    ( main
+    ) where
 
 import           DB.Basic           (localConnString, migrateDB)
 import qualified DB.Esq             as E
@@ -12,6 +13,7 @@ main = do
   choose args
   where
     choose :: [String] -> IO ()
-    choose as
-      | null as || head as /= "esq" = migrateDB localConnString
-      | otherwise                   = E.migrateDB localConnString
+    choose [] = migrateDB localConnString
+    choose (a:_)
+      | a == "esq" = E.migrateDB localConnString
+      | otherwise   = migrateDB localConnString
