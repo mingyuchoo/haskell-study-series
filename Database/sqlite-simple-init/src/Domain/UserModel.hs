@@ -27,5 +27,5 @@ instance FromRow User where
     fromRow = User <$> field <*> field <*> field <*> field <*> field <*> field
 
 instance ToRow User where
-    toRow (User id name email password created updated) =
-        toRow (id, name, email, password, created, updated)
+    toRow (User uid name email password created updated) =
+        toRow (uid, name, email, password, created, updated)

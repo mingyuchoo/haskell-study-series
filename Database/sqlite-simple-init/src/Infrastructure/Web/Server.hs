@@ -1,6 +1,5 @@
 {-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-
 module Infrastructure.Web.Server
     ( startServer
     ) where
@@ -8,7 +7,6 @@ module Infrastructure.Web.Server
 import           Application.UserService     (UserService (..))
 
 import           Control.Exception           (SomeException, try)
-import           Control.Monad.IO.Class      (liftIO)
 
 import           Data.Aeson                  (object, (.=))
 
@@ -35,12 +33,12 @@ startServer userService = scotty 3000 <| do
         file "static/favicon.ico"
 
     get "/css/:filename" <| do
-        filename <- param "filename"
+        filename <- pathParam "filename"
         setHeader "Content-Type" "text/css"
         file ("static/css/" <> filename)
 
     get "/js/:filename" <| do
-        filename <- param "filename"
+        filename <- pathParam "filename"
         setHeader "Content-Type" "application/javascript"
         file ("static/js/" <> filename)
 

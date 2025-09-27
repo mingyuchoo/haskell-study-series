@@ -75,7 +75,7 @@ instance UserService UserRepository where
         -- Get the updated user to return it
         maybeUser <- getUserById (UserRepository conn) uid
         case maybeUser of
-            Just user -> return True
+            Just _ -> return True
             Nothing   -> return False
 
     -- Delete user

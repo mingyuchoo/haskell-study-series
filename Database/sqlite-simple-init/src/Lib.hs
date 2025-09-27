@@ -4,7 +4,6 @@ module Lib
     ) where
 
 -- Domain Layer
-import           Application.UserService                  (UserService (..))
 
 import           Domain.UserModel                         (User (..))
 
