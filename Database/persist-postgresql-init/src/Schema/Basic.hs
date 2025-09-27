@@ -17,7 +17,6 @@ module Schema.Basic
 import           Data.Aeson
 import           Data.Aeson.Types
 import           Data.Text           (Text)
-
 import           Database.Persist    (Entity (..))
 import           Database.Persist.Sql (fromSqlKey)
 import qualified Database.Persist.TH as PTH

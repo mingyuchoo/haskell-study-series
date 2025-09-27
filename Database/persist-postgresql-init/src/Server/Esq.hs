@@ -8,20 +8,14 @@ module Server.Esq
 import           Control.Monad.IO.Class     (liftIO)
 import           Control.Monad.Trans.Except (throwE)
 import           Control.Exception          (try)
-
 import           Data.Int                   (Int64)
 import           Data.Proxy                 (Proxy (..))
 import           Data.Text                  (Text)
-
 import           Database.Persist           (Entity, Key)
 import           Database.PostgreSQL.Simple (SqlError(..))
-
 import           DB.Esq
-
 import           Network.Wai.Handler.Warp   (run)
-
 import           Schema.Esq
-
 import           Servant.API
 import           Servant.Client
 import           Servant.Server

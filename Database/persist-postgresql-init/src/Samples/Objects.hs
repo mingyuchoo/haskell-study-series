@@ -4,9 +4,7 @@ module Samples.Objects
 
 import           Data.Int               (Int64)
 import           Data.Time.Clock.POSIX  (posixSecondsToUTCTime)
-
 import           Database.Persist.Sql   (toSqlKey)
-
 import           Schema.Esq
 
 testUser1 :: User

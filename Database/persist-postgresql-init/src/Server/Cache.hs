@@ -6,21 +6,14 @@ module Server.Cache
     where
 
 import           Schema.Basic
-
 import           Cache.Core
-
 import           Control.Monad.IO.Class     (liftIO)
 import           Control.Monad.Trans.Except (throwE)
-
 import           Data.Int                   (Int64)
 import           Data.Proxy                 (Proxy (..))
-
 import           DB.Basic                   (PGInfo, fetchUserPG, createUserPG,
                                              localConnString)
-import           Database.Persist           (Entity, Key)
-
 import           Network.Wai.Handler.Warp   (run)
-
 import           Servant.API
 import           Servant.Client
 import           Servant.Server

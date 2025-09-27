@@ -2,7 +2,6 @@ module Main
     where
 
 import           DB.Basic           (localConnString, migrateDB)
-
 import qualified DB.Esq             as E
 
 import           System.Environment (getArgs)

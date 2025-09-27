@@ -1,24 +1,26 @@
 module TestUtils
     where
 
-import           Schema.Basic                 (migrateAll)
-
-import           Cache.Core                   (RedisInfo, localRedisInfo)
-
-import           Server.Cache                 (runServer)
+import           Cache.Core                  (RedisInfo, localRedisInfo)
 
 import           Control.Concurrent          (ThreadId, forkIO, threadDelay)
 import           Control.Monad.Logger        (runStdoutLoggingT)
 import           Control.Monad.Reader        (runReaderT)
 
 import           DB.Basic                    (PGInfo, localConnString)
+
 import           Database.Persist.Postgresql (runMigrationSilent,
                                               withPostgresqlConn)
 
 import           Network.HTTP.Client         (newManager)
 import           Network.HTTP.Client.TLS     (tlsManagerSettings)
 
-import           Servant.Client              (ClientEnv, mkClientEnv, parseBaseUrl)
+import           Schema.Basic                (migrateAll)
+
+import           Servant.Client              (ClientEnv, mkClientEnv,
+                                              parseBaseUrl)
+
+import           Server.Cache                (runServer)
 
 setupTests :: IO (PGInfo, RedisInfo, ClientEnv, ThreadId)
 setupTests = do
