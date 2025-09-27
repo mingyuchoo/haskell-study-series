@@ -63,3 +63,19 @@ parseUser o = do
     , userAge = uAge
     , userOccupation = uOccupation
     }
+
+-- Partial update type for PATCH requests
+data UpdateUser = UpdateUser
+  { uuName       :: Maybe Text
+  , uuEmail      :: Maybe Text
+  , uuAge        :: Maybe Int
+  , uuOccupation :: Maybe Text
+  } deriving (Show, Read)
+
+instance FromJSON UpdateUser where
+  parseJSON = withObject "UpdateUser" $ \o -> do
+    uuName       <- o .:? "name"
+    uuEmail      <- o .:? "email"
+    uuAge        <- o .:? "age"
+    uuOccupation <- o .:? "occupation"
+    return UpdateUser {..}

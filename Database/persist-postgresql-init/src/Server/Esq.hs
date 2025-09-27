@@ -11,7 +11,7 @@ import           Control.Exception          (try)
 import           Data.Int                   (Int64)
 import           Data.Proxy                 (Proxy (..))
 import           Data.Text                  (Text)
-import           Database.Persist           (Entity, Key)
+import           Database.Persist           (Entity)
 import           Database.PostgreSQL.Simple (SqlError(..))
 import           DB.Esq
 import           Network.Wai.Handler.Warp   (run)
@@ -23,6 +23,9 @@ import           Servant.Server
 type FullAPI =
        Get '[JSON] [Text]
   :<|> "users" :> Capture "userid" Int64 :> Get '[JSON] User
+  :<|> "users" :> Capture "userid" Int64 :> ReqBody '[JSON] User :> Put '[JSON] NoContent
+  :<|> "users" :> Capture "userid" Int64 :> ReqBody '[JSON] UserPatch :> Patch '[JSON] NoContent
+  :<|> "users" :> Capture "userid" Int64 :> Delete '[JSON] NoContent
   :<|> "users" :> ReqBody '[JSON] User :> Post '[JSON] Int64
   :<|> "users" :> Get '[JSON] [Entity User]
   :<|> "articles" :> Capture "articleid" Int64 :> Get '[JSON] Article
@@ -39,6 +42,9 @@ rootApiListHandler = pure
   , "POST /users"
   , "GET /users"
   , "GET /users/{id}"
+  , "PUT /users/{id}"
+  , "PATCH /users/{id}"
+  , "DELETE /users/{id}"
   ]
 
 fetchUsersHandler :: PGInfo -> Int64 -> Handler User
@@ -47,6 +53,20 @@ fetchUsersHandler pgInfo uid = do
   case maybeUser of
     Just user -> return user
     Nothing -> Handler $ (throwE $ err401 { errBody = "Could not find user with that ID" })
+
+replaceUserHandler :: PGInfo -> Int64 -> User -> Handler NoContent
+replaceUserHandler pgInfo uid user = do
+  replaced <- liftIO $ replaceUserPG pgInfo uid user
+  if replaced
+    then pure NoContent
+    else Handler $ throwE $ err404 { errBody = "User not found" }
+
+patchUserHandler :: PGInfo -> Int64 -> UserPatch -> Handler NoContent
+patchUserHandler pgInfo uid patchBody = do
+  updated <- liftIO $ patchUserPG pgInfo uid patchBody
+  if updated
+    then pure NoContent
+    else Handler $ throwE $ err404 { errBody = "User not found" }
 
 createUserHandler :: PGInfo -> User -> Handler Int64
 createUserHandler pgInfo user = do
@@ -60,6 +80,13 @@ createUserHandler pgInfo user = do
 
 listUsersHandler :: PGInfo -> Handler [Entity User]
 listUsersHandler pgInfo = liftIO $ fetchAllUsersPG pgInfo
+
+deleteUserHandler :: PGInfo -> Int64 -> Handler NoContent
+deleteUserHandler pgInfo uid = do
+  mUser <- liftIO $ fetchUserPG pgInfo uid
+  case mUser of
+    Nothing   -> Handler $ throwE $ err404 { errBody = "User not found" }
+    Just _usr -> liftIO (deleteUserPG pgInfo uid) >> pure NoContent
 
 fetchArticleHandler :: PGInfo -> Int64 -> Handler Article
 fetchArticleHandler pgInfo aid = do
@@ -81,6 +108,9 @@ fullAPIServer :: PGInfo -> Server FullAPI
 fullAPIServer pgInfo =
   rootApiListHandler :<|>
   (fetchUsersHandler pgInfo) :<|>
+  (replaceUserHandler pgInfo) :<|>
+  (patchUserHandler pgInfo) :<|>
+  (deleteUserHandler pgInfo) :<|>
   (createUserHandler pgInfo) :<|>
   (listUsersHandler pgInfo) :<|>
   (fetchArticleHandler pgInfo) :<|>
@@ -93,6 +123,9 @@ runServer = run 8000 (serve usersAPI (fullAPIServer localConnString))
 
 rootApiListClient :: ClientM [Text]
 fetchUserClient :: Int64 -> ClientM User
+replaceUserClient :: Int64 -> User -> ClientM NoContent
+patchUserClient :: Int64 -> UserPatch -> ClientM NoContent
+deleteUserClient :: Int64 -> ClientM NoContent
 createUserClient :: User -> ClientM Int64
 listUsersClient :: ClientM [Entity User]
 fetchArticleClient :: Int64 -> ClientM Article
@@ -101,6 +134,9 @@ fetchArticlesByAuthorClient :: Int64 -> ClientM [Entity Article]
 fetchRecentArticlesClient :: ClientM [(Entity User, Entity Article)]
 ( rootApiListClient           :<|>
   fetchUserClient             :<|>
+  replaceUserClient           :<|>
+  patchUserClient             :<|>
+  deleteUserClient            :<|>
   createUserClient            :<|>
   listUsersClient             :<|>
   fetchArticleClient          :<|>

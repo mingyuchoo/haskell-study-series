@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveGeneric              #-}
 {-# LANGUAGE DerivingStrategies         #-}
 {-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GADTs                      #-}
@@ -19,6 +20,7 @@ import           Data.Aeson.Types
 import           Data.Text             (Text)
 import           Data.Time             (UTCTime)
 import           Data.Time.Clock.POSIX (posixSecondsToUTCTime, utcTimeToPOSIXSeconds)
+import           GHC.Generics          (Generic)
 
 import           Database.Persist      (Entity (..))
 import           Database.Persist.Sql  (fromSqlKey, toSqlKey)
@@ -115,3 +117,28 @@ parseArticle o = do
     , articlePublishedTime = posixSecondsToUTCTime aPublishedTime
     , articleAuthorId = toSqlKey aAuthorId
     }
+
+-- Partial update payload for PATCH /users/{id}
+data UserPatch = UserPatch
+  { upName       :: Maybe Text
+  , upEmail      :: Maybe Text
+  , upAge        :: Maybe Int
+  , upOccupation :: Maybe Text
+  } deriving (Show, Eq, Generic)
+
+instance FromJSON UserPatch where
+  parseJSON = withObject "UserPatch" $ \o ->
+    UserPatch
+      <$> o .:? "name"
+      <*> o .:? "email"
+      <*> o .:? "age"
+      <*> o .:? "occupation"
+
+instance ToJSON UserPatch where
+  toJSON UserPatch{..} = object $
+    concat
+      [ maybe [] (pure . ("name" .=)) upName
+      , maybe [] (pure . ("email" .=)) upEmail
+      , maybe [] (pure . ("age" .=)) upAge
+      , maybe [] (pure . ("occupation" .=)) upOccupation
+      ]

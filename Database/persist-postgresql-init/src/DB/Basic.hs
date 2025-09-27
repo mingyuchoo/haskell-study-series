@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards #-}
 
 module DB.Basic
     where
@@ -8,6 +9,7 @@ import           Control.Monad.IO.Class      (MonadIO)
 import           Control.Monad.Logger
 import           Control.Monad.Reader        (runReaderT)
 import           Data.Int                    (Int64)
+import           Data.Maybe                  (catMaybes)
 import           Database.Persist
 import           Database.Persist.Postgresql
 
@@ -52,3 +54,24 @@ deleteUserPG connString uid = runAction connString (delete userKey)
   where
     userKey :: Key User
     userKey = toSqlKey uid
+
+-- Replace full user document (PUT)
+putUserPG :: PGInfo -> Int64 -> User -> IO ()
+putUserPG connString uid user = runAction connString (replace userKey user)
+  where
+    userKey :: Key User
+    userKey = toSqlKey uid
+
+-- Partial update user (PATCH)
+patchUserPG :: PGInfo -> Int64 -> UpdateUser -> IO ()
+patchUserPG connString uid UpdateUser{..} = runAction connString (update userKey updates)
+  where
+    userKey :: Key User
+    userKey = toSqlKey uid
+    updates :: [Update User]
+    updates = catMaybes
+      [ (UserName =.) <$> uuName
+      , (UserEmail =.) <$> uuEmail
+      , (UserAge =.) <$> uuAge
+      , (UserOccupation =.) <$> uuOccupation
+      ]

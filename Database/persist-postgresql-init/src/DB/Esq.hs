@@ -8,12 +8,12 @@ import           Control.Monad.Logger        (LogLevel (..), LoggingT,
                                               runStdoutLoggingT)
 import           Control.Monad.Reader        (runReaderT)
 import           Data.Int                    (Int64)
-import           Data.Maybe                  (listToMaybe)
+import           Data.Maybe                  (catMaybes, listToMaybe)
 import           Database.Esqueleto          (InnerJoin (..), desc, from, limit,
                                               on, orderBy, select, val, where_,
                                               (==.), (^.))
 import           Database.Persist            (Entity, delete, entityVal, get,
-                                              insert)
+                                              insert, replace, update, (=.))
 import           Database.Persist.Postgresql (ConnectionString, SqlPersistT,
                                               runMigration, withPostgresqlConn)
 import           Database.Persist.Sql        (fromSqlKey, toSqlKey)
@@ -52,6 +52,37 @@ fetchAllUsersPG connString = runAction connString selectAction
 
 createUserPG :: PGInfo -> User -> IO Int64
 createUserPG connString user = fromSqlKey <$> runAction connString (insert user)
+
+-- Replace all fields of a user for PUT /users/{id}. Returns True if user existed and was replaced.
+replaceUserPG :: PGInfo -> Int64 -> User -> IO Bool
+replaceUserPG connString uid user = runAction connString action
+  where
+    key = toSqlKey uid
+    action = do
+      mExisting <- get key
+      case mExisting of
+        Nothing   -> pure False
+        Just _old -> replace key user >> pure True
+
+-- Partially update fields for PATCH /users/{id}. Returns True if user existed and was updated.
+patchUserPG :: PGInfo -> Int64 -> UserPatch -> IO Bool
+patchUserPG connString uid up = runAction connString action
+  where
+    key = toSqlKey uid
+    action = do
+      mExisting <- get key
+      case mExisting of
+        Nothing -> pure False
+        Just _  -> do
+          let sets = catMaybes
+                [ (UserName =.)       <$> upName up
+                , (UserEmail =.)      <$> upEmail up
+                , (UserAge =.)        <$> upAge up
+                , (UserOccupation =.) <$> upOccupation up
+                ]
+          case sets of
+            []   -> pure True -- nothing to update but treat as success
+            _    -> update key sets >> pure True
 
 deleteUserPG :: PGInfo -> Int64 -> IO ()
 deleteUserPG connString uid = runAction connString (delete userKey)

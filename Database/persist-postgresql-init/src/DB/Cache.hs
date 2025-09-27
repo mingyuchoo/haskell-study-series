@@ -2,16 +2,12 @@ module DB.Cache
     where
 
 import           Schema.Basic
+import           Schema.Cache               (RedisInfo)
 import           Data.ByteString.Char8 (pack, unpack)
 import           Data.ByteString       (ByteString)
 import           Data.Int              (Int64)
 import           Database.Redis
 import           Control.Exception     (SomeException, try)
-
-type RedisInfo = ConnectInfo
-
-localRedisInfo :: RedisInfo
-localRedisInfo = defaultConnectInfo
 
 runRedisAction :: RedisInfo -> Redis a -> IO a
 runRedisAction redisInfo action = do
