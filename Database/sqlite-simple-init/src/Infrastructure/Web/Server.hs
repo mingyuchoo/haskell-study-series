@@ -64,13 +64,13 @@ startServer userService = scotty 3000 <| do
         name <- formParam "name"
         email <- formParam "email"
         password <- formParam "password"
-        if null name || null email || null password
-            then do
-                status status400
-                json <| object ["error" .= ("name, email and password are required" :: String)]
-            else do
-                result <- (liftIO <| (try (createUser userService name email password) :: IO (Either SQLError User)))
-                case result of
+        case () of
+            _ | null name || null email || null password -> do
+                    status status400
+                    json <| object ["error" .= ("name, email and password are required" :: String)]
+              | otherwise -> do
+                    result <- (liftIO <| (try (createUser userService name email password) :: IO (Either SQLError User)))
+                    case result of
                     Right user -> do
                         status status201
                         json user
@@ -82,37 +82,35 @@ startServer userService = scotty 3000 <| do
                         json <| object ["error" .= (show e :: String)]
 
     -- | Update user
-        put "/users/:id" <| do
+    put "/users/:id" <| do
         uid <- pathParam "id"
         name <- formParam "name"
         email <- formParam "email"
         password <- formParam "password"
-        if null name || null email || null password
-            then do
+        case () of
+            _ | null name || null email || null password -> do
                 status status400
                 json <| object ["error" .= ("name, email and password are required" :: String)]
-            else do
+              | otherwise -> do
                 result <- (liftIO <| (try (updateUser userService uid name email password) :: IO (Either SQLError Bool)))
                 case result of
-                    Right success ->
-                        if success
-                            then do
-                                userResult <- liftIO <| (try (getUserById userService uid) :: IO (Either SomeException (Maybe User)))
-                                case userResult of
-                                    Right maybeUser ->
-                                        case maybeUser of
-                                            Just user -> do
-                                                status status200
-                                                json user
-                                            Nothing -> do
-                                                status status404
-                                                json <| object ["error" .= ("User not found after update" :: String)]
-                                    Left (e :: SomeException) -> do
-                                        status status500
-                                        json <| object ["error" .= (show e :: String)]
-                            else do
-                                status status404
-                                json <| object ["error" .= ("User not found" :: String)]
+                    Right success | success -> do
+                        userResult <- liftIO <| (try (getUserById userService uid) :: IO (Either SomeException (Maybe User)))
+                        case userResult of
+                            Right maybeUser ->
+                                case maybeUser of
+                                    Just user -> do
+                                        status status200
+                                        json user
+                                    Nothing -> do
+                                        status status404
+                                        json <| object ["error" .= ("User not found after update" :: String)]
+                            Left (e :: SomeException) -> do
+                                status status500
+                                json <| object ["error" .= (show e :: String)]
+                    Right _ -> do
+                        status status404
+                        json <| object ["error" .= ("User not found" :: String)]
                     Left (SQLError { sqlError = ErrorConstraint }) -> do
                         status status409
                         json <| object ["error" .= ("Email already exists" :: String)]
@@ -125,12 +123,11 @@ startServer userService = scotty 3000 <| do
         uid <- pathParam "id"
         result <- liftIO <| try <| deleteUser userService uid
         case result of
-            Right success ->
-                if success
-                    then status status204
-                    else do
-                        status status404
-                        json <| object ["error" .= ("User not found" :: String)]
+            Right success | success ->
+                status status204
+            Right _ -> do
+                status status404
+                json <| object ["error" .= ("User not found" :: String)]
             Left (e :: SomeException) -> do
                 status status500
                 json <| object ["error" .= (show e :: String)]
