@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module DatabaseEsq
+module DB.Esq
     where
 
 import           Control.Monad               (void)
@@ -23,7 +23,7 @@ import           Database.Persist.Postgresql (ConnectionString, SqlPersistT,
                                               runMigration, withPostgresqlConn)
 import           Database.Persist.Sql        (fromSqlKey, toSqlKey)
 
-import           SchemaEsq
+import           Schema.Esq
 
 type PGInfo = ConnectionString
 
@@ -47,6 +47,13 @@ migrateDB connString = runAction connString (runMigration migrateAll)
 
 fetchUserPG :: PGInfo -> Int64 -> IO (Maybe User)
 fetchUserPG connString uid = runAction connString (get (toSqlKey uid))
+
+fetchAllUsersPG :: PGInfo -> IO [Entity User]
+fetchAllUsersPG connString = runAction connString selectAction
+  where
+    selectAction :: SqlPersistT (LoggingT IO) [Entity User]
+    selectAction = select . from $ \users -> do
+      return users
 
 createUserPG :: PGInfo -> User -> IO Int64
 createUserPG connString user = fromSqlKey <$> runAction connString (insert user)

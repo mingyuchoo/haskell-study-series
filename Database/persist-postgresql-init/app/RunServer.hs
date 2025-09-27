@@ -1,11 +1,10 @@
 module Main
-    where
+    ( main
+    ) where
 
-import qualified BasicServer        as B
-
-import qualified CacheServer        as C
-
-import qualified ServerEsq          as E
+import qualified Server.Basic       as B
+import qualified Server.Cache       as C
+import qualified Server.Esq         as E
 
 import           System.Environment (getArgs)
 

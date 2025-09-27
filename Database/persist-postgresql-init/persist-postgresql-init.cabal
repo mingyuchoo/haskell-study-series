@@ -27,15 +27,15 @@ source-repository head
 
 library
   exposed-modules:
-      BasicSchema
-      BasicServer
-      Cache
-      CacheServer
-      Database
-      DatabaseEsq
-      SampleObjects
-      SchemaEsq
-      ServerEsq
+      Cache.Core
+      DB.Basic
+      DB.Esq
+      Samples.Objects
+      Schema.Basic
+      Schema.Esq
+      Server.Basic
+      Server.Cache
+      Server.Esq
   other-modules:
       Paths_persist_postgresql_init
   autogen-modules:
@@ -69,6 +69,7 @@ library
     , persistent
     , persistent-postgresql
     , persistent-template
+    , postgresql-simple
     , servant
     , servant-client
     , servant-server
@@ -110,6 +111,49 @@ executable migrate-db
     , persistent
     , persistent-postgresql
     , persistent-template
+    , postgresql-simple
+    , servant
+    , servant-client
+    , servant-server
+    , text
+    , time
+    , transformers
+    , warp
+  default-language: Haskell2010
+
+executable migrate-db-esq
+  main-is: MigrateDBEsq.hs
+  hs-source-dirs:
+      app
+  default-extensions:
+      DataKinds
+      DerivingStrategies
+      FlexibleInstances
+      GADTs
+      GeneralizedNewtypeDeriving
+      MultiParamTypeClasses
+      OverloadedStrings
+      QuasiQuotes
+      RecordWildCards
+      StandaloneDeriving
+      TemplateHaskell
+      TypeFamilies
+      TypeOperators
+      UndecidableInstances
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  build-depends:
+      aeson
+    , base
+    , bytestring
+    , esqueleto
+    , hedis
+    , monad-logger
+    , mtl
+    , persist-postgresql-init
+    , persistent
+    , persistent-postgresql
+    , persistent-template
+    , postgresql-simple
     , servant
     , servant-client
     , servant-server
@@ -151,6 +195,7 @@ executable run-server
     , persistent
     , persistent-postgresql
     , persistent-template
+    , postgresql-simple
     , servant
     , servant-client
     , servant-server
@@ -201,6 +246,7 @@ test-suite api-tests
     , persistent
     , persistent-postgresql
     , persistent-template
+    , postgresql-simple
     , servant
     , servant-client
     , servant-server

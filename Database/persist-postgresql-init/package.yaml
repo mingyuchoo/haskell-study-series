@@ -25,6 +25,7 @@ dependencies:
 - persistent
 - persistent-postgresql
 - persistent-template
+- postgresql-simple
 - servant
 - servant-client
 - servant-server
@@ -77,6 +78,17 @@ executables:
     - persist-postgresql-init
   run-server:
     main:                RunServer.hs
+    source-dirs:         app
+    other-modules:       []
+    ghc-options:
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N4
+    dependencies:
+    - persist-postgresql-init
+  migrate-db-esq:
+    main:                MigrateDBEsq.hs
     source-dirs:         app
     other-modules:       []
     ghc-options:

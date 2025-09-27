@@ -1,13 +1,13 @@
 {-# LANGUAGE OverloadedStrings #-}
-module SampleObjects
+module Samples.Objects
     where
 
-import           Data.Int              (Int64)
-import           Data.Time.Clock.POSIX (posixSecondsToUTCTime)
+import           Data.Int               (Int64)
+import           Data.Time.Clock.POSIX  (posixSecondsToUTCTime)
 
-import           Database.Persist.Sql  (toSqlKey)
+import           Database.Persist.Sql   (toSqlKey)
 
-import           SchemaEsq
+import           Schema.Esq
 
 testUser1 :: User
 testUser1 = User

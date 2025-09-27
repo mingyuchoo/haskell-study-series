@@ -1,17 +1,17 @@
 module TestUtils
     where
 
-import           BasicSchema                 (migrateAll)
+import           Schema.Basic                 (migrateAll)
 
-import           Cache                       (RedisInfo, localRedisInfo)
+import           Cache.Core                   (RedisInfo, localRedisInfo)
 
-import           CacheServer                 (runServer)
+import           Server.Cache                 (runServer)
 
 import           Control.Concurrent          (ThreadId, forkIO, threadDelay)
 import           Control.Monad.Logger        (runStdoutLoggingT)
 import           Control.Monad.Reader        (runReaderT)
 
-import           Database                    (PGInfo, localConnString)
+import           DB.Basic                    (PGInfo, localConnString)
 import           Database.Persist.Postgresql (runMigrationSilent,
                                               withPostgresqlConn)
 

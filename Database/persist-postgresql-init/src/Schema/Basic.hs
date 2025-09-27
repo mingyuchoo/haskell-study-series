@@ -11,7 +11,7 @@
 {-# LANGUAGE TypeFamilies               #-}
 {-# LANGUAGE UndecidableInstances       #-}
 
-module BasicSchema
+module Schema.Basic
     where
 
 import           Data.Aeson
@@ -19,6 +19,7 @@ import           Data.Aeson.Types
 import           Data.Text           (Text)
 
 import           Database.Persist    (Entity (..))
+import           Database.Persist.Sql (fromSqlKey)
 import qualified Database.Persist.TH as PTH
 
 PTH.share [PTH.mkPersist PTH.sqlSettings, PTH.mkMigrate "migrateAll"] [PTH.persistLowerCase|
@@ -30,6 +31,15 @@ PTH.share [PTH.mkPersist PTH.sqlSettings, PTH.mkMigrate "migrateAll"] [PTH.persi
     UniqueEmail email
     deriving Show Read
 |]
+
+instance ToJSON (Entity User) where
+  toJSON (Entity uid user) = object
+    [ "id" .= fromSqlKey uid
+    , "name" .= userName user
+    , "email" .= userEmail user
+    , "age" .= userAge user
+    , "occupation" .= userOccupation user
+    ]
 
 instance ToJSON User where
   toJSON user = object

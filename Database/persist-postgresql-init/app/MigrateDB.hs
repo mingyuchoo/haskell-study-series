@@ -1,9 +1,9 @@
 module Main
     where
 
-import           Database           (localConnString, migrateDB)
+import           DB.Basic           (localConnString, migrateDB)
 
-import qualified DatabaseEsq        as E
+import qualified DB.Esq             as E
 
 import           System.Environment (getArgs)
 

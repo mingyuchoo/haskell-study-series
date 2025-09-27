@@ -1,11 +1,11 @@
 module Main
     where
 
-import           BasicSchema                 (User (..))
+import           Schema.Basic               (User (..))
 
-import           Cache
+import           Cache.Core
 
-import           CacheServer                 (createUserClient, fetchUserClient)
+import           Server.Cache               (createUserClient, fetchUserClient)
 
 import           Control.Concurrent          (killThread)
 
@@ -13,7 +13,7 @@ import           Data.Either                 (isLeft)
 import           Data.Int                    (Int64)
 import           Data.Maybe                  (isJust)
 
-import           Database
+import           DB.Basic
 import           Database.Persist.Postgresql (fromSqlKey)
 
 import           Servant.Client              (ClientEnv, runClientM)

@@ -1,7 +1,7 @@
-module Cache
+module Cache.Core
     where
 
-import           BasicSchema
+import           Schema.Basic
 
 import           Control.Monad         (void)
 

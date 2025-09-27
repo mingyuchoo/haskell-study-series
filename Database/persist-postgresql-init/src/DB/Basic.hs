@@ -1,9 +1,9 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Database
+module DB.Basic
     where
 
-import           BasicSchema
+import           Schema.Basic
 
 import           Control.Monad.IO.Class      (MonadIO)
 import           Control.Monad.Logger
@@ -43,6 +43,9 @@ selectYoungTeachers' = selectList
 
 fetchUserPG :: PGInfo -> Int64 -> IO (Maybe User)
 fetchUserPG connString uid = runAction connString (get (toSqlKey uid))
+
+fetchAllUsersPG :: PGInfo -> IO [Entity User]
+fetchAllUsersPG connString = runAction connString (selectList [] [])
 
 createUserPG :: PGInfo -> User -> IO Int64
 createUserPG connString user = fromSqlKey <$> runAction connString (insert user)
