@@ -5,12 +5,8 @@ module Presentation.Server.Server
     ) where
 
 import           Application.Interfaces.ChatApplicationService (ChatApplicationService)
-
 import           Data.Text                                     (pack)
-import qualified Data.Text.IO                                  as TIO
-
 import           Flow                                          ((<|))
-
 import           Network.Wai                                   (Application)
 import           Network.Wai.Handler.Warp                      (defaultSettings,
                                                                 runSettings,
@@ -18,11 +14,11 @@ import           Network.Wai.Handler.Warp                      (defaultSettings,
                                                                 setPort)
 import           Network.Wai.Logger                            (withStdoutLogger)
 import           Network.Wai.Middleware.Cors                   (simpleCors)
-
 import           Presentation.Api.ApiHandler                   (API, apiServer)
-
 import           Servant                                       (Proxy (..),
                                                                 serve)
+
+import qualified Data.Text.IO                                  as TIO
 
 -- | Create the WAI application with CORS support
 app :: ChatApplicationService s => s -> Application

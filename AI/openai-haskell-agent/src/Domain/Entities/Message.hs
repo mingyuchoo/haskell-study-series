@@ -6,7 +6,6 @@ module Domain.Entities.Message
     ) where
 
 import           Data.Text    (Text)
-
 import           GHC.Generics (Generic)
 
 -- | Role type for chat participants

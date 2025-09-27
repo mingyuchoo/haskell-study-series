@@ -10,21 +10,15 @@ import           Control.Concurrent.STM              (atomically)
 import           Control.Concurrent.STM.TChan        (TChan, newTChanIO,
                                                       writeTChan)
 import           Control.Monad                       (forM_, unless, void)
-
 import           Data.ByteString                     (ByteString)
-import qualified Data.ByteString.Char8               as BS8
 import           Data.Text                           (Text)
-
 import           Domain.Entities.Chat                (ChatResponse (..),
                                                       Choice (..), Delta (..),
                                                       chatChoices, choiceDelta,
                                                       deltaContent)
 import           Domain.Interfaces.HttpClient        (HttpClient (..))
-
 import           Flow                                ((<|))
-
 import           Infrastructure.OpenAI.OpenAIService (parseChatStreamLine)
-
 import           Network.HTTP.Client                 (BodyReader,
                                                       RequestBody (..),
                                                       Response, brRead, httpLbs,
@@ -35,6 +29,8 @@ import           Network.HTTP.Client                 (BodyReader,
                                                       withResponse)
 import           Network.HTTP.Types                  (hAuthorization,
                                                       hContentType, methodPost)
+
+import qualified Data.ByteString.Char8               as BS8
 
 -- | OpenAI HTTP Client implementation for making API requests
 data OpenAIHttpClient = OpenAIHttpClient

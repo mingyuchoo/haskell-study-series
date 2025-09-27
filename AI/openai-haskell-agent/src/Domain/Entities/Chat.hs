@@ -8,9 +8,7 @@ module Domain.Entities.Chat
     ) where
 
 import           Data.Text               (Text)
-
 import           Domain.Entities.Message (Message)
-
 import           GHC.Generics            (Generic)
 
 -- | Chat request type for the OpenAI API

@@ -5,28 +5,21 @@ module Application.Services.ChatService
 
 import           Control.Concurrent.STM              (atomically)
 import           Control.Concurrent.STM.TChan        (readTChan)
-
 import qualified Data.Aeson
 import qualified Data.ByteString.Lazy                as LBS
 import           Data.Text                           (pack)
 import qualified Data.Text                           as T
 import qualified Data.Text.IO                        as TIO
-
 import           Domain.Entities.Chat                (ChatRequest (..))
 import           Domain.Entities.Message             (Message (..), Role (..))
 import           Domain.Interfaces.ChatService       (ChatService (..))
 import           Domain.Interfaces.HttpClient        (HttpClient (..))
-
 import           Flow                                ((<|))
-
 import           Infrastructure.Http.HttpClient      (OpenAIHttpClient)
 import           Infrastructure.OpenAI.OpenAIService (toJsonChatRequest)
-
 import           Network.HTTP.Client                 (Manager)
-
 import           System.Environment                  (getEnv)
 import           System.IO                           (hFlush, stdout)
-
 import           Text.Read                           (readMaybe)
 
 -- | OpenAI Chat Service implementation

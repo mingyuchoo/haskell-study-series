@@ -6,20 +6,15 @@ module Application.Services.ChatServiceSpec
 
 import           Application.Services.ChatService (OpenAIChatService (..),
                                                    createOpenAIChatService)
-
 import           Control.Concurrent.STM           (atomically)
 import           Control.Concurrent.STM.TChan     (newTChanIO, writeTChan)
 import           Control.Monad.IO.Class           (liftIO)
-
 import           Domain.Interfaces.ChatService    (ChatService (..))
 import           Flow                             ((<|))
 import           Infrastructure.Http.HttpClient   (createOpenAIHttpClient)
-
 import           Network.HTTP.Client              (newManager)
 import           Network.HTTP.Client.TLS          (tlsManagerSettings)
-
 import           System.Environment               (setEnv)
-
 import           Test.Hspec
 
 spec :: Spec

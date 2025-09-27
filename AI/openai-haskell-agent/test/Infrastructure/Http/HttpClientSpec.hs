@@ -5,19 +5,14 @@ module Infrastructure.Http.HttpClientSpec
     ) where
 
 import           Control.Monad.IO.Class         (liftIO)
-
 import qualified Data.ByteString.Lazy           as LBS
-
 import           Domain.Interfaces.HttpClient   (HttpClient (createRequest))
 import           Flow ((<|))
-
 import           Infrastructure.Http.HttpClient (createOpenAIHttpClient)
-
 import           Network.HTTP.Client            (RequestBody (..), method,
                                                  requestBody, requestHeaders)
 import           Network.HTTP.Types             (hAuthorization, hContentType,
                                                  methodPost)
-
 import           Test.Hspec
 
 spec :: Spec

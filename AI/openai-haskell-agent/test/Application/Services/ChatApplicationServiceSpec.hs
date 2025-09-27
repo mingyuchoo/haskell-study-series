@@ -6,16 +6,12 @@ module Application.Services.ChatApplicationServiceSpec
 
 import           Application.Services.ChatApplicationService (createOpenAIChatApplicationService)
 import           Application.Services.ChatService            (createOpenAIChatService)
-
 import           Control.Monad.IO.Class                      (liftIO)
 import           Flow                                        ((<|))
 import           Infrastructure.Http.HttpClient              (createOpenAIHttpClient)
-
 import           Mocks.MockChatService                       (createMockChatService)
-
 import           Network.HTTP.Client                         (newManager)
 import           Network.HTTP.Client.TLS                     (tlsManagerSettings)
-
 import           Test.Hspec
 
 spec :: Spec

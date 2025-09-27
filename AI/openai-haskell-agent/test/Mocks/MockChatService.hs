@@ -8,9 +8,7 @@ module Mocks.MockChatService
 import           Control.Concurrent.STM        (atomically)
 import           Control.Concurrent.STM.TChan  (newTChanIO, readTChan,
                                                 writeTChan)
-
 import           Data.Text                     (Text)
-
 import           Domain.Entities.Message       (Message (..), Role (..))
 import           Domain.Interfaces.ChatService (ChatService (..))
 import           Flow ((<|))

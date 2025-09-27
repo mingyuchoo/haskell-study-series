@@ -5,15 +5,12 @@ module Infrastructure.OpenAI.OpenAIServiceSpec
     ) where
 
 import qualified Data.ByteString.Char8               as BS8
-
 import           Domain.Entities.Chat                (ChatRequest (..),
                                                       ChatResponse (..),
                                                       Choice (..), Delta (..))
 import           Domain.Entities.Message             (Message (..), Role (..))
 import           Flow ((<|))
-
 import           Infrastructure.OpenAI.OpenAIService
-
 import           Test.Hspec
 
 spec :: Spec

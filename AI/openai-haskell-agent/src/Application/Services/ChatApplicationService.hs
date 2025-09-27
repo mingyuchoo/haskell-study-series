@@ -5,19 +5,14 @@ module Application.Services.ChatApplicationService
 
 import           Application.Interfaces.ChatApplicationService (ChatApplicationService (..))
 import           Application.Services.ChatService              (OpenAIChatService)
-
 import           Control.Monad                                 (when)
-
 import           Data.Text                                     (pack)
 import qualified Data.Text.IO                                  as TIO
 import           Data.UUID.V4                                  (nextRandom)
-
 import           Domain.Entities.Message                       (Message (..),
                                                                 Role (..))
 import           Domain.Interfaces.ChatService                 (ChatService (..))
-
 import           Flow                                          ((<|))
-
 import           System.IO                                     (hFlush, stdout)
 
 -- | OpenAI Chat Application Service implementation

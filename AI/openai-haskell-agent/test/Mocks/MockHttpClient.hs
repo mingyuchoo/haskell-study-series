@@ -7,13 +7,10 @@ module Mocks.MockHttpClient
 
 import           Control.Concurrent.STM       (atomically)
 import           Control.Concurrent.STM.TChan (newTChanIO, writeTChan)
-
 import qualified Data.ByteString.Lazy         as LBS
 import           Data.Text                    (Text)
-
 import           Domain.Interfaces.HttpClient (HttpClient (..))
 import           Flow ((<|))
-
 import           Network.HTTP.Client          (RequestBody (..), method,
                                                parseRequest, requestBody,
                                                requestHeaders)
