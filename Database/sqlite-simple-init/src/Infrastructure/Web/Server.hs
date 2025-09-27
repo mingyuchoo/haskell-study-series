@@ -5,20 +5,13 @@ module Infrastructure.Web.Server
     ) where
 
 import           Application.UserService     (UserService (..))
-
 import           Control.Exception           (SomeException, try)
-
 import           Data.Aeson                  (object, (.=))
-
 import           Database.SQLite.Simple      (Error (..), SQLError (..))
-
 import           Domain.UserModel            (User (..))
-
 import           Flow                        ((<|))
-
 import           Network.HTTP.Types
 import           Network.Wai.Middleware.Cors
-
 import           Web.Scotty
 
 -- Web server implementation

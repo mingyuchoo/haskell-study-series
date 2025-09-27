@@ -6,7 +6,6 @@ module Lib
 -- Domain Layer
 
 import           Domain.UserModel                         (User (..))
-
 import           Infrastructure.Repository.UserRepository (UserRepository (..),
                                                            initDB)
 import           Infrastructure.Web.Server                (startServer)

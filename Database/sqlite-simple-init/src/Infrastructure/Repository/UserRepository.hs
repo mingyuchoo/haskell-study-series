@@ -11,13 +11,9 @@ module Infrastructure.Repository.UserRepository
     ) where
 
 import           Application.UserService (UserService (..))
-
 import           Data.Time               (getCurrentTime)
-
 import           Database.SQLite.Simple
-
 import           Domain.UserModel        (User (..))
-
 import           Flow                    ((<|))
 
 -- SQLite implementation of UserService
