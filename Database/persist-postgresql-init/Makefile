@@ -84,7 +84,7 @@ docker-build: release
 	docker build --build-arg PROJECT_NAME=$(PROJECT_NAME) -t $(PROJECT_NAME):latest -f Dockerfile .
 
 docker-run: docker-build
-	docker run -it --rm -p 80:8080 $(PROJECT_NAME):latest
+	docker run -it --rm -p 8000:8000 $(PROJECT_NAME):latest
 
 install: release
 	mkdir -p $(HOME)/.local/bin
