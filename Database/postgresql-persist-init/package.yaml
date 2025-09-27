@@ -1,6 +1,6 @@
-name:                persist-postgresql-init
+name:                postgresql-persist-init
 version:             0.1.0.0
-github:              "mingyuchoo/persist-postgresql-init"
+github:              "mingyuchoo/postgresql-persist-init"
 license:             BSD-3-Clause
 author:              "Mingyu Choo"
 maintainer:          "mingyuchoo@gmail.com"
@@ -12,7 +12,7 @@ extra-source-files:
 
 synopsis:            Short description of your package
 category:            Web
-description:         Please see the README on GitHub at <https://github.com/mingyuchoo/persist-postgresql-init#readme>
+description:         Please see the README on GitHub at <https://github.com/mingyuchoo/postgresql-persist-init#readme>
 
 dependencies:
 - base
@@ -73,7 +73,7 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N4
     dependencies:
-    - persist-postgresql-init
+    - postgresql-persist-init
   run-server:
     main:                RunServer.hs
     source-dirs:         app
@@ -83,7 +83,7 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N4
     dependencies:
-    - persist-postgresql-init
+    - postgresql-persist-init
   migrate-db-esq:
     main:                MigrateDBEsq.hs
     source-dirs:         app
@@ -93,7 +93,7 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N4
     dependencies:
-    - persist-postgresql-init
+    - postgresql-persist-init
 
 tests:
   api-tests:
@@ -104,7 +104,7 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N4
     dependencies:
-    - persist-postgresql-init
+    - postgresql-persist-init
     - hspec
     - http-client
     - http-client-tls

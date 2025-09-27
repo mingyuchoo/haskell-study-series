@@ -1,4 +1,4 @@
-# Changelog for `persist-postgresql-init`
+# Changelog for `postgresql-persist-init`
 
 All notable changes to this project will be documented in this file.
 

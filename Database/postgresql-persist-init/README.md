@@ -1,4 +1,4 @@
-# persist-postgresql-init
+# postgresql-persist-init
 
 A small Haskell example project demonstrating how to:
 
@@ -51,7 +51,7 @@ Note: `Server.Cache` and `Server.Esq` are referenced by executables and tests an
 
 ## Dependencies
 
-See `package.yaml` and the generated `persist-postgresql-init.cabal`. Key libraries:
+See `package.yaml` and the generated `postgresql-persist-init.cabal`. Key libraries:
 
 - `persistent`, `persistent-postgresql`, `persistent-template`
 - `esqueleto`

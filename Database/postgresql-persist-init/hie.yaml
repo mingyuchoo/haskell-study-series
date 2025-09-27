@@ -1,0 +1,16 @@
+cradle:
+  stack:
+    - path: ./src
+      component: postgresql-persist-init:lib
+
+    - path: ./app/MigrateDBEsq.hs
+      component: postgresql-persist-init:exe:migrate-db-esq
+
+    - path: ./app/MigrateDB.hs
+      component: postgresql-persist-init:exe:migrate-db
+
+    - path: ./app/RunServer.hs
+      component: postgresql-persist-init:exe:run-server
+
+    - path: ./test
+      component: postgresql-persist-init:test:api-tests
