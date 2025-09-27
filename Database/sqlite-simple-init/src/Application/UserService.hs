@@ -4,7 +4,7 @@ module Application.UserService
 
 import           Domain.UserModel (User (..))
 
--- Service interface for user operations
+-- | Service interface for user operations
 class UserService a where
     createUser :: a -> String -> String -> String -> IO User
     getAllUsers :: a -> IO [User]

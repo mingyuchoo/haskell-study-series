@@ -12,9 +12,9 @@ import           Application.UserService                 (UserService (..))
 import           Domain.UserModel                        (User (..))
 import           Infrastructure.Repository.UserRepository (UserRepository (..), initDB)
 
+-- | Clean up the database before running tests
 main :: IO ()
 main = do
-    -- Start from a clean database state for deterministic tests
     cleanupDB
 
     conn <- initDB

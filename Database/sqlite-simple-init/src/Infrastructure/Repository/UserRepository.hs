@@ -16,10 +16,10 @@ import           Database.SQLite.Simple
 import           Domain.UserModel        (User (..))
 import           Flow                    ((<|))
 
--- SQLite implementation of UserService
+-- | SQLite implementation of UserService
 newtype UserRepository = UserRepository Connection
 
--- Initialize database
+-- | Initialize database
 initDB :: IO Connection
 initDB = do
     conn <- open "users.db"
@@ -35,9 +35,9 @@ initDB = do
             \created_at DATETIME NOT NULL,         \
             \updated_at DATETIME NOT NULL)"
 
--- UserService implementation for SQLite
+-- | UserService implementation for SQLite
 instance UserService UserRepository where
-    -- Create a new user
+    -- | Create a new user
     createUser (UserRepository conn) name email password = do
         now <- getCurrentTime
         let user = User Nothing name email password now now
@@ -46,18 +46,18 @@ instance UserService UserRepository where
         rowId <- lastInsertRowId conn
         return <| user { userId = Just (fromIntegral rowId) }
 
-    -- Get all users
+    -- | Get all users
     getAllUsers (UserRepository conn) =
         query_ conn "SELECT id, name, email, password, created_at, updated_at FROM users"
 
-    -- Get user by ID
+    -- | Get user by ID
     getUserById (UserRepository conn) uid = do
         users <- query conn "SELECT id, name, email, password, created_at, updated_at FROM users WHERE id = ?" (Only uid)
         return <| case users of
             [user] -> Just user
             _      -> Nothing
 
-    -- Update user
+    -- | Update user
     updateUser (UserRepository conn) uid name email password = do
         now <- getCurrentTime
         executeNamed conn
@@ -74,7 +74,7 @@ instance UserService UserRepository where
             Just _ -> return True
             Nothing   -> return False
 
-    -- Delete user
+    -- | Delete user
     deleteUser (UserRepository conn) uid = do
         executeNamed conn "DELETE FROM users WHERE id = :uid" [":uid" := uid]
         return True
