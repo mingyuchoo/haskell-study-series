@@ -1,23 +1,26 @@
 module Lib
-    where
+    ( someFunc
+    ) where
 
 import           Database.PostgreSQL.Simple
 import           Database.PostgreSQL.Simple.FromRow
 import           Database.PostgreSQL.Simple.ToRow
 
-
-data TestField = TestField { id   :: Int
-                           , name :: String
+-- | Test data type
+data TestField = TestField { testId   :: Int
+                           , testName :: String
                            }
      deriving (Show)
 
+-- | Test data type instance
 instance FromRow TestField where
     fromRow = TestField <$> field <*> field
 
+-- | Test data type instance
 instance ToRow TestField where
-    toRow (TestField id name) = toRow (id, name)
+    toRow (TestField tid tname) = toRow (tid, tname)
 
-
+-- | ConnectInfo for local PostgreSQL
 localPG :: ConnectInfo
 localPG = defaultConnectInfo { connectHost = "127.0.0.1"
                              , connectDatabase = "postgres"
@@ -25,7 +28,7 @@ localPG = defaultConnectInfo { connectHost = "127.0.0.1"
                              , connectPassword = "postgres"
                              }
 
--- Ensure the required table exists
+-- | Ensure the required table exists
 initDB :: Connection -> IO ()
 initDB conn = do
     let q = "CREATE TABLE IF NOT EXISTS test (id INT PRIMARY KEY, name TEXT NOT NULL)"
@@ -35,34 +38,36 @@ initDB conn = do
 someFunc :: IO ()
 someFunc = do
     conn <- connect localPG
-    -- Initialize schema if missing
     initDB conn
 
     cid <- createTest conn
     putStrLn $ "New Test: " ++ (show cid)
 
-    ret <- updateTest conn
-    putStrLn $ "Ret value: " ++ (show ret)
+    updated <- updateTest conn
+    putStrLn $ "Ret value: " ++ (show updated)
 
     row <- retrieveTest conn
     mapM_ print row
 
-    ret <- deleteTest conn
-    putStrLn $ "Ret value: " ++ (show ret)
+    deleted <- deleteTest conn
+    putStrLn $ "Ret value: " ++ (show deleted)
 
+-- | Create a new test
 createTest :: Connection -> IO [Only Int]
 createTest conn = query conn "INSERT INTO test (id, name) VALUES (?, ?) RETURNING id" $ ((1 :: Int), ("Jacob" :: String))
 
+-- | Update a test
 updateTest :: Connection -> IO Bool
 updateTest conn = do
     n <- execute conn "UPDATE test SET name = ? WHERE id = ?" $ (("Tomas" :: String), (1 :: Int))
     return $ n > 0
 
+-- | Retrieve a test
 retrieveTest :: Connection -> IO  [TestField]
 retrieveTest conn = query conn "SELECT id, name FROM test WHERE id = ?" $ (Only (1 :: Int))
 
+-- | Delete a test
 deleteTest :: Connection -> IO Bool
 deleteTest conn = do
     n <- execute conn "DELETE FROM test WHERE id = ?" $ (Only (1 :: Int))
     return $ n > 0
-

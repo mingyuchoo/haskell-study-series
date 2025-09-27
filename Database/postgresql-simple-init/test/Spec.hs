@@ -1,5 +1,7 @@
 module Main
-    where
+    ( main
+    ) where
 
+-- | Entry point
 main :: IO ()
 main = putStrLn "Test suite not yet implemented"

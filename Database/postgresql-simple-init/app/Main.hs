@@ -1,7 +1,9 @@
 module Main
-    where
+    ( main
+    ) where
 
 import           Lib
 
+-- | Entry point
 main :: IO ()
 main = someFunc
