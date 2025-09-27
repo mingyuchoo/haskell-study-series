@@ -1,0 +1,51 @@
+# Docker build context ignore rules for the haskell-study-series repo
+# This keeps the context small while retaining files the Dockerfile needs
+# (stack.yaml, stack.yaml.lock, package.yaml, *.cabal, Setup.hs, README.md,
+#  CHANGELOG.md, LICENSE, src/, app/, test/, static/)
+
+# VCS
+.git
+.git/**/*
+.svn
+.hg
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor/IDE
+.vscode
+.idea
+*.iml
+*.swp
+*.swo
+*~
+
+# Logs and env
+*.log
+.env
+.env.*
+
+# Node/npm
+node_modules
+npm-debug.log*
+yarn-error.log
+
+# Haskell/Stack/Cabal build outputs
+.stack-work
+.stack-work/**
+dist
+dist-*
+cabal-dev
+.hpc
+
+# Nix/direnv
+result
+result-*
+.direnv
+.cache
+
+# Misc
+Thumbs.db
+**/__pycache__/

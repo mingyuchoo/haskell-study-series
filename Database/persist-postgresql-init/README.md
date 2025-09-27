@@ -1,34 +1,92 @@
 # persist-postgresql-init
 
-## Requirements
+## 요구 사항
 
-### Postgresql
+### PostgreSQL
 
-Building this code requires that you have Postgres installed on your system. If you run `stack build` and see the following error message, this indicates that you do not have Postgres:
+이 코드를 빌드하려면 시스템에 PostgreSQL이 설치되어 있어야 합니다. `stack build` 실행 시 아래와 같은 오류가 보인다면 PostgreSQL이 설치되어 있지 않다는 의미입니다:
 
 ```bash
 >> stack build
 setup: The program 'pg_config' is required but it could not be found
 ```
 
-On Linux, you'll want at least the following packages:
+Linux에서는 적어도 다음 패키지가 필요합니다:
 
 ```bash
 >> sudo apt-get update
 >> sudo apt-get install postgresql-server-dev-all libpq-dev
 ```
 
-On Windows and MacOS, you should be able to use the [downloads here](https://postgresql.org/download).
+Windows 및 macOS에서는 [여기](https://postgresql.org/download)의 다운로드를 사용하면 됩니다.
+
+#### macOS (Homebrew) 설정
+
+macOS, 특히 Apple Silicon(M1/M2/M3)에서는 Homebrew에서 `libpq`가 keg-only입니다. Stack 빌드에서 `pg_config`와 `libpq`를 인식하도록 다음 단계를 따르세요:
+
+1) 필수 패키지 설치
+
+```bash
+brew update
+brew install libpq pkg-config
+# 선택: 로컬 PostgreSQL 서버 설치
+brew install postgresql
+```
+
+2) 셸 환경(zsh) 설정 업데이트
+
+PATH에 `libpq`의 bin을 추가하고 pkg-config 파일을 노출합니다. Apple Silicon의 Homebrew 기본 경로는 보통 `/opt/homebrew`입니다.
+
+```bash
+echo 'export PATH="/opt/homebrew/opt/libpq/bin:$PATH"' >> ~/.zshrc
+echo 'export PKG_CONFIG_PATH="/opt/homebrew/opt/libpq/lib/pkgconfig:$PKG_CONFIG_PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+Intel macOS에서 Homebrew가 `/usr/local`에 설치되어 있다면 경로를 다음과 같이 조정하세요:
+
+```bash
+echo 'export PATH="/usr/local/opt/libpq/bin:$PATH"' >> ~/.zshrc
+echo 'export PKG_CONFIG_PATH="/usr/local/opt/libpq/lib/pkgconfig:$PKG_CONFIG_PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+3) 정상 노출 여부 확인
+
+```bash
+which pg_config
+pg_config --version
+pkg-config --modversion libpq
+```
+
+4) Stack 힌트(감지가 계속 실패하는 경우)
+
+`postgresql-libpq`가 헤더와 라이브러리를 찾을 수 있도록 `stack.yaml`에 include/lib 디렉터리를 지정할 수 있습니다:
+
+```yaml
+# stack.yaml
+extra-include-dirs:
+  - /opt/homebrew/opt/libpq/include   # 또는 /usr/local/opt/libpq/include
+extra-lib-dirs:
+  - /opt/homebrew/opt/libpq/lib       # 또는 /usr/local/opt/libpq/lib
+```
+
+5) GHC 버전을 resolver와 맞추기(GHC 불일치 오류가 보일 경우)
+
+전역 GHC가 resolver의 GHC와 다르다면, 이 프로젝트는 Stack이 컴파일러를 관리하도록 하세요:
+
+```bash
+stack setup
+stack build --no-system-ghc
+```
+
+이렇게 하면 시스템에 설치된 GHC 대신 Stackage resolver의 GHC가 사용됩니다.
 
 ### Redis
 
-Starting with [part 3](https://www.mmhaskell.com/real-world/redis), our server starts incorporating caching using
-[Redis](https://www.redis.io). You'll want to follow the [instructions](https://www.redis.io/topics/quickstart) for installing it based on your operating
-system.
+[파트 3](https://www.mmhaskell.com/real-world/redis)부터 서버에 [Redis](https://www.redis.io)를 이용한 캐싱을 도입합니다. 사용하는 운영체제에 맞춰 [설치 가이드](https://www.redis.io/topics/quickstart)를 따라 설치하세요.
 
-The two main functions you should be concerned with are running the server and the client CLI. With the server, you
-should be able to run the `redis-server` command and leave it running in the background. Then you can bring up the CLI
-with `redis-cli` and run some basic commands:
+중요하게 사용할 것은 서버 데몬과 클라이언트 CLI입니다. 서버는 `redis-server` 명령으로 백그라운드에 실행해두고, CLI는 `redis-cli`로 실행하여 기본 명령을 테스트할 수 있습니다:
 
 ```bash
 >> redis-cli
@@ -40,76 +98,71 @@ with `redis-cli` and run some basic commands:
 
 ### Docker
 
-In [part 4](https://www.mmhaskell.com/real-world/docker) we write some tests, using Docker so that the tests are
-agnostic to the programmer's environment. So head to the [Docker homepage](https://docker.com) and follow the instructions
-to get it working on your system.
+[파트 4](https://www.mmhaskell.com/real-world/docker)에서는 개발자 환경에 영향을 받지 않도록 Docker를 사용하여 테스트를 작성합니다. [Docker 홈페이지](https://docker.com)의 안내를 따라 시스템에 설치하고 실행하세요.
 
-## Running the Code
+## 코드 실행
 
-### Build
+### 빌드
 
-Build the library and executables:
+라이브러리와 실행 파일을 빌드합니다:
 
 ```bash
 stack build
-# or fast build
+# 빠른 빌드 옵션
 stack build --fast -j4 --ghc-options "-j16 +RTS -A256m -RTS"
 ```
 
-### Quick Run (executables)
+### 빠른 실행(실행 파일)
 
-This project provides two executables:
+이 프로젝트는 다음 두 개의 실행 파일을 제공합니다:
 
-- `migrate-db` — runs database migrations
-- `run-server` — runs the web server
+- `migrate-db` — 데이터베이스 마이그레이션 실행
+- `run-server` — 웹 서버 실행
 
-Run migrations:
+마이그레이션 실행:
 
 ```bash
-# Persistent-based migration
+# Persistent 기반 마이그레이션
 stack exec migrate-db
 
-# Esqueleto-based migration
+# Esqueleto 기반 마이그레이션
 stack exec migrate-db -- esq
 ```
 
-Run the server:
+서버 실행:
 
 ```bash
-# Basic server
+# 기본 서버
 stack exec run-server
 
-# Cache server (requires a running redis-server)
+# 캐시 서버(실행 중인 redis-server 필요)
 stack exec run-server -- cache
 
-# Esqueleto server
+# Esqueleto 서버
 stack exec run-server -- esq
 ```
 
-### [Part 1: Persistent](https://www.mmhaskell.com/real-world/databases)
+### [파트 1: Persistent](https://www.mmhaskell.com/real-world/databases)
 
-The code for this part can be run pretty easily through GHCI. The main thing is you need your Postgres server to be up
-and running. You can modify the [`localConnString` variable](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/src/Database.hs#L17) in the code matches up with the settings you used.
-The default we use is that the username, DB name, and password are all "postgres":
+이 파트의 코드는 GHCI에서 손쉽게 실행할 수 있습니다. 핵심은 Postgres 서버가 실행 중이어야 한다는 점입니다. 사용 환경에 맞도록 코드 내 [`localConnString` 변수](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/src/Database.hs#L17)를 수정하세요. 기본값은 사용자명, DB 이름, 비밀번호가 모두 "postgres"입니다:
 
 ```haskell
 localConnString :: PGInfo
 localConnString = "host=127.0.0.1 port=5432 user=postgres dbname=postgres password=postgres"
 ```
 
-Then once you load the code in GHCI, you should use the `migrateDB` expression. This will migrate your Postgres database
-so that it contains the `users` table specified in our schema! Note how you can also set your connection string here as well if it's different from our built-in.
+GHCI에서 코드를 로드한 후 `migrateDB` 식을 실행합니다. 그러면 스키마에 정의된 `users` 테이블로 Postgres 데이터베이스가 마이그레이션됩니다. 필요하다면 이곳에서도 연결 문자열을 바꿔서 사용할 수 있습니다.
 
 ```bash
 >> stack ghci
 >> :l
--- (Removes all modules so there are no name conflicts)
+-- (모든 모듈을 제거하여 이름 충돌 방지)
 >> import Database
 >> let localConnString' = "host=127.0.0.1 port=5432 user=postgres dbname=postgres password=postgres" :: PGInfo
 >> migrateDB localConnString'
 ```
 
-Then you'll be able to start running queries using the other functions in the `Database` module
+그다음 `Database` 모듈의 다른 함수들을 사용하여 쿼리를 실행해볼 수 있습니다:
 
 ```bash
 >> let u = User "Kristina" "kristina@gmail.com" 45 "Software Engineer"
@@ -120,37 +173,33 @@ Just (User {userName = "Kristina", userEmail = "kristina@gmail.com", userAge = 4
 >> deleteUserPG localConnString 1
 ```
 
-After each step, you can also check your Postgres database to verify that the queries went through! You can bring up
-a Postgres query terminal with the `psql` command. You can use the `-U` argument to pass your username. Then enter
-your password. And finally, you can connect to a different database with `\c`.
+각 단계 이후에는 Postgres 데이터베이스에서도 쿼리가 성공했는지 확인할 수 있습니다. `psql` 명령으로 Postgres 터미널을 띄우고, `-U` 인자로 사용자명을 넘긴 뒤 비밀번호를 입력하세요. `\c`로 다른 데이터베이스에 접속할 수도 있습니다.
 
 ```
 >> psql -U postgres
-(enter password)
+(비밀번호 입력)
 >> \c postgres
 >> select * from users;
-(See the users you've created!)
+(방금 생성한 사용자들을 확인!)
 ```
 
-### [Part 2: Servant](https://www.mmhaskell.com/real-world/servant)
+### [파트 2: Servant](https://www.mmhaskell.com/real-world/servant)
 
-In this second part, we make a very basic server to expose the information in our database. Take a look at the source
-[in this module](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/src/BasicServer.hs).
+두 번째 파트에서는 데이터베이스의 정보를 노출하는 아주 기초적인 서버를 만듭니다. 소스는 [이 모듈](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/src/BasicServer.hs)을 참고하세요.
 
-To run this server, first make your database is migrated, if you didn't do that in part 1:
+이 서버를 실행하기 전에, 1부에서 마이그레이션을 하지 않았다면 먼저 마이그레이션을 수행하세요:
 
 ```bash
 >> stack exec migrate-db
 ```
 
-Then you can run the server with this executable:
+그다음 아래 실행 파일로 서버를 띄웁니다:
 
 ```bash
 >> stack exec run-server
 ```
 
-Now you can make HTTP requests to your server from any client program. My favorite is [Postman](https://postman.com).
-Then you can follow the same pattern you did in the first part. Try creating a user:
+이제 어떤 클라이언트 프로그램으로든 서버에 HTTP 요청을 보낼 수 있습니다. 필자는 [Postman](https://postman.com)을 선호합니다. 1부에서 했던 것과 같은 패턴으로 진행해보세요. 예를 들어 사용자 생성:
 
 ```bash
 POST /users
@@ -166,7 +215,7 @@ POST /users
 2
 ```
 
-Then try fetching it:
+이후 조회:
 
 ```bash
 GET /users/2
@@ -181,7 +230,7 @@ GET /users/2
 }
 ```
 
-You can also try fetching invalid users!
+존재하지 않는 사용자를 조회해보는 것도 가능합니다:
 
 ```bash
 GET /users/45
@@ -191,24 +240,19 @@ GET /users/45
 Could not find user with that ID
 ```
 
-### [Part 3: Redis](https://www.mmhaskell.com/real-world/redis)
+### [파트 3: Redis](https://www.mmhaskell.com/real-world/redis)
 
-The third part of the series discusses a library for using [Redis in Haskell](https://hackage.haskell.org/package/hedis).
-The code examples in the article can be seen in the [Cache Module](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/src/Cache.hs)
-and the [CacheServer module](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/src/CacheServer.hs),
-which has updates to the original server from part 2 with our caching functionality.
+시리즈의 세 번째 파트에서는 [Haskell에서 Redis 사용](https://hackage.haskell.org/package/hedis)을 다룹니다. 글의 코드 예시는 [Cache 모듈](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/src/Cache.hs)과
+[CacheServer 모듈](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/src/CacheServer.hs)에서 확인할 수 있으며, 파트 2의 서버에 캐싱 기능을 추가한 버전입니다.
 
-You can run the updated server with the `run-server` executable and the `cache` argument, though you should have the Redis server running
-in the background first:
+업데이트된 서버는 `run-server` 실행 파일에 `cache` 인자를 주어 실행합니다. 먼저 Redis 서버가 백그라운드에서 실행 중이어야 합니다:
 
 ```bash
 >> redis-server &
 >> stack exec run-server -- cache
 ```
 
-The external API is the same, so you can make the same kinds of HTTP requests. For example, following the example above
-in the Part 2 section, we might do `GET /users/2`. Then you should be able to bring up the `redis-cli` and find that
-the user is stored in our cache:
+외부 API는 동일하므로, 파트 2의 예시처럼 `GET /users/2`를 호출한 뒤 `redis-cli`에서 캐시에 저장된 결과를 확인할 수 있습니다:
 
 ```bash
 >> redis-cli
@@ -218,64 +262,53 @@ the user is stored in our cache:
 (nil)
 ```
 
-### [Part 4: Docker Tests](https://www.mmhaskell.com/real-world/docker)
+### [파트 4: Docker 테스트](https://www.mmhaskell.com/real-world/docker)
 
-In this part, we write some tests for our Server. You can see some setup code in [this module](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/test/TestUtils.hs),
-but the main assertions are written in Hspec in [this file](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/test/APITests.hs).
-You can run the tests by running:
+이 파트에서는 서버에 대한 테스트를 작성합니다. 일부 설정 코드는 [이 모듈](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/test/TestUtils.hs)에서 볼 수 있고, 핵심 검증은 Hspec으로 작성된 [이 파일](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/test/APITests.hs)에서 확인할 수 있습니다.
+
+테스트 실행은 다음과 같습니다:
 
 ```bash
 stack test
 ```
 
-These tests depend on having a postgres database and a Redis cache running on your machine. There are two options for them.
-First, you can rely on your local system, and run these services as you have been so far. Be aware that the tests have
-"side effects" this way. If they run to completion, there shouldn't be any extra rows in the table. However, because
-the tests insert and then delete a user, the primary key index will increment.
+이 테스트는 로컬에서 Postgres 데이터베이스와 Redis 캐시가 실행 중이어야 합니다. 두 가지 방법이 있습니다. 첫째, 지금까지와 같이 로컬 시스템의 서비스를 사용합니다. 이 경우 테스트는 "부작용"이 있을 수 있습니다. 테스트가 정상 종료되면 테이블에 추가 행이 남지는 않지만, 사용자 삽입 후 삭제 과정 때문에 프라이머리 키 인덱스는 증가합니다.
 
-The second option is to use Docker. To do this, you can start the Docker container specified in the repository by going
-to the root project directory and running the following command:
+둘째, Docker를 사용하는 방법입니다. 저장소의 루트 디렉터리에서 다음 명령으로 제공된 Docker 컨테이너를 실행합니다:
 
 ```bash
 >> docker-compose up
 ```
 
-You can observe the configurations in the [Docker Compose file](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/docker-compose.yml).
+자세한 구성은 [Docker Compose 파일](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/docker-compose.yml)에서 확인할 수 있습니다.
 
-Then, you need to go to the [stack.yaml](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/stack.yaml)
-file and change the project settings to use Docker. You'll change the `docker.enable` flag to `true`:
+그다음 [stack.yaml](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/stack.yaml)에서 프로젝트 설정을 Docker 사용으로 변경합니다. `docker.enable` 플래그를 `true`로 바꾸세요:
 
 ```yaml
 docker:
   enabled: true
 ```
 
-Then you can run `stack test` again. The first time you do this, the Docker container will need extra time to setup,
-downloading Stack, GHC, and all the utilities it needs. But subsequent runs will be faster.
+이후 다시 `stack test`를 실행합니다. 최초 실행 시에는 컨테이너가 Stack, GHC 및 필요한 유틸리티를 다운로드하느라 시간이 더 걸리지만, 다음부터는 더 빨라집니다.
 
-### [Part 5: Esqueleto](https://www.mmhaskell.com/real-world/esqueleto)
+### [파트 5: Esqueleto](https://www.mmhaskell.com/real-world/esqueleto)
 
-In part 5, we add a new type to our schema, this time incorporating a foreign key relation. This part has its own
-distinct set of modules to avoid conflicts with the code from the first 4 parts:
+파트 5에서는 외래 키 관계를 포함하는 새 타입을 스키마에 추가합니다. 앞선 4개 파트의 코드와 충돌을 피하기 위해 별도의 모듈 집합을 사용합니다:
 
-1. [New Schema Module](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/src/SchemaEsq.hs)
-2. [New Database Library](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/src/DatabaseEsq.hs)
-3. [Updated Server](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/src/ServerEsq.hs) (this server does not have any Redis caching)
-4. [Sample Objects](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/src/SampleObjects.hs) (for database insertion)
+1. [새 스키마 모듈](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/src/SchemaEsq.hs)
+2. [새 데이터베이스 라이브러리](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/src/DatabaseEsq.hs)
+3. [업데이트된 서버](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/src/ServerEsq.hs) (이 서버에는 Redis 캐싱이 없습니다)
+4. [샘플 객체](https://github.com/MondayMorningHaskell/RealWorldHaskell/blob/master/src/SampleObjects.hs) (데이터베이스 삽입용)
 
-To try out this code, you should start by running a new migration on your database:
+이 코드를 시험하려면 데이터베이스에 새 마이그레이션을 먼저 실행하세요:
 
 ```bash
 >> stack exec migrate-db -- esq
 ```
 
-This will add the `articles` table, but it should leave the `users` table unaffected, so it shouldn't cause any
-problems with your original code.
+이 작업은 `articles` 테이블을 추가하지만, `users` 테이블에는 영향을 주지 않으므로 기존 코드에는 문제가 없습니다.
 
-Next you can update the database in a couple different ways. First, as with the first part, you can open up GHCI and
-try running the insertions for yourself. In the `SampleObjects` module, we've provided a set of objects you can use
-as sample database items. The `User` objects are fine on their own, but the `Article` objects require you to pass in
-the integer ID of the User after they've been created. For example:
+그다음 두 가지 방법으로 데이터베이스를 갱신할 수 있습니다. 첫째, 1부와 마찬가지로 GHCI를 열어 직접 삽입을 실행합니다. `SampleObjects` 모듈에는 샘플로 사용할 객체들이 준비되어 있습니다. `User` 객체는 그대로 사용하면 되지만, `Article` 객체는 사용자 생성 후 그 사용자의 정수형 ID를 인자로 넘겨야 합니다. 예를 들어:
 
 ```bash
 >> stack ghci
@@ -290,13 +323,13 @@ the integer ID of the User after they've been created. For example:
 [(Entity {entityKey = SqlBackendKey 5, entityVal = User {...}}, Entity {entityKey = SqlBackendKey 1, entityVal = Article {...}})]
 ```
 
-The other way to do this is to use the API via the server. Start by running the updated server:
+둘째, 서버를 통해 API를 사용하는 방법입니다. 먼저 업데이트된 서버를 실행합니다:
 
 ```bash
 >> stack exec run-server -- esq
 ```
 
-And then you can make your requests, via Postman or whatever service you use:
+이후 Postman 등 선호하는 도구로 요청을 보냅니다:
 
 ```bash
 POST /users

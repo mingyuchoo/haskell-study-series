@@ -22,7 +22,28 @@ format: setup
 build: setup
 	stack build --fast -j4 --ghc-options "-j16 +RTS -A256m -RTS"
 
-test: setup
+## Ensure local services are running for tests
+.PHONY: docker-up docker-down wait-for
+
+docker-up:
+	# Start Postgres and Redis in the background if not already running
+	docker compose up -d postgres redis
+
+docker-down:
+	# Stop services
+	docker compose down
+
+wait-for:
+	@echo "Waiting for Postgres (5432) and Redis (6379) to be ready..."
+	@i=0; \
+	until nc -z 127.0.0.1 5432 && nc -z 127.0.0.1 6379; do \
+	  i=$$((i+1)); \
+	  if [ $$i -ge 60 ]; then echo "Timeout waiting for services"; exit 1; fi; \
+	  sleep 1; \
+	done; \
+	echo "Services are ready."
+
+test: setup docker-up wait-for
 	stack test --fast
 
 coverage: setup
