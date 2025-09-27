@@ -9,33 +9,33 @@ clean:
 	stack clean
 
 update-stack-yaml:
-	sed -i 's/container-name: ".*"/container-name: "$(PROJECT_NAME)"/g' stack.yaml
-	sed -i 's/ARG PROJECT_NAME=.*/ARG PROJECT_NAME=$(PROJECT_NAME)/g' Dockerfile
+	sed -i '' 's/container-name: ".*"/container-name: "$(PROJECT_NAME)"/g' stack.yaml
+	sed -i '' 's/ARG PROJECT_NAME=.*/ARG PROJECT_NAME=$(PROJECT_NAME)/g' Dockerfile
 
 setup: update-stack-yaml
-	stack setup
-	stack test --only-dependencies
+	stack --no-docker setup
+	stack --no-docker test --only-dependencies
 
 build: setup
-	stack build --fast -j4 --ghc-options "-j16 +RTS -A256m -RTS"
+	stack --no-docker build --fast -j4 --ghc-options "-j16 +RTS -A256m -RTS"
 
 test: setup
-	stack test --fast
+	stack --no-docker test --fast
 
 coverage: setup
-	stack test --coverage --fast --haddock
+	stack --no-docker test --coverage --fast --haddock
 
 watch-test: setup
-	stack test --fast --file-watch --watch-all
+	stack --no-docker test --fast --file-watch --watch-all
 
 watch-coverage: setup
-	stack test --coverage --fast --file-watch --watch-all --haddock
+	stack --no-docker test --coverage --fast --file-watch --watch-all --haddock
 
 ghcid: setup
-	ghcid --command "stack ghci test/Spec.hs"
+	ghcid --command "stack --no-docker ghci test/Spec.hs"
 
 run: setup
-	time stack exec $(PROJECT_NAME)-exe
+	time stack --no-docker exec $(PROJECT_NAME)-exe
 
 release: setup
 	stack build --docker
@@ -48,4 +48,4 @@ docker-run: docker-build
 
 install: release
 	mkdir -p $(HOME)/.local/bin
-	cp $(shell stack path --local-install-root)/bin/$(PROJECT_NAME)-exe $(HOME)/.local/bin/
+	cp $(shell stack --no-docker path --local-install-root)/bin/$(PROJECT_NAME)-exe $(HOME)/.local/bin/
