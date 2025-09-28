@@ -1,6 +1,6 @@
-name:                openai-haskell-agent
+name:                backend
 version:             0.1.0.0
-github:              "mingyuchoo/openai-haskell-agent"
+github:              "mingyuchoo/backend"
 license:             BSD-3-Clause
 author:              "Mingyu Choo"
 maintainer:          "mingyuchoo@gmail.com"
@@ -12,7 +12,7 @@ extra-source-files:
 
 synopsis:            Short description of your package
 category:            A
-description:         Please see the README on GitHub at <https://github.com/mingyuchoo/openai-haskell-agent#readme>
+description:         Please see the README on GitHub at <https://github.com/mingyuchoo/backend#readme>
 
 dependencies:
 - base
@@ -73,7 +73,7 @@ library:
     - Presentation.Server.Server
 
 executables:
-  openai-haskell-agent-exe:
+  backend-exe:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
@@ -81,10 +81,10 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - openai-haskell-agent
+    - backend
 
 tests:
-  openai-haskell-agent-test:
+  backend-test:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
@@ -92,7 +92,7 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - openai-haskell-agent
+    - backend
     - hspec
     - doctest
     - doctest-discover

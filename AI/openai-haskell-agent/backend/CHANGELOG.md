@@ -1,4 +1,4 @@
-# Changelog for `openai-haskell-agent`
+# Changelog for `backend`
 
 All notable changes to this project will be documented in this file.
 

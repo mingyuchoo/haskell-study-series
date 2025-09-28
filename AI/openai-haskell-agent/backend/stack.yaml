@@ -14,7 +14,7 @@ flags: {}
 docker:
   enable: true
   stack-exe: host
-  container-name: "openai-haskell-agent"
+  container-name: "backend"
   repo: fpco/stack-build:lts-24.4
   set-user: true
   auto-pull: true
