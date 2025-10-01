@@ -19,7 +19,7 @@ import Web.Scotty
 -- | Web server implementation
 startServer :: (UserService a) => a -> IO ()
 startServer userService =
-  scotty 3000 <| do
+  scotty 8000 <| do
     -- \| Enable CORS
     middleware simpleCors
 

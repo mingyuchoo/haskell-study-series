@@ -50,6 +50,11 @@ library:
   - Lib
   - Domain.UserModel
   - Application.UserService
+  - Adapters.Repository.UserRepositoryAdapter
+  - Adapters.Web.UserWebAdapter
+  - Infrastructure.Database.Connection
+  - Infrastructure.Database.SampleData
+  - Infrastructure.Config.AppConfig
   - Infrastructure.Repository.UserRepository
   - Infrastructure.Web.Server
 

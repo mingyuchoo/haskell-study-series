@@ -1,6 +1,6 @@
 cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.38.1.
+-- This file has been generated from package.yaml by hpack version 0.37.0.
 --
 -- see: https://github.com/sol/hpack
 
@@ -30,6 +30,11 @@ library
       Lib
       Domain.UserModel
       Application.UserService
+      Adapters.Repository.UserRepositoryAdapter
+      Adapters.Web.UserWebAdapter
+      Infrastructure.Database.Connection
+      Infrastructure.Database.SampleData
+      Infrastructure.Config.AppConfig
       Infrastructure.Repository.UserRepository
       Infrastructure.Web.Server
   other-modules:
