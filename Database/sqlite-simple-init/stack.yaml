@@ -8,6 +8,10 @@ extra-package-dbs: []
 extra-deps: []
 flags: {}
 
+docker:
+  enable: true
+  image: "fpco/stack-build:lts-24.4"
+
 #nix:
 #  enable: true
 #  pure: true

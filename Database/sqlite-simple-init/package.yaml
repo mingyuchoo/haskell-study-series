@@ -67,7 +67,6 @@ executables:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N4
-    - -optl-Wl,-w
     dependencies:
     - sqlite-simple-init
 
@@ -80,6 +79,5 @@ tests:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N4
-    - -optl-Wl,-w
     dependencies:
     - sqlite-simple-init
