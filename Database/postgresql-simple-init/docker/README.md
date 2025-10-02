@@ -43,22 +43,16 @@ docker build \
 
 ## 실행 방법
 
-### 기본 실행
+### Docker Compose로 실행 (PostgreSQL 포함)
 
 ```bash
-docker run -p 8000:8000 postgresql-simple-init:latest
+docker compose -f docker/docker-compose.yaml up --build
 ```
 
-### 백그라운드 실행
+PowerShell:
 
-```bash
-docker run -d -p 8000:8000 --name sqlite-app postgresql-simple-init:latest
-```
-
-### 볼륨 마운트 (데이터 영속성)
-
-```bash
-docker run -p 8000:8000 -v $(pwd)/data:/app/data postgresql-simple-init:latest
+```powershell
+docker compose -f docker/docker-compose.yaml up --build
 ```
 
 ## 최적화 팁
@@ -72,12 +66,17 @@ docker run -p 8000:8000 -v $(pwd)/data:/app/data postgresql-simple-init:latest
 
 3. **이미지 크기**: 최종 런타임 이미지는 빌드 도구 없이 필요한 런타임만 포함합니다.
 
-## 테스트
+## 테스트 (엔드포인트)
 
 ```bash
 # 컨테이너 실행 후
-curl http://localhost:8000/users
+curl http://localhost:8000/health
+curl http://localhost:8000/tests
+```
 
-# 샘플 데이터 확인
-curl http://localhost:8000/users | jq
+PowerShell:
+
+```powershell
+irm http://localhost:8000/health
+irm http://localhost:8000/tests
 ```

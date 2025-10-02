@@ -1,150 +1,307 @@
 # postgresql-simple-init
 
-## Prerequisite
+PostgreSQL과 Haskell을 사용한 헥사고날 아키텍처(Hexagonal Architecture) 기반 웹 애플리케이션 예제입니다.
 
-### In PostgreSQL
+## 📋 개요
 
-```sql
-CREATE TABLE test (
-       id int
-       , name varchar
-);
+이 프로젝트는 다음을 보여줍니다:
 
-DROP TABLE test;
+- **헥사고날 아키텍처(포트 & 어댑터)** 패턴 구현
+- **postgresql-simple**을 사용한 PostgreSQL 데이터베이스 연동
+- **WAI/Warp**를 사용한 경량 HTTP 서버
+- **Docker 멀티스테이지 빌드**를 통한 최적화된 컨테이너 이미지
+- **Stack** 빌드 도구를 사용한 Haskell 프로젝트 관리
+
+## 🏗️ 아키텍처
+
+프로젝트는 헥사고날 아키텍처를 따르며 다음과 같은 계층으로 구성됩니다:
+
+```
+┌─────────────────────────────────────────┐
+│         Infrastructure Layer            │
+│  (Postgres.hs - 환경변수, 연결 관리)     │
+└─────────────────┬───────────────────────┘
+                  │
+┌─────────────────▼───────────────────────┐
+│          Adapters Layer                 │
+│  (PostgresRepository.hs - 구체 구현)    │
+└─────────────────┬───────────────────────┘
+                  │
+┌─────────────────▼───────────────────────┐
+│        Application Layer                │
+│  (UseCases.hs - 비즈니스 로직)          │
+└─────────────────┬───────────────────────┘
+                  │
+┌─────────────────▼───────────────────────┐
+│          Domain Layer                   │
+│  (Model.hs, Repository.hs - 인터페이스) │
+└─────────────────────────────────────────┘
 ```
 
-### In Ubuntu
+### 디렉터리 구조
 
-```bash
-sudo apt install -y libpq-dev
 ```
-
-### In Manjaro
-
-```bash
-sudo pacman -S postgresql-libs
-```
-
-### Add a package dependency
-
-```yaml
-dependencies:
-- postgresql-simple
-```
-
-## Project structure
-
-```text
 .
-├── CHANGELOG.md
-├── Dockerfile
-├── LICENSE
-├── Makefile
-├── README.md
-├── Setup.hs
-├── app/
+├── app/                    # 애플리케이션 진입점
 │   └── Main.hs
-├── docker-compose.yaml
-├── format.sh
-├── package.yaml
-├── postgresql-simple-init.cabal
-├── src/
-│   └── Lib.hs
-├── stack.yaml
-├── stack.yaml.lock
-└── test/
-    └── Spec.hs
+├── src/                    # 소스 코드
+│   ├── Domain/             # 도메인 계층 (순수 비즈니스 로직)
+│   │   ├── Model.hs        # 엔터티 정의
+│   │   └── Repository.hs   # 레포지토리 인터페이스 (포트)
+│   ├── Application/        # 애플리케이션 계층
+│   │   └── UseCases.hs     # 유스케이스 구현
+│   ├── Adapters/           # 어댑터 계층
+│   │   └── PostgresRepository.hs  # PostgreSQL 구현체
+│   ├── Infrastructure/     # 인프라 계층
+│   │   └── Postgres.hs     # DB 연결 관리
+│   └── Lib.hs              # 애플리케이션 조립 및 HTTP 서버
+├── docker/                 # Docker 관련 파일
+│   ├── Dockerfile          # 멀티스테이지 빌드
+│   └── docker-compose.yaml # 서비스 오케스트레이션
+├── test/                   # 테스트 코드
+├── static/                 # 정적 파일
+├── package.yaml            # 프로젝트 메타데이터
+├── stack.yaml              # Stack 설정
+└── Makefile                # 빌드 자동화
 ```
 
-- `app/Main.hs`: 엔트리 포인트. `Lib.someFunc`를 호출합니다.
-- `src/Lib.hs`: PostgreSQL 접속/CRUD 로직과 초기 테이블 생성(`initDB`).
-- `docker-compose.yaml`: 로컬 PostgreSQL 17.6 컨테이너 실행 설정.
-- `Dockerfile`: Stack 기반 컨테이너 빌드 및 실행.
-- `Makefile`: 자주 쓰는 작업을 단축 명령으로 제공.
+## 🚀 시작하기
 
-## How to run
+### 사전 요구사항
 
-1. PostgreSQL 실행
+- **Haskell Stack** (>= 2.0)
+- **Docker & Docker Compose** (선택사항, 컨테이너 실행 시)
+- **PostgreSQL** (>= 12, 로컬 실행 시)
 
-```bash
-docker compose up -d
-# 포트: 5432, 사용자/비밀번호/DB: postgres/postgres/postgres
-```
+### 로컬 개발 환경 설정
 
-1. 의존성 설치
-
-- Install sd (macOS: Homebrew)
+#### 1. 의존성 설치 및 빌드
 
 ```bash
-brew install sd
-```
-
-- Install stylish-haskell (macOS: Homebrew)
-
-```bash
-brew install stylish-haskell
-```
-
-1. 빌드
-
-```bash
-# Makefile 사용
+# 의존성 설치 및 프로젝트 빌드
 make setup
 make build
-```
 
-또는 직접 stack 사용:
-
-```bash
+# 또는 직접 Stack 명령어 사용
 stack setup
 stack build
 ```
 
-1. 실행
+#### 2. PostgreSQL 데이터베이스 준비
+
+로컬에서 PostgreSQL을 실행하거나 Docker로 실행:
+
+```bash
+# Docker로 PostgreSQL만 실행
+docker run -d \
+  --name postgres-dev \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=postgres \
+  -p 5432:5432 \
+  postgres:16-alpine
+```
+
+#### 3. 환경변수 설정
+
+```bash
+export DB_HOST=127.0.0.1
+export DB_PORT=5432
+export DB_NAME=postgres
+export DB_USER=postgres
+export DB_PASSWORD=postgres
+```
+
+#### 4. 애플리케이션 실행
 
 ```bash
 # Makefile 사용
 make run
-```
 
-또는 직접 stack 사용:
-
-```bash
+# 또는 Stack 직접 사용
 stack exec postgresql-simple-init-exe
 ```
 
-실행 시 `src/Lib.hs`의 `someFunc`가 다음을 수행합니다.
+서버가 `http://0.0.0.0:8000`에서 시작됩니다.
 
-- `initDB`: `test` 테이블이 없으면 생성
-- INSERT → UPDATE → SELECT → DELETE 순으로 동작 예시 실행 및 결과 출력
+### Docker Compose로 실행
 
-## Configuration
+전체 스택(PostgreSQL + 애플리케이션)을 Docker Compose로 실행:
 
-- 기본 접속 정보(`src/Lib.hs`):
+```bash
+# 서비스 시작
+make docker-compose-up
 
-```haskell
-localPG = defaultConnectInfo
-  { connectHost = "127.0.0.1"
-  , connectDatabase = "postgres"
-  , connectUser = "postgres"
-  , connectPassword = "postgres"
-  }
+# 로그 확인
+make docker-compose-logs
+
+# 서비스 중지 및 볼륨 삭제
+make docker-compose-down
 ```
 
-- 로컬에서 `docker-compose.yaml`로 띄운 컨테이너 설정과 일치합니다.
+## 📡 API 엔드포인트
 
-## Make targets
+애플리케이션은 다음 HTTP 엔드포인트를 제공합니다:
 
-- `update-stack-yaml`: `stack.yaml`과 `Dockerfile`의 프로젝트명 관련 값을 최신 디렉터리명으로 치환(sd 사용)
-- `setup`: `stack setup`과 테스트 의존성 설치
-- `build`: 빠른 빌드 옵션으로 빌드
-- `test`: 테스트 실행
-- `run`: 실행 파일 실행
-- `docker-build`: 도커 이미지를 빌드합니다.
-- `docker-run`: 이미지를 실행합니다.
+### `GET /`
 
-참고: `update-stack-yaml`는 Rust 기반 치환 도구인 `sd`를 사용합니다. macOS(Homebrew): `brew install sd`
+- **설명**: 루트 엔드포인트
+- **응답**: `OK`
 
-## References
+### `GET /health`
 
-- <https://tuttlem.github.io/2020/10/30/postgresql-data-access-with-haskell.html>
+- **설명**: 헬스체크 엔드포인트
+- **응답**: `healthy`
+
+### `GET /tests`
+
+- **설명**: 모든 테스트 데이터 조회
+- **응답 예시**:
+
+  ```
+  1: Tomas
+  ```
+
+## 🧪 테스트
+
+```bash
+# 테스트 실행
+make test
+
+# 커버리지 포함 테스트
+make coverage
+
+# 파일 변경 감지 자동 테스트
+make watch-test
+```
+
+## 🐳 Docker
+
+### Docker 이미지 빌드
+
+```bash
+# 멀티스테이지 빌드로 이미지 생성
+make docker-build
+
+# 또는 직접 빌드
+docker build --build-arg PROJECT_NAME=postgresql-simple-init \
+  -t postgresql-simple-init:latest \
+  -f docker/Dockerfile .
+```
+
+### Docker 컨테이너 실행
+
+```bash
+# 단독 실행 (PostgreSQL 별도 필요)
+make docker-run
+
+# 또는 직접 실행
+docker run -it --rm \
+  --name postgresql-simple-init-app \
+  -p 8000:8000 \
+  -e DB_HOST=host.docker.internal \
+  -e DB_PORT=5432 \
+  -e DB_NAME=postgres \
+  -e DB_USER=postgres \
+  -e DB_PASSWORD=postgres \
+  postgresql-simple-init:latest
+```
+
+## 🔧 개발 도구
+
+### 코드 포맷팅
+
+```bash
+# stylish-haskell로 코드 포맷팅
+make format
+
+# 또는 직접 실행
+./format.sh
+```
+
+### GHCID (빠른 피드백)
+
+```bash
+# 파일 변경 시 자동 재컴파일
+make ghcid
+```
+
+## 📦 빌드 산출물
+
+### 로컬 설치
+
+```bash
+# 실행 파일을 ~/.local/bin에 설치
+make install
+```
+
+### 릴리즈 빌드
+
+```bash
+# 최적화된 릴리즈 빌드
+make release
+```
+
+## 🛠️ Makefile 주요 타겟
+
+| 타겟 | 설명 |
+|------|------|
+| `make all` | 전체 빌드 파이프라인 실행 (clean → setup → build → test → run) |
+| `make clean` | 빌드 아티팩트 정리 |
+| `make setup` | 의존성 설치 |
+| `make build` | 프로젝트 빌드 |
+| `make test` | 테스트 실행 |
+| `make run` | 애플리케이션 실행 |
+| `make format` | 코드 포맷팅 |
+| `make docker-build` | Docker 이미지 빌드 |
+| `make docker-compose-up` | Docker Compose로 전체 스택 시작 |
+| `make docker-compose-down` | Docker Compose 스택 중지 |
+
+## 🔑 환경변수
+
+| 변수 | 기본값 | 설명 |
+|------|--------|------|
+| `DB_HOST` | `127.0.0.1` | PostgreSQL 호스트 |
+| `DB_PORT` | `5432` | PostgreSQL 포트 |
+| `DB_NAME` | `postgres` | 데이터베이스 이름 |
+| `DB_USER` | `postgres` | 데이터베이스 사용자 |
+| `DB_PASSWORD` | `postgres` | 데이터베이스 비밀번호 |
+
+## 📚 주요 의존성
+
+- **base**: Haskell 기본 라이브러리
+- **postgresql-simple**: PostgreSQL 클라이언트 라이브러리
+- **wai**: Web Application Interface
+- **warp**: 고성능 HTTP 서버
+- **flow**: 함수 합성 유틸리티
+- **bytestring**: 효율적인 바이트 문자열 처리
+- **http-types**: HTTP 타입 정의
+
+## 📖 학습 포인트
+
+이 프로젝트를 통해 다음을 학습할 수 있습니다:
+
+1. **헥사고날 아키텍처**: 도메인 로직과 인프라를 분리하는 방법
+2. **타입클래스 기반 추상화**: `TestRepository` 인터페이스를 통한 의존성 역전
+3. **모나딕 패턴**: `PostgresRepo` 모나드를 통한 데이터베이스 연산 추상화
+4. **Docker 멀티스테이지 빌드**: 경량화된 프로덕션 이미지 생성
+5. **환경 기반 설정**: 12-Factor App 원칙 적용
+
+## 📝 라이선스
+
+BSD-3-Clause
+
+## 👤 작성자
+
+**Mingyu Choo**
+
+- Email: <mingyuchoo@gmail.com>
+- GitHub: [@mingyuchoo](https://github.com/mingyuchoo)
+
+## 🤝 기여
+
+이슈 제보와 풀 리퀘스트를 환영합니다!
+
+---
+
+**참고**: 이 프로젝트는 학습 목적으로 작성되었습니다.

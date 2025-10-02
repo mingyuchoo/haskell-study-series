@@ -2,8 +2,8 @@ module Main
     ( main
     ) where
 
-import           Lib
+import           Lib (runApp)
 
--- | Entry point
+-- | 애플리케이션 진입점
 main :: IO ()
-main = someFunc
+main = runApp

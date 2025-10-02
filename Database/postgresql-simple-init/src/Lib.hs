@@ -1,73 +1,51 @@
 module Lib
-    ( someFunc
-    ) where
+  ( runApp
+  ) where
 
-import           Database.PostgreSQL.Simple
-import           Database.PostgreSQL.Simple.FromRow
-import           Database.PostgreSQL.Simple.ToRow
-import           Flow ((<|))
--- | Test data type
-data TestField = TestField { testId   :: Int
-                           , testName :: String
-                           }
-     deriving (Show)
+-- | 애플리케이션 조립/부트스트랩 모듈
+-- 도메인/애플리케이션/어댑터/인프라 계층을 연결하고, 서버를 기동한다.
 
--- | Test data type instance
-instance FromRow TestField where
-    fromRow = TestField <$> field <*> field
+import           Control.Monad                  (void)
+import           Network.Wai                    (Application, responseLBS)
+import qualified Network.Wai                    as Wai
+import           Network.HTTP.Types             (status200, status404)
+import           Network.Wai.Handler.Warp       (run)
+import qualified Data.ByteString.Lazy.Char8     as LBS
 
--- | Test data type instance
-instance ToRow TestField where
-    toRow (TestField tid tname) = toRow (tid, tname)
+import           Application.UseCases           (seedSampleData, listAllTests)
+import           Adapters.PostgresRepository    (PostgresRepo, initSchema, runWith)
+import           Infrastructure.Postgres                 (loadConnectInfoFromEnv, withConnection)
+import           Domain.Model                   (TestField(..))
 
--- | ConnectInfo for local PostgreSQL
-localPG :: ConnectInfo
-localPG = defaultConnectInfo { connectHost = "127.0.0.1"
-                             , connectDatabase = "postgres"
-                             , connectUser = "postgres"
-                             , connectPassword = "postgres"
-                             }
+-- | 간단한 라우팅: /health, /tests 두 엔드포인트 제공
+mkApp :: (forall a. PostgresRepo a -> IO a) -> Application
+mkApp runRepoAction req respond = case (requestMethod, pathInfo) of
+  ("GET", [])                -> respond $ ok "OK"
+  ("GET", ["health"])       -> respond $ ok "healthy"
+  ("GET", ["tests"])        -> do
+      tests <- runRepoAction (listAllTests :: PostgresRepo [TestField])
+      respond $ ok (LBS.pack (unlines (map render tests)))
+  _                           -> respond $ notFound
+  where
+    requestMethod = Wai.requestMethod req
+    pathInfo      = Wai.pathInfo req
+    ok msg        = responseLBS status200 [("Content-Type","text/plain; charset=utf-8")] msg
+    notFound      = responseLBS status404 [("Content-Type","text/plain")]
+                     (LBS.pack "not found")
+    render (TestField i n) = show i <> ": " <> n
 
--- | Ensure the required table exists
-initDB :: Connection -> IO ()
-initDB conn = do
-    let q = "CREATE TABLE IF NOT EXISTS test (id INT PRIMARY KEY, name TEXT NOT NULL)"
-    _ <- execute_ conn q
-    pure ()
-
-someFunc :: IO ()
-someFunc = do
-    conn <- connect localPG
-    initDB conn
-
-    cid <- createTest conn
-    putStrLn <| "New Test: " <> (show cid)
-
-    updated <- updateTest conn
-    putStrLn <| "Ret value: " <> (show updated)
-
-    row <- retrieveTest conn
-    mapM_ print row
-
-    deleted <- deleteTest conn
-    putStrLn <| "Ret value: " <> (show deleted)
-
--- | Create a new test
-createTest :: Connection -> IO [Only Int]
-createTest conn = query conn "INSERT INTO test (id, name) VALUES (?, ?) RETURNING id" <| ((1 :: Int), ("Jacob" :: String))
-
--- | Update a test
-updateTest :: Connection -> IO Bool
-updateTest conn = do
-    n <- execute conn "UPDATE test SET name = ? WHERE id = ?" <| (("Tomas" :: String), (1 :: Int))
-    return <| n > 0
-
--- | Retrieve a test
-retrieveTest :: Connection -> IO  [TestField]
-retrieveTest conn = query conn "SELECT id, name FROM test WHERE id = ?" <| (Only (1 :: Int))
-
--- | Delete a test
-deleteTest :: Connection -> IO Bool
-deleteTest conn = do
-    n <- execute conn "DELETE FROM test WHERE id = ?" <| (Only (1 :: Int))
-    return <| n > 0
+-- | 애플리케이션 실행
+runApp :: IO ()
+runApp = do
+  -- 1) 환경변수로부터 DB 접속정보 로드
+  ci <- loadConnectInfoFromEnv
+  -- 2) 커넥션을 열고 스키마 초기화 및 시드 데이터 삽입
+  withConnection ci $ \conn -> do
+    initSchema conn
+    -- 샘플 데이터 삽입 (id=1 upsert 성격)
+    void $ runWith conn (seedSampleData :: PostgresRepo Bool)
+  -- 3) HTTP 서버 기동
+  putStrLn "[boot] 서버 시작: http://0.0.0.0:8000"
+  withConnection ci $ \conn -> do
+    let runRepoAction act = runWith conn act
+    run 8000 (mkApp runRepoAction)

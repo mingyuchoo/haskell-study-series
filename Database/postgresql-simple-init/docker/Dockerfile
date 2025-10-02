@@ -65,6 +65,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         ca-certificates \
         libgmp10 \
+        libpq5 \
         libsqlite3-0 \
         netbase \
         locales && \
