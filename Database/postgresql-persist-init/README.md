@@ -224,8 +224,8 @@ make docker-run
 Notes:
 
 - The Dockerfile builds the executable and copies it to `/app/bin/app-exe`.
-- The container prints a message about port 8080 and exposes 8080, but `Server.Basic` runs Warp on port 8000. If you run the image directly, either:
-  - Map host port 80 to container port 8080 as written and adjust the server to bind 8080, or
+- The container prints a message about port 8000 and exposes 8000, but `Server.Basic` runs Warp on port 8000. If you run the image directly, either:
+  - Map host port 80 to container port 8000 as written and adjust the server to bind 8000, or
   - Change the container to expose 8000 and run on 8000.
 
 Adjust as needed for your preferred port mapping.
@@ -246,7 +246,7 @@ See `src/Samples/Objects.hs` for example `User` and `Article` constructors you c
 - `make test` — run tests (ensures docker services up)
 - `make docker-up` / `make docker-down` — start/stop Postgres and Redis
 - `make docker-build` — build Docker image
-- `make docker-run` — run Docker image (host 80 → container 8080)
+- `make docker-run` — run Docker image (host 80 → container 8000)
 
 ## Development Tips
 

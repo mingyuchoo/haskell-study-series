@@ -21,11 +21,11 @@ main = do
   -- Load environment variables from .env file
   loadFile defaultConfig
 
-  -- Get port from environment variable or use default (8080)
+  -- Get port from environment variable or use default (8000)
   portStr <- lookupEnv "PORT"
   let port = case portStr >>= readMaybe of
         Just p  -> p
-        Nothing -> 8080
+        Nothing -> 8000
 
   -- Get API configuration from environment variables
   apiKey <- getEnv "OPENAI_API_KEY"

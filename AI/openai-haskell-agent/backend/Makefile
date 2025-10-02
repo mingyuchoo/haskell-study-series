@@ -9,43 +9,70 @@ clean:
 	stack clean
 
 update-stack-yaml:
-	sed -i '' 's/container-name: ".*"/container-name: "$(PROJECT_NAME)"/g' stack.yaml
-	sed -i '' 's/ARG PROJECT_NAME=.*/ARG PROJECT_NAME=$(PROJECT_NAME)/g' Dockerfile
+	sed -i 's/container-name: ".*"/container-name: "$(PROJECT_NAME)"/g' stack.yaml
+	# 루트 Dockerfile과 멀티스테이지 docker/Dockerfile 모두 PROJECT_NAME 갱신
+	- sed -i 's/ARG PROJECT_NAME=.*/ARG PROJECT_NAME=$(PROJECT_NAME)/g' Dockerfile
+	- sed -i 's/ARG PROJECT_NAME=.*/ARG PROJECT_NAME=$(PROJECT_NAME)/g' docker/Dockerfile
 
 setup: update-stack-yaml
-	stack --no-docker setup
-	stack --no-docker test --only-dependencies
+	stack setup
+	stack test --only-dependencies
+
+format: setup
+	stylish-haskell --config .stylish-haskell.yaml -r -i ./**/*.hs
 
 build: setup
-	stack --no-docker build --fast -j4 --ghc-options "-j16 +RTS -A256m -RTS"
+	stack build --fast -j4 --ghc-options "-j16 +RTS -A256m -RTS"
 
 test: setup
-	stack --no-docker test --fast
+	stack test --fast
 
 coverage: setup
-	stack --no-docker test --coverage --fast --haddock
+	stack test --coverage --fast --haddock
 
 watch-test: setup
-	stack --no-docker test --fast --file-watch --watch-all
+	stack test --fast --file-watch --watch-all
 
 watch-coverage: setup
-	stack --no-docker test --coverage --fast --file-watch --watch-all --haddock
+	stack test --coverage --fast --file-watch --watch-all --haddock
 
 ghcid: setup
-	ghcid --command "stack --no-docker ghci test/Spec.hs"
+	ghcid --command "stack ghci test/Spec.hs"
 
 run: setup
-	time stack --no-docker exec $(PROJECT_NAME)-exe
+	time stack exec $(PROJECT_NAME)-exe
 
 release: setup
-	stack build --docker
+	stack build -j4 --ghc-options "-j16 +RTS -A256m -RTS" --docker
 
 docker-build: release
-	docker build --build-arg PROJECT_NAME=$(PROJECT_NAME) -t $(PROJECT_NAME):latest -f Dockerfile .
+	# 멀티스테이지 Dockerfile 사용 (docker/Dockerfile)
+	docker build --build-arg PROJECT_NAME=$(PROJECT_NAME) -t $(PROJECT_NAME):latest -f docker/Dockerfile .
+
+docker-build-multi: 
+	docker build --build-arg PROJECT_NAME=$(PROJECT_NAME) -t $(PROJECT_NAME):latest -f docker/Dockerfile .
 
 docker-run: docker-build
-	docker run -it --rm -p 80:8080 $(PROJECT_NAME):latest
+	# 앱 포트 8000 노출 및 데이터 볼륨 마운트
+	mkdir -p ./data
+	docker run -it --rm \
+	  --name $(PROJECT_NAME)-app \
+	  -p 8000:8000 \
+	  -v $(PWD)/data:/app/data \
+	  $(PROJECT_NAME):latest
+
+docker-run-multi: docker-build-multi
+	docker run -it --rm -p 8000:8000 $(PROJECT_NAME):latest
+
+docker-compose-up:
+	docker compose -f docker/docker-compose.yaml up --build -d
+
+docker-compose-down:
+	docker compose -f docker/docker-compose.yaml down --volumes
+
+docker-compose-logs:
+	docker compose -f docker/docker-compose.yaml logs -f
 
 install: release
 	mkdir -p $(HOME)/.local/bin
-	cp $(shell stack --no-docker path --local-install-root)/bin/$(PROJECT_NAME)-exe $(HOME)/.local/bin/
+	cp $(shell stack path --local-install-root)/bin/$(PROJECT_NAME)-exe $(HOME)/.local/bin/

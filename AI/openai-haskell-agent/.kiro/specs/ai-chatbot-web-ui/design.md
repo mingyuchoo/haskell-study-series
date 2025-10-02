@@ -152,7 +152,7 @@ interface ChatState {
 class ApiService {
   private baseUrl: string;
   
-  constructor(baseUrl: string = 'http://localhost:8080') {
+  constructor(baseUrl: string = 'http://localhost:8000') {
     this.baseUrl = baseUrl;
   }
   
@@ -342,7 +342,7 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
-      '/api': 'http://localhost:8080'
+      '/api': 'http://localhost:8000'
     }
   }
 });
@@ -350,7 +350,7 @@ export default defineConfig({
 
 ### Environment Configuration
 
-- **Development**: Proxy API calls to localhost:8080
+- **Development**: Proxy API calls to localhost:8000
 - **Production**: Configurable API base URL
 - **Environment Variables**: API URL, feature flags
 

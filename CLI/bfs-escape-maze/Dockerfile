@@ -25,7 +25,7 @@ RUN stack install --no-docker --local-bin-path /app/bin
 RUN cp /app/bin/${PROJECT_NAME}-exe /app/bin/app-exe 
 
 # 포트 노출
-EXPOSE 8080
+EXPOSE 8000
 
 # 실행
-CMD ["sh", "-c", "echo \"Starting server on port 8080...\" && /app/bin/app-exe"]
+CMD ["sh", "-c", "echo \"Starting server on port 8000...\" && /app/bin/app-exe"]

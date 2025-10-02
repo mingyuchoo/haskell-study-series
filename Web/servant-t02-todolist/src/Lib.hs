@@ -46,14 +46,14 @@ app = loggingMiddleware <| serve appAPI appServer
 --
 -- This function:
 -- 1. Initializes the database (creates tables if they don't exist)
--- 2. Starts the web server on port 8080
+-- 2. Starts the web server on port 8000
 appRunner :: IO ()
 appRunner = do
-  putStrLn "Starting server on port 8080..."
+  putStrLn "Starting server on port 8000..."
   -- Initialize database (creates tables if they don't exist)
   _ <- initializeDatabase
   -- Start the web server
-  run 8080 app
+  run 8000 app
 
 -- -------------------------------------------------------------------
 -- API Definitions

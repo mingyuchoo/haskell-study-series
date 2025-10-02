@@ -28,7 +28,7 @@ spec = do
       let httpClient = createOpenAIHttpClient
           chatService = createOpenAIChatService httpClient manager "mock-api-key" "https://api.openai.com/v1/chat/completions"
           appService = createOpenAIChatApplicationService chatService
-          port = 8080
+          port = 8000
 
       -- Just verify that the runServer function exists and has the right type
       -- We don't actually run it as that would start a real server

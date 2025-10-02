@@ -34,7 +34,7 @@ You can also use `Makefile` for these works.
 ## How to call API from this project
 
 ```bash
-curl http://localhost:8080/users
+curl http://localhost:8000/users
 ```
 ## References
 

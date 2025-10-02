@@ -45,8 +45,8 @@ To run the web application:
 stack run
 ```
 
-The web server will start on the port specified in your `.env` file (default: 8080).
-Access the web interface at: http://localhost:8080
+The web server will start on the port specified in your `.env` file (default: 8000).
+Access the web interface at: http://localhost:8000
 
 ## Usage
 
@@ -56,7 +56,7 @@ Access the web interface at: http://localhost:8080
 - To exit the conversation, type `:q`, `quit`, or `exit`
 
 ### Web Application
-- Open your browser to http://localhost:8080
+- Open your browser to http://localhost:8000
 - Type your message in the input field and click Send or press Enter
 - View the conversation history in the chat window
 
@@ -130,7 +130,7 @@ If you encounter build errors related to missing modules:
   ```
 - **Example curl command**:
   ```bash
-  curl -X POST http://localhost:8080/api/chat \
+  curl -X POST http://localhost:8000/api/chat \
     -H "Content-Type: application/json" \
     -d '{"inputMessage": "Hello", "sessionId": null}'
   ```
@@ -149,7 +149,7 @@ If you encounter build errors related to missing modules:
   ```
 - **Example curl command**:
   ```bash
-  curl -X GET http://localhost:8080/health
+  curl -X GET http://localhost:8000/health
   ```
   
 
