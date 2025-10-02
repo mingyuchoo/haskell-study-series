@@ -15,7 +15,7 @@ docker:
   enable: true
   stack-exe: host
   container-name: "backend"
-  repo: fpco/stack-build:lts-24.4
+  image: fpco/stack-build:lts-24.4
   set-user: true
   auto-pull: true
   detach: false

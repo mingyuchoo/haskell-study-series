@@ -12,11 +12,14 @@ flags: {}
 docker:
   enable: true
   image: "fpco/stack-build:lts-24.4"
-  run-args:
-    - "--net=host"
+  container-name: "sample-name"
+  auto-pull: true
+  persist: true
+  set-user: true
+  stack-exe: host
+  run-args: []
   env:
     - "LC_ALL=C.UTF-8"
-  persist: true
 
 #nix:
 #  enable: true
