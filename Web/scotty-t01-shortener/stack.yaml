@@ -12,7 +12,7 @@ docker:
   enable: true
   image: fpco/stack-build:lts-24.4
   auto-pull: true
-  persist: true
+  persist: false
   container-name: "scotty-t01-shortener"
   run-args: []
   stack-exe: host

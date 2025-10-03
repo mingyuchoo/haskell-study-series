@@ -14,7 +14,7 @@ docker:
   image: "fpco/stack-build:lts-24.4"
   container-name: "sample-name"
   auto-pull: true
-  persist: true
+  persist: false
   set-user: true
   stack-exe: host
   run-args: []

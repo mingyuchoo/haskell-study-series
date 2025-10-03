@@ -12,7 +12,7 @@ docker:
   enable: true
   image: fpco/stack-build:lts-24.4
   auto-pull: true
-  persist: true
+  persist: false
   container-name: "socket-echo-server"
   run-args: []
   stack-exe: host

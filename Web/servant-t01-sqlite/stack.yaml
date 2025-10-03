@@ -12,7 +12,7 @@ docker:
   enable: true
   image: fpco/stack-build:lts-24.4
   auto-pull: true
-  persist: true
+  persist: false
   container-name: "servant-t01-sqlite"
   run-args: []
   stack-exe: host
