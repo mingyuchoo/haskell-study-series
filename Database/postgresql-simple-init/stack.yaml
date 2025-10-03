@@ -11,7 +11,7 @@ flags: {}
 docker:
   enable: true
   image: "fpco/stack-build:lts-24.4"
-  container-name: "sample-name"
+  container-name: "postgresql-simple-init"
   auto-pull: true
   persist: true
   set-user: true
