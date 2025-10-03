@@ -7,16 +7,20 @@ WORKDIR /app
 # 프로젝트에 필요한 모든 파일들을 복사
 # 설정 파일들
 ARG PROJECT_NAME
-COPY stack.yaml stack.yaml.lock package.yaml ${PROJECT_NAME}.cabal Setup.hs ./
+COPY stack.yaml package.yaml ${PROJECT_NAME}.cabal Setup.hs ./
 COPY README.md CHANGELOG.md LICENSE ./
 # 소스 디렉토리들
 COPY src/ src/
 COPY app/ app/
 COPY test/ test/
-COPY static/ static/
+COPY www/ www/
 
 # 프로젝트 설정 및 의존성 설치
-RUN stack setup --no-docker && stack build --dependencies-only --no-docker
+# 혹시 레이어 캐시로 인해 다른 프로젝트의 .cabal 파일이 남아 있으면 정리
+ARG PROJECT_NAME
+RUN find . -maxdepth 1 -name '*.cabal' ! -name "${PROJECT_NAME}.cabal" -delete && \
+    ls -al && \
+    stack setup --no-docker && stack build --dependencies-only --no-docker
 
 # 프로젝트 빌드
 ARG PROJECT_NAME

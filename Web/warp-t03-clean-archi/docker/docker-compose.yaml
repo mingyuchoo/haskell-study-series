@@ -1,0 +1,15 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        PROJECT_NAME: ${PROJECT_NAME:-servant-t02-todolist}
+    image: ${PROJECT_NAME:-servant-t02-todolist}:latest
+    container_name: ${PROJECT_NAME:-servant-t02-todolist}-app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../data:/app/data
+    environment:
+      - PORT=8000

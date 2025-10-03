@@ -9,8 +9,8 @@ clean:
 	stack clean
 
 update-stack-yaml:
-	sed -i '' 's/container-name: ".*"/container-name: "$(PROJECT_NAME)"/g' stack.yaml
-	sed -i '' 's/ARG PROJECT_NAME=.*/ARG PROJECT_NAME=$(PROJECT_NAME)/g' Dockerfile
+	sed -i 's/container-name: ".*"/container-name: "$(PROJECT_NAME)"/g' stack.yaml
+	sed -i 's/ARG PROJECT_NAME=.*/ARG PROJECT_NAME=$(PROJECT_NAME)/g' docker/Dockerfile
 
 setup: update-stack-yaml
 	stack setup
@@ -63,13 +63,14 @@ docker-run-multi: docker-build-multi
 	docker run -it --rm -p 8000:8000 $(PROJECT_NAME):latest
 
 docker-compose-up:
-	docker compose -f docker/docker-compose.yaml up --build -d
+	mkdir -p ./data
+	PROJECT_NAME=$(PROJECT_NAME) docker compose -f docker/docker-compose.yaml up --build -d
 
 docker-compose-down:
-	docker compose -f docker/docker-compose.yaml down --volumes
+	PROJECT_NAME=$(PROJECT_NAME) docker compose -f docker/docker-compose.yaml down --volumes
 
 docker-compose-logs:
-	docker compose -f docker/docker-compose.yaml logs -f
+	PROJECT_NAME=$(PROJECT_NAME) docker compose -f docker/docker-compose.yaml logs -f
 
 install: release
 	mkdir -p $(HOME)/.local/bin
