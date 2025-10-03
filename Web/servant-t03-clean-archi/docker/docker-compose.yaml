@@ -1,0 +1,14 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        - PROJECT_NAME=${PROJECT_NAME}
+    image: ${PROJECT_NAME}:latest
+    container_name: ${PROJECT_NAME}-app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../data:/app/data
+    restart: unless-stopped

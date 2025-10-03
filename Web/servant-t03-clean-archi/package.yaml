@@ -1,0 +1,89 @@
+name: servant-t03-clean-archi
+version: 0.1.0.0
+github: mingyuchoo/servant-t03-clean-archi
+license: BSD-3-Clause
+author: Mingyu Choo
+maintainer: mingyuhcoo@gmail.com
+copyright: 2025, Mingyu Choo
+synopsis: Short description of your package
+category: CLI
+description: Please see the README on GitHub at <https://github.com/mingyuchoo/servant-t03-clean-archi#readme>
+
+flags:
+  static:
+    description: Build static binary
+    manual: true
+    default: false
+
+extra-source-files:
+  - README.md
+  - CHANGELOG.md
+
+dependencies:
+  - aeson
+  - base
+  - blaze-html
+  - bytestring
+  - data-default
+  - flow
+  - http-media
+  - http-types
+  - lucid
+  - servant-lucid
+  - servant-server
+  - sqlite-simple
+  - text
+  - time
+  - wai
+  - wai-app-static
+  - warp
+
+default-extensions:
+  - StandaloneKindSignatures
+  - TypeApplications
+
+ghc-options:
+  - -Wall
+  - -O2
+  - -haddock
+
+language: Haskell2010
+
+library:
+  source-dirs: src
+
+executables:
+  servant-t03-clean-archi-exe:
+    main: Main.hs
+    source-dirs: app
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N4
+    when:
+      - condition: flag(static)
+        ghc-options:
+          - -static
+          - -optl-static
+          - -optc-static
+          - -optc-fno-PIC
+      - condition: '!(flag(static))'
+        ghc-options:
+          - -dynamic
+    dependencies:
+      - servant-t03-clean-archi
+
+tests:
+  servant-t03-clean-archi-test:
+    main: Spec.hs
+    source-dirs: test
+    ghc-options:
+      - -dynamic
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N4
+    dependencies:
+      - servant-t03-clean-archi
+      - hspec
+      - doctest
+      - doctest-discover
