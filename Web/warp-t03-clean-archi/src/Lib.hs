@@ -40,7 +40,7 @@ appRunner = do
     run port (app conn)
   where
     port :: Int
-    port = 4000
+    port = 8000
 
 -- | Application
 --
