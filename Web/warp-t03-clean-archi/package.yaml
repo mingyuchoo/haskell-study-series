@@ -1,13 +1,13 @@
-name: warp-t02-sqlite
+name: warp-t03-clean-archi
 version: 0.1.0.0
-github: mingyuchoo/warp-t02-sqlite
+github: mingyuchoo/warp-t03-clean-archi
 license: BSD-3-Clause
 author: Mingyu Choo
 maintainer: mingyuhcoo@gmail.com
 copyright: 2025, Mingyu Choo
 synopsis: Short description of your package
 category: CLI
-description: Please see the README on GitHub at <https://github.com/mingyuchoo/warp-t02-sqlite#readme>
+description: Please see the README on GitHub at <https://github.com/mingyuchoo/warp-t03-clean-archi#readme>
 
 extra-source-files:
   - README.md
@@ -41,7 +41,7 @@ library:
   source-dirs: src
 
 executables:
-  warp-t02-sqlite-exe:
+  warp-t03-clean-archi-exe:
     main: Main.hs
     source-dirs: app
     ghc-options:
@@ -50,10 +50,10 @@ executables:
       - -rtsopts
       - -with-rtsopts=-N4
     dependencies:
-      - warp-t02-sqlite
+      - warp-t03-clean-archi
 
 tests:
-  warp-t02-sqlite-test:
+  warp-t03-clean-archi-test:
     main: Spec.hs
     source-dirs: test
     ghc-options:
@@ -62,7 +62,7 @@ tests:
       - -rtsopts
       - -with-rtsopts=-N4
     dependencies:
-      - warp-t02-sqlite
+      - warp-t03-clean-archi
       - hspec
       - doctest
       - doctest-discover

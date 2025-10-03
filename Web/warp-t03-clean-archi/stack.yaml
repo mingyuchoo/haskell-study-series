@@ -13,7 +13,7 @@ docker:
   image: fpco/stack-build:lts-24.4
   auto-pull: true
   persist: false
-  container-name: "warp-t02-sqlite"
+  container-name: "warp-t03-clean-archi"
   run-args: []
   stack-exe: host
   set-user: true

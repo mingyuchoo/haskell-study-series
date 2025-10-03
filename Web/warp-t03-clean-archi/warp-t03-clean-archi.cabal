@@ -4,13 +4,13 @@ cabal-version: 3.16
 --
 -- see: https://github.com/sol/hpack
 
-name:           warp-t02-sqlite
+name:           warp-t03-clean-archi
 version:        0.1.0.0
 synopsis:       Short description of your package
-description:    Please see the README on GitHub at <https://github.com/mingyuchoo/warp-t02-sqlite#readme>
+description:    Please see the README on GitHub at <https://github.com/mingyuchoo/warp-t03-clean-archi#readme>
 category:       CLI
-homepage:       https://github.com/mingyuchoo/warp-t02-sqlite#readme
-bug-reports:    https://github.com/mingyuchoo/warp-t02-sqlite/issues
+homepage:       https://github.com/mingyuchoo/warp-t03-clean-archi#readme
+bug-reports:    https://github.com/mingyuchoo/warp-t03-clean-archi/issues
 author:         Mingyu Choo
 maintainer:     mingyuhcoo@gmail.com
 copyright:      2025, Mingyu Choo
@@ -23,16 +23,16 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/mingyuchoo/warp-t02-sqlite
+  location: https://github.com/mingyuchoo/warp-t03-clean-archi
 
 library
   exposed-modules:
       Database
       Lib
   other-modules:
-      Paths_warp_t02_sqlite
+      Paths_warp_t03_clean_archi
   autogen-modules:
-      Paths_warp_t02_sqlite
+      Paths_warp_t03_clean_archi
   hs-source-dirs:
       src
   default-extensions:
@@ -53,12 +53,12 @@ library
     , warp
   default-language: Haskell2010
 
-executable warp-t02-sqlite-exe
+executable warp-t03-clean-archi-exe
   main-is: Main.hs
   other-modules:
-      Paths_warp_t02_sqlite
+      Paths_warp_t03_clean_archi
   autogen-modules:
-      Paths_warp_t02_sqlite
+      Paths_warp_t03_clean_archi
   hs-source-dirs:
       app
   default-extensions:
@@ -77,16 +77,16 @@ executable warp-t02-sqlite-exe
     , uuid
     , wai
     , warp
-    , warp-t02-sqlite
+    , warp-t03-clean-archi
   default-language: Haskell2010
 
-test-suite warp-t02-sqlite-test
+test-suite warp-t03-clean-archi-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Paths_warp_t02_sqlite
+      Paths_warp_t03_clean_archi
   autogen-modules:
-      Paths_warp_t02_sqlite
+      Paths_warp_t03_clean_archi
   hs-source-dirs:
       test
   default-extensions:
@@ -108,5 +108,5 @@ test-suite warp-t02-sqlite-test
     , uuid
     , wai
     , warp
-    , warp-t02-sqlite
+    , warp-t03-clean-archi
   default-language: Haskell2010
