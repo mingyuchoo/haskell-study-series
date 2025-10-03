@@ -1,0 +1,31 @@
+# https://www.stackage.org/lts-24.4
+resolver: lts-24.4
+
+packages:
+- .
+
+extra-package-dbs: []
+extra-deps: []
+flags: {}
+
+docker:
+  enable: true
+  image: fpco/stack-build:lts-24.4
+  auto-pull: true
+  persist: false
+  container-name: "warp-t02-sqlite"
+  run-args: []
+  stack-exe: host
+  set-user: true
+
+# nix:
+#   enable: true
+#   pure: true
+#   packages:
+#   - zlib
+#   - glpk
+#   - pcre
+#   #shell-file: shell.nix
+#   nix-shell-options: []
+#   path: []
+#   add-gc-roots: false
