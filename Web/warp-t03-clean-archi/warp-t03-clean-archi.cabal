@@ -1,6 +1,6 @@
-cabal-version: 3.16
+cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.38.0.
+-- This file has been generated from package.yaml by hpack version 0.37.0.
 --
 -- see: https://github.com/sol/hpack
 
@@ -27,9 +27,15 @@ source-repository head
 
 library
   exposed-modules:
-      Database
       Lib
   other-modules:
+      Adapters.Repository.UserRepositoryAdapter
+      Adapters.Web.UserWebAdapter
+      Application.UserService
+      Database
+      Domain.UserModel
+      Infrastructure.Config.AppConfig
+      Infrastructure.Database.Connection
       Paths_warp_t03_clean_archi
   autogen-modules:
       Paths_warp_t03_clean_archi
@@ -38,6 +44,7 @@ library
   default-extensions:
       StandaloneKindSignatures
       TypeApplications
+      ScopedTypeVariables
   ghc-options: -Wall -O2 -haddock
   build-depends:
       aeson
@@ -64,6 +71,7 @@ executable warp-t03-clean-archi-exe
   default-extensions:
       StandaloneKindSignatures
       TypeApplications
+      ScopedTypeVariables
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       aeson
@@ -92,6 +100,7 @@ test-suite warp-t03-clean-archi-test
   default-extensions:
       StandaloneKindSignatures
       TypeApplications
+      ScopedTypeVariables
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       aeson

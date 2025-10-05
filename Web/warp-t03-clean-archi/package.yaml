@@ -29,16 +29,17 @@ dependencies:
 default-extensions:
   - StandaloneKindSignatures
   - TypeApplications
-
+  - ScopedTypeVariables
 ghc-options:
   - -Wall
   - -O2
   - -haddock
-
 language: Haskell2010
 
 library:
   source-dirs: src
+  exposed-modules:
+    - Lib
 
 executables:
   warp-t03-clean-archi-exe:
