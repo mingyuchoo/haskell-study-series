@@ -11,9 +11,9 @@ A small Haskell example project demonstrating how to:
 
 This project provides three server variants and database migration executables to showcase patterns with Persistent and Esqueleto.
 
-**Note**: This project has been refactored to follow Clean Architecture principles. See `CLEAN_ARCHITECTURE.md` for detailed documentation of the new structure.
+**Note**: This project has been refactored to follow Clean Architecture principles. See `docs/CLEAN_ARCHITECTURE.md` for detailed documentation of the new structure.
 
-**Test Status**: The existing tests in the `test/` directory still reference the old module structure and will need to be updated to work with the new Clean Architecture. The core functionality has been preserved but the module organization has changed.
+**Test Status**: The tests in the `test/` directory have been updated to work with the new Clean Architecture. The core functionality has been preserved and the module organization follows Clean Architecture patterns.
 
 ## Features
 
@@ -25,32 +25,69 @@ This project provides three server variants and database migration executables t
 
 ## Project Structure
 
+This project follows **Clean Architecture** principles with clear separation of concerns:
+
 ```shell
 app/
   MigrateDB.hs        # Run DB migrations for Persistent schema
   MigrateDBEsq.hs     # Run DB migrations for Esqueleto schema
   RunServer.hs        # Entry point to run Basic/Cache/Esq servers
+
 src/
   Domain/             # Pure business logic (innermost layer)
-    Entities/         # Business entities with validation
+    Entities/         # Business entities with smart constructors and validation
+      User.hs         # User entity with validation rules
+      Article.hs      # Article entity with validation rules
     Repositories/     # Repository interfaces (ports)
+      UserRepository.hs     # Abstract user data access interface
+      ArticleRepository.hs  # Abstract article data access interface
     Services/         # Service interfaces for external dependencies
+      CacheService.hs # Abstract caching interface
+
   UseCases/           # Application business rules
     User/             # User-related use cases
+      CreateUser.hs   # Create user with validation and duplicate checking
+      GetUser.hs      # Retrieve user with optional caching
+      UpdateUser.hs   # Update user with validation and cache invalidation
+      DeleteUser.hs   # Delete user with cache cleanup
+      ListUsers.hs    # List all users
+
   Interface/          # Interface adapters
-    Web/              # Web controllers and DTOs
+    Web/              # Web layer adapters
+      Controllers/    # HTTP request/response handling
+        UserController.hs  # User API endpoints
+      DTOs/           # Data transfer objects
+        UserDTO.hs    # Web API data structures
+
   Application/        # Service orchestration and dependency injection
+    UserService.hs    # Coordinates use cases and manages dependencies
+
   Infrastructure/     # Framework implementations (outermost layer)
     Persistence/      # Database implementations
+      PostgreSQL/
+        UserRepositoryImpl.hs  # PostgreSQL user repository
     Cache/            # Cache implementations
+      Redis/
+        CacheServiceImpl.hs    # Redis cache service
     Web/              # Server configuration
+      Server.hs       # Warp server setup and dependency wiring
 
- test/
-  APITests.hs         # Hspec tests for cache server behavior
-  TestUtils.hs        # Test harness: spins up server, migrates DB
+test/
+  APITests.hs         # Integration tests for API endpoints
+  TestUtils.hs        # Test utilities and setup
 ```
 
-Note: The server variants are now implemented using Clean Architecture principles in `src/Infrastructure/Web/Server.hs`.
+**Architecture Benefits:**
+- **Dependency Inversion**: Inner layers define interfaces, outer layers implement them
+- **Testability**: Business logic is isolated and easily testable
+- **Flexibility**: Easy to swap implementations (PostgreSQL → MongoDB, Redis → Memcached)
+- **Maintainability**: Clear separation of concerns and single responsibility
+
+For detailed architecture documentation, see `docs/CLEAN_ARCHITECTURE.md`.
+
+**Migration Status**: The project has been successfully refactored from the old mixed-concern structure to Clean Architecture. All old files (`src/DB/`, `src/Schema/`, `src/Server/`) have been replaced with their Clean Architecture equivalents while preserving functionality.
+
+**Build Status**: The codebase compiles cleanly with minimal warnings. All unused imports have been removed and the code follows Clean Architecture dependency rules.
 
 ## Prerequisites
 
@@ -90,8 +127,8 @@ make docker-down
 
 The code expects the following default connection strings:
 
-- PostgreSQL: `host=127.0.0.1 port=5432 user=postgres dbname=postgres password=postgres` (see `DB/Basic.hs` and `DB/Esq.hs`)
-- Redis: `defaultConnectInfo` (see `DB/Cache.hs`)
+- PostgreSQL: `host=127.0.0.1 port=5432 user=postgres dbname=postgres password=postgres` (see `src/Infrastructure/Persistence/PostgreSQL/UserRepositoryImpl.hs`)
+- Redis: `defaultConnectInfo` (see `src/Infrastructure/Cache/Redis/CacheServiceImpl.hs`)
 
 ## Build, Run, Test
 
@@ -142,7 +179,7 @@ There are three variants; `app/RunServer.hs` dispatches based on arguments.
   stack exec run-server -- esq
   ```
 
-By default `Server.Basic.runServer` listens on port `8000`.
+By default all server variants listen on port `8000`.
 
 ### Database migrations
 
@@ -179,12 +216,23 @@ make watch-coverage
 
 ## API
 
-The API is now defined in `src/Interface/Web/Controllers/UserController.hs` with Clean Architecture principles. Base URL: `http://127.0.0.1:8000`.
+The API is defined in `src/Interface/Web/Controllers/UserController.hs` following Clean Architecture principles. Base URL: `http://127.0.0.1:8000`.
 
-- `GET /` → List endpoints
-- `POST /users` with JSON body `User` → returns `Int64` (new user ID)
-- `GET /users` → returns `[Entity User]`
-- `GET /users/{id}` → returns `User` or 401 if not found
+**Endpoints:**
+- `GET /` → List available endpoints
+- `POST /users` → Create new user (returns user ID)
+- `GET /users` → List all users
+- `GET /users/{id}` → Get user by ID
+- `PUT /users/{id}` → Update user (full update)
+- `PATCH /users/{id}` → Update user (partial update)
+- `DELETE /users/{id}` → Delete user
+
+**Data Flow:**
+1. HTTP requests → `UserController` (Interface layer)
+2. Controller → `UserService` (Application layer)
+3. Service → Use Cases (Use Cases layer)
+4. Use Cases → Repository/Cache interfaces (Domain layer)
+5. Interfaces → Concrete implementations (Infrastructure layer)
 
 ### Example curl
 
@@ -274,7 +322,7 @@ All services include health checks and the app waits for database services to be
 
 ## Sample Data
 
-For testing and development, you can create sample `User` and `Article` objects using the domain entities in `src/Domain/Entities/`.
+For testing and development, you can create sample `User` and `Article` objects using the domain entities in `src/Domain/Entities/`. The entities include smart constructors with validation to ensure data integrity.
 
 ## Makefile Targets
 
@@ -286,19 +334,25 @@ For testing and development, you can create sample `User` and `Article` objects 
 - `make run-esq` — run esqueleto server
 - `make migrate` — DB migration (basic)
 - `make migrate-esq` — DB migration (esqueleto)
-- `make test` — run tests (ensures docker services up)
+- `make test` — run tests (automatically starts docker services and waits for readiness)
+- `make watch-test` — run tests in watch mode
+- `make watch-coverage` — run tests with coverage in watch mode
+- `make coverage` — run tests with coverage report
 
 ### Docker Services
 - `make docker-up` — start Postgres and Redis only
 - `make docker-up-all` — start all services including app
-- `make docker-down` — stop all services
+- `make docker-down` — stop all services and remove volumes
 - `make docker-logs` — show logs for all services
 - `make docker-build-app` — build just the app service
 - `make docker-restart-app` — restart just the app service
+- `make wait-for` — wait for services to be ready (used internally by tests)
 
 ### Docker Build
-- `make docker-build` — build app with docker-compose
-- `make docker-run` — run app with docker-compose
+- `make docker-build` — build Docker image for the app
+- `make docker-run` — run Docker image (exposes port 8000)
+- `make docker-build-multi` — build multi-stage Docker image
+- `make docker-run-multi` — run multi-stage Docker image
 
 ## Development Tips
 
@@ -308,10 +362,28 @@ For testing and development, you can create sample `User` and `Article` objects 
   make ghcid
   ```
 
-- Format sources:
+- Format sources with stylish-haskell:
 
   ```shell
   make format
+  ```
+
+  Or use the format script directly:
+
+  ```shell
+  ./format.sh
+  ```
+
+- The project follows Clean Architecture principles with clear separation between:
+  - **Domain**: Pure business logic (`src/Domain/`)
+  - **Use Cases**: Application business rules (`src/UseCases/`)
+  - **Interface**: Controllers and DTOs (`src/Interface/`)
+  - **Infrastructure**: Framework implementations (`src/Infrastructure/`)
+
+- Tests are organized to work with the Clean Architecture and can be run with:
+
+  ```shell
+  make test
   ```
 
 ## License
