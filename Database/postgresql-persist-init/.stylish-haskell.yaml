@@ -63,7 +63,8 @@ steps:
        # - "same_line" -- leave "=" AND data constructor on the same line as the type constructor.
        # - "indent N" -- insert a new line and N spaces from the beginning of the next line.
        equals: "same_line"
-  
+       
+
        # How to format first field of each record constructor.
        # Possible values:
        # - "same_line" -- "{" and first field goes on the same line as the data constructor.

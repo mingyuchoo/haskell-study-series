@@ -1,28 +1,40 @@
-# Local ignores for docker/ directory
-# Note: This file only affects builds if this directory is used as the build context.
+# Build artifacts
+.stack-work/
+dist/
+dist-newstyle/
 
-# VCS and OS files
-.git
-.git/**/*
-.DS_Store
+# VCS
+.git/
+.gitignore
 
 # Editor/IDE
-.vscode
-.idea
+.vscode/
+.idea/
 *.swp
 *.swo
 *~
 
-# Logs and env
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
 *.log
+
+# Environment
 .env
 .env.*
 
-# Nix/direnv
-result
-.direnv
-.cache
+# Documentation (not needed for runtime)
+docs/
 
-# Keep Dockerfile and docker-compose.yaml included
-!Dockerfile
-!docker-compose.yaml
+# Development tools
+format.sh
+.stylish-haskell.yaml
+.projectile
+hie.yaml
+
+# Keep necessary files
+!README.md
+!CHANGELOG.md
+!LICENSE

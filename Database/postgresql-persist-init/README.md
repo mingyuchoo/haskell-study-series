@@ -221,23 +221,56 @@ The API is now defined in `src/Interface/Web/Controllers/UserController.hs` with
 
 ## Docker
 
-A multi-stage-like single-image build using `fpco/stack-build:lts-24.4` is in `Dockerfile`.
+### Full Stack with Docker Compose
 
-Build and run:
+The project includes a complete Docker Compose setup that runs PostgreSQL, Redis, and the Haskell application together:
+
+```shell
+# Start all services (database, cache, and app)
+make docker-up-all
+
+# Or use docker-compose directly
+docker compose -f docker/docker-compose.yaml up -d
+
+# View logs
+make docker-logs
+
+# Stop all services
+make docker-down
+```
+
+The application will be available at `http://localhost:8000`.
+
+### Development with Docker Services
+
+For development, you can run just the database services in Docker and run the Haskell app locally:
+
+```shell
+# Start only PostgreSQL and Redis
+make docker-up
+
+# Run the app locally
+make run
+```
+
+### Building the Application Image
+
+Build and run just the Haskell application:
 
 ```shell
 make docker-build
 make docker-run
 ```
 
-Notes:
+### Docker Services
 
-- The Dockerfile builds the executable and copies it to `/app/bin/app-exe`.
-- The container prints a message about port 8000 and exposes 8000, but the server runs Warp on port 8000. If you run the image directly, either:
-  - Map host port 80 to container port 8000 as written and adjust the server to bind 8000, or
-  - Change the container to expose 8000 and run on 8000.
+The `docker/docker-compose.yaml` defines:
 
-Adjust as needed for your preferred port mapping.
+- **PostgreSQL 17.6**: Available on port 5432 with persistent volume
+- **Redis 8.2**: Available on port 6379 with persistent volume  
+- **Haskell App**: Built from `docker/Dockerfile`, runs on port 8000
+
+All services include health checks and the app waits for database services to be ready before starting.
 
 ## Sample Data
 
@@ -245,6 +278,7 @@ For testing and development, you can create sample `User` and `Article` objects 
 
 ## Makefile Targets
 
+### Development
 - `make setup` — stack setup and test deps
 - `make build` — fast build with parallel GC
 - `make run` — run basic server
@@ -253,9 +287,18 @@ For testing and development, you can create sample `User` and `Article` objects 
 - `make migrate` — DB migration (basic)
 - `make migrate-esq` — DB migration (esqueleto)
 - `make test` — run tests (ensures docker services up)
-- `make docker-up` / `make docker-down` — start/stop Postgres and Redis
-- `make docker-build` — build Docker image
-- `make docker-run` — run Docker image (host 80 → container 8000)
+
+### Docker Services
+- `make docker-up` — start Postgres and Redis only
+- `make docker-up-all` — start all services including app
+- `make docker-down` — stop all services
+- `make docker-logs` — show logs for all services
+- `make docker-build-app` — build just the app service
+- `make docker-restart-app` — restart just the app service
+
+### Docker Build
+- `make docker-build` — build app with docker-compose
+- `make docker-run` — run app with docker-compose
 
 ## Development Tips
 

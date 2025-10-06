@@ -1,27 +1,28 @@
 {-# LANGUAGE FlexibleContexts #-}
 
 module UseCases.User.DeleteUser
-    ( DeleteUserUseCase(..)
-    , DeleteUserRequest(..)
-    , DeleteUserResponse(..)
+    ( DeleteUserRequest (..)
+    , DeleteUserResponse (..)
+    , DeleteUserUseCase (..)
     , deleteUserUseCase
     , deleteUserWithCacheUseCase
     ) where
 
-import Domain.Entities.User
-import Domain.Repositories.UserRepository
+import           Data.Text                          (Text)
+
+import           Domain.Entities.User
+import           Domain.Repositories.UserRepository
 import qualified Domain.Repositories.UserRepository as Repo
-import Domain.Services.CacheService
-import Data.Text (Text)
+import           Domain.Services.CacheService
 
 -- Use case input/output DTOs
-data DeleteUserRequest = DeleteUserRequest
-    { drUserId :: UserId
-    } deriving (Show, Eq)
+data DeleteUserRequest = DeleteUserRequest { drUserId :: UserId
+                                           }
+     deriving (Eq, Show)
 
-data DeleteUserResponse = DeleteUserResponse
-    { drSuccess :: Bool
-    } deriving (Show, Eq)
+data DeleteUserResponse = DeleteUserResponse { drSuccess :: Bool
+                                             }
+     deriving (Eq, Show)
 
 -- Use case interface
 class Monad m => DeleteUserUseCase m where

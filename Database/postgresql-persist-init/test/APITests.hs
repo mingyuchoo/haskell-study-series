@@ -1,23 +1,32 @@
 module Main
     where
 
-import           Control.Concurrent (killThread)
+import           Control.Concurrent                                       (killThread)
 
-import           Infrastructure.Persistence.PostgreSQL.UserRepositoryImpl (PGInfo, localConnString)
-import           Infrastructure.Cache.Redis.CacheServiceImpl (RedisInfo, localRedisInfo)
-import           Domain.Entities.User (User(..), UserId(..), UserName(..), UserEmail(..), UserAge(..), UserOccupation(..))
+import           Data.Either                                              (isLeft)
+import           Data.Int                                                 (Int64)
+import           Data.List                                                (find)
+import           Data.Maybe                                               (isJust)
+import           Data.Text                                                (Text)
 
-import           Data.Either        (isLeft)
-import           Data.Int           (Int64)
-import           Data.Maybe         (isJust)
-import           Data.List          (find)
-import           Data.Text          (Text)
+import           Domain.Entities.User                                     (User (..),
+                                                                           UserAge (..),
+                                                                           UserEmail (..),
+                                                                           UserId (..),
+                                                                           UserName (..),
+                                                                           UserOccupation (..))
 
-import           Servant.Client     (ClientEnv, runClientM)
+import           Infrastructure.Cache.Redis.CacheServiceImpl              (RedisInfo,
+                                                                           localRedisInfo)
+import           Infrastructure.Persistence.PostgreSQL.UserRepositoryImpl (PGInfo,
+                                                                           localConnString)
+
+import           Servant.Client                                           (ClientEnv,
+                                                                           runClientM)
 
 import           Test.Hspec
 
-import           TestUtils          (setupTests)
+import           TestUtils                                                (setupTests)
 
 main :: IO ()
 main = do

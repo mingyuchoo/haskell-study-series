@@ -1,23 +1,24 @@
 {-# LANGUAGE FlexibleContexts #-}
 
 module UseCases.User.ListUsers
-    ( ListUsersUseCase(..)
-    , ListUsersRequest(..)
-    , ListUsersResponse(..)
+    ( ListUsersRequest (..)
+    , ListUsersResponse (..)
+    , ListUsersUseCase (..)
     , listUsers
     ) where
 
-import Domain.Entities.User
-import Domain.Repositories.UserRepository
-import Data.Text (Text)
+import           Data.Text                          (Text)
+
+import           Domain.Entities.User
+import           Domain.Repositories.UserRepository
 
 -- Use case input/output DTOs
 data ListUsersRequest = ListUsersRequest
-    deriving (Show, Eq)
+     deriving (Eq, Show)
 
-data ListUsersResponse = ListUsersResponse
-    { lrUsers :: [User]
-    } deriving (Show, Eq)
+data ListUsersResponse = ListUsersResponse { lrUsers :: [User]
+                                           }
+     deriving (Eq, Show)
 
 -- Use case interface
 class Monad m => ListUsersUseCase m where

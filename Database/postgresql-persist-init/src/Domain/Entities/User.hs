@@ -1,37 +1,43 @@
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Domain.Entities.User
-    ( User(..)
-    , UserId(..)
-    , UserEmail(..)
-    , UserName(..)
-    , UserAge(..)
-    , UserOccupation(..)
+    ( User (..)
+    , UserAge (..)
+    , UserEmail (..)
+    , UserId (..)
+    , UserName (..)
+    , UserOccupation (..)
     , mkUser
     , validateUser
     ) where
 
-import Data.Text (Text)
-import qualified Data.Text as T
-import Data.Int (Int64)
-import GHC.Generics (Generic)
+import           Data.Int     (Int64)
+import           Data.Text    (Text)
+import qualified Data.Text    as T
+
+import           GHC.Generics (Generic)
 
 -- Domain types with validation
-newtype UserId = UserId Int64 deriving (Show, Eq, Read, Generic)
-newtype UserEmail = UserEmail Text deriving (Show, Eq, Read, Generic)
-newtype UserName = UserName Text deriving (Show, Eq, Read, Generic)
-newtype UserAge = UserAge Int deriving (Show, Eq, Read, Generic)
-newtype UserOccupation = UserOccupation Text deriving (Show, Eq, Read, Generic)
+newtype UserId = UserId Int64
+     deriving (Eq, Generic, Read, Show)
+newtype UserEmail = UserEmail Text
+     deriving (Eq, Generic, Read, Show)
+newtype UserName = UserName Text
+     deriving (Eq, Generic, Read, Show)
+newtype UserAge = UserAge Int
+     deriving (Eq, Generic, Read, Show)
+newtype UserOccupation = UserOccupation Text
+     deriving (Eq, Generic, Read, Show)
 
 -- Core domain entity
-data User = User
-    { userId :: Maybe UserId
-    , userName :: UserName
-    , userEmail :: UserEmail
-    , userAge :: UserAge
-    , userOccupation :: UserOccupation
-    } deriving (Show, Eq, Read, Generic)
+data User = User { userId         :: Maybe UserId
+                 , userName       :: UserName
+                 , userEmail      :: UserEmail
+                 , userAge        :: UserAge
+                 , userOccupation :: UserOccupation
+                 }
+     deriving (Eq, Generic, Read, Show)
 
 -- Smart constructor with validation
 mkUser :: Text -> Text -> Int -> Text -> Either Text User

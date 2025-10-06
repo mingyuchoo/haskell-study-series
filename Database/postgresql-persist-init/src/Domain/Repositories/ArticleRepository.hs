@@ -1,11 +1,11 @@
 {-# LANGUAGE RankNTypes #-}
 
 module Domain.Repositories.ArticleRepository
-    ( ArticleRepository(..)
+    ( ArticleRepository (..)
     ) where
 
-import Domain.Entities.Article
-import Domain.Entities.User (UserId, User)
+import           Domain.Entities.Article
+import           Domain.Entities.User    (User, UserId)
 
 
 -- Repository interface (port) - defines what we need, not how

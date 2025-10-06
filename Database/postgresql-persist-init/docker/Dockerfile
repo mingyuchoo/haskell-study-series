@@ -19,14 +19,13 @@ COPY static/ static/
 RUN stack setup --no-docker && stack build --dependencies-only --no-docker
 
 # 프로젝트 빌드
-ARG PROJECT_NAME
-RUN stack install --no-docker --local-bin-path /app/bin
+RUN stack build --no-docker
 
-# 실행 파일 이름 고정
-RUN cp /app/bin/${PROJECT_NAME}-exe /app/bin/app-exe 
+# 실행 파일들을 bin 디렉토리로 복사
+RUN stack install --no-docker --local-bin-path /app/bin
 
 # 포트 노출
 EXPOSE 8000
 
-# 실행
-CMD ["sh", "-c", "echo \"Starting server on port 8000...\" && /app/bin/app-exe"]
+# 실행 (run-server 실행파일 사용)
+CMD ["sh", "-c", "echo \"Starting server on port 8000...\" && /app/bin/run-server"]

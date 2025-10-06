@@ -2,9 +2,10 @@ module Main
     ( main
     ) where
 
-import           Infrastructure.Persistence.PostgreSQL.UserRepositoryImpl (localConnString, migrateDB)
+import           Infrastructure.Persistence.PostgreSQL.UserRepositoryImpl (localConnString,
+                                                                           migrateDB)
 
-import           System.Environment (getArgs)
+import           System.Environment                                       (getArgs)
 
 main :: IO ()
 main = do

@@ -1,23 +1,26 @@
-{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleInstances     #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings     #-}
 
 module Infrastructure.Cache.Redis.CacheServiceImpl
-    ( RedisCacheService(..)
-    , runRedisCacheService
+    ( RedisCacheService (..)
     , RedisInfo
     , localRedisInfo
+    , runRedisCacheService
     ) where
 
-import Domain.Entities.User
-import Domain.Services.CacheService
-import Control.Monad.IO.Class (MonadIO, liftIO)
-import Control.Monad.Reader (ReaderT, runReaderT, ask)
-import Control.Exception (SomeException, try)
-import Data.Int (Int64)
-import Data.ByteString.Char8 (pack, unpack)
-import Data.ByteString (ByteString)
-import Database.Redis
+import           Control.Exception            (SomeException, try)
+import           Control.Monad.IO.Class       (MonadIO, liftIO)
+import           Control.Monad.Reader         (ReaderT, ask, runReaderT)
+
+import           Data.ByteString              (ByteString)
+import           Data.ByteString.Char8        (pack, unpack)
+import           Data.Int                     (Int64)
+
+import           Database.Redis
+
+import           Domain.Entities.User
+import           Domain.Services.CacheService
 
 -- Infrastructure types
 type RedisInfo = ConnectInfo
@@ -27,7 +30,7 @@ localRedisInfo = defaultConnectInfo
 
 -- Cache service implementation monad
 newtype RedisCacheService a = RedisCacheService (ReaderT RedisInfo IO a)
-    deriving (Functor, Applicative, Monad, MonadIO)
+     deriving (Applicative, Functor, Monad, MonadIO)
 
 -- Run the cache service
 runRedisCacheService :: RedisInfo -> RedisCacheService a -> IO a
@@ -45,10 +48,10 @@ serializeUser user = pack $ show user
 
 -- Deserialize user from cache
 deserializeUser :: Int64 -> ByteString -> Maybe User
-deserializeUser uid userString = 
+deserializeUser uid userString =
     case reads (unpack userString) of
         [(user, "")] -> Just user { userId = Just (UserId uid) }
-        _ -> Nothing
+        _            -> Nothing
 
 -- Cache service implementation
 instance CacheService RedisCacheService where
@@ -62,7 +65,7 @@ instance CacheService RedisCacheService where
         eResult <- liftIO $ (try (runRedisAction redisInfo $ get (pack . show $ uid)) :: IO (Either SomeException (Either Reply (Maybe ByteString))))
         return $ case eResult of
             Right (Right (Just userString)) -> deserializeUser uid userString
-            _ -> Nothing
+            _                               -> Nothing
 
     invalidateUser (UserId uid) = RedisCacheService $ do
         redisInfo <- ask

@@ -3,7 +3,8 @@ module Main
     ) where
 
 import qualified Infrastructure.Web.Server as Server
-import           System.Environment (getArgs)
+
+import           System.Environment        (getArgs)
 
 main :: IO ()
 main = do

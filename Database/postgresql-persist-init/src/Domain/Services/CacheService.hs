@@ -1,8 +1,8 @@
 module Domain.Services.CacheService
-    ( CacheService(..)
+    ( CacheService (..)
     ) where
 
-import Domain.Entities.User
+import           Domain.Entities.User
 
 -- Cache service interface (port)
 class Monad m => CacheService m where

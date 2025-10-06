@@ -1,28 +1,29 @@
 {-# LANGUAGE FlexibleContexts #-}
 
 module UseCases.User.CreateUser
-    ( CreateUserUseCase(..)
-    , CreateUserRequest(..)
-    , CreateUserResponse(..)
+    ( CreateUserRequest (..)
+    , CreateUserResponse (..)
+    , CreateUserUseCase (..)
     , createUser
     ) where
 
-import Domain.Entities.User
-import Domain.Repositories.UserRepository
-import Data.Text (Text)
+import           Data.Text                          (Text)
+
+import           Domain.Entities.User
+import           Domain.Repositories.UserRepository
 
 
 -- Use case input/output DTOs
-data CreateUserRequest = CreateUserRequest
-    { crName :: Text
-    , crEmail :: Text
-    , crAge :: Int
-    , crOccupation :: Text
-    } deriving (Show, Eq)
+data CreateUserRequest = CreateUserRequest { crName       :: Text
+                                           , crEmail      :: Text
+                                           , crAge        :: Int
+                                           , crOccupation :: Text
+                                           }
+     deriving (Eq, Show)
 
-data CreateUserResponse = CreateUserResponse
-    { crUserId :: UserId
-    } deriving (Show, Eq)
+data CreateUserResponse = CreateUserResponse { crUserId :: UserId
+                                             }
+     deriving (Eq, Show)
 
 -- Use case interface
 class Monad m => CreateUserUseCase m where

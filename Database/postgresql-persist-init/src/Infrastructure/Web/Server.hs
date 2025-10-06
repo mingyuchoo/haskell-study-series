@@ -1,6 +1,6 @@
-{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DataKinds         #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE TypeOperators     #-}
 
 module Infrastructure.Web.Server
     ( FullAPI
@@ -9,20 +9,26 @@ module Infrastructure.Web.Server
     , runEsqueletoServer
     ) where
 
-import Interface.Web.Controllers.UserController
-import Application.UserService
-import Infrastructure.Persistence.PostgreSQL.UserRepositoryImpl
-import Infrastructure.Cache.Redis.CacheServiceImpl
-import Control.Monad.IO.Class (liftIO)
-import Control.Monad.Error.Class (throwError)
-import Data.Proxy (Proxy(..))
-import Data.Text (Text)
-import Network.Wai.Handler.Warp (run)
-import Servant.API
-import Servant.Server
+import           Application.UserService
+
+import           Control.Monad.Error.Class                                (throwError)
+import           Control.Monad.IO.Class                                   (liftIO)
+
+import           Data.Proxy                                               (Proxy (..))
+import           Data.Text                                                (Text)
+
+import           Infrastructure.Cache.Redis.CacheServiceImpl
+import           Infrastructure.Persistence.PostgreSQL.UserRepositoryImpl
+
+import           Interface.Web.Controllers.UserController
+
+import           Network.Wai.Handler.Warp                                 (run)
+
+import           Servant.API
+import           Servant.Server
 
 -- Full API definition
-type FullAPI = 
+type FullAPI =
        Get '[JSON] [Text]
   :<|> UserAPI
 
@@ -46,12 +52,12 @@ basicServer :: Server FullAPI
 basicServer = rootHandler :<|> notImplementedUserAPI
 
 -- Cached server - simplified for now
-cachedServer :: Server FullAPI  
+cachedServer :: Server FullAPI
 cachedServer = rootHandler :<|> notImplementedUserAPI
 
 -- Placeholder implementation
 notImplementedUserAPI :: Server UserAPI
-notImplementedUserAPI = 
+notImplementedUserAPI =
     (\_ -> throwError err501) :<|>
     (\_ -> throwError err501) :<|>
     (throwError err501) :<|>

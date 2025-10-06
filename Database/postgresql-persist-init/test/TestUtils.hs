@@ -1,28 +1,39 @@
 module TestUtils
     where
 
-import           Control.Concurrent          (ThreadId, forkIO, threadDelay)
-import           Control.Monad.Logger        (runStdoutLoggingT)
-import           Control.Monad.Reader        (runReaderT)
+import           Control.Concurrent                                       (ThreadId,
+                                                                           forkIO,
+                                                                           threadDelay)
+import           Control.Monad.Logger                                     (runStdoutLoggingT)
+import           Control.Monad.Reader                                     (runReaderT)
 
-import           Infrastructure.Persistence.PostgreSQL.UserRepositoryImpl (PGInfo, localConnString, migrateAll)
-import           Infrastructure.Cache.Redis.CacheServiceImpl (RedisInfo, localRedisInfo)
-import           Domain.Entities.User        (User(..), UserId(..))
+import           Data.Text                                                (Text)
 
-import           Database.Persist.Postgresql (runMigrationSilent,
-                                              withPostgresqlConn)
-import           Database.Persist            (deleteWhere, Filter)
-import           Database.Redis              (connect, runRedis, flushall)
+import           Database.Persist                                         (Filter,
+                                                                           deleteWhere)
+import           Database.Persist.Postgresql                              (runMigrationSilent,
+                                                                           withPostgresqlConn)
+import           Database.Redis                                           (connect,
+                                                                           flushall,
+                                                                           runRedis)
 
-import           Network.HTTP.Client         (newManager)
-import           Network.HTTP.Client.TLS     (tlsManagerSettings)
+import           Domain.Entities.User                                     (User (..),
+                                                                           UserId (..))
 
-import           Servant.Client              (ClientEnv, mkClientEnv,
-                                              parseBaseUrl)
+import           Infrastructure.Cache.Redis.CacheServiceImpl              (RedisInfo,
+                                                                           localRedisInfo)
+import           Infrastructure.Persistence.PostgreSQL.UserRepositoryImpl (PGInfo,
+                                                                           localConnString,
+                                                                           migrateAll)
+import           Infrastructure.Web.Server                                (runCachedServer)
 
-import           Infrastructure.Web.Server   (runCachedServer)
-import           Servant.Client              (runClientM)
-import           Data.Text                   (Text)
+import           Network.HTTP.Client                                      (newManager)
+import           Network.HTTP.Client.TLS                                  (tlsManagerSettings)
+
+import           Servant.Client                                           (ClientEnv,
+                                                                           mkClientEnv,
+                                                                           parseBaseUrl,
+                                                                           runClientM)
 
 -- Simple root API client for testing server readiness
 rootApiListClient :: ClientEnv -> IO (Either Text [Text])

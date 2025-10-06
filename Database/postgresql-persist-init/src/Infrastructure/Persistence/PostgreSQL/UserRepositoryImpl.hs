@@ -1,38 +1,42 @@
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DerivingStrategies #-}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE GADTs #-}
+{-# LANGUAGE DataKinds                  #-}
+{-# LANGUAGE DerivingStrategies         #-}
+{-# LANGUAGE FlexibleInstances          #-}
+{-# LANGUAGE GADTs                      #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE QuasiQuotes #-}
-{-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE StandaloneDeriving #-}
-{-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE MultiParamTypeClasses      #-}
+{-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE QuasiQuotes                #-}
+{-# LANGUAGE RecordWildCards            #-}
+{-# LANGUAGE StandaloneDeriving         #-}
+{-# LANGUAGE TemplateHaskell            #-}
+{-# LANGUAGE TypeFamilies               #-}
+{-# LANGUAGE UndecidableInstances       #-}
 
 module Infrastructure.Persistence.PostgreSQL.UserRepositoryImpl
-    ( PostgreSQLUserRepository(..)
-    , runPostgreSQLUserRepository
-    , PGInfo
+    ( PGInfo
+    , PostgreSQLUserRepository (..)
     , localConnString
-    , migrateDB
     , migrateAll
+    , migrateDB
+    , runPostgreSQLUserRepository
     ) where
 
-import Domain.Entities.User
-import Domain.Repositories.UserRepository
-import Control.Monad.IO.Class (MonadIO, liftIO)
-import Control.Monad.Logger (LogLevel(..), LoggingT, filterLogger, runStdoutLoggingT)
-import Control.Monad.Reader (ReaderT, runReaderT, ask)
-import Data.Int (Int64)
-import Data.Text (Text)
+import           Control.Monad.IO.Class             (MonadIO, liftIO)
+import           Control.Monad.Logger               (LogLevel (..), LoggingT,
+                                                     filterLogger,
+                                                     runStdoutLoggingT)
+import           Control.Monad.Reader               (ReaderT, ask, runReaderT)
 
-import Database.Persist
-import Database.Persist.Postgresql
-import Database.Persist.Sql (fromSqlKey, toSqlKey)
-import qualified Database.Persist.TH as PTH
+import           Data.Int                           (Int64)
+import           Data.Text                          (Text)
+
+import           Database.Persist
+import           Database.Persist.Postgresql
+import           Database.Persist.Sql               (fromSqlKey, toSqlKey)
+import qualified Database.Persist.TH                as PTH
+
+import           Domain.Entities.User
+import           Domain.Repositories.UserRepository
 
 -- Define the database schema
 PTH.share [PTH.mkPersist PTH.sqlSettings, PTH.mkMigrate "migrateAll"] [PTH.persistLowerCase|
@@ -69,7 +73,7 @@ migrateDB connString = runAction connString (runMigration migrateAll)
 
 -- Repository implementation monad
 newtype PostgreSQLUserRepository a = PostgreSQLUserRepository (ReaderT PGInfo IO a)
-    deriving (Functor, Applicative, Monad, MonadIO)
+     deriving (Applicative, Functor, Monad, MonadIO)
 
 -- Run the repository
 runPostgreSQLUserRepository :: PGInfo -> PostgreSQLUserRepository a -> IO a
@@ -125,5 +129,5 @@ instance UserRepository PostgreSQLUserRepository where
         pgInfo <- ask
         entities <- liftIO $ runAction pgInfo (selectList [DBUserEmail ==. email] [])
         return $ case entities of
-            [] -> Nothing
+            []         -> Nothing
             (entity:_) -> Just $ entityToDomain entity

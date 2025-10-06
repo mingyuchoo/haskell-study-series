@@ -1,35 +1,40 @@
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Domain.Entities.Article
-    ( Article(..)
+    ( Article (..)
+    , ArticleBody (..)
     , ArticleId
-    , ArticleTitle(..)
-    , ArticleBody(..)
+    , ArticleTitle (..)
     , mkArticle
     , validateArticle
     ) where
 
-import Data.Text (Text)
-import qualified Data.Text as T
-import Data.Time (UTCTime)
-import Data.Int (Int64)
-import GHC.Generics (Generic)
-import Domain.Entities.User (UserId)
+import           Data.Int             (Int64)
+import           Data.Text            (Text)
+import qualified Data.Text            as T
+import           Data.Time            (UTCTime)
+
+import           Domain.Entities.User (UserId)
+
+import           GHC.Generics         (Generic)
 
 -- Domain types
-newtype ArticleId = ArticleId Int64 deriving (Show, Eq, Generic)
-newtype ArticleTitle = ArticleTitle Text deriving (Show, Eq, Generic)
-newtype ArticleBody = ArticleBody Text deriving (Show, Eq, Generic)
+newtype ArticleId = ArticleId Int64
+     deriving (Eq, Generic, Show)
+newtype ArticleTitle = ArticleTitle Text
+     deriving (Eq, Generic, Show)
+newtype ArticleBody = ArticleBody Text
+     deriving (Eq, Generic, Show)
 
 -- Core domain entity
-data Article = Article
-    { articleId :: Maybe ArticleId
-    , articleTitle :: ArticleTitle
-    , articleBody :: ArticleBody
-    , articlePublishedTime :: UTCTime
-    , articleAuthorId :: UserId
-    } deriving (Show, Eq, Generic)
+data Article = Article { articleId            :: Maybe ArticleId
+                       , articleTitle         :: ArticleTitle
+                       , articleBody          :: ArticleBody
+                       , articlePublishedTime :: UTCTime
+                       , articleAuthorId      :: UserId
+                       }
+     deriving (Eq, Generic, Show)
 
 -- Smart constructor with validation
 mkArticle :: Text -> Text -> UTCTime -> UserId -> Either Text Article

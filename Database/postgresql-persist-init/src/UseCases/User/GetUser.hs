@@ -1,26 +1,27 @@
 {-# LANGUAGE FlexibleContexts #-}
 
 module UseCases.User.GetUser
-    ( GetUserUseCase(..)
-    , GetUserRequest(..)
-    , GetUserResponse(..)
+    ( GetUserRequest (..)
+    , GetUserResponse (..)
+    , GetUserUseCase (..)
     , getUser
     , getUserWithCache
     ) where
 
-import Domain.Entities.User
-import Domain.Repositories.UserRepository
-import Domain.Services.CacheService
-import Data.Text (Text)
+import           Data.Text                          (Text)
+
+import           Domain.Entities.User
+import           Domain.Repositories.UserRepository
+import           Domain.Services.CacheService
 
 -- Use case input/output DTOs
-data GetUserRequest = GetUserRequest
-    { grUserId :: UserId
-    } deriving (Show, Eq)
+data GetUserRequest = GetUserRequest { grUserId :: UserId
+                                     }
+     deriving (Eq, Show)
 
-data GetUserResponse = GetUserResponse
-    { grUser :: User
-    } deriving (Show, Eq)
+data GetUserResponse = GetUserResponse { grUser :: User
+                                       }
+     deriving (Eq, Show)
 
 -- Use case interface
 class Monad m => GetUserUseCase m where
@@ -31,7 +32,7 @@ getUser :: (UserRepository m) => GetUserRequest -> m (Either Text GetUserRespons
 getUser req = do
     maybeUser <- findUserById (grUserId req)
     case maybeUser of
-        Nothing -> return $ Left "User not found"
+        Nothing   -> return $ Left "User not found"
         Just user -> return $ Right $ GetUserResponse user
 
 -- Implementation with cache

@@ -1,31 +1,32 @@
 {-# LANGUAGE FlexibleContexts #-}
 
 module UseCases.User.UpdateUser
-    ( UpdateUserUseCase(..)
-    , UpdateUserRequest(..)
-    , UpdateUserResponse(..)
+    ( UpdateUserRequest (..)
+    , UpdateUserResponse (..)
+    , UpdateUserUseCase (..)
     , updateUserUseCase
     , updateUserWithCacheUseCase
     ) where
 
-import Domain.Entities.User
-import Domain.Repositories.UserRepository
+import           Data.Text                          (Text)
+
+import           Domain.Entities.User
+import           Domain.Repositories.UserRepository
 import qualified Domain.Repositories.UserRepository as Repo
-import Domain.Services.CacheService
-import Data.Text (Text)
+import           Domain.Services.CacheService
 
 -- Use case input/output DTOs
-data UpdateUserRequest = UpdateUserRequest
-    { urUserId :: UserId
-    , urName :: Maybe Text
-    , urEmail :: Maybe Text
-    , urAge :: Maybe Int
-    , urOccupation :: Maybe Text
-    } deriving (Show, Eq)
+data UpdateUserRequest = UpdateUserRequest { urUserId     :: UserId
+                                           , urName       :: Maybe Text
+                                           , urEmail      :: Maybe Text
+                                           , urAge        :: Maybe Int
+                                           , urOccupation :: Maybe Text
+                                           }
+     deriving (Eq, Show)
 
-data UpdateUserResponse = UpdateUserResponse
-    { urSuccess :: Bool
-    } deriving (Show, Eq)
+data UpdateUserResponse = UpdateUserResponse { urSuccess :: Bool
+                                             }
+     deriving (Eq, Show)
 
 -- Use case interface
 class Monad m => UpdateUserUseCase m where
