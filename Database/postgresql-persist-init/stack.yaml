@@ -12,7 +12,7 @@ flags: {}
 docker:
   enable: true
   image: "fpco/stack-build:lts-24.4"
-  container-name: "sample-name"
+  container-name: "postgresql-persist-init"
   auto-pull: true
   persist: false
   set-user: true

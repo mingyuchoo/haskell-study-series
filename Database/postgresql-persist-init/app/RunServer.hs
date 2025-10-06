@@ -2,10 +2,7 @@ module Main
     ( main
     ) where
 
-import qualified Server.Basic       as B
-import qualified Server.Cache       as C
-import qualified Server.Esq         as E
-
+import qualified Infrastructure.Web.Server as Server
 import           System.Environment (getArgs)
 
 main :: IO ()
@@ -14,7 +11,7 @@ main = do
   choose args
   where
     choose :: [String] -> IO ()
-    choose [] = putStrLn "Running Basic Server" >> B.runServer
+    choose [] = putStrLn "Running Basic Server" >> Server.runBasicServer
     choose (a:_)
-      | a == "cache" = putStrLn "Running Cache Server" >> C.runServer
-      | otherwise    = putStrLn "Running Esqueleto Server" >> E.runServer
+      | a == "cache" = putStrLn "Running Cache Server" >> Server.runCachedServer
+      | otherwise    = putStrLn "Running Esqueleto Server" >> Server.runEsqueletoServer

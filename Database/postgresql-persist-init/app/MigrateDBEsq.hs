@@ -2,7 +2,7 @@ module Main
     ( main
     ) where
 
-import           DB.Esq (localConnString, migrateDB)
+import           Infrastructure.Persistence.PostgreSQL.UserRepositoryImpl (localConnString, migrateDB)
 
 main :: IO ()
 main = migrateDB localConnString

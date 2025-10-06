@@ -2,8 +2,7 @@ module Main
     ( main
     ) where
 
-import           DB.Basic           (localConnString, migrateDB)
-import qualified DB.Esq             as E
+import           Infrastructure.Persistence.PostgreSQL.UserRepositoryImpl (localConnString, migrateDB)
 
 import           System.Environment (getArgs)
 
@@ -15,5 +14,5 @@ main = do
     choose :: [String] -> IO ()
     choose [] = migrateDB localConnString
     choose (a:_)
-      | a == "esq" = E.migrateDB localConnString
+      | a == "esq" = migrateDB localConnString  -- Using same migration for now
       | otherwise   = migrateDB localConnString

@@ -11,6 +11,10 @@ A small Haskell example project demonstrating how to:
 
 This project provides three server variants and database migration executables to showcase patterns with Persistent and Esqueleto.
 
+**Note**: This project has been refactored to follow Clean Architecture principles. See `CLEAN_ARCHITECTURE.md` for detailed documentation of the new structure.
+
+**Test Status**: The existing tests in the `test/` directory still reference the old module structure and will need to be updated to work with the new Clean Architecture. The core functionality has been preserved but the module organization has changed.
+
 ## Features
 
 - Basic `User` model (Persistent) and extended `Article` model (Esqueleto)
@@ -27,21 +31,26 @@ app/
   MigrateDBEsq.hs     # Run DB migrations for Esqueleto schema
   RunServer.hs        # Entry point to run Basic/Cache/Esq servers
 src/
-  DB/Cache.hs       # Redis cache helpers for User
-  DB/Basic.hs         # Persistent-based DB helpers (User)
-  DB/Esq.hs           # Esqueleto-based DB helpers (User, Article)
-  Samples/Objects.hs  # Sample in-memory objects for quick examples
-  Schema/Basic.hs     # Persistent schema: User
-  Schema/Esq.hs       # Persistent schema: User, Article + JSON instances
-  Server/Basic.hs     # Servant server exposing user endpoints (port 8000)
-  Server/Cache.hs     # Servant server variant with caching (referenced by tests)
-  Server/Esq.hs       # Servant server variant using Esqueleto
+  Domain/             # Pure business logic (innermost layer)
+    Entities/         # Business entities with validation
+    Repositories/     # Repository interfaces (ports)
+    Services/         # Service interfaces for external dependencies
+  UseCases/           # Application business rules
+    User/             # User-related use cases
+  Interface/          # Interface adapters
+    Web/              # Web controllers and DTOs
+  Application/        # Service orchestration and dependency injection
+  Infrastructure/     # Framework implementations (outermost layer)
+    Persistence/      # Database implementations
+    Cache/            # Cache implementations
+    Web/              # Server configuration
+
  test/
   APITests.hs         # Hspec tests for cache server behavior
   TestUtils.hs        # Test harness: spins up server, migrates DB
 ```
 
-Note: `Server.Cache` and `Server.Esq` are referenced by executables and tests and are expected to follow the same API surface as `Server.Basic`.
+Note: The server variants are now implemented using Clean Architecture principles in `src/Infrastructure/Web/Server.hs`.
 
 ## Prerequisites
 
@@ -168,9 +177,9 @@ make watch-test
 make watch-coverage
 ```
 
-## API (Server.Basic)
+## API
 
-`src/Server/Basic.hs` defines the API and handlers. Base URL: `http://127.0.0.1:8000`.
+The API is now defined in `src/Interface/Web/Controllers/UserController.hs` with Clean Architecture principles. Base URL: `http://127.0.0.1:8000`.
 
 - `GET /` → List endpoints
 - `POST /users` with JSON body `User` → returns `Int64` (new user ID)
@@ -224,7 +233,7 @@ make docker-run
 Notes:
 
 - The Dockerfile builds the executable and copies it to `/app/bin/app-exe`.
-- The container prints a message about port 8000 and exposes 8000, but `Server.Basic` runs Warp on port 8000. If you run the image directly, either:
+- The container prints a message about port 8000 and exposes 8000, but the server runs Warp on port 8000. If you run the image directly, either:
   - Map host port 80 to container port 8000 as written and adjust the server to bind 8000, or
   - Change the container to expose 8000 and run on 8000.
 
@@ -232,7 +241,7 @@ Adjust as needed for your preferred port mapping.
 
 ## Sample Data
 
-See `src/Samples/Objects.hs` for example `User` and `Article` constructors you can use when playing in `ghci` or writing seeds.
+For testing and development, you can create sample `User` and `Article` objects using the domain entities in `src/Domain/Entities/`.
 
 ## Makefile Targets
 

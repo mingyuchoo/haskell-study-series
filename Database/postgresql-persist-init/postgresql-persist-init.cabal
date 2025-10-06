@@ -1,6 +1,6 @@
 cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.37.0.
+-- This file has been generated from package.yaml by hpack version 0.38.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -27,16 +27,22 @@ source-repository head
 
 library
   exposed-modules:
-      DB.Basic
-      DB.Cache
-      DB.Esq
-      Samples.Objects
-      Schema.Basic
-      Schema.Cache
-      Schema.Esq
-      Server.Basic
-      Server.Cache
-      Server.Esq
+      Application.UserService
+      Domain.Entities.Article
+      Domain.Entities.User
+      Domain.Repositories.ArticleRepository
+      Domain.Repositories.UserRepository
+      Domain.Services.CacheService
+      Infrastructure.Cache.Redis.CacheServiceImpl
+      Infrastructure.Persistence.PostgreSQL.UserRepositoryImpl
+      Infrastructure.Web.Server
+      Interface.Web.Controllers.UserController
+      Interface.Web.DTOs.UserDTO
+      UseCases.User.CreateUser
+      UseCases.User.DeleteUser
+      UseCases.User.GetUser
+      UseCases.User.ListUsers
+      UseCases.User.UpdateUser
   other-modules:
       Paths_postgresql_persist_init
   autogen-modules:
