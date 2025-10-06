@@ -1,6 +1,6 @@
-cabal-version: 3.16
+cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.35.1.
+-- This file has been generated from package.yaml by hpack version 0.38.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -34,6 +34,8 @@ library
       TypeClassInheritance
   other-modules:
       Paths_tutorial_template
+  autogen-modules:
+      Paths_tutorial_template
   hs-source-dirs:
       src
   default-extensions:
@@ -49,6 +51,8 @@ library
 executable tutorial-template-exe
   main-is: Main.hs
   other-modules:
+      Paths_tutorial_template
+  autogen-modules:
       Paths_tutorial_template
   hs-source-dirs:
       app
@@ -68,6 +72,8 @@ test-suite tutorial-template-test
   main-is: Spec.hs
   other-modules:
       Data.String.StripSpec
+      Paths_tutorial_template
+  autogen-modules:
       Paths_tutorial_template
   hs-source-dirs:
       test
