@@ -10,8 +10,7 @@ module Interface.Web.Controllers.UserController
     ) where
 
 import           Control.Monad.Error.Class  (throwError)
-import           Control.Monad.IO.Class     (MonadIO, liftIO)
-import           Control.Monad.Trans.Except (throwE)
+
 
 import qualified Data.ByteString.Lazy       as LBS
 import           Data.Char                  (ord)
@@ -19,18 +18,10 @@ import           Data.Int                   (Int64)
 import           Data.Text                  (Text)
 import qualified Data.Text                  as T
 
-import           Domain.Entities.User
-
 import           Interface.Web.DTOs.UserDTO
 
 import           Servant.API
 import           Servant.Server
-
-import           UseCases.User.CreateUser
-import           UseCases.User.DeleteUser
-import           UseCases.User.GetUser
-import           UseCases.User.ListUsers
-import           UseCases.User.UpdateUser
 
 -- API definition
 type UserAPI =

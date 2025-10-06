@@ -9,16 +9,10 @@ module Infrastructure.Web.Server
     , runEsqueletoServer
     ) where
 
-import           Application.UserService
-
 import           Control.Monad.Error.Class                                (throwError)
-import           Control.Monad.IO.Class                                   (liftIO)
 
 import           Data.Proxy                                               (Proxy (..))
 import           Data.Text                                                (Text)
-
-import           Infrastructure.Cache.Redis.CacheServiceImpl
-import           Infrastructure.Persistence.PostgreSQL.UserRepositoryImpl
 
 import           Interface.Web.Controllers.UserController
 

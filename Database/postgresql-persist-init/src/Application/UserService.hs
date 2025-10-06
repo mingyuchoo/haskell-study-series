@@ -9,11 +9,8 @@ module Application.UserService
     , runCachedUserService
     ) where
 
-import           Control.Monad.IO.Class                   (MonadIO, liftIO)
+import           Control.Monad.IO.Class                   (MonadIO)
 import           Control.Monad.Reader                     (ReaderT, runReaderT)
-
-import           Data.Int                                 (Int64)
-import           Data.Text                                (Text)
 
 import           Domain.Entities.User
 import           Domain.Repositories.UserRepository
@@ -28,8 +25,7 @@ import           UseCases.User.DeleteUser                 (DeleteUserRequest (..
                                                            deleteUserWithCacheUseCase)
 import           UseCases.User.GetUser
 import           UseCases.User.ListUsers
-import           UseCases.User.UpdateUser                 (UpdateUserRequest (..),
-                                                           updateUserUseCase,
+import           UseCases.User.UpdateUser                 (updateUserUseCase,
                                                            updateUserWithCacheUseCase)
 
 -- Application service without cache

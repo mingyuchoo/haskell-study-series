@@ -32,7 +32,6 @@ import           Data.Text                          (Text)
 
 import           Database.Persist
 import           Database.Persist.Postgresql
-import           Database.Persist.Sql               (fromSqlKey, toSqlKey)
 import qualified Database.Persist.TH                as PTH
 
 import           Domain.Entities.User
