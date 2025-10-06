@@ -6,7 +6,6 @@ module Lib
 
 import           Data.IORef                             (newIORef)
 import           Data.Map                               (Map)
-import qualified Data.Map                               as M
 
 import           Domain.Entity.Url                      (Url)
 

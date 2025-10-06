@@ -10,8 +10,6 @@ import           Application.UseCase.ListUrls                    (listUrls)
 import           Application.UseCase.RetrieveUrl                 (retrieveUrl)
 import           Application.UseCase.ShortenUrl                  (shortenUrl)
 
-import           Control.Monad.IO.Class                          (liftIO)
-
 import           Data.IORef                                      (IORef)
 import           Data.Map                                        (Map)
 import qualified Data.Text.Lazy                                  as LT
@@ -39,7 +37,10 @@ createUrlHandler :: IORef UrlStore -> ActionM ()
 createUrlHandler storeRef = do
     urlText <- formParam "url"
     case mkUrl urlText of
-        Nothing -> raiseStatus status400 "Invalid URL"
+        Nothing -> do
+            status status400
+            text "Invalid URL"
+            finish
         Just url -> do
             _ <- liftIO $ runInMemoryUrlRepo (shortenUrl url) storeRef
             redirect "/"
@@ -50,4 +51,7 @@ redirectHandler storeRef = do
     maybeUrl <- liftIO $ runInMemoryUrlRepo (retrieveUrl urlId) storeRef
     case maybeUrl of
         Just url -> redirect (LT.fromStrict $ getUrl url)
-        Nothing  -> raiseStatus status404 "not found"
+        Nothing  -> do
+            status status404
+            text "not found"
+            finish
