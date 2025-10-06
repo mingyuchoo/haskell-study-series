@@ -10,7 +10,7 @@ import qualified Data.Map                               as M
 
 import           Domain.Entity.Url                      (Url)
 
-import           Interface.Web.Controller.UrlController (createUrlHandler,
+import           Adapters.Web.Controller.UrlController (createUrlHandler,
                                                          homeHandler,
                                                          redirectHandler)
 

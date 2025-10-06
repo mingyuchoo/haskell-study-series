@@ -32,8 +32,8 @@ library
       Application.UseCase.RetrieveUrl
       Application.UseCase.ListUrls
       Infrastructure.Repository.InMemoryUrlRepository
-      Interface.Web.View.UrlView
-      Interface.Web.Controller.UrlController
+      Adapters.Web.View.UrlView
+      Adapters.Web.Controller.UrlController
   other-modules:
       Paths_scotty_t02_clean_archi
   autogen-modules:

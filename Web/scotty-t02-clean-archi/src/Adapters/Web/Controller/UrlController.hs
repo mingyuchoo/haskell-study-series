@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Interface.Web.Controller.UrlController
+module Adapters.Web.Controller.UrlController
     ( createUrlHandler
     , homeHandler
     , redirectHandler
@@ -21,7 +21,7 @@ import           Domain.Entity.Url                               (Url (..),
 
 import           Infrastructure.Repository.InMemoryUrlRepository (runInMemoryUrlRepo)
 
-import           Interface.Web.View.UrlView                      (renderHomePage)
+import           Adapters.Web.View.UrlView                      (renderHomePage)
 
 import           Network.HTTP.Types                              (status400,
                                                                   status404)

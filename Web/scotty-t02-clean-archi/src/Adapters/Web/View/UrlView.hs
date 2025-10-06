@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Interface.Web.View.UrlView
+module Adapters.Web.View.UrlView
     ( renderHomePage
     ) where
 

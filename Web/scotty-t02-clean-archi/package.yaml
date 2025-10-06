@@ -49,8 +49,8 @@ library:
     - Application.UseCase.RetrieveUrl
     - Application.UseCase.ListUrls
     - Infrastructure.Repository.InMemoryUrlRepository
-    - Interface.Web.View.UrlView
-    - Interface.Web.Controller.UrlController
+    - Adapters.Web.View.UrlView
+    - Adapters.Web.Controller.UrlController
 
 executables:
   scotty-t02-clean-archi-exe:

@@ -24,11 +24,11 @@ Contains implementations of external concerns like data storage.
 
 - **`Infrastructure.Repository.InMemoryUrlRepository`**: In-memory implementation of URL repository
 
-### 4. Interface Layer (`src/Interface/`)
+### 4. Adapters Layer (`src/Adapters/`)
 Contains controllers and views that handle external interfaces.
 
-- **`Interface.Web.Controller.UrlController`**: HTTP request handlers
-- **`Interface.Web.View.UrlView`**: HTML rendering logic
+- **`Adapters.Web.Controller.UrlController`**: HTTP request handlers
+- **`Adapters.Web.View.UrlView`**: HTML rendering logic
 
 ## Key Benefits
 
@@ -41,12 +41,12 @@ Contains controllers and views that handle external interfaces.
 ## Dependency Flow
 
 ```
-Interface Layer → Application Layer → Domain Layer
+Adapters Layer → Application Layer → Domain Layer
      ↓
 Infrastructure Layer → Domain Layer
 ```
 
-- Interface layer depends on Application layer
+- Adapters layer depends on Application layer
 - Application layer depends on Domain layer  
 - Infrastructure layer implements Domain interfaces
 - Domain layer has no external dependencies
