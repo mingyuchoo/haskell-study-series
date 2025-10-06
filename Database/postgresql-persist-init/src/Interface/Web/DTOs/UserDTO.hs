@@ -31,8 +31,22 @@ data UserResponseDTO = UserResponseDTO { userId         :: Int64
                                        }
      deriving (Eq, Generic, Show)
 
-instance ToJSON UserResponseDTO
-instance FromJSON UserResponseDTO
+instance ToJSON UserResponseDTO where
+    toJSON (UserResponseDTO uid name email age occupation) = object
+        [ "id" .= uid
+        , "name" .= name
+        , "email" .= email
+        , "age" .= age
+        , "occupation" .= occupation
+        ]
+
+instance FromJSON UserResponseDTO where
+    parseJSON = withObject "UserResponseDTO" $ \o -> UserResponseDTO
+        <$> o .: "id"
+        <*> o .: "name"
+        <*> o .: "email"
+        <*> o .: "age"
+        <*> o .: "occupation"
 
 -- Request DTOs
 data CreateUserRequestDTO = CreateUserRequestDTO { crName       :: Text
@@ -42,15 +56,31 @@ data CreateUserRequestDTO = CreateUserRequestDTO { crName       :: Text
                                                  }
      deriving (Eq, Generic, Show)
 
-instance ToJSON CreateUserRequestDTO
-instance FromJSON CreateUserRequestDTO
+instance ToJSON CreateUserRequestDTO where
+    toJSON (CreateUserRequestDTO name email age occupation) = object
+        [ "name" .= name
+        , "email" .= email
+        , "age" .= age
+        , "occupation" .= occupation
+        ]
+
+instance FromJSON CreateUserRequestDTO where
+    parseJSON = withObject "CreateUserRequestDTO" $ \o -> CreateUserRequestDTO
+        <$> o .: "name"
+        <*> o .: "email"
+        <*> o .: "age"
+        <*> o .: "occupation"
 
 data CreateUserResponseDTO = CreateUserResponseDTO { crUserId :: Int64
                                                    }
      deriving (Eq, Generic, Show)
 
-instance ToJSON CreateUserResponseDTO
-instance FromJSON CreateUserResponseDTO
+instance ToJSON CreateUserResponseDTO where
+    toJSON (CreateUserResponseDTO uid) = object ["id" .= uid]
+
+instance FromJSON CreateUserResponseDTO where
+    parseJSON = withObject "CreateUserResponseDTO" $ \o -> CreateUserResponseDTO
+        <$> o .: "id"
 
 data UpdateUserRequestDTO = UpdateUserRequestDTO { urName       :: Maybe Text
                                                  , urEmail      :: Maybe Text
@@ -59,8 +89,20 @@ data UpdateUserRequestDTO = UpdateUserRequestDTO { urName       :: Maybe Text
                                                  }
      deriving (Eq, Generic, Show)
 
-instance ToJSON UpdateUserRequestDTO
-instance FromJSON UpdateUserRequestDTO
+instance ToJSON UpdateUserRequestDTO where
+    toJSON (UpdateUserRequestDTO name email age occupation) = object
+        [ "name" .= name
+        , "email" .= email
+        , "age" .= age
+        , "occupation" .= occupation
+        ]
+
+instance FromJSON UpdateUserRequestDTO where
+    parseJSON = withObject "UpdateUserRequestDTO" $ \o -> UpdateUserRequestDTO
+        <$> o .:? "name"
+        <*> o .:? "email"
+        <*> o .:? "age"
+        <*> o .:? "occupation"
 
 -- Conversion functions
 userToResponseDTO :: User -> UserResponseDTO
