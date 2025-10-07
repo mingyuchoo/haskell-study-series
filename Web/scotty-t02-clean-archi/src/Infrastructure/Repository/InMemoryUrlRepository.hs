@@ -11,7 +11,8 @@ import           Data.IORef                      (IORef, modifyIORef, readIORef)
 import           Data.Map                        (Map)
 import qualified Data.Map                        as M
 
-import           Domain.Entity.Url               (Url (..), UrlId)
+import           Domain.Entity.Url               (Url (..), TempUrl (..), UrlId, mkUrlWithMetadata, generateShortUrl)
+import           Data.Time                       (getCurrentTime)
 import           Domain.Repository.UrlRepository (UrlRepository (..))
 
 type UrlStore = (Int, Map UrlId Url)
@@ -34,9 +35,12 @@ instance MonadIO InMemoryUrlRepo where
     liftIO action = InMemoryUrlRepo $ \_ -> action
 
 instance UrlRepository InMemoryUrlRepo where
-    storeUrl url = InMemoryUrlRepo $ \ref -> do
+    storeUrl tempUrl = InMemoryUrlRepo $ \ref -> do
         (nextId, urls) <- readIORef ref
-        let newUrls = M.insert nextId url urls
+        currentTime <- getCurrentTime
+        let shortUrl = generateShortUrl nextId
+            url = mkUrlWithMetadata nextId (getTempUrl tempUrl) shortUrl currentTime
+            newUrls = M.insert nextId url urls
         modifyIORef ref $ \_ -> (nextId + 1, newUrls)
         return nextId
 

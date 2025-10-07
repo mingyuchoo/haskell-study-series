@@ -32,6 +32,7 @@ library
       Application.UseCase.RetrieveUrl
       Application.UseCase.ListUrls
       Infrastructure.Repository.InMemoryUrlRepository
+      Infrastructure.Repository.RedisUrlRepository
       Adapters.Web.View.UrlView
       Adapters.Web.Controller.UrlController
   other-modules:
@@ -42,12 +43,17 @@ library
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      base
+      aeson
+    , base
     , blaze-html
+    , bytestring
     , containers
+    , hedis
     , http-types
+    , random
     , scotty
     , text
+    , time
   default-language: Haskell2010
 
 executable scotty-t02-clean-archi-exe
@@ -60,13 +66,18 @@ executable scotty-t02-clean-archi-exe
       app
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base
+      aeson
+    , base
     , blaze-html
+    , bytestring
     , containers
+    , hedis
     , http-types
+    , random
     , scotty
     , scotty-t02-clean-archi
     , text
+    , time
   default-language: Haskell2010
 
 test-suite scotty-t02-clean-archi-test
@@ -80,13 +91,18 @@ test-suite scotty-t02-clean-archi-test
       test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base
+      aeson
+    , base
     , blaze-html
+    , bytestring
     , containers
     , doctest
     , doctest-discover
+    , hedis
     , http-types
+    , random
     , scotty
     , scotty-t02-clean-archi
     , text
+    , time
   default-language: Haskell2010

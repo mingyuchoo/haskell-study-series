@@ -75,6 +75,18 @@ docker-compose-down:
 docker-compose-logs:
 	docker compose -f docker/docker-compose.yaml logs -f
 
+redis-cli:
+	docker exec -it scotty-redis redis-cli
+
+redis-monitor:
+	docker exec -it scotty-redis redis-cli monitor
+
+redis-keys:
+	docker exec scotty-redis redis-cli keys "*"
+
+redis-flushall:
+	docker exec scotty-redis redis-cli flushall
+
 install: release
 	mkdir -p $(HOME)/.local/bin
 	cp $(shell stack path --local-install-root)/bin/$(PROJECT_NAME)-exe $(HOME)/.local/bin/

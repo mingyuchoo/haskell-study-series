@@ -23,9 +23,14 @@ dependencies:
 - base
 - blaze-html
 - containers
+- hedis
 - http-types
 - scotty
 - text
+- time
+- aeson
+- bytestring
+- random
 
 default-extensions: []
 ghc-options:
@@ -49,6 +54,7 @@ library:
     - Application.UseCase.RetrieveUrl
     - Application.UseCase.ListUrls
     - Infrastructure.Repository.InMemoryUrlRepository
+    - Infrastructure.Repository.RedisUrlRepository
     - Adapters.Web.View.UrlView
     - Adapters.Web.Controller.UrlController
 

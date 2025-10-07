@@ -3,11 +3,11 @@ module Application.UseCase.ShortenUrl
     , shortenUrl
     ) where
 
-import           Domain.Entity.Url               (Url, UrlId)
+import           Domain.Entity.Url               (TempUrl, UrlId)
 import           Domain.Repository.UrlRepository (UrlRepository (..))
 
 class Monad m => ShortenUrlUseCase m where
-    shortenUrlUC :: Url -> m UrlId
+    shortenUrlUC :: TempUrl -> m UrlId
 
-shortenUrl :: UrlRepository m => Url -> m UrlId
+shortenUrl :: UrlRepository m => TempUrl -> m UrlId
 shortenUrl = storeUrl

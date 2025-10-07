@@ -6,35 +6,33 @@ module Adapters.Web.Controller.UrlController
     , redirectHandler
     ) where
 
-import           Application.UseCase.ListUrls                    (listUrls)
-import           Application.UseCase.RetrieveUrl                 (retrieveUrl)
-import           Application.UseCase.ShortenUrl                  (shortenUrl)
+import           Application.UseCase.ListUrls                   (listUrls)
+import           Application.UseCase.RetrieveUrl                (retrieveUrl)
+import           Application.UseCase.ShortenUrl                 (shortenUrl)
 
-import           Data.IORef                                      (IORef)
-import           Data.Map                                        (Map)
-import qualified Data.Text.Lazy                                  as LT
+import           Control.Monad.IO.Class                         (liftIO)
 
-import           Domain.Entity.Url                               (Url (..),
-                                                                  mkUrl)
+import           Database.Redis                                 (Connection)
+import qualified Data.Text.Lazy                                 as LT
 
-import           Infrastructure.Repository.InMemoryUrlRepository (runInMemoryUrlRepo)
+import           Domain.Entity.Url                              (Url (..), TempUrl (..), mkUrl)
 
-import           Adapters.Web.View.UrlView                      (renderHomePage)
+import           Infrastructure.Repository.RedisUrlRepository   (runRedisUrlRepo)
 
-import           Network.HTTP.Types                              (status400,
-                                                                  status404)
+import           Adapters.Web.View.UrlView                     (renderHomePage)
+
+import           Network.HTTP.Types                             (status400,
+                                                                 status404)
 
 import           Web.Scotty
 
-type UrlStore = (Int, Map Int Url)
-
-homeHandler :: IORef UrlStore -> ActionM ()
-homeHandler storeRef = do
-    urls <- liftIO $ runInMemoryUrlRepo listUrls storeRef
+homeHandler :: Connection -> ActionM ()
+homeHandler redisConn = do
+    urls <- liftIO $ runRedisUrlRepo listUrls redisConn
     html $ renderHomePage urls
 
-createUrlHandler :: IORef UrlStore -> ActionM ()
-createUrlHandler storeRef = do
+createUrlHandler :: Connection -> ActionM ()
+createUrlHandler redisConn = do
     urlText <- formParam "url"
     case mkUrl urlText of
         Nothing -> do
@@ -42,15 +40,15 @@ createUrlHandler storeRef = do
             text "Invalid URL"
             finish
         Just url -> do
-            _ <- liftIO $ runInMemoryUrlRepo (shortenUrl url) storeRef
+            _ <- liftIO $ runRedisUrlRepo (shortenUrl url) redisConn
             redirect "/"
 
-redirectHandler :: IORef UrlStore -> ActionM ()
-redirectHandler storeRef = do
+redirectHandler :: Connection -> ActionM ()
+redirectHandler redisConn = do
     urlId <- pathParam "n"
-    maybeUrl <- liftIO $ runInMemoryUrlRepo (retrieveUrl urlId) storeRef
+    maybeUrl <- liftIO $ runRedisUrlRepo (retrieveUrl urlId) redisConn
     case maybeUrl of
-        Just url -> redirect (LT.fromStrict $ getUrl url)
+        Just url -> redirect (LT.fromStrict $ originalUrl url)
         Nothing  -> do
             status status404
             text "not found"

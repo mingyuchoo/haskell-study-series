@@ -4,14 +4,11 @@ module Lib
     ( shortener
     ) where
 
-import           Data.IORef                             (newIORef)
-import           Data.Map                               (Map)
+import           Infrastructure.Repository.RedisUrlRepository (createRedisConnection)
 
-import           Domain.Entity.Url                      (Url)
-
-import           Adapters.Web.Controller.UrlController (createUrlHandler,
-                                                         homeHandler,
-                                                         redirectHandler)
+import           Adapters.Web.Controller.UrlController       (createUrlHandler,
+                                                               homeHandler,
+                                                               redirectHandler)
 
 import           Web.Scotty
 
@@ -20,9 +17,11 @@ import           Web.Scotty
 --
 shortener :: IO ()
 shortener = do
-    urlsR <- newIORef (1 :: Int, mempty :: Map Int Url)
+    redisConn <- createRedisConnection
+    putStrLn "Connected to Redis"
+    putStrLn "Starting URL Shortener on port 8000..."
     scotty 8000 $ do
-        get "/" $ homeHandler urlsR
-        post "/" $ createUrlHandler urlsR
-        get "/:n" $ redirectHandler urlsR
+        get "/" $ homeHandler redisConn
+        post "/" $ createUrlHandler redisConn
+        get "/:n" $ redirectHandler redisConn
 
