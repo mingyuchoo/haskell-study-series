@@ -27,6 +27,6 @@ handler :: Socket -> IO ()
 handler conn = do
   handleSock <- socketToHandle conn ReadWriteMode
   line <- hGetLine handleSock
-  putStrLn $ "Client say: " ++ line
+  putStrLn $ "Client says: " ++ line
   hPutStrLn handleSock $ "You said: " ++ line
   hClose handleSock
