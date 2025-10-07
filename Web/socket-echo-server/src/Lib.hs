@@ -3,15 +3,16 @@ module Lib
     ) where
 
 import           Network.Socket
+
 import           System.IO
 
 someFunc :: IO ()
 someFunc = do
   sock <- socket AF_INET Stream 0
   setSocketOption sock ReuseAddr 1
-  bind sock (SockAddrInet 4000 0)
+  bind sock (SockAddrInet 8000 0)
   listen sock 2
-  putStrLn "Listening on port 4000..."
+  putStrLn "Listening on port 8000..."
   mainLoop sock
 
 
