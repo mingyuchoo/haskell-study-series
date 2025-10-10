@@ -10,6 +10,9 @@ extra-source-files:
 - README.md
 - CHANGELOG.md
 
+data-files:
+- static/**/*
+
 synopsis:            Short description of your package
 category:            A
 description:         Please see the README on GitHub at <https://github.com/mingyuchoo/backend#readme>

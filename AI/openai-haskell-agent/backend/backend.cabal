@@ -19,6 +19,14 @@ build-type:     Simple
 extra-source-files:
     README.md
     CHANGELOG.md
+data-files:
+    static/assets/index-CAl1KfkQ.js
+    static/assets/index-CLT8khGR.css
+    static/assets/index-D8b4DHJx.css
+    static/assets/index-jZ3Mvkp6.js
+    static/assets/react-CHdo91hT.svg
+    static/index.html
+    static/vite.svg
 
 source-repository head
   type: git

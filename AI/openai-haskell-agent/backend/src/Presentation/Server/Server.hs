@@ -34,6 +34,7 @@ runServer port chatAppService = do
 
         -- Print server information to console
         TIO.putStrLn <| pack <| "Starting server on port " <> show port
+        TIO.putStrLn <| pack <| "Web UI available at http://localhost:" <> show port <> "/"
         TIO.putStrLn <| pack <| "API available at http://localhost:" <> show port <> "/api/chat"
         TIO.putStrLn <| pack <| "Health check at http://localhost:" <> show port <> "/health"
 
