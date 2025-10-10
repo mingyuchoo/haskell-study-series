@@ -18,19 +18,22 @@ module Infrastructure.OpenAI.OpenAIService
 import           Data.Aeson              (FromJSON (..), ToJSON (..),
                                           Value (..), decode, object,
                                           withObject, (.:), (.:?), (.=))
+import qualified Data.Aeson.Key          as Key
 import           Data.ByteString         (ByteString)
+import qualified Data.ByteString.Char8   as BS8
+import qualified Data.ByteString.Lazy    as LBS
 import           Data.Text               (Text, pack)
+import qualified Data.Text               as T
+
 import           Domain.Entities.Chat    (ChatRequest (..), ChatResponse (..),
                                           Choice (..), Delta (..))
 import           Domain.Entities.Message (Message (..), Role (..))
-import           Flow                    ((<|))
-import           GHC.Generics            (Generic)
-import           Network.HTTP.Client     (Manager)
 
-import qualified Data.Aeson.Key          as Key
-import qualified Data.ByteString.Char8   as BS8
-import qualified Data.ByteString.Lazy    as LBS
-import qualified Data.Text               as T
+import           Flow                    ((<|))
+
+import           GHC.Generics            (Generic)
+
+import           Network.HTTP.Client     (Manager)
 
 -- | OpenAI Service for handling OpenAI API requests
 data OpenAIService = OpenAIService { _oasManager :: Manager

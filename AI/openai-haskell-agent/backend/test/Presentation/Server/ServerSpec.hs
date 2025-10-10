@@ -7,12 +7,18 @@ module Presentation.Server.ServerSpec
 
 import           Application.Services.ChatApplicationService (createOpenAIChatApplicationService)
 import           Application.Services.ChatService            (createOpenAIChatService)
+
 import           Control.Monad.IO.Class                      (liftIO)
-import           Flow ((<|))
+
+import           Flow                                        ((<|))
+
 import           Infrastructure.Http.HttpClient              (createOpenAIHttpClient)
+
 import           Network.HTTP.Client                         (newManager)
 import           Network.HTTP.Client.TLS                     (tlsManagerSettings)
+
 import           Presentation.Server.Server                  (runServer)
+
 import           Test.Hspec
 
 spec :: Spec
@@ -26,7 +32,7 @@ spec = do
       -- Create a real OpenAIChatService for type compatibility
       manager <- liftIO <| newManager tlsManagerSettings
       let httpClient = createOpenAIHttpClient
-          chatService = createOpenAIChatService httpClient manager "mock-api-key" "https://api.openai.com/v1/chat/completions"
+          chatService = createOpenAIChatService httpClient manager "mock-api-key" "https://api.openai.com/v1/chat/completions" "v1"
           appService = createOpenAIChatApplicationService chatService
           port = 8000
 

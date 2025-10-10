@@ -21,7 +21,7 @@ docker:
   detach: false
   persist: false
   run-args:
-    - "--cpus=16"
+    - "--cpus=12"
     - "--memory=32g"
 
 # nix:

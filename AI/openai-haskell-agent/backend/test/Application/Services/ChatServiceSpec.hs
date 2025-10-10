@@ -6,15 +6,22 @@ module Application.Services.ChatServiceSpec
 
 import           Application.Services.ChatService (OpenAIChatService (..),
                                                    createOpenAIChatService)
+
 import           Control.Concurrent.STM           (atomically)
 import           Control.Concurrent.STM.TChan     (newTChanIO, writeTChan)
 import           Control.Monad.IO.Class           (liftIO)
+
 import           Domain.Interfaces.ChatService    (ChatService (..))
+
 import           Flow                             ((<|))
+
 import           Infrastructure.Http.HttpClient   (createOpenAIHttpClient)
+
 import           Network.HTTP.Client              (newManager)
 import           Network.HTTP.Client.TLS          (tlsManagerSettings)
+
 import           System.Environment               (setEnv)
+
 import           Test.Hspec
 
 spec :: Spec
@@ -41,7 +48,7 @@ spec = do
       -- Create a real OpenAIHttpClient (required by type signature)
       manager <- liftIO <| newManager tlsManagerSettings
       let httpClient = createOpenAIHttpClient
-          service = createOpenAIChatService httpClient manager "mock-api-key" "https://api.openai.com/v1/chat/completions"
+          service = createOpenAIChatService httpClient manager "mock-api-key" "https://api.openai.com/v1/chat/completions" "v1"
 
       -- Test processing streaming responses
       result <- liftIO <| processStreamingResponse service responseChan
@@ -54,7 +61,7 @@ spec = do
       -- Create a real OpenAIHttpClient (required by type signature)
       manager <- liftIO <| newManager tlsManagerSettings
       let httpClient = createOpenAIHttpClient
-          service = createOpenAIChatService httpClient manager "mock-api-key" "https://api.openai.com/v1/chat/completions"
+          service = createOpenAIChatService httpClient manager "mock-api-key" "https://api.openai.com/v1/chat/completions" "v1"
 
       -- We would normally test with messages like these:
       -- let messages = [Message System "You are a helpful assistant",

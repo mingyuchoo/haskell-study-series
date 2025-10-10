@@ -4,13 +4,19 @@ module Main
 
 import           Application.Services.ChatApplicationService (createOpenAIChatApplicationService)
 import           Application.Services.ChatService            (createOpenAIChatService)
+
 import           Configuration.Dotenv                        (defaultConfig,
                                                               loadFile)
+
 import           Infrastructure.Http.HttpClient              (createOpenAIHttpClient)
+
 import           Network.HTTP.Client                         (newManager)
 import           Network.HTTP.Client.TLS                     (tlsManagerSettings)
+
 import           Presentation.Server.Server                  (runServer)
+
 import           System.Environment                          (getEnv, lookupEnv)
+
 import           Text.Read                                   (readMaybe)
 
 
@@ -28,13 +34,14 @@ main = do
         Nothing -> 8000
 
   -- Get API configuration from environment variables
-  apiKey <- getEnv "OPENAI_API_KEY"
-  apiUrl <- getEnv "OPENAI_API_URL"
+  apiKey     <- getEnv "OPENAI_API_KEY"
+  apiUrl     <- getEnv "OPENAI_API_URL"
+  apiVersion <- getEnv "OPENAI_API_VERSION"
 
   -- Initialize components with dependency injection
   manager <- newManager tlsManagerSettings
-  let httpClient = createOpenAIHttpClient
-      chatService = createOpenAIChatService httpClient manager apiKey apiUrl
+  let httpClient     = createOpenAIHttpClient
+      chatService    = createOpenAIChatService httpClient manager apiKey apiUrl apiVersion
       chatAppService = createOpenAIChatApplicationService chatService
 
   -- Run the server with the configured port and application service

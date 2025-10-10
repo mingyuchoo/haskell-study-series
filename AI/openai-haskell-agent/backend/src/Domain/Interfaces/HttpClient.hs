@@ -3,8 +3,10 @@ module Domain.Interfaces.HttpClient
     ) where
 
 import           Control.Concurrent.STM.TChan (TChan)
+
 import qualified Data.ByteString.Lazy         as LBS
 import           Data.Text                    (Text)
+
 import           Network.HTTP.Client          (Manager, Request)
 
 -- | Interface for HTTP clients that can handle API requests

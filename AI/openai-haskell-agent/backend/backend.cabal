@@ -1,6 +1,6 @@
 cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.38.1.
+-- This file has been generated from package.yaml by hpack version 0.37.0.
 --
 -- see: https://github.com/sol/hpack
 
@@ -20,11 +20,8 @@ extra-source-files:
     README.md
     CHANGELOG.md
 data-files:
-    static/assets/index-CAl1KfkQ.js
     static/assets/index-CLT8khGR.css
-    static/assets/index-D8b4DHJx.css
     static/assets/index-jZ3Mvkp6.js
-    static/assets/react-CHdo91hT.svg
     static/index.html
     static/vite.svg
 

@@ -3,7 +3,9 @@ module Domain.Interfaces.ChatService
     ) where
 
 import           Control.Concurrent.STM.TChan (TChan)
+
 import           Data.Text                    (Text)
+
 import           Domain.Entities.Chat         (ChatRequest)
 import           Domain.Entities.Message      (Message)
 

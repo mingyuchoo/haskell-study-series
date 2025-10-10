@@ -6,12 +6,18 @@ module Application.Services.ChatApplicationServiceSpec
 
 import           Application.Services.ChatApplicationService (createOpenAIChatApplicationService)
 import           Application.Services.ChatService            (createOpenAIChatService)
+
 import           Control.Monad.IO.Class                      (liftIO)
+
 import           Flow                                        ((<|))
+
 import           Infrastructure.Http.HttpClient              (createOpenAIHttpClient)
+
 import           Mocks.MockChatService                       (createMockChatService)
+
 import           Network.HTTP.Client                         (newManager)
 import           Network.HTTP.Client.TLS                     (tlsManagerSettings)
+
 import           Test.Hspec
 
 spec :: Spec
@@ -27,8 +33,8 @@ spec = do
       manager <- liftIO <| newManager tlsManagerSettings
       -- These variables are created to demonstrate the proper API usage but aren't directly used in assertions
       _ <- pure <| createOpenAIHttpClient
-      _ <- pure <| createOpenAIChatService (createOpenAIHttpClient) manager "mock-api-key" "https://api.openai.com/v1/chat/completions"
-      _ <- pure <| createOpenAIChatApplicationService (createOpenAIChatService (createOpenAIHttpClient) manager "mock-api-key" "https://api.openai.com/v1/chat/completions")
+      _ <- pure <| createOpenAIChatService (createOpenAIHttpClient) manager "mock-api-key" "https://api.openai.com/v1/chat/completions" "v1"
+      _ <- pure <| createOpenAIChatApplicationService (createOpenAIChatService (createOpenAIHttpClient) manager "mock-api-key" "https://api.openai.com/v1/chat/completions" "v1")
 
       -- Just verify that the service was created
       True `shouldBe` True
@@ -38,8 +44,8 @@ spec = do
       manager <- liftIO <| newManager tlsManagerSettings
       -- These variables are created to demonstrate the proper API usage but aren't directly used in assertions
       _ <- pure <| createOpenAIHttpClient
-      _ <- pure <| createOpenAIChatService (createOpenAIHttpClient) manager "mock-api-key" "https://api.openai.com/v1/chat/completions"
-      _ <- pure <| createOpenAIChatApplicationService (createOpenAIChatService (createOpenAIHttpClient) manager "mock-api-key" "https://api.openai.com/v1/chat/completions")
+      _ <- pure <| createOpenAIChatService (createOpenAIHttpClient) manager "mock-api-key" "https://api.openai.com/v1/chat/completions" "v1"
+      _ <- pure <| createOpenAIChatApplicationService (createOpenAIChatService (createOpenAIHttpClient) manager "mock-api-key" "https://api.openai.com/v1/chat/completions" "v1")
 
       -- Just verify that the service was created
       True `shouldBe` True
@@ -49,8 +55,8 @@ spec = do
       manager <- liftIO <| newManager tlsManagerSettings
       -- These variables are created to demonstrate the proper API usage but aren't directly used in assertions
       _ <- pure <| createOpenAIHttpClient
-      _ <- pure <| createOpenAIChatService (createOpenAIHttpClient) manager "mock-api-key" "https://api.openai.com/v1/chat/completions"
-      _ <- pure <| createOpenAIChatApplicationService (createOpenAIChatService (createOpenAIHttpClient) manager "mock-api-key" "https://api.openai.com/v1/chat/completions")
+      _ <- pure <| createOpenAIChatService (createOpenAIHttpClient) manager "mock-api-key" "https://api.openai.com/v1/chat/completions" "v1"
+      _ <- pure <| createOpenAIChatApplicationService (createOpenAIChatService (createOpenAIHttpClient) manager "mock-api-key" "https://api.openai.com/v1/chat/completions" "v1")
 
       -- Just verify that the service was created and has the expected method
       -- We don't actually call runInteractiveChat as it would start an interactive session

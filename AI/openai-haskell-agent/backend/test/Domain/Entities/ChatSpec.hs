@@ -6,7 +6,9 @@ module Domain.Entities.ChatSpec
 
 import           Domain.Entities.Chat
 import           Domain.Entities.Message
-import           Flow    ((<|))
+
+import           Flow                    ((<|))
+
 import           Test.Hspec
 
 spec :: Spec

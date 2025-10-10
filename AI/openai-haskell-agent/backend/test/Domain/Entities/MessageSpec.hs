@@ -5,7 +5,9 @@ module Domain.Entities.MessageSpec
     ) where
 
 import           Domain.Entities.Message
-import           Flow ((<|))
+
+import           Flow                    ((<|))
+
 import           Test.Hspec
 
 spec :: Spec

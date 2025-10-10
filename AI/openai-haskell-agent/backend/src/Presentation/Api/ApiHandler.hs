@@ -11,7 +11,9 @@ module Presentation.Api.ApiHandler
     ) where
 
 import           Application.Interfaces.ChatApplicationService (ChatApplicationService (..))
+
 import           Control.Monad.IO.Class                        (liftIO)
+
 import           Data.Aeson                                    (FromJSON,
                                                                 ToJSON)
 import           Data.Text                                     (Text)
@@ -20,8 +22,11 @@ import           Data.Time.Clock                               (getCurrentTime)
 import           Data.Time.Format                              (defaultTimeLocale,
                                                                 formatTime)
 import           Data.UUID                                     (UUID)
+
 import           Flow                                          ((<|))
+
 import           GHC.Generics                                  (Generic)
+
 import           Servant
 
 -- | Input type for chat requests
