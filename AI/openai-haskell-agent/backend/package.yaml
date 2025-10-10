@@ -36,6 +36,10 @@ dependencies:
 - servant
 - servant-server
 - servant-client
+- servant-openapi3
+- openapi3
+- servant-blaze
+- blaze-html
 - wai
 - wai-cors
 - wai-eventsource

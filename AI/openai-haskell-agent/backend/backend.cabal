@@ -56,6 +56,7 @@ library
       aeson
     , async
     , base
+    , blaze-html
     , bytestring
     , containers
     , dotenv
@@ -67,8 +68,11 @@ library
     , lens-aeson
     , microlens
     , mtl
+    , openapi3
     , servant
+    , servant-blaze
     , servant-client
+    , servant-openapi3
     , servant-server
     , stm
     , text
@@ -102,6 +106,7 @@ executable backend-exe
     , async
     , backend
     , base
+    , blaze-html
     , bytestring
     , containers
     , dotenv
@@ -113,8 +118,11 @@ executable backend-exe
     , lens-aeson
     , microlens
     , mtl
+    , openapi3
     , servant
+    , servant-blaze
     , servant-client
+    , servant-openapi3
     , servant-server
     , stm
     , text
@@ -159,6 +167,7 @@ test-suite backend-test
     , async
     , backend
     , base
+    , blaze-html
     , bytestring
     , containers
     , doctest
@@ -173,8 +182,11 @@ test-suite backend-test
     , lens-aeson
     , microlens
     , mtl
+    , openapi3
     , servant
+    , servant-blaze
     , servant-client
+    , servant-openapi3
     , servant-server
     , stm
     , text

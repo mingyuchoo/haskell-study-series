@@ -28,6 +28,13 @@ import           Flow                                          ((<|))
 import           GHC.Generics                                  (Generic)
 
 import           Servant
+import           Servant.OpenApi                              (toOpenApi)
+import           Data.OpenApi                                 (OpenApi, ToSchema, declareNamedSchema, genericDeclareNamedSchema, defaultSchemaOptions)
+import           Data.Proxy                                   (Proxy (..))
+import           Servant.HTML.Blaze                           (HTML)
+import           Text.Blaze.Html5                             (Html)
+import qualified Text.Blaze.Html5                             as H
+import qualified Text.Blaze.Html5.Attributes                  as A
 
 -- | Input type for chat requests
 data ChatInput = ChatInput { inputMessage :: Text
@@ -39,6 +46,8 @@ data ChatInput = ChatInput { inputMessage :: Text
 
 instance ToJSON ChatInput
 instance FromJSON ChatInput
+instance ToSchema ChatInput where
+  declareNamedSchema = genericDeclareNamedSchema defaultSchemaOptions
 
 -- | Output type for chat responses
 data ChatOutput = ChatOutput { outputMessage   :: Text
@@ -50,6 +59,8 @@ data ChatOutput = ChatOutput { outputMessage   :: Text
 
 instance ToJSON ChatOutput
 instance FromJSON ChatOutput
+instance ToSchema ChatOutput where
+  declareNamedSchema = genericDeclareNamedSchema defaultSchemaOptions
 
 -- | Health info response type for the health check endpoint
 data HealthInfo = HealthInfo { status    :: Text
@@ -65,16 +76,45 @@ data HealthInfo = HealthInfo { status    :: Text
 
 instance ToJSON HealthInfo
 instance FromJSON HealthInfo
+instance ToSchema HealthInfo where
+  declareNamedSchema = genericDeclareNamedSchema defaultSchemaOptions
 
--- | API definition with chat endpoint, health check, and static file serving
-type API = "api" :> "chat" :> ReqBody '[JSON] ChatInput :> Post '[JSON] ChatOutput
-      :<|> "health" :> Get '[JSON] HealthInfo
-      :<|> Raw
+-- | 내부 실제 비즈니스 API 라우트 (OpenAPI 생성 대상)
+type APIRoutes =
+       "api" :> "chat" :> ReqBody '[JSON] ChatInput :> Post '[JSON] ChatOutput
+  :<|>  "health" :> Get '[JSON] HealthInfo
+
+-- | 전체 API: 비즈니스 라우트 + OpenAPI 스펙 + Swagger UI + 정적 파일
+type API =
+       APIRoutes
+  :<|>  "openapi.json" :> Get '[JSON] OpenApi
+  :<|>  "swagger" :> Get '[HTML] Html
+  :<|>  Raw
 
 -- | API server implementation that combines all handlers
 apiServer :: ChatApplicationService s => s -> Server API
 apiServer chatAppService =
-    chatHandler chatAppService :<|> healthHandler :<|> serveDirectoryFileServer "static"
+    routesServer :<|> openApiHandler :<|> swaggerUi :<|> staticFiles
+  where
+    routesServer = chatHandler chatAppService :<|> healthHandler
+    openApiHandler = pure (toOpenApi (Proxy :: Proxy APIRoutes))
+    swaggerUi = pure swaggerUiHtml
+    staticFiles = serveDirectoryFileServer "static"
+
+-- | Swagger UI HTML (CDN 사용)
+swaggerUiHtml :: Html
+swaggerUiHtml = H.docTypeHtml $ do
+  H.head $ do
+    H.meta H.! A.charset "utf-8"
+    H.meta H.! A.name "viewport" H.! A.content "width=device-width, initial-scale=1"
+    H.title "Swagger UI"
+    H.link H.! A.rel "stylesheet" H.! A.href "https://unpkg.com/swagger-ui-dist@5/swagger-ui.css"
+    H.style "html { box-sizing: border-box; overflow: -moz-scrollbars-vertical; overflow-y: scroll; }\n*, *:before, *:after { box-sizing: inherit; }\nbody { margin:0; background: #fafafa; }"
+  H.body $ do
+    H.div H.! A.id "swagger-ui" $ mempty
+    H.script H.! A.src "https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js" $ mempty
+    H.script H.! A.src "https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js" $ mempty
+    H.script $ H.preEscapedToHtml ("window.onload = () => { window.ui = SwaggerUIBundle({ url: '/openapi.json', dom_id: '#swagger-ui', presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset], layout: 'StandaloneLayout' }); };" :: String)
 
 -- | Health check endpoint handler
 healthHandler :: Handler HealthInfo
