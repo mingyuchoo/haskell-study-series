@@ -1,0 +1,8 @@
+.stack-work/
+*~
+
+# Environment variables
+.env
+
+# Frontend build output
+static/

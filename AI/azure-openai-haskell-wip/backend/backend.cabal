@@ -6,27 +6,16 @@ cabal-version: 2.2
 
 name:           backend
 version:        0.1.0.0
-synopsis:       Short description of your package
-description:    Please see the README on GitHub at <https://github.com/mingyuchoo/backend#readme>
-category:       A
+description:    Azure OpenAI client in Haskell
 homepage:       https://github.com/mingyuchoo/backend#readme
 bug-reports:    https://github.com/mingyuchoo/backend/issues
 author:         Mingyu Choo
 maintainer:     mingyuchoo@gmail.com
-copyright:      Mingyu Choo 2025
+copyright:      2025 Mingyu Choo
 license:        BSD-3-Clause
 build-type:     Simple
 extra-source-files:
     README.md
-    CHANGELOG.md
-data-files:
-    static/assets/index-CAl1KfkQ.js
-    static/assets/index-CLT8khGR.css
-    static/assets/index-D8b4DHJx.css
-    static/assets/index-jZ3Mvkp6.js
-    static/assets/react-CHdo91hT.svg
-    static/index.html
-    static/vite.svg
 
 source-repository head
   type: git
@@ -34,61 +23,40 @@ source-repository head
 
 library
   exposed-modules:
-      Domain.Entities.Message
-      Domain.Entities.Chat
-      Domain.Interfaces.ChatService
-      Domain.Interfaces.HttpClient
-      Application.Interfaces.ChatApplicationService
-      Application.Services.ChatService
-      Application.Services.ChatApplicationService
-      Infrastructure.Http.HttpClient
-      Infrastructure.OpenAI.OpenAIService
-      Presentation.Api.ApiHandler
-      Presentation.Server.Server
+      Lib
+      Domain.Entities
+      Domain.Ports
+      Application.UseCases
+      Infrastructure.AzureOpenAI
+      Presentation.API
+      Presentation.Server
   other-modules:
       Paths_backend
   autogen-modules:
       Paths_backend
   hs-source-dirs:
       src
-  default-extensions:
-      StandaloneKindSignatures
-      TypeApplications
-  ghc-options: -Wall -O2 -haddock
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       aeson
-    , async
-    , base
-    , blaze-html
+    , base >=4.7 && <5
     , bytestring
-    , containers
     , dotenv
-    , flow
     , http-client
     , http-client-tls
     , http-types
     , lens
-    , lens-aeson
-    , microlens
     , mtl
-    , openapi3
     , servant
-    , servant-blaze
-    , servant-client
-    , servant-openapi3
     , servant-server
-    , stm
+    , servant-swagger
+    , servant-swagger-ui
+    , swagger2
     , text
     , time
     , transformers
-    , unordered-containers
     , uuid
-    , vector
     , wai
-    , wai-cors
-    , wai-eventsource
-    , wai-extra
-    , wai-logger
     , warp
   default-language: Haskell2010
 
@@ -100,108 +68,27 @@ executable backend-exe
       Paths_backend
   hs-source-dirs:
       app
-  default-extensions:
-      StandaloneKindSignatures
-      TypeApplications
-  ghc-options: -Wall -O2 -haddock -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
-    , async
     , backend
-    , base
-    , blaze-html
+    , base >=4.7 && <5
     , bytestring
-    , containers
     , dotenv
-    , flow
     , http-client
     , http-client-tls
     , http-types
     , lens
-    , lens-aeson
-    , microlens
     , mtl
-    , openapi3
     , servant
-    , servant-blaze
-    , servant-client
-    , servant-openapi3
     , servant-server
-    , stm
+    , servant-swagger
+    , servant-swagger-ui
+    , swagger2
     , text
     , time
     , transformers
-    , unordered-containers
     , uuid
-    , vector
     , wai
-    , wai-cors
-    , wai-eventsource
-    , wai-extra
-    , wai-logger
-    , warp
-  default-language: Haskell2010
-
-test-suite backend-test
-  type: exitcode-stdio-1.0
-  main-is: Spec.hs
-  other-modules:
-      Application.Services.ChatApplicationServiceSpec
-      Application.Services.ChatServiceSpec
-      Domain.Entities.ChatSpec
-      Domain.Entities.MessageSpec
-      Infrastructure.Http.HttpClientSpec
-      Infrastructure.OpenAI.OpenAIServiceSpec
-      Mocks.MockChatService
-      Mocks.MockHttpClient
-      Presentation.Api.ApiHandlerSpec
-      Presentation.Server.ServerSpec
-      Paths_backend
-  autogen-modules:
-      Paths_backend
-  hs-source-dirs:
-      test
-  default-extensions:
-      StandaloneKindSignatures
-      TypeApplications
-  ghc-options: -Wall -O2 -haddock -threaded -rtsopts -with-rtsopts=-N
-  build-depends:
-      aeson
-    , async
-    , backend
-    , base
-    , blaze-html
-    , bytestring
-    , containers
-    , doctest
-    , doctest-discover
-    , dotenv
-    , flow
-    , hspec
-    , http-client
-    , http-client-tls
-    , http-types
-    , lens
-    , lens-aeson
-    , microlens
-    , mtl
-    , openapi3
-    , servant
-    , servant-blaze
-    , servant-client
-    , servant-openapi3
-    , servant-server
-    , stm
-    , text
-    , time
-    , transformers
-    , unordered-containers
-    , uuid
-    , vector
-    , wai
-    , wai-cors
-    , wai-eventsource
-    , wai-extra
-    , wai-logger
     , warp
   default-language: Haskell2010

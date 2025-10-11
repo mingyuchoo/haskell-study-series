@@ -1,173 +1,97 @@
-# OpenAI Haskell Agent
+# azure-openai-backend
 
-## Overview
-
-This Haskell application implements a multi-turn conversation with OpenAI's API. It allows you to have an interactive chat with GPT-4o, maintaining conversation history and streaming responses in real-time. The application is available both as a CLI tool and as a web application.
-
-The project follows the Onion Architecture pattern for better separation of concerns, testability, and maintainability.
-
-## Features
-
-- Multi-turn conversation with OpenAI's GPT-4o model
-- Streaming responses for real-time interaction
-- Conversation history management
-- Available as both CLI and web application
-- RESTful API for chat integration
-- Modern web interface
-- Onion Architecture for better maintainability and testability
+A Haskell REST API service for Azure OpenAI multi-turn conversations, built with Clean Architecture.
 
 ## Prerequisites
 
-- Haskell and Stack build tool
-- OpenAI API key (set as environment variable)
+- GHC (Glasgow Haskell Compiler) >= 9.2
+- Cabal >= 3.6 or Stack
 
 ## Setup
 
-1. Clone the repository
-2. Copy the `.env.example` file to `.env` and set your configuration:
-   ```bash
-   cp .env.example .env
-   # Edit .env with your OpenAI API key and other settings
-   ```
-3. Build the project:
-   ```bash
-   stack build
-   ```
+1. Copy `.env.example` to `.env` and fill in your Azure OpenAI credentials:
 
-## Running the Application
-
-### CLI Mode (Legacy)
-
-To run the original CLI application:
 ```bash
-# This requires modifying Main.hs to use the CLI version
-stack run
+cp .env.example .env
 ```
 
-### Web Application Mode
+2. Install dependencies:
 
-To run the web application:
+```bash
+stack build
+```
+
+## Running
+
 ```bash
 stack run
 ```
 
-The web server will start on the port specified in your `.env` file (default: 8000).
-Access the web interface at: http://localhost:8000
+The server will start on http://localhost:8000
 
-## Usage
+## API Endpoints
 
-### CLI Mode
+- **Web UI**: http://localhost:8000/
+- **Chat API**: POST http://localhost:8000/api/chat
+- **Health Check**: GET http://localhost:8000/health
+- **Swagger UI**: http://localhost:8000/swagger-ui
+- **OpenAPI JSON**: http://localhost:8000/openapi.json
 
-- Enter your message when prompted with `You: `
-- The AI will respond with streaming text
-- To exit the conversation, type `:q`, `quit`, or `exit`
+## API Usage
 
-### Web Application
+### Chat Request
 
-- Open your browser to http://localhost:8000
-- Type your message in the input field and click Send or press Enter
-- View the conversation history in the chat window
-
-## Implementation Details
-
-The application uses:  
-- `http-client` and `http-client-tls` for API communication
-- `aeson` for JSON parsing
-- `stm` and `async` for handling streaming responses
-- `text` for text processing
-- `servant` for RESTful API implementation
-- `warp` for the web server
-- `wai-cors` for Cross-Origin Resource Sharing support
-
-## Architecture
-
-This project implements the Onion Architecture pattern with the following layers:
-
-### 1. Domain Layer (Core)
-
-- `Domain.Entities.*`: Core business entities (Message, Chat)
-- `Domain.Interfaces.*`: Core interfaces (ChatService, HttpClient)
-
-### 2. Application Layer
-
-- `Application.Interfaces.*`: Application interfaces (ChatApplicationService)
-- `Application.Services.*`: Application services (ChatService, ChatApplicationService)
-
-### 3. Infrastructure Layer
-
-- `Infrastructure.Http.*`: HTTP client implementations (HttpClient)
-- `Infrastructure.OpenAI.*`: OpenAI-specific implementations (OpenAIService)
-
-### 4. Presentation Layer
-
-- `Presentation.Api.*`: API controllers (ApiHandler)
-- `Presentation.Server.*`: Server implementation (Server)
-
-This architecture provides better separation of concerns, testability, and maintainability. Dependencies point inward, with the domain layer having no dependencies on outer layers.
-
-## Troubleshooting
-
-### Common Issues
-
-#### Empty Responses from OpenAI API
-
-If you receive empty responses from the OpenAI API (`{"outputMessage":"","outputSessionId":"..."}`), check the following:
-
-1. **JSON Encoding**: Ensure the `encodeRequest` function in `Application.Services.ChatService` is properly encoding the ChatRequest to JSON.
-2. **Response Parsing**: Verify that `parseChatStreamLine` in `Infrastructure.OpenAI.OpenAIService` is correctly imported and used in the HttpClient.
-
-#### Build Errors
-
-If you encounter build errors related to missing modules:
-
-1. **Module Exports**: Check that all required functions are properly exported in their respective module headers.
-2. **Main Module**: Ensure the Main module is not incorrectly listed in the library section of package.yaml.
-
-## API Documentation
-
-### Chat Endpoint
-
-- **URL**: `/api/chat`
-- **Method**: POST
-- **Headers**:
-  - `Content-Type: application/json` (required)
-- **Request Body**:
-  ```json
-  {
-    "inputMessage": "Your message here",
-    "sessionId": null  // or a valid UUID string for continuing a conversation
-  }
-  ```
-- **Response**:
-  ```json
-  {
-    "outputMessage": "AI response here",
-    "sessionId": "session-uuid"
-  }
-  ```
-- **Example curl command**:
-  ```bash
-  curl -X POST http://localhost:8000/api/chat \
-    -H "Content-Type: application/json" \
-    -d '{"inputMessage": "Hello", "sessionId": null}'
-  ```
+```bash
+curl -X POST http://localhost:8000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "chatMessages": [
+      {"msgRole": "user", "msgContent": "Hello!"}
+    ]
+  }'
+```
 
 ### Health Check
 
-- **URL**: `/health`
-- **Method**: GET
-- **Response**:
-  ```json
-  {
-    "status": "UP",
-    "version": "0.1.0.0",
-    "uptime": 0,
-    "timestamp": "2025-04-27T19:57:51Z"
-  }
-  ```
-- **Example curl command**:
-  ```bash
-  curl -X GET http://localhost:8000/health
-  ```
-  
+```bash
+curl http://localhost:8000/health
+```
 
+## Architecture
+
+This project follows Clean Architecture principles with clear separation of concerns:
+
+```
+src/
+├── Lib.hs                      # Low-level Azure OpenAI HTTP client
+│                               # (handles HTTP requests, JSON parsing, streaming)
+├── Domain/                     # Core business layer (framework-independent)
+│   ├── Entities.hs            # Domain models: ChatMessage, ChatRole, ChatSession
+│   └── Ports.hs               # Interfaces: ChatService, ChatConfig
+├── Application/                # Business logic layer
+│   └── UseCases.hs            # Use cases: sendChatMessage, streamChatMessage
+├── Infrastructure/             # External adapters
+│   └── AzureOpenAI.hs         # ChatService implementation (wraps Lib.hs)
+└── Presentation/               # API/UI layer
+    ├── API.hs                 # Servant API definition, DTOs, Swagger docs
+    └── Server.hs              # Server setup, config loading, Warp runner
+```
+
+### Layer Responsibilities
+
+- **Lib.hs**: Direct Azure OpenAI API integration with HTTP client and streaming support
+- **Domain**: Pure business entities and port interfaces (no external dependencies)
+- **Application**: Thin use case layer delegating to ChatService interface
+- **Infrastructure**: Concrete ChatService implementation using Azure OpenAI
+- **Presentation**: REST API endpoints, request/response DTOs, and server configuration
+
+## Features
+
+- REST API with Servant framework
+- Clean Architecture with dependency inversion
+- OpenAPI 3.0/Swagger documentation
+- Interactive web UI for chat
+- Health check endpoint
+- Type-safe API with compile-time guarantees
+- Environment variable configuration with .env support
+- Streaming and non-streaming chat completions

@@ -1,37 +1,8 @@
-# https://www.stackage.org/lts-24.4
 resolver: lts-24.4
 
 packages:
 - .
 
-extra-package-dbs: []
 extra-deps:
-- wai-eventsource-3.0.0
 - dotenv-0.12.0.0@sha256:2f25615cec37ff9a66a48ef0ebf2ac96ae989911d0c26c6796fc2f5247bdd665,4702
 - data-default-class-0.1.2.2@sha256:51400ed341ec87e86a4acf83301c6890e1fc67708e2d0ac519d48e0a14f54c15,1309
-flags: {}
-
-docker:
-  enable: true
-  stack-exe: host
-  container-name: "azure-openai-haskell-wip"
-  image: fpco/stack-build:lts-24.4
-  set-user: true
-  auto-pull: true
-  detach: false
-  persist: false
-  run-args:
-    - "--cpus=12"
-    - "--memory=32g"
-
-# nix:
-#   enable: true
-#   pure: true
-#   packages:
-#   - zlib
-#   - glpk
-#   - pcre
-#   #shell-file: shell.nix
-#   nix-shell-options: []
-#   path: []
-#   add-gc-roots: false
