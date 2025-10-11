@@ -1,4 +1,4 @@
-cabal-version: 1.12
+cabal-version: 2.2
 
 -- This file has been generated from package.yaml by hpack version 0.38.1.
 --
@@ -9,10 +9,10 @@ version:        0.1.0.0
 description:    Azure OpenAI client in Haskell
 homepage:       https://github.com/mingyuchoo/backend#readme
 bug-reports:    https://github.com/mingyuchoo/backend/issues
-author:         Your Name
-maintainer:     your.email@example.com
-copyright:      2025 Your Name
-license:        BSD3
+author:         Mingyu Choo
+maintainer:     mingyuchoo@gmail.com
+copyright:      2025 Mingyu Choo
+license:        BSD-3-Clause
 build-type:     Simple
 extra-source-files:
     README.md
@@ -31,6 +31,8 @@ library
       Presentation.API
       Presentation.Server
   other-modules:
+      Paths_backend
+  autogen-modules:
       Paths_backend
   hs-source-dirs:
       src
@@ -61,6 +63,8 @@ library
 executable backend-exe
   main-is: Main.hs
   other-modules:
+      Paths_backend
+  autogen-modules:
       Paths_backend
   hs-source-dirs:
       app

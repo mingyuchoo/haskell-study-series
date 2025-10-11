@@ -1,10 +1,10 @@
 name: backend
 version: 0.1.0.0
 github: "mingyuchoo/backend"
-license: BSD3
-author: "Your Name"
-maintainer: "your.email@example.com"
-copyright: "2025 Your Name"
+license: BSD-3-Clause
+author: "Mingyu Choo"
+maintainer: "mingyuchoo@gmail.com"
+copyright: "2025 Mingyu Choo"
 
 extra-source-files:
 - README.md
