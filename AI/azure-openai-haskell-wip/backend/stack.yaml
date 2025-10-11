@@ -14,7 +14,7 @@ flags: {}
 docker:
   enable: true
   stack-exe: host
-  container-name: "auzre-openai-haskell-wip"
+  container-name: "azure-openai-haskell-wip"
   image: fpco/stack-build:lts-24.4
   set-user: true
   auto-pull: true

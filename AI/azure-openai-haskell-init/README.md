@@ -1,4 +1,4 @@
-# auzre-openai-auzre-openai-haskell-init
+# azure-openai-azure-openai-haskell-init
 
 A Haskell port of the bun-init project for Azure OpenAI multi-turn conversations.
 
@@ -33,7 +33,7 @@ stack build
 With Cabal:
 
 ```bash
-cabal run auzre-openai-auzre-openai-haskell-init
+cabal run azure-openai-azure-openai-haskell-init
 ```
 
 Or with Stack:
@@ -46,7 +46,7 @@ stack run
 
 - `app/Main.hs` - Main application entry point
 - `src/AzureOpenAI.hs` - Azure OpenAI client implementation
-- `auzre-openai-auzre-openai-haskell-init.cabal` - Project configuration
+- `azure-openai-azure-openai-haskell-init.cabal` - Project configuration
 - `.env.example` - Environment variables template
 
 ## Features

@@ -1,6 +1,6 @@
-name: auzre-openai-haskell-init
+name: azure-openai-haskell-init
 version: 0.1.0.0
-github: "mingyuchoo/auzre-openai-haskell-init"
+github: "mingyuchoo/azure-openai-haskell-init"
 license: BSD3
 author: "Your Name"
 maintainer: "your.email@example.com"
@@ -38,7 +38,7 @@ library:
   - AzureOpenAI
 
 executables:
-  auzre-openai-haskell-init-exe:
+  azure-openai-haskell-init-exe:
     main: Main.hs
     source-dirs: app
     ghc-options:
@@ -46,4 +46,4 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - auzre-openai-haskell-init
+    - azure-openai-haskell-init
