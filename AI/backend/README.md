@@ -1,6 +1,6 @@
 # azure-openai-backend
 
-A Haskell port of the bun-init project for Azure OpenAI multi-turn conversations.
+A Haskell REST API service for Azure OpenAI multi-turn conversations, built with Clean Architecture.
 
 ## Prerequisites
 
@@ -18,40 +18,70 @@ cp .env.example .env
 2. Install dependencies:
 
 ```bash
-cabal update
-cabal build
-```
-
-Or with Stack:
-
-```bash
 stack build
 ```
 
 ## Running
 
-With Cabal:
-
-```bash
-cabal run azure-openai-backend
-```
-
-Or with Stack:
-
 ```bash
 stack run
 ```
 
-## Project Structure
+The server will start on http://localhost:8000
 
-- `app/Main.hs` - Main application entry point
-- `src/AzureOpenAI.hs` - Azure OpenAI client implementation
-- `azure-openai-backend.cabal` - Project configuration
-- `.env.example` - Environment variables template
+## API Endpoints
+
+- **Web UI**: http://localhost:8000/
+- **Chat API**: POST http://localhost:8000/api/chat
+- **Health Check**: GET http://localhost:8000/health
+- **Swagger UI**: http://localhost:8000/swagger-ui
+- **OpenAPI JSON**: http://localhost:8000/openapi.json
+
+## API Usage
+
+### Chat Request
+
+```bash
+curl -X POST http://localhost:8000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "chatMessages": [
+      {"msgRole": "user", "msgContent": "Hello!"}
+    ]
+  }'
+```
+
+### Health Check
+
+```bash
+curl http://localhost:8000/health
+```
+
+## Architecture
+
+This project follows Clean Architecture principles:
+
+```
+src/
+├── Lib.hs               # Low-level Azure OpenAI HTTP client
+├── Domain/              # Business entities and interfaces
+│   ├── Entities.hs     # Core domain models
+│   └── Ports.hs        # Service interfaces
+├── Application/         # Use cases
+│   └── UseCases.hs     # Business logic
+├── Infrastructure/      # External services
+│   └── AzureOpenAI.hs  # Azure OpenAI adapter (wraps Lib.hs)
+└── Presentation/        # API layer
+    ├── API.hs          # API definition
+    └── Server.hs       # Server setup
+```
 
 ## Features
 
-- Multi-turn conversation with Azure OpenAI
-- Streaming response support
-- Environment variable configuration
+- REST API with Servant
+- Clean Architecture design
+- OpenAPI/Swagger documentation
+- Web UI for chat
+- Health check endpoint
 - Type-safe API interactions
+- Environment variable configuration

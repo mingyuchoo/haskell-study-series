@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module AzureOpenAI
+module Lib
     ( ChatRequest (..)
     , ChatResponse (..)
     , Choice (..)

@@ -23,7 +23,13 @@ source-repository head
 
 library
   exposed-modules:
-      AzureOpenAI
+      Lib
+      Domain.Entities
+      Domain.Ports
+      Application.UseCases
+      Infrastructure.AzureOpenAI
+      Presentation.API
+      Presentation.Server
   other-modules:
       Paths_backend
   hs-source-dirs:
@@ -37,7 +43,19 @@ library
     , http-client
     , http-client-tls
     , http-types
+    , lens
+    , mtl
+    , servant
+    , servant-server
+    , servant-swagger
+    , servant-swagger-ui
+    , swagger2
     , text
+    , time
+    , transformers
+    , uuid
+    , wai
+    , warp
   default-language: Haskell2010
 
 executable backend-exe
@@ -56,5 +74,17 @@ executable backend-exe
     , http-client
     , http-client-tls
     , http-types
+    , lens
+    , mtl
+    , servant
+    , servant-server
+    , servant-swagger
+    , servant-swagger-ui
+    , swagger2
     , text
+    , time
+    , transformers
+    , uuid
+    , wai
+    , warp
   default-language: Haskell2010

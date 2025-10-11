@@ -20,6 +20,18 @@ dependencies:
 - http-client-tls
 - http-types
 - dotenv
+- wai
+- warp
+- servant
+- servant-server
+- servant-swagger
+- servant-swagger-ui
+- swagger2
+- mtl
+- transformers
+- uuid
+- time
+- lens
 
 ghc-options:
 - -Wall
@@ -35,7 +47,13 @@ ghc-options:
 library:
   source-dirs: src
   exposed-modules:
-  - AzureOpenAI
+  - Lib
+  - Domain.Entities
+  - Domain.Ports
+  - Application.UseCases
+  - Infrastructure.AzureOpenAI
+  - Presentation.API
+  - Presentation.Server
 
 executables:
   backend-exe:
