@@ -74,13 +74,13 @@ docker-run-multi: docker-build-multi
 	docker run -it --rm -p 8000:8000 $(PROJECT_NAME):latest
 
 docker-compose-up:
-	docker compose -f docker/docker-compose.yaml up --build -d
+	docker compose -f docker/docker-compose.yaml --env-file backend/.env up --build -d
 
 docker-compose-down:
-	docker compose -f docker/docker-compose.yaml down --volumes
+	docker compose -f docker/docker-compose.yaml --env-file backend/.env down --volumes
 
 docker-compose-logs:
-	docker compose -f docker/docker-compose.yaml logs -f
+	docker compose -f docker/docker-compose.yaml --env-file backend/.env logs -f
 
 install: release
 	mkdir -p $(HOME)/.local/bin
