@@ -1,19 +1,20 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Domain.Ports
-    ( ChatService (..)
-    , ChatConfig (..)
+    ( ChatConfig (..)
+    , ChatService (..)
     ) where
 
 import           Data.Text       (Text)
+
 import           Domain.Entities
 
-data ChatConfig = ChatConfig
-    { configApiKey     :: Text
-    , configEndpoint   :: Text
-    , configDeployment :: Text
-    , configApiVersion :: Text
-    } deriving (Show)
+data ChatConfig = ChatConfig { configApiKey     :: Text
+                             , configEndpoint   :: Text
+                             , configDeployment :: Text
+                             , configApiVersion :: Text
+                             }
+     deriving (Show)
 
 class Monad m => ChatService m where
     sendMessage :: ChatConfig -> [ChatMessage] -> m Text

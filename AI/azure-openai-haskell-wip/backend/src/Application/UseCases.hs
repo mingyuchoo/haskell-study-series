@@ -6,6 +6,7 @@ module Application.UseCases
     ) where
 
 import           Data.Text       (Text)
+
 import           Domain.Entities
 import           Domain.Ports
 

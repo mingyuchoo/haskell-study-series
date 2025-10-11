@@ -1,10 +1,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Main (main) where
+module Main
+    ( main
+    ) where
 
-import           Control.Exception    (SomeException, catch)
-import qualified Data.Text            as T
-import qualified Data.Text.IO         as TIO
+import           Control.Exception   (SomeException, catch)
+
+import qualified Data.Text           as T
+import qualified Data.Text.IO        as TIO
+
 import           Presentation.Server
 
 main :: IO ()

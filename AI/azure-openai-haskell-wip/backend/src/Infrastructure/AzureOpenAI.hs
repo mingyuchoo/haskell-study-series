@@ -5,9 +5,10 @@ module Infrastructure.AzureOpenAI
     ( AzureOpenAIService (..)
     ) where
 
-import qualified Lib             as Azure
 import           Domain.Entities
 import           Domain.Ports
+
+import qualified Lib             as Azure
 
 newtype AzureOpenAIService = AzureOpenAIService ()
 

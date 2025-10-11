@@ -2,20 +2,27 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Presentation.Server
-    ( runServer
-    , loadConfigFromEnv
+    ( loadConfigFromEnv
+    , runServer
     ) where
 
-import           Configuration.Dotenv (defaultConfig, loadFile)
-import           Control.Exception    (catch, SomeException)
-import qualified Data.Text            as T
-import qualified Data.Text.IO         as TIO
+import           Configuration.Dotenv     (defaultConfig, loadFile)
+
+import           Control.Exception        (SomeException, catch)
+
+import qualified Data.Text                as T
+import qualified Data.Text.IO             as TIO
+
 import           Domain.Ports
+
 import           Network.Wai.Handler.Warp
+
 import           Presentation.API
+
 import           Servant
-import           System.Environment   (lookupEnv)
-import           System.Exit          (die)
+
+import           System.Environment       (lookupEnv)
+import           System.Exit              (die)
 
 loadConfigFromEnv :: IO ChatConfig
 loadConfigFromEnv = do

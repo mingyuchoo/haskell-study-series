@@ -12,36 +12,41 @@ module Presentation.API
     , server
     ) where
 
-import           Control.Lens                 ((?~), (.~), (&))
-import           Control.Monad.IO.Class       (liftIO)
+import           Control.Lens               ((&), (.~), (?~))
+import           Control.Monad.IO.Class     (liftIO)
+
 import           Data.Aeson
 import           Data.Swagger
-import           Data.Text                    (Text)
+import           Data.Text                  (Text)
+
 import           Domain.Entities
 import           Domain.Ports
+
 import           GHC.Generics
-import           Infrastructure.AzureOpenAI   ()
+
+import           Infrastructure.AzureOpenAI ()
+
 import           Servant
 import           Servant.Swagger
 import           Servant.Swagger.UI
 
 -- API Types
-data ChatRequest = ChatRequest
-    { chatMessages :: [ChatMessageDTO]
-    } deriving (Generic, Show)
+data ChatRequest = ChatRequest { chatMessages :: [ChatMessageDTO]
+                               }
+     deriving (Generic, Show)
 
-data ChatMessageDTO = ChatMessageDTO
-    { msgRole    :: Text
-    , msgContent :: Text
-    } deriving (Generic, Show)
+data ChatMessageDTO = ChatMessageDTO { msgRole    :: Text
+                                     , msgContent :: Text
+                                     }
+     deriving (Generic, Show)
 
-data ChatResponse = ChatResponse
-    { response :: Text
-    } deriving (Generic, Show)
+data ChatResponse = ChatResponse { response :: Text
+                                 }
+     deriving (Generic, Show)
 
-data HealthResponse = HealthResponse
-    { status :: Text
-    } deriving (Generic, Show)
+data HealthResponse = HealthResponse { status :: Text
+                                     }
+     deriving (Generic, Show)
 
 instance ToJSON ChatRequest
 instance FromJSON ChatRequest
