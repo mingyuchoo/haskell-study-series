@@ -1,4 +1,4 @@
-import type { ChatInput, ChatOutput, HealthInfo } from './types'
+import type { ChatRequest, ChatResponse, HealthResponse, Message } from './types'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
@@ -13,13 +13,20 @@ export class ApiError extends Error {
 }
 
 export const chatApi = {
-  async sendMessage(input: ChatInput): Promise<ChatOutput> {
+  async sendMessage(messages: Message[]): Promise<ChatResponse> {
+    const request: ChatRequest = {
+      chatMessages: messages.map(msg => ({
+        msgRole: msg.role,
+        msgContent: msg.content
+      }))
+    }
+
     const response = await fetch(`${API_BASE_URL}/api/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(input),
+      body: JSON.stringify(request),
     })
 
     if (!response.ok) {
@@ -32,7 +39,7 @@ export const chatApi = {
     return response.json()
   },
 
-  async checkHealth(): Promise<HealthInfo> {
+  async checkHealth(): Promise<HealthResponse> {
     const response = await fetch(`${API_BASE_URL}/health`)
 
     if (!response.ok) {

@@ -16,6 +16,12 @@ license:        BSD-3-Clause
 build-type:     Simple
 extra-source-files:
     README.md
+data-files:
+    static/assets/index-CLT8khGR.css
+    static/assets/index-jZ3Mvkp6.js
+    static/assets/index-OpMI3I2N.js
+    static/index.html
+    static/vite.svg
 
 source-repository head
   type: git

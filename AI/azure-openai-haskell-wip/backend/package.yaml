@@ -9,6 +9,9 @@ copyright: "2025 Mingyu Choo"
 extra-source-files:
 - README.md
 
+data-files:
+- static/**/*
+
 description: Azure OpenAI client in Haskell
 
 dependencies:

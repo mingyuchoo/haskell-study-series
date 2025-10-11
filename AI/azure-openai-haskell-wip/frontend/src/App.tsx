@@ -6,7 +6,6 @@ import './App.css'
 function App() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
-  const [sessionId, setSessionId] = useState<string | undefined>(undefined)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -26,17 +25,14 @@ function App() {
     setInput('')
     setError(null)
     
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }])
+    const newMessages = [...messages, { role: 'user' as const, content: userMessage }]
+    setMessages(newMessages)
     setIsLoading(true)
 
     try {
-      const data = await chatApi.sendMessage({
-        inputMessage: userMessage,
-        ...(sessionId && { sessionId })
-      })
+      const data = await chatApi.sendMessage(newMessages)
       
-      setSessionId(data.outputSessionId)
-      setMessages(prev => [...prev, { role: 'assistant', content: data.outputMessage }])
+      setMessages(prev => [...prev, { role: 'assistant', content: data.response }])
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to send message'
       setError(errorMessage)
@@ -55,7 +51,6 @@ function App() {
 
   const clearChat = () => {
     setMessages([])
-    setSessionId(undefined)
     setError(null)
   }
 
@@ -63,7 +58,7 @@ function App() {
     <div className="chat-container">
       <header className="chat-header">
         <h1>OpenAI Chat Assistant</h1>
-        {sessionId && (
+        {messages.length > 0 && (
           <button onClick={clearChat} className="clear-button">
             New Chat
           </button>

@@ -21,12 +21,12 @@ Added frontend build integration:
 **package.yaml:**
 - Added `data-files: static/**/*` to include frontend build in package
 
-**ApiHandler.hs:**
-- Already configured with `Raw` endpoint for static file serving
-- Serves files from `static/` directory
+**API.hs:**
+- Configured with `Raw` endpoint for static file serving
+- Serves files from `static/` directory using `serveDirectoryFileServer "static"`
 
 **Server.hs:**
-- Added log message for Web UI URL
+- Added log messages for Web UI URL and all available endpoints
 
 **.gitignore:**
 - Added `static/` to ignore frontend build output
@@ -98,10 +98,8 @@ project/
 │   │   └── ...
 │   └── src/
 │       └── Presentation/
-│           ├── Api/
-│           │   └── ApiHandler.hs  # Raw endpoint for static
-│           └── Server/
-│               └── Server.hs      # Updated logs
+│           ├── API.hs             # Raw endpoint for static
+│           └── Server.hs          # Updated logs
 └── frontend/
     ├── vite.config.ts        # Updated with proxy
     ├── dist/                 # Build output (generated)
