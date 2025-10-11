@@ -41,7 +41,7 @@ runServer port chatAppService = do
         TIO.putStrLn <| pack <| "Web UI available at http://localhost:" <> show port <> "/"
         TIO.putStrLn <| pack <| "API available at http://localhost:" <> show port <> "/api/chat"
         TIO.putStrLn <| pack <| "Health check at http://localhost:" <> show port <> "/health"
-        TIO.putStrLn <| pack <| "Swagger UI at http://localhost:" <> show port <> "/swagger"
+        TIO.putStrLn <| pack <| "Swagger UI at http://localhost:" <> show port <> "/swagger-ui"
         TIO.putStrLn <| pack <| "OpenAPI JSON at http://localhost:" <> show port <> "/openapi.json"
 
         -- Run the server with the configured settings

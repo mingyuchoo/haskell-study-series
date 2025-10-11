@@ -88,7 +88,7 @@ type APIRoutes =
 type API =
        APIRoutes
   :<|>  "openapi.json" :> Get '[JSON] OpenApi
-  :<|>  "swagger" :> Get '[HTML] Html
+  :<|>  "swagger-ui" :> Get '[HTML] Html
   :<|>  Raw
 
 -- | API server implementation that combines all handlers
