@@ -27,7 +27,7 @@
 ## 디렉터리 구조
 
 ```
-azure-openai-haskell-wip/
+azure-openai-haskell-agent/
 ├── frontend/
 │   ├── src/              # React 소스 코드
 │   ├── dist/             # 빌드 출력 (생성됨)

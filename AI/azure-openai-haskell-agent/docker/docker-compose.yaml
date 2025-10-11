@@ -4,8 +4,8 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
       args:
-        PROJECT_NAME: ${PROJECT_NAME:-azure-openai-haskell-wip}
-    container_name: ${PROJECT_NAME:-azure-openai-haskell-wip}-app
+        PROJECT_NAME: ${PROJECT_NAME:-azure-openai-haskell-agent}
+    container_name: ${PROJECT_NAME:-azure-openai-haskell-agent}-app
     ports:
       - "8000:8000"
     volumes:
