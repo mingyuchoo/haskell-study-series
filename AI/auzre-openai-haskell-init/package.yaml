@@ -1,0 +1,49 @@
+name: auzre-openai-haskell-init
+version: 0.1.0.0
+github: "mingyuchoo/auzre-openai-haskell-init"
+license: BSD3
+author: "Your Name"
+maintainer: "your.email@example.com"
+copyright: "2025 Your Name"
+
+extra-source-files:
+- README.md
+
+description: Azure OpenAI client in Haskell
+
+dependencies:
+- base >= 4.7 && < 5
+- text
+- aeson
+- bytestring
+- http-client
+- http-client-tls
+- http-types
+- dotenv
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wmissing-export-lists
+- -Wmissing-home-modules
+- -Wpartial-fields
+- -Wredundant-constraints
+
+library:
+  source-dirs: src
+  exposed-modules:
+  - AzureOpenAI
+
+executables:
+  auzre-openai-haskell-init-exe:
+    main: Main.hs
+    source-dirs: app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - auzre-openai-haskell-init
