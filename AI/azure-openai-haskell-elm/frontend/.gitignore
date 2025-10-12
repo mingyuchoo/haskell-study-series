@@ -1,0 +1,14 @@
+# Elm
+elm-stuff/
+public/elm.js
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
