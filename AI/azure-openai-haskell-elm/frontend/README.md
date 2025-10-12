@@ -10,7 +10,9 @@ React/TypeScript 프론트엔드를 Elm으로 포팅하고 Clean Architecture로
 
 ```bash
 # Elm 설치 (아직 설치하지 않은 경우)
-bun install -g elm
+bun install -g elm        \
+               elm-format \
+               elm-live
 
 # 프로젝트 디렉토리로 이동
 cd frontend

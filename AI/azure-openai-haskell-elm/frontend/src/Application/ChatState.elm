@@ -1,16 +1,16 @@
 module Application.ChatState exposing
     ( ChatState
-    , init
     , addMessage
-    , clearMessages
-    , setLoading
-    , setError
     , clearError
-    , updateInput
-    , getMessages
-    , getInput
-    , isLoading
+    , clearMessages
     , getError
+    , getInput
+    , getMessages
+    , init
+    , isLoading
+    , setError
+    , setLoading
+    , updateInput
     )
 
 {-| 채팅 상태 관리

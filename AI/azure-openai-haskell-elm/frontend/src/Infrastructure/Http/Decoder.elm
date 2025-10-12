@@ -1,7 +1,7 @@
 module Infrastructure.Http.Decoder exposing
     ( chatResponseDecoder
-    , encodeMessage
     , encodeChatRequest
+    , encodeMessage
     )
 
 {-| JSON 인코더/디코더

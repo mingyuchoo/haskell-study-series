@@ -1,7 +1,7 @@
 module Application.ChatUseCase exposing
-    ( sendUserMessage
+    ( clearChat
     , handleResponse
-    , clearChat
+    , sendUserMessage
     , updateInput
     )
 

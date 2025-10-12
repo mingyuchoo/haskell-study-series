@@ -13,6 +13,9 @@ frontend-clean:
 	cd frontend && rm -f public/elm.js
 	rm -rf backend/static
 
+frontend-format:
+	cd frontend && elm-format src/ --yes
+
 frontend-build:
 	cd frontend && elm make src/Main.elm --output=public/elm.js --optimize
 	mkdir -p backend/static
