@@ -30,13 +30,13 @@ elm make src/Main.elm --output=public/elm.js
 # 개발 서버 실행 (간단한 HTTP 서버 필요)
 # Python 3를 사용하는 경우:
 cd public
-python3 -m http.server 8080
+python3 -m http.server 8000
 
 # 또는 Node.js http-server를 사용하는 경우:
-npx http-server public -p 8080
+npx http-server public -p 8000
 ```
 
-브라우저에서 `http://localhost:8080`을 열어 애플리케이션을 확인하세요.
+브라우저에서 `http://localhost:8000`을 열어 애플리케이션을 확인하세요.
 
 ## 프로덕션 빌드
 
