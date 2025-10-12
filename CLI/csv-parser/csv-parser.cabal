@@ -38,7 +38,7 @@ library
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock
   build-depends:
-      base >=4.19 && <5
+      base
     , bytestring
     , cassava
     , containers
@@ -60,7 +60,7 @@ executable csv-parser-exe
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.19 && <5
+      base
     , bytestring
     , cassava
     , containers
@@ -84,7 +84,7 @@ test-suite csv-parser-test
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
-      base >=4.19 && <5
+      base
     , bytestring
     , cassava
     , containers
