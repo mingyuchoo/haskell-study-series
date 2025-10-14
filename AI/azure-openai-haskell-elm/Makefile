@@ -23,10 +23,15 @@ frontend-build:
 	cp frontend/public/index.html backend/static/
 
 update-stack-yaml:
-	sed -i 's/container-name: ".*"/container-name: "$(PROJECT_NAME)"/g' backend/stack.yaml
-	# 루트 Dockerfile과 멀티스테이지 docker/Dockerfile 모두 PROJECT_NAME 갱신
-	- sed -i 's/ARG PROJECT_NAME=.*/ARG PROJECT_NAME=$(PROJECT_NAME)/g' Dockerfile
-	- sed -i 's/ARG PROJECT_NAME=.*/ARG PROJECT_NAME=$(PROJECT_NAME)/g' docker/Dockerfile
+	@if [ "`uname`" = "Darwin" ]; then \
+		sed -i '' 's/container-name: ".*"/container-name: "$(PROJECT_NAME)"/g' backend/stack.yaml; \
+		sed -i '' 's/ARG PROJECT_NAME=.*/ARG PROJECT_NAME=$(PROJECT_NAME)/g' Dockerfile 2>/dev/null || true; \
+		sed -i '' 's/ARG PROJECT_NAME=.*/ARG PROJECT_NAME=$(PROJECT_NAME)/g' docker/Dockerfile 2>/dev/null || true; \
+	else \
+		sed -i 's/container-name: ".*"/container-name: "$(PROJECT_NAME)"/g' backend/stack.yaml; \
+		sed -i 's/ARG PROJECT_NAME=.*/ARG PROJECT_NAME=$(PROJECT_NAME)/g' Dockerfile 2>/dev/null || true; \
+		sed -i 's/ARG PROJECT_NAME=.*/ARG PROJECT_NAME=$(PROJECT_NAME)/g' docker/Dockerfile 2>/dev/null || true; \
+	fi
 
 setup: update-stack-yaml
 	cd backend && stack setup
