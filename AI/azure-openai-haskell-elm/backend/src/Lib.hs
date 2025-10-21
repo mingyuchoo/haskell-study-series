@@ -23,7 +23,6 @@ import qualified Data.Text                 as T
 import qualified Data.Text.Encoding        as TE
 
 import           GHC.Generics
-
 import           Network.HTTP.Client
 import           Network.HTTP.Client.TLS
 import           Network.HTTP.Types.Header
@@ -47,7 +46,7 @@ instance ToJSON Role where
     toJSON Assistant = String "assistant"
 
 instance FromJSON Role where
-    parseJSON = withText "Role"<|\t -> case t of
+    parseJSON = withText "Role"<| \t -> case t of
         "system"    -> pure System
         "user"      -> pure User
         "assistant" -> pure Assistant
@@ -90,7 +89,7 @@ data Delta = Delta { deltaContent :: Maybe Text
      deriving (Generic, Show)
 
 instance FromJSON Delta where
-    parseJSON = withObject "Delta"<|\v ->
+    parseJSON = withObject "Delta"<| \v ->
         Delta <$> v .:? "content"
 
 -- | Choice in response

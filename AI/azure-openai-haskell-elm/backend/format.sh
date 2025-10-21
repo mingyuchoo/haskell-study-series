@@ -23,9 +23,9 @@ format_directory() {
     if [ -f "$file" ]; then
       echo "Processing $file"
       
-      # Check for <| operator in test files
+      # Check for $ operator in test files
       if [[ "$dir" == "test" && $(grep -q "<|" "$file"; echo $?) -eq 0 ]]; then
-        echo "Skipping $file (contains <| operator)"
+        echo "Skipping $file (contains $ operator)"
       else
         stylish-haskell -i "$file" || echo "Failed to format $file"
       fi
