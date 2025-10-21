@@ -5,6 +5,8 @@ module Infrastructure.AzureOpenAI
     ( AzureOpenAIService (..)
     ) where
 
+import           Data.Text       (Text)
+
 import           Domain.Entities
 import           Domain.Ports
 
@@ -15,7 +17,8 @@ newtype AzureOpenAIService = AzureOpenAIService ()
 instance ChatService IO where
     sendMessage config messages = do
         let azureConfig = toAzureConfig config
-        let azureMessages = map toAzureMessage messages
+        let systemMessage = createSystemMessage (configSystemPrompt config)
+        let azureMessages = systemMessage : map toAzureMessage messages
         let request = Azure.ChatRequest
                 { Azure.messages    = azureMessages
                 , Azure.model       = configDeployment config
@@ -28,7 +31,8 @@ instance ChatService IO where
 
     streamMessage config messages callback = do
         let azureConfig = toAzureConfig config
-        let azureMessages = map toAzureMessage messages
+        let systemMessage = createSystemMessage (configSystemPrompt config)
+        let azureMessages = systemMessage : map toAzureMessage messages
         let request = Azure.ChatRequest
                 { Azure.messages    = azureMessages
                 , Azure.model       = configDeployment config
@@ -57,3 +61,9 @@ toAzureRole :: ChatRole -> Azure.Role
 toAzureRole SystemRole    = Azure.System
 toAzureRole UserRole      = Azure.User
 toAzureRole AssistantRole = Azure.Assistant
+
+createSystemMessage :: Text -> Azure.Message
+createSystemMessage prompt = Azure.Message
+    { Azure.role    = Azure.System
+    , Azure.content = prompt
+    }

@@ -9,10 +9,11 @@ import           Data.Text       (Text)
 
 import           Domain.Entities
 
-data ChatConfig = ChatConfig { configApiKey     :: Text
-                             , configEndpoint   :: Text
-                             , configDeployment :: Text
-                             , configApiVersion :: Text
+data ChatConfig = ChatConfig { configApiKey       :: Text
+                             , configEndpoint     :: Text
+                             , configDeployment   :: Text
+                             , configApiVersion   :: Text
+                             , configSystemPrompt :: Text
                              }
      deriving (Show)
 
