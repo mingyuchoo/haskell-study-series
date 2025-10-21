@@ -22,12 +22,14 @@ import           Data.Text                 (Text)
 import qualified Data.Text                 as T
 import qualified Data.Text.Encoding        as TE
 
+import           Flow                      ((<|), (|>))
+
 import           GHC.Generics
+
 import           Network.HTTP.Client
 import           Network.HTTP.Client.TLS
 import           Network.HTTP.Types.Header
 import           Network.HTTP.Types.Status
-
 -- | Azure OpenAI configuration
 data Config = Config { apiKey     :: Text
                      , endpoint   :: Text
@@ -46,11 +48,11 @@ instance ToJSON Role where
     toJSON Assistant = String "assistant"
 
 instance FromJSON Role where
-    parseJSON = withText "Role"<| \t -> case t of
+    parseJSON = withText "Role" (\t -> case t of
         "system"    -> pure System
         "user"      -> pure User
         "assistant" -> pure Assistant
-        _           -> fail "Invalid role"
+        _           -> fail "Invalid role")
 
 -- | Chat message
 data Message = Message { role    :: Role
@@ -89,8 +91,8 @@ data Delta = Delta { deltaContent :: Maybe Text
      deriving (Generic, Show)
 
 instance FromJSON Delta where
-    parseJSON = withObject "Delta"<| \v ->
-        Delta <$> v .:? "content"
+    parseJSON = withObject "Delta" (\v ->
+        Delta <$> v .:? "content")
 
 -- | Choice in response
 data Choice = Choice { delta   :: Maybe Delta
@@ -99,8 +101,8 @@ data Choice = Choice { delta   :: Maybe Delta
      deriving (Generic, Show)
 
 instance FromJSON Choice where
-    parseJSON = withObject "Choice"<|\v ->
-        Choice <$> v .:? "delta" <*> v .:? "message"
+    parseJSON = withObject "Choice" (\v ->
+        Choice <$> v .:? "delta" <*> v .:? "message")
 
 -- | Chat completion response
 data ChatResponse = ChatResponse { choices :: [Choice]
@@ -113,76 +115,79 @@ instance FromJSON ChatResponse
 createChatCompletion :: Config -> ChatRequest -> IO Text
 createChatCompletion config req = do
     manager <- newManager tlsManagerSettings
-    let url = T.unpack<|endpoint config <> "/openai/deployments/"
+    let url = (endpoint config <> "/openai/deployments/"
               <> deployment config <> "/chat/completions?api-version="
-              <> apiVersion config
+              <> apiVersion config) |> T.unpack
 
     initialRequest <- parseRequest url
     let request = initialRequest
             { method = "POST"
             , requestHeaders =
                 [ (hContentType, "application/json")
-                , ("api-key", TE.encodeUtf8<|apiKey config)
+                , ("api-key", apiKey config |> TE.encodeUtf8)
                 ]
-            , requestBody = RequestBodyLBS<|encode req
+            , requestBody = req |> encode |> RequestBodyLBS
             }
 
     response <- httpLbs request manager
 
-    if statusCode (responseStatus response) /= 200
-        then throwIO<|userError<|"API request failed: " ++ show (responseStatus response)
-        else case decode (responseBody response) of
-            Nothing -> throwIO<|userError "Failed to parse response"
-            Just chatResp -> case choices chatResp of
-                (Choice _ (Just msg):_) -> pure<|content msg
-                _ -> throwIO<|userError "No message in response"
+    case decode (responseBody response) of
+        _ | statusCode (responseStatus response) /= 200 ->
+            ("API request failed: " ++ show (responseStatus response)) |> userError |> throwIO
+        Nothing -> "Failed to parse response" |> userError |> throwIO
+        Just chatResp -> case choices chatResp of
+            (Choice _ (Just msg):_) -> content msg |> pure
+            _ -> "No message in response" |> userError |> throwIO
 
 -- | Stream chat completion
 streamChatCompletion :: Config -> ChatRequest -> (Text -> IO ()) -> IO ()
 streamChatCompletion config req callback = do
     manager <- newManager tlsManagerSettings
-    let url = T.unpack<|endpoint config <> "/openai/deployments/"
+    let url = (endpoint config <> "/openai/deployments/"
               <> deployment config <> "/chat/completions?api-version="
-              <> apiVersion config
+              <> apiVersion config) |> T.unpack
 
     initialRequest <- parseRequest url
     let request = initialRequest
             { method = "POST"
             , requestHeaders =
                 [ (hContentType, "application/json")
-                , ("api-key", TE.encodeUtf8<|apiKey config)
+                , ("api-key", apiKey config |> TE.encodeUtf8)
                 ]
             , requestBody = RequestBodyLBS<|encode req { stream = True }
             }
 
-    withResponse request manager<|\response -> do
-        if statusCode (responseStatus response) /= 200
-            then throwIO<|userError<|"API request failed: " ++ show (responseStatus response)
-            else processStream (responseBody response)
+    withResponse request manager<|(\response -> do
+        processStream response (responseBody response))
   where
-    processStream body = do
+    processStream response body = do
         chunk <- brRead body
-        if BS.null chunk
-            then pure ()
-            else do
-                processChunk chunk
-                processStream body
+        processChunk response chunk body
 
-    processChunk chunk = do
-        let linesList = BS.split 10 chunk  -- Split by newline
-        mapM_ processLine linesList
+    processChunk response chunk body
+        | BS.null chunk = pure ()
+        | otherwise = do
+            let linesList = BS.split 10 chunk  -- Split by newline
+            mapM_ processLine linesList
+            processStream response body
 
     processLine line
         | BS.null line = pure ()
-        | BS.isPrefixOf "data: " line = do
-            let jsonData = BS.drop 6 line
-            if jsonData == "[DONE]"
-                then pure ()
-                else case decode (BL.fromStrict jsonData) of
-                    Just chatResp -> case choices chatResp of
-                        (Choice (Just d) _:_) -> case deltaContent d of
-                            Just txt -> callback txt
-                            Nothing  -> pure ()
-                        _ -> pure ()
-                    Nothing -> pure ()
+        | BS.isPrefixOf "data: " line = processDataLine line
         | otherwise = pure ()
+
+    processDataLine line = do
+        let jsonData = BS.drop 6 line
+        processJsonData jsonData
+
+    processJsonData jsonData
+        | jsonData == "[DONE]" = pure ()
+        | otherwise = case decode (BL.fromStrict jsonData) of
+            Just chatResp -> processChoices (choices chatResp)
+            Nothing -> pure ()
+
+    processChoices [] = pure ()
+    processChoices (Choice (Just d) _:_) = case deltaContent d of
+        Just txt -> callback txt
+        Nothing  -> pure ()
+    processChoices (_:rest) = processChoices rest

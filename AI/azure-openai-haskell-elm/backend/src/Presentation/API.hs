@@ -22,6 +22,8 @@ import           Data.Text                  (Text)
 import           Domain.Entities
 import           Domain.Ports
 
+import           Flow                       ((|>))
+
 import           GHC.Generics
 
 import           Infrastructure.AzureOpenAI ()
@@ -83,11 +85,11 @@ server config = (chatHandler :<|> healthHandler)
     chatHandler :: ChatRequest -> Handler ChatResponse
     chatHandler req = do
         let messages = map fromDTO (chatMessages req)
-        result <- liftIO<|sendMessage config messages
-        pure<|ChatResponse result
+        result <- sendMessage config messages |> liftIO
+        result |> ChatResponse |> pure
 
     healthHandler :: Handler HealthResponse
-    healthHandler = pure<|HealthResponse "ok"
+    healthHandler = "ok" |> HealthResponse |> pure
 
 -- Helper Functions
 fromDTO :: ChatMessageDTO -> ChatMessage
