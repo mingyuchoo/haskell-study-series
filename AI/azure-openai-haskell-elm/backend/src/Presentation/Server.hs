@@ -29,8 +29,8 @@ loadConfigFromEnv :: IO ChatConfig
 loadConfigFromEnv = do
     _ <- loadFile defaultConfig `catch` \(_ :: SomeException) -> pure ()
 
-    apiKey' <- lookupEnv "AZURE_OPENAI_API_KEY"
-    endpoint' <- lookupEnv "AZURE_OPENAI_ENDPOINT"
+    apiKey'     <- lookupEnv "AZURE_OPENAI_API_KEY"
+    endpoint'   <- lookupEnv "AZURE_OPENAI_ENDPOINT"
     deployment' <- lookupEnv "AZURE_OPENAI_DEPLOYMENT"
     apiVersion' <- lookupEnv "AZURE_OPENAI_API_VERSION"
 

@@ -77,12 +77,12 @@ data ChatRequest = ChatRequest { messages    :: [Message]
 
 instance ToJSON ChatRequest where
     toJSON (ChatRequest msgs mdl strm maxTok temp tp) = object
-        [ "messages" .= msgs
-        , "model" .= mdl
-        , "stream" .= strm
-        , "max_tokens" .= maxTok
+        [ "messages"    .= msgs
+        , "model"       .= mdl
+        , "stream"      .= strm
+        , "max_tokens"  .= maxTok
         , "temperature" .= temp
-        , "top_p" .= tp
+        , "top_p"       .= tp
         ]
 
 -- | Delta for streaming responses
@@ -115,7 +115,7 @@ instance FromJSON ChatResponse
 createChatCompletion :: Config -> ChatRequest -> IO Text
 createChatCompletion config req = do
     manager <- newManager tlsManagerSettings
-    let url = (endpoint config <> "/openai/deployments/"
+    let url = (endpoint config     <> "/openai/deployments/"
               <> deployment config <> "/chat/completions?api-version="
               <> apiVersion config) |> T.unpack
 
@@ -133,17 +133,17 @@ createChatCompletion config req = do
 
     case decode (responseBody response) of
         _ | statusCode (responseStatus response) /= 200 ->
-            ("API request failed: " ++ show (responseStatus response)) |> userError |> throwIO
+            ("API request failed: " <> show (responseStatus response)) |> userError |> throwIO
         Nothing -> "Failed to parse response" |> userError |> throwIO
         Just chatResp -> case choices chatResp of
             (Choice _ (Just msg):_) -> content msg |> pure
-            _ -> "No message in response" |> userError |> throwIO
+            _                       -> "No message in response" |> userError |> throwIO
 
 -- | Stream chat completion
 streamChatCompletion :: Config -> ChatRequest -> (Text -> IO ()) -> IO ()
 streamChatCompletion config req callback = do
     manager <- newManager tlsManagerSettings
-    let url = (endpoint config <> "/openai/deployments/"
+    let url = (endpoint config     <> "/openai/deployments/"
               <> deployment config <> "/chat/completions?api-version="
               <> apiVersion config) |> T.unpack
 
@@ -157,7 +157,7 @@ streamChatCompletion config req callback = do
             , requestBody = RequestBodyLBS<|encode req { stream = True }
             }
 
-    withResponse request manager<|(\response -> do
+    withResponse request manager <| (\response -> do
         processStream response (responseBody response))
   where
     processStream response body = do
@@ -172,9 +172,9 @@ streamChatCompletion config req callback = do
             processStream response body
 
     processLine line
-        | BS.null line = pure ()
+        | BS.null line                = pure ()
         | BS.isPrefixOf "data: " line = processDataLine line
-        | otherwise = pure ()
+        | otherwise                   = pure ()
 
     processDataLine line = do
         let jsonData = BS.drop 6 line
@@ -182,12 +182,12 @@ streamChatCompletion config req callback = do
 
     processJsonData jsonData
         | jsonData == "[DONE]" = pure ()
-        | otherwise = case decode (BL.fromStrict jsonData) of
+        | otherwise            = case decode (BL.fromStrict jsonData) of
             Just chatResp -> processChoices (choices chatResp)
-            Nothing -> pure ()
+            Nothing       -> pure ()
 
-    processChoices [] = pure ()
+    processChoices []                    = pure ()
     processChoices (Choice (Just d) _:_) = case deltaContent d of
         Just txt -> callback txt
         Nothing  -> pure ()
-    processChoices (_:rest) = processChoices rest
+    processChoices (_:rest)              = processChoices rest

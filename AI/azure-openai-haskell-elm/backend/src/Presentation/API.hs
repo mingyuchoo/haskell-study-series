@@ -22,7 +22,7 @@ import           Data.Text                  (Text)
 import           Domain.Entities
 import           Domain.Ports
 
-import           Flow                       ((|>))
+import           Flow                       ((<|), (|>))
 
 import           GHC.Generics
 
@@ -85,7 +85,7 @@ server config = (chatHandler :<|> healthHandler)
     chatHandler :: ChatRequest -> Handler ChatResponse
     chatHandler req = do
         let messages = map fromDTO (chatMessages req)
-        result <- sendMessage config messages |> liftIO
+        result <- liftIO <| sendMessage config messages
         result |> ChatResponse |> pure
 
     healthHandler :: Handler HealthResponse
@@ -107,6 +107,6 @@ parseRole _           = UserRole
 -- Swagger Documentation
 swaggerDoc :: Swagger
 swaggerDoc = toSwagger chatAPI
-    & info.title .~ "Azure OpenAI Chat API"
-    & info.version .~ "1.0"
+    & info.title       .~ "Azure OpenAI Chat API"
+    & info.version     .~ "1.0"
     & info.description ?~ "REST API for Azure OpenAI chat service"
