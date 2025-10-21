@@ -34,7 +34,7 @@ loadConfigFromEnv = do
     apiVersion' <- lookupEnv "AZURE_OPENAI_API_VERSION"
 
     case (apiKey', endpoint', deployment', apiVersion') of
-        (Just k, Just e, Just d, Just v) -> pure $ ChatConfig
+        (Just k, Just e, Just d, Just v) -> pure<|ChatConfig
             { configApiKey = T.pack k
             , configEndpoint = T.pack e
             , configDeployment = T.pack d
@@ -45,11 +45,11 @@ loadConfigFromEnv = do
 runServer :: ChatConfig -> IO ()
 runServer config = do
     let port = 8000
-    TIO.putStrLn $ "Starting server on http://localhost:" <> T.pack (show port)
+    TIO.putStrLn<|"Starting server on http://localhost:" <> T.pack (show port)
     TIO.putStrLn "Available endpoints:"
     TIO.putStrLn "  - Web UI: http://localhost:8000/"
     TIO.putStrLn "  - API: http://localhost:8000/api/chat"
     TIO.putStrLn "  - Health: http://localhost:8000/health"
     TIO.putStrLn "  - Swagger UI: http://localhost:8000/swagger-ui"
     TIO.putStrLn "  - OpenAPI JSON: http://localhost:8000/openapi.json"
-    run port (serve api $ server config)
+    run port (serve api<|server config)

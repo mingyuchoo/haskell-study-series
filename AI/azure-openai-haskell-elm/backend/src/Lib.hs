@@ -47,7 +47,7 @@ instance ToJSON Role where
     toJSON Assistant = String "assistant"
 
 instance FromJSON Role where
-    parseJSON = withText "Role" $ \t -> case t of
+    parseJSON = withText "Role"<|\t -> case t of
         "system"    -> pure System
         "user"      -> pure User
         "assistant" -> pure Assistant
@@ -90,7 +90,7 @@ data Delta = Delta { deltaContent :: Maybe Text
      deriving (Generic, Show)
 
 instance FromJSON Delta where
-    parseJSON = withObject "Delta" $ \v ->
+    parseJSON = withObject "Delta"<|\v ->
         Delta <$> v .:? "content"
 
 -- | Choice in response
@@ -100,7 +100,7 @@ data Choice = Choice { delta   :: Maybe Delta
      deriving (Generic, Show)
 
 instance FromJSON Choice where
-    parseJSON = withObject "Choice" $ \v ->
+    parseJSON = withObject "Choice"<|\v ->
         Choice <$> v .:? "delta" <*> v .:? "message"
 
 -- | Chat completion response
@@ -114,7 +114,7 @@ instance FromJSON ChatResponse
 createChatCompletion :: Config -> ChatRequest -> IO Text
 createChatCompletion config req = do
     manager <- newManager tlsManagerSettings
-    let url = T.unpack $ endpoint config <> "/openai/deployments/"
+    let url = T.unpack<|endpoint config <> "/openai/deployments/"
               <> deployment config <> "/chat/completions?api-version="
               <> apiVersion config
 
@@ -123,26 +123,26 @@ createChatCompletion config req = do
             { method = "POST"
             , requestHeaders =
                 [ (hContentType, "application/json")
-                , ("api-key", TE.encodeUtf8 $ apiKey config)
+                , ("api-key", TE.encodeUtf8<|apiKey config)
                 ]
-            , requestBody = RequestBodyLBS $ encode req
+            , requestBody = RequestBodyLBS<|encode req
             }
 
     response <- httpLbs request manager
 
     if statusCode (responseStatus response) /= 200
-        then throwIO $ userError $ "API request failed: " ++ show (responseStatus response)
+        then throwIO<|userError<|"API request failed: " ++ show (responseStatus response)
         else case decode (responseBody response) of
-            Nothing -> throwIO $ userError "Failed to parse response"
+            Nothing -> throwIO<|userError "Failed to parse response"
             Just chatResp -> case choices chatResp of
-                (Choice _ (Just msg):_) -> pure $ content msg
-                _ -> throwIO $ userError "No message in response"
+                (Choice _ (Just msg):_) -> pure<|content msg
+                _ -> throwIO<|userError "No message in response"
 
 -- | Stream chat completion
 streamChatCompletion :: Config -> ChatRequest -> (Text -> IO ()) -> IO ()
 streamChatCompletion config req callback = do
     manager <- newManager tlsManagerSettings
-    let url = T.unpack $ endpoint config <> "/openai/deployments/"
+    let url = T.unpack<|endpoint config <> "/openai/deployments/"
               <> deployment config <> "/chat/completions?api-version="
               <> apiVersion config
 
@@ -151,14 +151,14 @@ streamChatCompletion config req callback = do
             { method = "POST"
             , requestHeaders =
                 [ (hContentType, "application/json")
-                , ("api-key", TE.encodeUtf8 $ apiKey config)
+                , ("api-key", TE.encodeUtf8<|apiKey config)
                 ]
-            , requestBody = RequestBodyLBS $ encode req { stream = True }
+            , requestBody = RequestBodyLBS<|encode req { stream = True }
             }
 
-    withResponse request manager $ \response -> do
+    withResponse request manager<|\response -> do
         if statusCode (responseStatus response) /= 200
-            then throwIO $ userError $ "API request failed: " ++ show (responseStatus response)
+            then throwIO<|userError<|"API request failed: " ++ show (responseStatus response)
             else processStream (responseBody response)
   where
     processStream body = do

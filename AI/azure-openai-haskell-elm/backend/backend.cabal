@@ -1,6 +1,6 @@
 cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.38.1.
+-- This file has been generated from package.yaml by hpack version 0.37.0.
 --
 -- see: https://github.com/sol/hpack
 
@@ -45,6 +45,7 @@ library
     , base
     , bytestring
     , dotenv
+    , flow
     , http-client
     , http-client-tls
     , http-types
@@ -78,6 +79,7 @@ executable backend-exe
     , base
     , bytestring
     , dotenv
+    , flow
     , http-client
     , http-client-tls
     , http-types

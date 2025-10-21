@@ -35,6 +35,7 @@ dependencies:
 - uuid
 - time
 - lens
+- flow
 
 ghc-options:
 - -Wall

@@ -83,11 +83,11 @@ server config = (chatHandler :<|> healthHandler)
     chatHandler :: ChatRequest -> Handler ChatResponse
     chatHandler req = do
         let messages = map fromDTO (chatMessages req)
-        result <- liftIO $ sendMessage config messages
-        pure $ ChatResponse result
+        result <- liftIO<|sendMessage config messages
+        pure<|ChatResponse result
 
     healthHandler :: Handler HealthResponse
-    healthHandler = pure $ HealthResponse "ok"
+    healthHandler = pure<|HealthResponse "ok"
 
 -- Helper Functions
 fromDTO :: ChatMessageDTO -> ChatMessage
