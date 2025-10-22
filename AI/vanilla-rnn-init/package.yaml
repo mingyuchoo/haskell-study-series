@@ -21,6 +21,7 @@ description:         Please see the README on GitHub at <https://github.com/ming
 
 dependencies:
 - base
+- random
 
 ghc-options:
 - -Wall

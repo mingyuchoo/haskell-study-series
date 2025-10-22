@@ -3,15 +3,15 @@ resolver: lts-24.4
 packages:
 - .
 
-docker:
-  enable: true
-  image: fpco/stack-build:lts-24.4
-  auto-pull: true
-  persist: false
-  container-name: "vanilla-rnn-init"
-  run-args: []
-  stack-exe: host
-  set-user: true
+#docker:
+#  enable: true
+#  image: fpco/stack-build:lts-24.4
+#  auto-pull: true
+#  persist: false
+#  container-name: "vanilla-rnn-init"
+#  run-args: []
+#  stack-exe: host
+#  set-user: true
 
 #nix:
 #  enable: true
