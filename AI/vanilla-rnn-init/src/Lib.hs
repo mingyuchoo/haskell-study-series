@@ -5,7 +5,6 @@ module Lib
   )
 where
 
-import Data.List (foldl')
 import System.Random
 
 -- | 벡터 타입 (리스트로 표현)
@@ -59,8 +58,11 @@ outerProduct v1 v2 = [[x * y | y <- v2] | x <- v1]
 
 -- | 전치 행렬
 transpose :: Matrix -> Matrix
+transpose [] = []
 transpose ([] : _) = []
-transpose m = map head m : transpose (map tail m)
+transpose m =
+  map (\row -> case row of (x : _) -> x; [] -> error "transpose: empty row") m
+    : transpose (map (\row -> case row of (_ : xs) -> xs; [] -> []) m)
 
 -- | 행렬 덧셈
 matAdd :: Matrix -> Matrix -> Matrix
@@ -259,13 +261,13 @@ trainLoop params inputs targets lr epochs =
 -- | 단순화된 그래디언트 계산
 computeSimpleGradients :: RNNParams -> [Vector] -> [Vector] -> [Vector] -> [RNNState] -> RNNGradients
 computeSimpleGradients params inputs targets outputs states =
-  let inputSize = length (head inputs)
+  let inputSize = case inputs of (x : _) -> length x; [] -> 0
       hiddenSize = length (bh params)
       outputSize = length (by params)
       zeroGrads = zeroGradients inputSize hiddenSize outputSize
       -- 역순으로 처리하며 그래디언트 누적
       gradsWithHidden = reverse $ go (reverse inputs) (reverse targets) (reverse outputs) (reverse states) (replicate hiddenSize 0.0) []
-   in foldl' addGradients zeroGrads gradsWithHidden
+   in foldr addGradients zeroGrads gradsWithHidden
   where
     go [] [] [] [] _ acc = acc
     go (inp : inps) (tgt : tgts) (out : outs) (st : sts) dh_next acc =
@@ -278,10 +280,7 @@ computeSimpleGradients params inputs targets outputs states =
 -- | 각 스텝의 그래디언트 계산
 computeStepGradients :: RNNParams -> Vector -> Vector -> Vector -> Vector -> Vector -> RNNGradients
 computeStepGradients params input target output h_t dh_next =
-  let inputSize = length input
-      hiddenSize = length (bh params)
-      outputSize = length (by params)
-      -- 출력층 그래디언트
+  let -- 출력층 그래디언트
       dy = vecSub output target
       -- 은닉층으로 역전파
       dh_raw = vecAdd (matVecMul (transpose (why params)) dy) dh_next
