@@ -38,6 +38,8 @@ library
     , bytestring
     , directory
     , filepath
+    , hspec
+    , hspec-discover
     , text
     , xml-conduit
     , zip-archive
@@ -57,6 +59,8 @@ executable korean-docx-parser-exe
     , bytestring
     , directory
     , filepath
+    , hspec
+    , hspec-discover
     , korean-docx-parser
     , text
     , xml-conduit
@@ -67,6 +71,7 @@ test-suite korean-docx-parser-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      LibSpec
       Paths_korean_docx_parser
   autogen-modules:
       Paths_korean_docx_parser
@@ -78,6 +83,8 @@ test-suite korean-docx-parser-test
     , bytestring
     , directory
     , filepath
+    , hspec
+    , hspec-discover
     , korean-docx-parser
     , text
     , xml-conduit

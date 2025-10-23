@@ -2,23 +2,26 @@
 
 module Lib
     ( parseDocxToMarkdown
+    , extractTextToMarkdown
+    , getHeadingLevel
     ) where
 
-import Codec.Archive.Zip
-import qualified Data.ByteString.Lazy as BL
-import Data.Text (Text)
-import qualified Data.Text as T
-import qualified Data.Text.IO as TIO
+import           Codec.Archive.Zip
 
-import Text.XML
-import Text.XML.Cursor
+import qualified Data.ByteString.Lazy as BL
+import           Data.Text            (Text)
+import qualified Data.Text            as T
+import qualified Data.Text.IO         as TIO
+
+import           Text.XML
+import           Text.XML.Cursor
 
 -- DOCX 파일을 파싱하여 Markdown으로 변환
 parseDocxToMarkdown :: FilePath -> FilePath -> IO ()
 parseDocxToMarkdown inputPath outputPath = do
     -- DOCX 파일 읽기 (ZIP 아카이브)
     archive <- toArchive <$> BL.readFile inputPath
-    
+
     -- document.xml 추출
     let docEntry = findEntryByPath "word/document.xml" archive
     case docEntry of
@@ -53,7 +56,7 @@ processParagraph pCursor =
        then ""
        else case headingLevel of
            Just level -> T.replicate level "#" <> " " <> paraText
-           Nothing -> paraText
+           Nothing    -> paraText
 
 -- Run (텍스트 조각) 처리
 processRun :: Cursor -> Text
