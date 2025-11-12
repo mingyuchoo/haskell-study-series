@@ -2,14 +2,14 @@
 ** How to use Jupyter Notebook with Haskell
 *** Prerequisites
 For Ubuntu
-- Install Libraries
+- Install libraries
 #+BEGIN_SRC shell
-  sudo apt install -y libtinfo-dev \
-                      libzmq3-dev \
-                      libcairo2-dev \
+  sudo apt install -y libtinfo-dev    \
+                      libzmq3-dev     \
+                      libcairo2-dev   \
                       libpango1.0-dev \
-                      libmagic-dev \
-                      libblas-dev \
+                      libmagic-dev    \
+                      libblas-dev     \
                       liblapack-dev
 #+END_SRC
 - Install Python3 and set ~.venv~ up
@@ -26,7 +26,7 @@ For Ubuntu
 #+BEGIN_SRC shell
   uv venv --python 3.14
   source .venv/bin/activate
-  uv install jupyberlab
+  uv pip install jupyterlab
   jupyter lab
 #+END_SRC
 ** References
