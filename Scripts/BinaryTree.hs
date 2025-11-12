@@ -1,4 +1,7 @@
-#!/usr/bin/env runghc
+#!/usr/bin/env stack
+-- stack --resolver lts-24.11 script --package flow
+
+import Flow
 
 -- Binary Tree Data Structure
 data BinaryTree a = Empty
@@ -8,17 +11,17 @@ data BinaryTree a = Empty
 -- Pre-order traversal
 preOrder :: BinaryTree a -> [a]
 preOrder Empty = []
-preOrder (Node value left right) = [value] ++ preOrder left ++ preOrder right
+preOrder (Node value left right) = [value] <> preOrder left <> preOrder right
 
 -- In-order traversal
 inOrder :: BinaryTree a -> [a]
 inOrder Empty = []
-inOrder (Node value left right) = inOrder left ++ [value] ++ inOrder right
+inOrder (Node value left right) = inOrder left <> [value] <> inOrder right
 
 -- Post-order traversal
 postOrder :: BinaryTree a -> [a]
 postOrder Empty = []
-postOrder (Node value left right) = postOrder left ++ postOrder right ++ [value]
+postOrder (Node value left right) = postOrder left <> postOrder right <> [value]
 
 -- Level-order traversal
 levelOrder :: BinaryTree a -> [a]
@@ -27,7 +30,7 @@ levelOrder tree = concatMap level [0..height tree]
     level n = levelN n tree
     levelN _ Empty = []
     levelN 0 (Node value _ _) = [value]
-    levelN n (Node _ left right) = levelN (n-1) left ++ levelN (n-1) right
+    levelN n (Node _ left right) = levelN (n-1) left <> levelN (n-1) right
 
 
 height :: BinaryTree a -> Int
@@ -46,7 +49,7 @@ main = do
           (Node 6 Empty Empty)
           Empty)
 
-  print $ preOrder tree
-  print $ inOrder tree
-  print $ postOrder tree
-  print $ levelOrder tree
+  print <| preOrder tree
+  print <| inOrder tree
+  print <| postOrder tree
+  print <| levelOrder tree

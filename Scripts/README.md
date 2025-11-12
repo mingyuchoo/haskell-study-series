@@ -3,11 +3,8 @@
 ## Template
 
 ```haskell
--- hello.hs
-
 #!/usr/bin/env runghc
 
--- Add Haskell code here
 main :: IO ()
 main =
   putStrLn "Hello, Haskell!"
