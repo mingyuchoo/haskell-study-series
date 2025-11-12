@@ -32,6 +32,17 @@ For Ubuntu
 #+BEGIN_SRC shell
   jupyter lab
 #+END_SRC
+*** Install additional packages
+#+BEGIN_SRC shell
+  stack install ihaskell-diagrams    \
+                ihaskell-charts      \
+                ihaskell-juicypixels \
+                ihaskell-blaze       \
+                ihaskell-gnuplot     \
+                ihaskell-hatex       \
+                ihaskell-hvega       \
+                ihaskell-widgets
+#+END_SRC
 ** References
 - [[IHaskell][https://github.com/IHaskell/IHaskell]]
 - [[IHaskell Notebook][https://notebook.community/gibiansky/IHaskell/notebooks/IHaskell]]
