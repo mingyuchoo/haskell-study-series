@@ -1,6 +1,6 @@
 cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.38.1.
+-- This file has been generated from package.yaml by hpack version 0.37.0.
 --
 -- see: https://github.com/sol/hpack
 
@@ -52,7 +52,9 @@ executable SDL2Demo01-exe
   build-depends:
       SDL2Demo01
     , base >=4.7 && <5
+    , linear
     , sdl2
+    , text
   default-language: Haskell2010
 
 test-suite SDL2Demo01-test
@@ -68,5 +70,7 @@ test-suite SDL2Demo01-test
   build-depends:
       SDL2Demo01
     , base >=4.7 && <5
+    , linear
     , sdl2
+    , text
   default-language: Haskell2010
