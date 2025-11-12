@@ -18,15 +18,18 @@ For Ubuntu
 #+BEGIN_SRC shell
   stack install ihasekll
 #+END_SRC
+*** Install Jupyter Lab
+#+BEGIN_SRC shell
+  uv venv --python 3.14
+  source .venv/bin/activate
+  uv pip install jupyterlab
+#+END_SRC
 *** Install IHaskell as a kernel on Jupyter Notebook
 #+BEGIN_SRC shell
   ihaskell install --stack
 #+END_SRC
 *** Run Jupyter Lab
 #+BEGIN_SRC shell
-  uv venv --python 3.14
-  source .venv/bin/activate
-  uv pip install jupyterlab
   jupyter lab
 #+END_SRC
 ** References
