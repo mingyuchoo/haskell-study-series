@@ -1,3 +1,5 @@
+#!/usr/bin/env runghc
+
 -- Binary Tree Data Structure
 data BinaryTree a = Empty
                   | Node a (BinaryTree a) (BinaryTree a)
