@@ -1,0 +1,62 @@
+name:                DiagramsDemo01
+version:             0.1.0.0
+github:              "mingyuchoo/DiagramsDemo01"
+license:             BSD-3-Clause
+author:              "Mingyu Choo"
+maintainer:          "mingyuchoo@gmail.com"
+copyright:           "Mingyu Choo 2025"
+
+extra-source-files:
+- README.md
+- CHANGELOG.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/mingyuchoo/DiagramsDemo01#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- diagrams
+- diagrams-lib
+- diagrams-svg
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wmissing-export-lists
+- -Wmissing-home-modules
+- -Wpartial-fields
+- -Wredundant-constraints
+
+library:
+  source-dirs: src
+
+executables:
+  DiagramsDemo01-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - DiagramsDemo01
+
+tests:
+  DiagramsDemo01-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - DiagramsDemo01
