@@ -1,0 +1,85 @@
+name: HaskellGPT
+version: 0.1.0.0
+github: "username/HaskellGPT"
+license: MIT
+author: "HaskellGPT Team"
+maintainer: "haskellgpt@example.com"
+copyright: "2025 HaskellGPT Team"
+
+extra-source-files:
+- README.md
+
+synopsis: A transformer-based language model implemented in pure Haskell
+category: Machine Learning
+
+description: |
+  HaskellGPT is a complete Haskell port of RustGPT, implementing a transformer-based
+  language model using pure functional programming. It includes pre-training and
+  instruction tuning capabilities with an interactive chat mode.
+
+dependencies:
+- base >= 4.7 && < 5
+- hmatrix >= 0.20
+- random >= 1.2
+- containers >= 0.6
+- aeson >= 2.0
+- bytestring >= 0.11
+- text >= 1.2
+- vector >= 0.12
+- cassava >= 0.5
+- mtl >= 2.2
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wmissing-export-lists
+- -Wmissing-home-modules
+- -Wpartial-fields
+- -Wredundant-constraints
+- -O2
+
+library:
+  source-dirs: src
+  exposed-modules:
+  - HaskellGPT
+  - HaskellGPT.Types
+  - HaskellGPT.Adam
+  - HaskellGPT.Vocab
+  - HaskellGPT.Embeddings
+  - HaskellGPT.SelfAttention
+  - HaskellGPT.FeedForward
+  - HaskellGPT.LayerNorm
+  - HaskellGPT.Transformer
+  - HaskellGPT.OutputProjection
+  - HaskellGPT.LLM
+  - HaskellGPT.Dataset
+
+executables:
+  HaskellGPT-exe:
+    main: Main.hs
+    source-dirs: app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - HaskellGPT
+
+tests:
+  HaskellGPT-test:
+    main: Spec.hs
+    source-dirs: test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - HaskellGPT
+    - hspec >= 2.8
+    - QuickCheck >= 2.14
+    - HUnit >= 1.6
+    - temporary >= 1.3
+    - filepath >= 1.4
