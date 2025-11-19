@@ -1,12 +1,12 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.4.
+-- This file has been generated from package.yaml by hpack version 0.38.1.
 --
 -- see: https://github.com/sol/hpack
 
-name:           monomer-starter
+name:           MonomerApp
 version:        0.1.0.0
-homepage:       https://github.com/githubuser/monomer-starter#readme
+homepage:       https://github.com/githubuser/MonomerApp#readme
 author:         Author name here
 maintainer:     example@example.com
 copyright:      2021 Author name here
@@ -19,7 +19,7 @@ extra-source-files:
 executable app
   main-is: Main.hs
   other-modules:
-      Paths_monomer_starter
+      Paths_MonomerApp
   hs-source-dirs:
       src
   default-extensions:

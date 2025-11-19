@@ -12,7 +12,7 @@ For more information, check https://github.com/fjvallarino/monomer.
 ## Create a new project
 
 ```bash
-git clone https://github.com/fjvallarino/monomer-starter.git <your-app-name>
+git clone https://github.com/fjvallarino/MonomerApp.git <your-app-name>
 ```
 
 ## Prerequisites
@@ -23,7 +23,6 @@ brew install pkg-config
 brew install glfw3 pkg-config
 brew install sdl2
 brew install glew
-
 
 # For Ubuntu
 sudo apt-get install libsdl2-dev
@@ -44,7 +43,6 @@ stack exec -- pacman -S mingw-w64-x86_64-glew
 stack exec -- pacman -S mingw-w64-x86_64-freetype
 stack exec -- pacman -Syu
 ```
-
 
 ## References
 

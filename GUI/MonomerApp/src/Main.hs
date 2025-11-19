@@ -1,24 +1,24 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskell   #-}
 
-module Main where
+module Main
+    where
 
-import Control.Lens
-import Data.Maybe
-import Data.Text (Text)
-import Monomer
-import TextShow
+import           Control.Lens
 
+import           Data.Maybe
+import           Data.Text    (Text)
+
+import           Monomer
 import qualified Monomer.Lens as L
 
-newtype AppModel = AppModel {
-  _clickCount :: Int
-} deriving (Eq, Show)
+import           TextShow
 
-data AppEvent
-  = AppInit
-  | AppIncrease
-  deriving (Eq, Show)
+newtype AppModel = AppModel { _clickCount :: Int }
+     deriving (Eq, Show)
+
+data AppEvent = AppInit | AppIncrease
+     deriving (Eq, Show)
 
 makeLenses 'AppModel
 
@@ -44,7 +44,7 @@ handleEvent
   -> AppEvent
   -> [AppEventResponse AppModel AppEvent]
 handleEvent wenv node model evt = case evt of
-  AppInit -> []
+  AppInit     -> []
   AppIncrease -> [Model (model & clickCount +~ 1)]
 
 main :: IO ()
