@@ -1,6 +1,6 @@
-cabal-version: 3.16
+cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.34.4.
+-- This file has been generated from package.yaml by hpack version 0.38.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -11,7 +11,7 @@ homepage:       https://github.com/mingyuchoo/coordinate-manipulate#readme
 bug-reports:    https://github.com/mingyuchoo/coordinate-manipulate/issues
 author:         Mingyu Choo
 maintainer:     mingyuchoo@gmail.com
-copyright:      Mingyu Choo
+copyright:      2023 Mingyu Choo
 license:        BSD-3-Clause
 license-file:   LICENSE
 build-type:     Simple
@@ -28,9 +28,13 @@ library
       Lib
   other-modules:
       Paths_coordinate_manipulate
+  autogen-modules:
+      Paths_coordinate_manipulate
   hs-source-dirs:
       src
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  default-extensions:
+      StandaloneKindSignatures
+  ghc-options: -Wall -O2 -haddock
   build-depends:
       base
     , containers
@@ -42,9 +46,13 @@ executable coordinate-manipulate-exe
   main-is: Main.hs
   other-modules:
       Paths_coordinate_manipulate
+  autogen-modules:
+      Paths_coordinate_manipulate
   hs-source-dirs:
       app
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  default-extensions:
+      StandaloneKindSignatures
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base
     , containers
@@ -58,9 +66,13 @@ test-suite coordinate-manipulate-test
   main-is: Spec.hs
   other-modules:
       Paths_coordinate_manipulate
+  autogen-modules:
+      Paths_coordinate_manipulate
   hs-source-dirs:
       test
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  default-extensions:
+      StandaloneKindSignatures
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base
     , containers

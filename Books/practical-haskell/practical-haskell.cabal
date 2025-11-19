@@ -1,6 +1,6 @@
-cabal-version: 3.16
+cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.36.0.
+-- This file has been generated from package.yaml by hpack version 0.38.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -28,6 +28,8 @@ library
       Lib
   other-modules:
       Paths_practical_haskell
+  autogen-modules:
+      Paths_practical_haskell
   hs-source-dirs:
       src
   default-extensions:
@@ -43,6 +45,8 @@ library
 executable practical-haskell-exe
   main-is: Main.hs
   other-modules:
+      Paths_practical_haskell
+  autogen-modules:
       Paths_practical_haskell
   hs-source-dirs:
       app
@@ -63,6 +67,8 @@ test-suite practical-haskell-test
   other-modules:
       Chapter2Spec
       ExampleSpec
+      Paths_practical_haskell
+  autogen-modules:
       Paths_practical_haskell
   hs-source-dirs:
       test

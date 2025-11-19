@@ -1,6 +1,6 @@
-cabal-version: 3.16
+cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.34.4.
+-- This file has been generated from package.yaml by hpack version 0.38.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -11,7 +11,7 @@ homepage:       https://github.com/mingyuchoo/freeze-drinks#readme
 bug-reports:    https://github.com/mingyuchoo/freeze-drinks/issues
 author:         Mingyu Choo
 maintainer:     mingyuchoo@gmail.com
-copyright:      Mingyu Choo
+copyright:      2023 Mingyu Choo
 license:        BSD-3-Clause
 license-file:   LICENSE
 build-type:     Simple
@@ -30,9 +30,13 @@ library
       Lib
   other-modules:
       Paths_freeze_drinks
+  autogen-modules:
+      Paths_freeze_drinks
   hs-source-dirs:
       src
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  default-extensions:
+      StandaloneKindSignatures
+  ghc-options: -Wall -O2 -haddock
   build-depends:
       array
     , base
@@ -47,9 +51,13 @@ executable freeze-drinks-exe
   main-is: Main.hs
   other-modules:
       Paths_freeze_drinks
+  autogen-modules:
+      Paths_freeze_drinks
   hs-source-dirs:
       app
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  default-extensions:
+      StandaloneKindSignatures
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       array
     , base
@@ -66,9 +74,13 @@ test-suite freeze-drinks-test
   main-is: Spec.hs
   other-modules:
       Paths_freeze_drinks
+  autogen-modules:
+      Paths_freeze_drinks
   hs-source-dirs:
       test
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  default-extensions:
+      StandaloneKindSignatures
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       array
     , base

@@ -10,14 +10,24 @@ import           Data.Default
 import           Data.Text       (Text)
 
 import           Monomer
+import           TextShow
 
 -- 데이터 모델 정의 (상태)
 
 data TodoType = Home | Work | Sports
      deriving (Enum, Eq, Show)
 
+instance TextShow TodoType where
+  showt Home   = "Home"
+  showt Work   = "Work"
+  showt Sports = "Sports"
+
 data TodoStatus = Pending | Done
      deriving (Enum, Eq, Show)
+
+instance TextShow TodoStatus where
+  showt Pending = "Pending"
+  showt Done    = "Done"
 
 data Todo = Todo { _todoId      :: Millisecond
                  , _todoType    :: TodoType

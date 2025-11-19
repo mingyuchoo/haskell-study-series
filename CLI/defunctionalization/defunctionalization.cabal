@@ -1,10 +1,10 @@
-cabal-version: 3.16
+cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.36.0.
+-- This file has been generated from package.yaml by hpack version 0.38.1.
 --
 -- see: https://github.com/sol/hpack
 
-name:                   defunctionalization
+name:           defunctionalization
 version:        0.1.0.0
 synopsis:       Short description of your package
 description:    Please see the README on GitHub at <https://github.com/mingyuchoo/defunctionalization#readme>
@@ -29,7 +29,9 @@ library
   exposed-modules:
       Lib
   other-modules:
-      Paths_haskell_defunctionalization
+      Paths_defunctionalization
+  autogen-modules:
+      Paths_defunctionalization
   hs-source-dirs:
       src
   default-extensions:
@@ -46,7 +48,9 @@ library
 executable defunctionalization-exe
   main-is: Main.hs
   other-modules:
-      Paths_haskell_defunctionalization
+      Paths_defunctionalization
+  autogen-modules:
+      Paths_defunctionalization
   hs-source-dirs:
       app
   default-extensions:
@@ -56,8 +60,8 @@ executable defunctionalization-exe
   build-depends:
       base
     , containers
-    , flow
     , defunctionalization
+    , flow
     , parallel
   default-language: Haskell2010
 
@@ -65,7 +69,9 @@ test-suite defunctionalization-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Paths_haskell_defunctionalization
+      Paths_defunctionalization
+  autogen-modules:
+      Paths_defunctionalization
   hs-source-dirs:
       test
   default-extensions:
@@ -75,10 +81,10 @@ test-suite defunctionalization-test
   build-depends:
       base
     , containers
+    , defunctionalization
     , doctest
     , doctest-discover
     , flow
-    , defunctionalization
     , hspec
     , parallel
   default-language: Haskell2010
