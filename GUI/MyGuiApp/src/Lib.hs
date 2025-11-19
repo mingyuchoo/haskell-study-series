@@ -16,7 +16,7 @@ someFunc = do
         [ #applicationId := "com.example.MyGuiApp" ]
 
     -- Application activate
-    on app #activate $ do
+    _ <- on app #activate $ do
         window <- new Gtk.ApplicationWindow
             [ #application := app
             , #title := "Hello GTK4"
@@ -28,7 +28,7 @@ someFunc = do
             [ #label := "Click me" ]
 
         -- 클릭 이벤트
-        on button #clicked $
+        _ <- on button #clicked $
             putStrLn "Button clicked!"
 
         -- GTK4에서는 Widget upcast 필요
