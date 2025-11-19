@@ -1,0 +1,31 @@
+name:                MonomerTodo
+version:             0.1.0.0
+#synopsis:
+#description:
+homepage:            https://github.com/githubuser/MonomerTodo#readme
+license:             BSD-3-Clause
+author:              Author name here
+maintainer:          example@example.com
+copyright:           2021 Author name here
+#category:
+extra-source-files:
+- README.md
+
+default-extensions:
+- OverloadedStrings
+
+dependencies:
+  - base >= 4.7 && < 5
+  - data-default
+  - lens
+  - monomer
+  - text
+  - text-show
+
+executables:
+  app:
+    source-dirs:      src
+    main:             Main.hs
+    ghc-options:
+    - -fwarn-incomplete-patterns
+    - -threaded
