@@ -155,12 +155,11 @@ buildUI wenv model = widgetTree where
       editLayer `nodeVisible` isEditing
     ] <> confirmDeleteLayer)
 
-handleEvent
-  :: TodoWenv
-  -> TodoNode
-  -> TodoModel
-  -> TodoEvt
-  -> [EventResponse TodoModel TodoEvt TodoModel TodoEvt]
+handleEvent :: TodoWenv
+            -> TodoNode
+            -> TodoModel
+            -> TodoEvt
+            -> [EventResponse TodoModel TodoEvt TodoModel TodoEvt]
 handleEvent wenv node model evt = case evt of
   TodoInit -> [SetFocusOnKey "todoNew"]
 

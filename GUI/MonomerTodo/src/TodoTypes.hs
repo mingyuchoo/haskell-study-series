@@ -25,12 +25,11 @@ data Todo = Todo { _todoId      :: Millisecond
      deriving (Eq, Show)
 
 instance Default Todo where
-  def = Todo {
-    _todoId = 0,
-    _todoType = Home,
-    _status = Pending,
-    _description = ""
-  }
+  def = Todo { _todoId      = 0
+             , _todoType    = Home
+             , _status      = Pending
+             , _description = ""
+             }
 
 data TodoAction = TodoNone
                 | TodoAdding
