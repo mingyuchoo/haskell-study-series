@@ -14,14 +14,18 @@ import qualified Monomer.Lens as L
 
 import           TextShow
 
+-- 1. 데이터 모델 정의 (상태)
 newtype AppModel = AppModel { _clickCount :: Int }
      deriving (Eq, Show)
 
+-- Lens 생성 (상태 업데이트를 쉽게 하기 위함)
+makeLenses 'AppModel
+
+-- 2. 이벤트 정의 (사용자 액션)
 data AppEvent = AppInit | AppIncrease
      deriving (Eq, Show)
 
-makeLenses 'AppModel
-
+-- 3. UI 빌드 (화면 구성)
 buildUI :: WidgetEnv AppModel AppEvent
         -> AppModel
         -> WidgetNode AppModel AppEvent
@@ -36,6 +40,7 @@ buildUI wenv model = widgetTree where
       ]
     ] `styleBasic` [padding 10]
 
+-- 4. 이벤트 핸들러 (로직 처리)
 handleEvent :: WidgetEnv AppModel AppEvent
             -> WidgetNode AppModel AppEvent
             -> AppModel
@@ -45,6 +50,7 @@ handleEvent wenv node model evt = case evt of
   AppInit     -> []
   AppIncrease -> [Model (model & clickCount +~ 1)]
 
+-- 5. 메인 함수
 main :: IO ()
 main = do
   startApp model handleEvent buildUI config

@@ -11,6 +11,8 @@ import           Data.Text       (Text)
 
 import           Monomer
 
+-- 데이터 모델 정의 (상태)
+
 data TodoType = Home | Work | Sports
      deriving (Enum, Eq, Show)
 

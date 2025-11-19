@@ -22,98 +22,14 @@ import           TodoTypes
 type TodoWenv = WidgetEnv TodoModel TodoEvt
 type TodoNode = WidgetNode TodoModel TodoEvt
 
-todoRowKey :: Todo -> Text
-todoRowKey todo = "todoRow" <> showt (todo ^. todoId)
-
-todoRow :: TodoWenv -> TodoModel -> Int -> Todo -> TodoNode
-todoRow wenv model idx t = animRow `nodeKey` todoKey where
-  sectionBg = wenv ^. L.theme . L.sectionColor
-  rowButtonColor = wenv ^. L.theme . L.userColorMap . at "rowButton" . non def
-  rowSepColor = gray & L.a .~ 0.5
-
-  todoKey = todoRowKey t
-  todoDone = t ^. status == Done
-  isLast = idx == length (model ^. todos) - 1
-
-  (todoBg, todoFg)
-    | todoDone = (doneBg, doneFg)
-    | otherwise = (pendingBg, pendingFg)
-
-  todoStatus = labelS (t ^. status)
-    `styleBasic` [textFont "Medium", textSize 12, textAscender, textColor todoFg, padding 6, paddingH 8, radius 12, bgColor todoBg]
-
-  rowButton caption action = button caption action
-    `styleBasic` [textFont "Remix", textMiddle, textColor rowButtonColor, bgColor transparent, border 0 transparent]
-    `styleHover` [bgColor sectionBg]
-    `styleFocus` [bgColor (sectionBg & L.a .~ 0.5)]
-    `styleFocusHover` [bgColor sectionBg]
-
-  todoInfo = hstack [
-      vstack [
-        labelS (t ^. todoType) `styleBasic` [textSize 12, textColor darkGray],
-        spacer_ [width 5],
-        label (t ^. description) `styleBasic` [textThroughline_ todoDone]
-      ],
-      filler,
-      box_ [alignRight] todoStatus `styleBasic` [width 80],
-      spacer,
-      rowButton remixEdit2Line (TodoEdit idx t),
-      spacer,
-      rowButton remixDeleteBinLine (TodoDeleteBegin idx t)
-    ] `styleBasic` [ paddingV 15, styleIf (not isLast) $ borderB 1 rowSepColor ]
-
-  animRow = animFadeOut_ [onFinished (TodoDelete idx t)] todoInfo
-
-todoEdit :: TodoWenv -> TodoModel -> TodoNode
-todoEdit wenv model = editNode where
-  sectionBg = wenv ^. L.theme . L.sectionColor
-  isValidInput = model ^. activeTodo . description /= ""
-
-  (saveAction, saveLabel) = case model ^. action of
-    TodoEditing idx -> (TodoSave idx, "Save")
-    _               -> (TodoAdd, "Add")
-
-  saveTodoBtn = mainButton saveLabel saveAction
-
-  editFields = keystroke [("Enter", saveAction) | isValidInput] $ vstack [
-      hstack [
-        label "Task:",
-        spacer,
-        textField (activeTodo . description) `nodeKey` "todoDesc"
-      ],
-      spacer,
-      hgrid [
-        hstack [
-          label "Type:",
-          spacer,
-          textDropdownS (activeTodo . todoType) todoTypes `nodeKey` "todoType",
-          spacer -- Added here to avoid grid expanding it to 1/3 total width
-        ],
-        hstack [
-          label "Status:",
-          spacer,
-          textDropdownS (activeTodo . status) todoStatuses
-        ]
-      ]
-    ]
-
-  editNode = keystroke [("Esc", TodoCancel)] $ vstack [
-      editFields,
-      spacer,
-      hstack [
-        filler,
-        saveTodoBtn `nodeEnabled` isValidInput,
-        spacer,
-        button "Cancel" TodoCancel
-        ]
-    ] `styleBasic` [bgColor sectionBg, padding 20]
-
+-- UI 빌드 (화면 구성)
 buildUI :: TodoWenv -> TodoModel -> TodoNode
 buildUI wenv model = widgetTree where
   sectionBg = wenv ^. L.theme . L.sectionColor
-  isEditing
-    | TodoEditing _ <- model ^. action = True
-    | otherwise = False
+  isEditing = case model ^. action of
+    TodoAdding    -> True
+    TodoEditing _ -> True
+    _             -> False
 
   countLabel = label caption `styleBasic` styles where
     caption = "Tasks (" <> showt (length $ model ^. todos) <> ")"
@@ -155,6 +71,7 @@ buildUI wenv model = widgetTree where
       editLayer `nodeVisible` isEditing
     ] <> confirmDeleteLayer)
 
+-- 이벤트 핸들러 (로직 처리)
 handleEvent :: TodoWenv
             -> TodoNode
             -> TodoModel
@@ -243,6 +160,7 @@ initialTodos = todos where
     ]
   todos = zipWith (\t idx -> t & todoId .~ idx) items [0..]
 
+-- 메인 함수
 main :: IO ()
 main = do
   startApp (TodoModel initialTodos def TodoNone) handleEvent buildUI config
@@ -278,3 +196,90 @@ customDarkTheme = darkTheme
 
 remove :: Int -> [a] -> [a]
 remove idx ls = take idx ls ++ drop (idx + 1) ls
+
+
+todoRowKey :: Todo -> Text
+todoRowKey todo = "todoRow" <> showt (todo ^. todoId)
+
+todoRow :: TodoWenv -> TodoModel -> Int -> Todo -> TodoNode
+todoRow wenv model idx t = animRow `nodeKey` todoKey where
+  sectionBg = wenv ^. L.theme . L.sectionColor
+  rowButtonColor = wenv ^. L.theme . L.userColorMap . at "rowButton" . non def
+  rowSepColor = gray & L.a .~ 0.5
+
+  todoKey = todoRowKey t
+  todoDone = t ^. status == Done
+  isLast = idx == length (model ^. todos) - 1
+
+  (todoBg, todoFg)
+    | todoDone = (doneBg, doneFg)
+    | otherwise = (pendingBg, pendingFg)
+
+  todoStatus = labelS (t ^. status)
+    `styleBasic` [textFont "Medium", textSize 12, textAscender, textColor todoFg, padding 6, paddingH 8, radius 12, bgColor todoBg]
+
+  rowButton caption action = button caption action
+    `styleBasic` [textFont "Remix", textMiddle, textColor rowButtonColor, bgColor transparent, border 0 transparent]
+    `styleHover` [bgColor sectionBg]
+    `styleFocus` [bgColor (sectionBg & L.a .~ 0.5)]
+    `styleFocusHover` [bgColor sectionBg]
+
+  todoInfo = hstack [
+      vstack [
+        labelS (t ^. todoType) `styleBasic` [textSize 12, textColor darkGray],
+        spacer_ [width 5],
+        label (t ^. description) `styleBasic` [textThroughline_ todoDone]
+      ],
+      filler,
+      box_ [alignRight] todoStatus `styleBasic` [width 80],
+      spacer,
+      rowButton remixEdit2Line (TodoEdit idx t),
+      spacer,
+      rowButton remixDeleteBinLine (TodoDeleteBegin idx t)
+    ] `styleBasic` [ paddingV 15, styleIf (not isLast) $ borderB 1 rowSepColor ]
+
+  animRow = animFadeOut_ [onFinished (TodoDelete idx t)] todoInfo
+
+todoEdit :: TodoWenv -> TodoModel -> TodoNode
+todoEdit wenv model = editNode where
+  sectionBg = wenv ^. L.theme . L.sectionColor
+  isValidInput = model ^. activeTodo . description /= ""
+
+  (saveAction, saveLabel) = case model ^. action of
+    TodoEditing idx -> (TodoSave idx, "Save")
+    _               -> (TodoAdd, "Add")
+
+  saveTodoBtn = mainButton saveLabel saveAction
+
+  editFields = keystroke [("Enter", saveAction) | isValidInput] $ vstack [
+      hstack [
+        label "Task:",
+        spacer,
+        textField (activeTodo . description) `nodeKey` "todoDesc"
+      ],
+      spacer,
+      hgrid [
+        hstack [
+          label "Type:",
+          spacer,
+          textDropdownS (activeTodo . todoType) todoTypes `nodeKey` "todoType",
+          spacer -- Added here to avoid grid expanding it to 1/3 total width
+        ],
+        hstack [
+          label "Status:",
+          spacer,
+          textDropdownS (activeTodo . status) todoStatuses
+        ]
+      ]
+    ]
+
+  editNode = keystroke [("Esc", TodoCancel)] $ vstack [
+      editFields,
+      spacer,
+      hstack [
+        filler,
+        saveTodoBtn `nodeEnabled` isValidInput,
+        spacer,
+        button "Cancel" TodoCancel
+        ]
+    ] `styleBasic` [bgColor sectionBg, padding 20]
