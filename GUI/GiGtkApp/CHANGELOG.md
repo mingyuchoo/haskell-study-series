@@ -1,4 +1,4 @@
-# Changelog for `MyGuiApp`
+# Changelog for `GiGtkApp`
 
 All notable changes to this project will be documented in this file.
 

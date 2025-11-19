@@ -13,7 +13,7 @@ someFunc :: IO ()
 someFunc = do
     -- Application 생성
     app <- new Gtk.Application
-        [ #applicationId := "com.example.MyGuiApp" ]
+        [ #applicationId := "com.example.GiGtkApp" ]
 
     -- Application activate
     _ <- on app #activate $ do
