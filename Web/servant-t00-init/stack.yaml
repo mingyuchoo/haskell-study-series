@@ -1,5 +1,5 @@
-# https://www.stackage.org/lts-24.4
-resolver: lts-24.4
+# https://www.stackage.org/lts-24.20
+resolver: lts-24.20
 
 packages:
 - .
@@ -10,7 +10,7 @@ flags: {}
 
 docker:
   enable: true
-  image: fpco/stack-build:lts-24.4
+  image: fpco/stack-build:lts-24.20
   auto-pull: true
   persist: false
   container-name: "servant-t00-init"

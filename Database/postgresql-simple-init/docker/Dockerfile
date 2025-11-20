@@ -1,7 +1,7 @@
 # ============================================
 # 1단계: 의존성 캐시 레이어
 # ============================================
-FROM fpco/stack-build:lts-24.4 AS dependencies
+FROM fpco/stack-build:lts-24.20 AS dependencies
 
 WORKDIR /build
 
@@ -17,7 +17,7 @@ RUN stack setup --no-docker && \
 # ============================================
 # 2단계: 애플리케이션 빌드
 # ============================================
-FROM fpco/stack-build:lts-24.4 AS builder
+FROM fpco/stack-build:lts-24.20 AS builder
 
 WORKDIR /build
 

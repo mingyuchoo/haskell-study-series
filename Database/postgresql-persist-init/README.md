@@ -91,7 +91,7 @@ For detailed architecture documentation, see `docs/CLEAN_ARCHITECTURE.md`.
 
 ## Prerequisites
 
-- Stack (resolver: `lts-24.4`)
+- Stack (resolver: `lts-24.20`)
 - Docker (optional, for containers)
 - Docker Compose (optional, to start Postgres and Redis)
 
