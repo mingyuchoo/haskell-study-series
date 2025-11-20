@@ -21,7 +21,8 @@ import           Data.Maybe
 type TypeA :: Type
 data TypeA = DataA0 -- `DataA0` is a Data Constructor
            | DataA1 { fieldA11 :: String
-                    } -- `DataA1` is a Data Constructor
+                    }
+           -- `DataA1` is a Data Constructor
      deriving (Show)
 
 
@@ -36,7 +37,8 @@ data TypeA = DataA0 -- `DataA0` is a Data Constructor
 type TypeB :: Type -> Type
 data TypeB a = DataB0 -- `DataB0` is a Data Constructor
              | DataB1 { fieldB11 :: String
-                      } -- `DataB1` is a Data Constructor
+                      }
+             -- `DataB1` is a Data Constructor
              | DataB2 { fieldB21 :: a
                         -- `a` is a type variable but when fieldB22 is called,
                       , fieldB22 :: a

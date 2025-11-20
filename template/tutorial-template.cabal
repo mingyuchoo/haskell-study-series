@@ -11,7 +11,7 @@ homepage:       https://github.com/mingyuchoo/tutorial-template#readme
 bug-reports:    https://github.com/mingyuchoo/tutorial-template/issues
 author:         Mingyu Choo
 maintainer:     mingyuchoo@gmail.com
-copyright:      2023 Mingyu Choo
+copyright:      2025 Mingyu Choo
 license:        BSD-3-Clause
 license-file:   LICENSE
 build-type:     Simple
@@ -39,6 +39,11 @@ library
   hs-source-dirs:
       src
   default-extensions:
+      TypeFamilies
+      DataKinds
+      GADTs
+      TypeOperators
+      KindSignatures
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock
   build-depends:
@@ -57,6 +62,11 @@ executable tutorial-template-exe
   hs-source-dirs:
       app
   default-extensions:
+      TypeFamilies
+      DataKinds
+      GADTs
+      TypeOperators
+      KindSignatures
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
@@ -78,6 +88,11 @@ test-suite tutorial-template-test
   hs-source-dirs:
       test
   default-extensions:
+      TypeFamilies
+      DataKinds
+      GADTs
+      TypeOperators
+      KindSignatures
       StandaloneKindSignatures
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:

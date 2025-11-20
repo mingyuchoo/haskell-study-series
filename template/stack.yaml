@@ -8,17 +8,17 @@ extra-package-dbs: []
 extra-deps: []
 flags: {}
 
-docker:
-  enable: true
-  image: "fpco/stack-build:lts-24.20"
-  container-name: "sample-name"
-  auto-pull: true
-  persist: false
-  set-user: true
-  stack-exe: host
-  run-args: []
-  env:
-    - "LC_ALL=C.UTF-8"
+#docker:
+#  enable: true
+#  image: "fpco/stack-build:lts-24.20"
+#  container-name: "sample-name"
+#  auto-pull: true
+#  persist: false
+#  set-user: true
+#  stack-exe: host
+#  run-args: []
+#  env:
+#    - "LC_ALL=C.UTF-8"
 
 #nix:
 #  enable: true

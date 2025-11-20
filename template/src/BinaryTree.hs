@@ -12,9 +12,8 @@ import           Debug.Trace   (trace, traceShow)
 --
 --
 f :: (Num a, Show a) => a -> a
-f x = traceShow ("before: " <> show x <> ", after: " <> show result) result
-  where
-    result = x + 1
+f x = traceShow ("before: " <> show x <> ", after: " <> show result) result where
+  result = x + 1
 
 -- |
 --
@@ -89,7 +88,7 @@ drop' n (x:xs) | n > 0 = drop' (n-1) xs
 insert' :: Ord a => a -> [a] -> [a]
 insert' v [] = [v]
 insert' v list@(x:xs) | v < x = v : list
-                         | otherwise = x : insert' v xs
+                      | otherwise = x : insert' v xs
 
 -- |
 --
@@ -104,7 +103,7 @@ isort list@(x:xs) = insert' x (isort xs)
 --
 merge' :: Ord a => [a] -> [a] -> [a]
 merge' [] second = second
-merge' first [] = first
+merge' first   [] = first
 merge' first@(x:xs) second@(y:ys) | x < y = x : merge' xs second
                                   | otherwise = y : merge' first ys
 
@@ -112,35 +111,32 @@ merge' first@(x:xs) second@(y:ys) | x < y = x : merge' xs second
 --
 --
 msort :: Ord a => [a] -> [a]
-msort [] = []
-msort [x] = [x]
-msort list@(x:xs) = merge' (msort l) (msort r)
-  where
-    half  = div (length list) 2
-    l  = take half list
-    r = drop half list
+msort []          = []
+msort [x]         = [x]
+msort list@(x:xs) = merge' (msort l) (msort r) where
+  half  = div (length list) 2
+  l     = take half list
+  r     = drop half list
 
 -- |
 --
 --
 qsort :: Ord a => [a] -> [a]
 qsort [] = []
-qsort list@(x:xs) = qsort small <> mid <> qsort large
-  where
-    small = [y | y <- xs,   y <  x]
-    mid   = [y | y <- list, y == x]
-    large = [y | y <- xs,   y >  x]
+qsort list@(x:xs) = qsort small <> mid <> qsort large where
+  small = [y | y <- xs,   y <  x]
+  mid   = [y | y <- list, y == x]
+  large = [y | y <- xs,   y >  x]
 
 -- |
 --
 --
 qsort' :: Ord a => [a] -> [a]
-qsort' [] = []
-qsort' list@(x:xs) = qsort' small <> mid <> qsort' large
-  where
-    small = do { y <- xs;   guard (y <  x); return y }
-    mid   = do { y <- list; guard (y == x); return y }
-    large = do { y <- xs;   guard (y >  x); return y }
+qsort' []          = []
+qsort' list@(x:xs) = qsort' small <> mid <> qsort' large where
+  small = do { y <- xs;   guard (y <  x); return y }
+  mid   = do { y <- list; guard (y == x); return y }
+  large = do { y <- xs;   guard (y >  x); return y }
 
 -- |
 --
@@ -242,9 +238,9 @@ singleton v = Node v Empty Empty
 insert :: (Ord a, Show a) => a -> Tree a -> Tree a
 insert x Empty = singleton x
 insert x (Node v l r) | x == v = Node v l r
-                             | x <  v = Node v (insert x l) r
-                             | x >  v = Node v l (insert x r)
-                             | otherwise = Node v l r
+                      | x <  v = Node v (insert x l) r
+                      | x >  v = Node v l (insert x r)
+                      | otherwise = Node v l r
 
 -- |
 --
@@ -252,9 +248,9 @@ insert x (Node v l r) | x == v = Node v l r
 elemT :: (Ord a, Show a) => a -> Tree a -> Bool
 elemT x Empty = False
 elemT x (Node v l r) | x == v = True
-                               | x <  v = elemT x l
-                               | x >  v = elemT x r
-                               | otherwise = False
+                     | x <  v = elemT x l
+                     | x >  v = elemT x r
+                     | otherwise = False
 
 -- |
 --
@@ -274,12 +270,11 @@ total (Node v l r) = v + total l + total r
 --
 --
 maxDepth :: Tree a -> Int
-maxDepth Empty           = 0
-maxDepth (Node _ l r) = 1 + max' (maxDepth l) (maxDepth r)
-  where
-    max' :: Ord a => a -> a -> a
-    max' x y | x > y     = x
-             | otherwise = y
+maxDepth Empty        = 0
+maxDepth (Node _ l r) = 1 + max' (maxDepth l) (maxDepth r) where
+  max' :: Ord a => a -> a -> a
+  max' x y | x > y     = x
+           | otherwise = y
 
 -- | DFS(Depth-First Search): Pre-Order
 --
