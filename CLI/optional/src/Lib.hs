@@ -10,7 +10,6 @@ module Lib
 
 -- |
 --
---
 -- 문자열을 정수로 변환. 만약, 변환할 수 없다면 무효 처리
 toNum :: String -> Maybe Int
 toNum s = case reads s of
@@ -18,7 +17,6 @@ toNum s = case reads s of
     _        -> Nothing
 
 -- |
---
 --
 -- 사칙 연산, 만약, 연산할 수 없다면 무효 처리
 addOp :: Int -> Int -> Maybe Int
@@ -37,7 +35,6 @@ divOp a b = Just (a `div` b)
 
 -- |
 --
---
 -- "+","-","*","/" 가운데 하나의 문자열을 연산으로 변환, 그 외는 무효 처리
 toBinOp :: String -> Maybe (Int -> Int -> Maybe Int)
 toBinOp "+" = Just addOp
@@ -48,7 +45,6 @@ toBinOp _   = Nothing
 
 
 -- |
---
 --
 -- 평가
 eval :: String -> Maybe Int
@@ -62,7 +58,6 @@ eval expr = do
     a `op` b             -- 숫자 연산 숫자 계산
 
 -- |
---
 --
 someFunc :: IO ()
 someFunc = getLine >>= putStrLn . maybe "invalid" show . eval

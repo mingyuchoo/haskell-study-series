@@ -11,12 +11,10 @@ import           Test.Hspec (hspec, describe, it, shouldBe)
 
 -- |
 --
---
 gwc :: Grid Cell
 gwc = gridWithCoords grid
 
 -- |
---
 --
 testFindWord :: String -> IO ()
 testFindWord word =
@@ -25,7 +23,6 @@ testFindWord word =
     (Just result) -> map cell2char result `shouldBe` word
 
 -- |
---
 --
 main :: IO ()
 main = hspec $ do

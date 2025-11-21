@@ -24,20 +24,17 @@ instance Show Coord where
 
 -- |
 --
---
 someFunc :: IO ()
 someFunc =
   print $ moveFwd (matrix, direction start, start) 0
 
 -- |
 --
---
 start :: Coord
 start =
   Coord 1 1 0
 
 -- |
---
 --
 matrix :: Matrix
 matrix =
@@ -49,7 +46,6 @@ matrix =
 
 -- |
 --
---
 moveFwd :: (Matrix, Value, Coord) -> Int -> Int
 moveFwd (m, _, c) acc
   | v == -1 = acc
@@ -58,7 +54,6 @@ moveFwd (m, _, c) acc
     (v, n) = filterFwd m c
 
 -- |
---
 --
 filterFwd :: Matrix -> Coord -> (Value, Coord)
 filterFwd m c =
@@ -72,7 +67,6 @@ filterFwd m c =
 
 -- |
 --
---
 filterBwd :: Matrix -> Coord -> (Value, Coord)
 filterBwd m c@(Coord _ _ d) =
   let
@@ -84,14 +78,12 @@ filterBwd m c@(Coord _ _ d) =
 
 -- |
 --
---
 canGoBack :: Direct -> (Value, Coord) -> Maybe (Value, Coord)
 canGoBack d c@(v, Coord _ _ z)
   | d == z && v /= 1 = Just c
   | otherwise = Nothing
 
 -- |
---
 --
 valuesFrom :: (Coord -> [Coord]) -> Matrix -> Coord -> [(Value, Coord)]
 valuesFrom f m c =
@@ -101,7 +93,6 @@ valuesFrom f m c =
     fn a@(Coord x y _) = (m !! x !! y, a)
 
 -- |
---
 --
 mkFwd :: Coord -> [Coord]
 mkFwd (Coord x y d) =
@@ -123,7 +114,6 @@ mkFwd (Coord x y d) =
 
 -- |
 --
---
 mkBwd :: Coord -> [Coord]
 mkBwd (Coord x y d) =
   zipWith mkPos ps ds
@@ -144,7 +134,6 @@ mkBwd (Coord x y d) =
 
 -- |
 --
---
 directions :: Direct -> [Direct]
 directions =
   mkSeq 4 []
@@ -155,13 +144,11 @@ directions =
 
 -- |
 --
---
 newDirection :: Direct -> Direct
 newDirection x =
   mod (x + 3) 4
 
 -- |
---
 --
 visit :: Matrix -> Coord -> Matrix
 visit m (Coord x y _) =

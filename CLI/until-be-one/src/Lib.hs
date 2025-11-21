@@ -3,7 +3,6 @@ module Lib
 
 -- |
 --
---
 someFunc :: IO ()
 someFunc = putStrLn "someFunc"
 
@@ -22,7 +21,6 @@ Then it should be 2
 -}
 
 -- |
---
 --
 solution :: Int -> Int -> Int
 solution = calc 0

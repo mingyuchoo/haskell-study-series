@@ -3,7 +3,6 @@ module Lib
 
 -- |
 --
---
 move :: Char -> (Int,Int) -> (Int,Int)
 move 'L' (x,y) = (x-1,y)
 move 'R' (x,y) = (x+1,y)
@@ -12,7 +11,6 @@ move 'D' (x,y) = (x,y-1)
 move _  _      = error "Error"
 
 -- |
---
 --
 someFunc :: IO ()
 someFunc = do

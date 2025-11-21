@@ -1,6 +1,6 @@
-cabal-version: 3.16
+cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.34.4.
+-- This file has been generated from package.yaml by hpack version 0.38.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -11,7 +11,7 @@ homepage:       https://github.com/mingyuchoo/hamming-distance#readme
 bug-reports:    https://github.com/mingyuchoo/hamming-distance/issues
 author:         Mingyu Choo
 maintainer:     mingyuchoo@gmail.com
-copyright:      2022 Mingyu Choo
+copyright:      2023 Mingyu Choo
 license:        BSD-3-Clause
 license-file:   LICENSE
 build-type:     Simple
@@ -28,9 +28,18 @@ library
       Lib
   other-modules:
       Paths_hamming_distance
+  autogen-modules:
+      Paths_hamming_distance
   hs-source-dirs:
       src
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
+      StandaloneKindSignatures
+      TypeApplications
+  ghc-options: -Wall -O2 -haddock
   build-depends:
       base
   default-language: Haskell2010
@@ -39,9 +48,18 @@ executable hamming-distance-exe
   main-is: Main.hs
   other-modules:
       Paths_hamming_distance
+  autogen-modules:
+      Paths_hamming_distance
   hs-source-dirs:
       app
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
+      StandaloneKindSignatures
+      TypeApplications
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base
     , hamming-distance
@@ -52,9 +70,18 @@ test-suite hamming-distance-test
   main-is: Spec.hs
   other-modules:
       Paths_hamming_distance
+  autogen-modules:
+      Paths_hamming_distance
   hs-source-dirs:
       test
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
+      StandaloneKindSignatures
+      TypeApplications
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base
     , doctest

@@ -9,7 +9,6 @@ import           System.IO   (BufferMode (NoBuffering), hSetBuffering, stdout)
 
 -- |
 --
---
 someFunc :: IO ()
 someFunc = do
   hSetBuffering stdout NoBuffering
@@ -28,7 +27,6 @@ type Pack = (Coin, Int)
 
 -- |
 --
---
 calc1 :: Change -> Coin -> Int
 calc1 x y =
   if y >= 500 then calc1 (x + 1) (y - 500) else
@@ -38,7 +36,6 @@ calc1 x y =
 
 
 -- |
---
 --
 calc2 :: Change -> Coin -> Int
 calc2 x y
@@ -50,7 +47,6 @@ calc2 x y
 
 
 -- |
---
 --
 calc3 :: Change -> [Coin] -> Int
 calc3 change coins =
@@ -71,7 +67,6 @@ func1 x (y:ys) packs
 
 
 -- |
---
 --
 calc4 :: Change -> [Coin] -> Int
 calc4 change coins =

@@ -2,13 +2,11 @@ module Lib where
 
 -- |
 --
---
 type Pizza = [Char]
 type Price = Int
 type Menu  = (Pizza,Price)
 
 -- |
---
 --
 solution :: [Menu] -> [Pizza] -> Price -> Price
 solution [] [] sum = sum + 0
@@ -19,7 +17,6 @@ solution menu (x:xs) sum =
       else solution (tail menu) (x:xs) sum
 
 -- |
---
 --
 someFunc :: IO ()
 someFunc = do

@@ -8,6 +8,8 @@ import           Data.Maybe   (mapMaybe)
 
 import           Flow         ((<|))
 
+-- |
+--
 someFunc :: IO ()
 someFunc = do
   print <| snd <| driver matrix1
@@ -21,18 +23,26 @@ someFunc = do
 -- 5. 모든 element 스캔하기
 
 
+-- |
+--
 type Coordinate :: Type
 type Coordinate = (Int, Int)
 
+-- |
+--
 type Matrix :: Type
 type Matrix = [[Int]]
 
+-- |
+--
 matrix1 :: Matrix
 matrix1 = [ [0,0,1]
           , [0,1,0]
           , [1,0,1]
           ]
 
+-- |
+--
 matrix2 :: Matrix
 matrix2 = [ [0,0,1,1,0]
           , [0,0,0,1,1]
@@ -41,12 +51,11 @@ matrix2 = [ [0,0,1,1,0]
           ]
 
 
--- 1. 사방 탐색하기
--- 3. 범위 밖이면 무시하기
-
+-- | 1. 사방 탐색하기
+-- | 3. 범위 밖이면 무시하기
+--
 getPos :: (Int, Int) -> Matrix -> Coordinate -> [Coordinate]
-getPos (row,col) m (i,j) =
-    mapMaybe func dirs
+getPos (row,col) m (i,j) = mapMaybe func dirs
   where
     dirs :: [Coordinate]
     dirs = [ ( 0,-1) -- North
@@ -62,14 +71,14 @@ getPos (row,col) m (i,j) =
           _ -> Nothing
 
 
--- 5. 모든 element 스캔하기
 
+-- | 5. 모든 element 스캔하기
+--
 type Accumulate :: Type
 type Accumulate = (Matrix, Int)
 
 driver :: Matrix -> Accumulate
-driver m =
-  foldl func (m, 0) [(i,j) | i <- [0..row-1], j <- [0..col-1]]
+driver m = foldl func (m, 0) [(i,j) | i <- [0..row-1], j <- [0..col-1]]
   where
     row = length m
     col = length <| head m
@@ -82,8 +91,8 @@ driver m =
         (newM,result) = starter n p
 
 
--- 2. 방문하기
-
+-- | 2. 방문하기
+--
 starter :: Matrix -> (Int, Int) -> (Matrix, Bool)
 starter m p = visit' (m, False) [p]
 
@@ -95,8 +104,8 @@ visit' v@(m, _) (c:cs) = visit' (visit' (visitMatrix v c) (getPos (row,col) m c)
     col = length <| head m
 
 
--- 4. 방문 기록하기
-
+-- | 4. 방문 기록하기
+--
 visitMatrix :: (Matrix, Bool) -> Coordinate -> (Matrix, Bool)
 visitMatrix (m,b) (x,y) =
   case m !! x !! y of

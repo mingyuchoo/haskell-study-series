@@ -37,7 +37,6 @@ split (x:xs)
 
 -- |
 --
---
 minutes :: [String] -> Int
 minutes []          = error "No head for empty lists!"
 minutes [""]        = error "No empty string!"
@@ -46,12 +45,10 @@ minutes (x : y : _) = 60 * (read x)  + (read y) :: Int
 
 -- |
 --
---
 diff :: Int -> Int -> Int
 diff x y = y - x
 
 -- |
---
 --
 min' :: [Int] -> Int
 min' [] = error "No items!"
@@ -60,7 +57,6 @@ min' (x:xs)
     | otherwise = minimum (x:xs)
 
 -- |
---
 --
 someFunc :: IO ()
 someFunc = do

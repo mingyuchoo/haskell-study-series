@@ -10,7 +10,6 @@ type Position = (Int, Int)
 
 -- |
 --
---
 someFunc :: IO ()
 someFunc = do
   putStr "Input initial position> "
@@ -19,13 +18,11 @@ someFunc = do
 
 -- |
 --
---
 find :: Position -- ^ initial posion of the knight
      -> Int      -- ^ the number of moveable positions
 find (x, y) = length <| mapMaybe (possible . add (x, y)) movement
 
 -- |
---
 --
 possible :: Position       -- ^ postion
          -> Maybe Position -- ^ possible position
@@ -36,14 +33,12 @@ possible (x, y)
 
 -- |
 --
---
 add :: Position -- ^ initial postion
     -> Position -- ^ relative postion
     -> Position -- ^ target postion
 add (x, y) (u, v) = (x+u, y+v)
 
 -- |
---
 --
 movement :: [Position]
 movement = [ (-1, -2)
@@ -58,7 +53,6 @@ movement = [ (-1, -2)
 
 -- |
 --
---
 conv :: String   -- ^ input string
      -> Position -- ^ converted postion value
 conv s | length s /= 2 = error "error: not correct length"
@@ -68,7 +62,6 @@ conv s | length s /= 2 = error "error: not correct length"
              _      -> (0, 0)
 
 -- |
---
 --
 aton :: Char -- ^ a character
      -> Int  -- ^ the integer value mapped with the character

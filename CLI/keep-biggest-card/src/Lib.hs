@@ -21,7 +21,6 @@ someFunc = do
 
 -- |
 --
---
 n1 :: Int
 n1 = 3
 
@@ -36,7 +35,6 @@ answer1 = 2
 
 
 -- |
---
 --
 n2 :: Int
 n2 = 2
@@ -53,14 +51,12 @@ answer2 = 3
 
 -- |
 --
---
 solution1 :: [[Int]] -> Int
 solution1 matrix =
   last <| head <| transpose <| map sort matrix
 
 
 -- |
---
 --
 solution2 :: [[Int]] -> Int
 solution2 matrix =

@@ -1,11 +1,9 @@
-module Lib
-    where
+module Lib where
 
-import           Data.List
+import Data.List
 
 someFunc :: IO ()
 someFunc = print $ solution list
-
 
 -- Given a list of `N` numbers
 -- and with the following constrains
@@ -15,11 +13,8 @@ someFunc = print $ solution list
 -- and the constrains
 -- Then I should get the biggest sum value.
 
--- |
---
---
 list :: [Int]
-list = [2,4,5,4,6]
+list = [2, 4, 5, 4, 6]
 
 n :: Int
 n = length list
@@ -30,10 +25,6 @@ m = 8
 k :: Int
 k = 3
 
-
--- |
---
---
 solution :: [Int] -> Int
 solution xs = (first xs * k * quotient) + (second xs * remainder)
   where

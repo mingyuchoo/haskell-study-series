@@ -12,7 +12,6 @@ import           Data.Int
 
 -- |
 --
---
 -- 소수 판정
 isPrime :: Int32 -> Bool
 isPrime x = all (\n -> x `mod` n /= 0) [2..toEnum (floor $ sqrt $ fromIntegral x)]
@@ -20,14 +19,12 @@ isPrime x = all (\n -> x `mod` n /= 0) [2..toEnum (floor $ sqrt $ fromIntegral x
 
 -- |
 --
---
 -- 2부터 1000000까지 수
 arr :: [Int32]
 arr = [2..1000000]
 
 
 -- |
---
 --
 -- 계산을 적용하면서 집계하는 병렬 계산 패턴
 reduceP :: (b -> a) -> (a -> a -> a) -> [b] -> a
@@ -42,7 +39,6 @@ reduceP f (<+>) xs =
 
 
 -- |
---
 --
 someFunc :: IO ()
 someFunc = do

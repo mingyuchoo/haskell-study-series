@@ -3,7 +3,6 @@ module Lib
 
 -- |
 --
---
 data TypeA = DataA0
      deriving (Show)
 
@@ -24,7 +23,6 @@ data TypeD a = DataD0
 
 -- |
 --
---
 class TypeClassA a where
   typeClassFunctionA :: a -> String
 
@@ -38,7 +36,6 @@ class TypeClassC a => TypeClassD a where
   typeClassFunctionD :: a -> String
 
 -- |
---
 --
 instance TypeClassA TypeA where
   typeClassFunctionA x = "TypeClassA - TypeA"
@@ -54,7 +51,6 @@ instance TypeClassD TypeA where
 
 -- |
 --
---
 instance (Num a) => TypeClassA (TypeB a) where
   typeClassFunctionA x = "TypeClassA - TypeB"
 
@@ -68,7 +64,6 @@ instance (Num a) => TypeClassD (TypeB a) where
   typeClassFunctionD x = "TypeClassD - TypeB"
 
 -- |
---
 --
 instance (Eq a) => TypeClassA (TypeC a) where
   typeClassFunctionA x = "TypeClassA - TypeC"
@@ -84,7 +79,6 @@ instance (Eq a) => TypeClassD (TypeC a) where
 
 -- |
 --
---
 instance (Ord a) => TypeClassA (TypeD a) where
   typeClassFunctionA x = "TypeClassA - TypeD"
 
@@ -98,7 +92,6 @@ instance (Ord a) => TypeClassD (TypeD a) where
   typeClassFunctionD x = "TypeClassD - TypeD"
 
 -- |
---
 --
 myFunctionA :: TypeA ->  String
 myFunctionA x = "TypeA - DataA0"
@@ -117,7 +110,6 @@ myFunctionD (DataD3 _ _ _) = "TypeD - DataD3"
 
 -- |
 --
---
 data Car = Car { company :: String
                , model   :: String
                , year    :: Int
@@ -132,13 +124,11 @@ data Passenger a b c = Passenger { name   :: a
 
 -- |
 --
---
 tellCar :: Car -> String
 tellCar Car {company = c, model = m, year = y} =
   "This " ++ c ++ " " ++ m ++ " was made in " ++ show y
 
 -- |
---
 --
 tellPassenger :: (Show t) => Passenger String String t -> String
 tellPassenger (Passenger {name = n, gender = g, age = a}) =
@@ -149,7 +139,6 @@ tellPassenger (Passenger {name = n, gender = g, age = a}) =
 -- | When run `doubleMe`
 -- | Then evaluate the result
 -- |
---
 --
 doubleMe :: (Num a) => a -> a
 doubleMe x = x + x
@@ -163,13 +152,11 @@ dobuleMe' x = x ++ x
 -- | Then evaluate the result
 -- |
 --
---
 doubleUs :: (Num a) => a -> a -> a
 doubleUs x y = x*2 + y*2
 
 
 -- |
---
 --
 sum' :: (Num a) => [a] -> a -> a
 sum' [] y     = y
@@ -179,14 +166,12 @@ sum' (x:xs) y = sum ((sum' [x] y) : xs)
 
 -- |
 --
---
 minimum' :: (Ord a) => [a] -> a
 minimum' []     = error "Error"
 minimum' [x]    = x
 minimum' (x:xs) = min x (minimum' xs)
 
 -- |
---
 --
 maximum' []     = error "maximum of empty list"
 maximum' [x]    = x
@@ -195,14 +180,12 @@ maximum' (x:xs) = max x (maximum' xs)
 
 -- |
 --
---
 fib :: Integer -> Integer
 fib 0 = 0
 fib 1 = 1
 fib n = fib (n-1) + fib(n-2)
 
 -- |
---
 --
 hundred :: (Eq a, Num a) => a -> a -> a
 hundred _ 0 = 0
@@ -211,7 +194,6 @@ hundred x y = x + (hundred x (y - 1))
 
 
 -- |
---
 --
 someFunc :: IO ()
 someFunc = do

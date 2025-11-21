@@ -39,7 +39,6 @@ someFunc = do
 
 -- |
 --
---
 usage :: String
 usage = "Usage: stack run COMMAND FILENAME [ITEM]\n" ++
         "  COMMAND - add \"todo item\"\n" ++
@@ -49,7 +48,6 @@ usage = "Usage: stack run COMMAND FILENAME [ITEM]\n" ++
 
 
 -- |
---
 --
 dispatch :: [(String, [String] -> IO ())]
 dispatch = [ ("add", add)
