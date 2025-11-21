@@ -3,13 +3,17 @@ module Lib
     ) where
 
 import           Data.Kind (Type)
+
+-- |
+--
 someFunc :: IO ()
 someFunc = do
   putStrLn $ solution ""                        --
   putStrLn $ solution "a"                       -- a1
   putStrLn $ solution "aaaaabbbccccccddddddddd" -- a5b3c6d9
 
-
+-- |
+--
 solution :: [Char] -> [Char]
 solution [] = ""
 solution (x:xs) = encode x xs 1

@@ -1,6 +1,6 @@
-cabal-version: 3.16
+cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.34.4.
+-- This file has been generated from package.yaml by hpack version 0.38.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -11,7 +11,7 @@ homepage:       https://github.com/mingyuchoo/parallel-using-par#readme
 bug-reports:    https://github.com/mingyuchoo/parallel-using-par/issues
 author:         Mingyu Choo
 maintainer:     mingyuchoo@gmail.com
-copyright:      2022 Mingyu Choo
+copyright:      2023 Mingyu Choo
 license:        BSD-3-Clause
 license-file:   LICENSE
 build-type:     Simple
@@ -28,39 +28,66 @@ library
       Lib
   other-modules:
       Paths_parallel_using_par
+  autogen-modules:
+      Paths_parallel_using_par
   hs-source-dirs:
       src
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
+      StandaloneKindSignatures
+      TypeApplications
+  ghc-options: -Wall -O2 -haddock
   build-depends:
       base
     , containers
     , flow
     , parallel
-  default-language: GHC2024
+  default-language: Haskell2010
 
 executable parallel-using-par-exe
   main-is: Main.hs
   other-modules:
       Paths_parallel_using_par
+  autogen-modules:
+      Paths_parallel_using_par
   hs-source-dirs:
       app
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
+      StandaloneKindSignatures
+      TypeApplications
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base
     , containers
     , flow
     , parallel
     , parallel-using-par
-  default-language: GHC2024
+  default-language: Haskell2010
 
 test-suite parallel-using-par-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
       Paths_parallel_using_par
+  autogen-modules:
+      Paths_parallel_using_par
   hs-source-dirs:
       test
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dyamic -threaded -rtsopts -with-rtsopts=-N4
+  default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
+      StandaloneKindSignatures
+      TypeApplications
+  ghc-options: -Wall -O2 -haddock -dyamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base
     , containers
@@ -70,4 +97,4 @@ test-suite parallel-using-par-test
     , hspec
     , parallel
     , parallel-using-par
-  default-language: GHC2024
+  default-language: Haskell2010

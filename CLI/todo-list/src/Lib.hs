@@ -7,10 +7,10 @@ module Lib
     ( someFunc
     ) where
 
-import           Data.Kind (Type)
 import           Control.Exception  (bracketOnError)
 import           Control.Monad      (mapM, mapM_, (>>))
 
+import           Data.Kind          (Type)
 import           Data.List          (delete, head, lines, lookup, tail, unlines,
                                      zipWith)
 
@@ -24,7 +24,6 @@ import           System.IO          (IOMode (..), appendFile, getLine, hClose,
                                      openTempFile, putStr, putStrLn, readFile)
 
 -- | application
---
 --
 someFunc :: IO ()
 someFunc = do
@@ -57,14 +56,12 @@ dispatch = [ ("add", add)
 
 -- | add todo item
 --
---
 add :: [String] -> IO ()
 add [fileName, todoItem] = appendFile fileName (todoItem ++ "\n")
 add _ = putStrLn "The add command takes exactly two arguments."
 
 
 -- | view todo item
---
 --
 view :: [String] -> IO ()
 view [fileName] = do
@@ -75,7 +72,6 @@ view [fileName] = do
 view _ = putStrLn "The view command takes exactly one argument."
 
 -- | remove todo item
---
 --
 remove :: [String] -> IO ()
 remove [fileName, numberString] = do

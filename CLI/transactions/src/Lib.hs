@@ -2,19 +2,20 @@ module Lib
     ( someFunc
     ) where
 
-import           Data.Kind (Type)
 import           Control.Concurrent          (forkIO, threadDelay)
 import           Control.Concurrent.STM.TVar
 import           Control.Monad               (forever)
 import           Control.Monad.STM
 
 import           Data.Foldable               (asum, forM_, for_)
+import           Data.Kind                   (Type)
 import qualified Data.Sequence               as Seq
 import           Data.Traversable            (for)
 
 import           System.Random.MWC           (createSystemRandom, uniformR)
 
-
+-- |
+--
 someFunc :: IO ()
 someFunc = do
   accountList <- for [1 .. 10] $ \_ -> atomically $ newTVar (100 :: Integer)

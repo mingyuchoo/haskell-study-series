@@ -12,6 +12,7 @@ import           System.IO     (BufferMode (NoBuffering), hSetBuffering, stdout)
 import           System.Random (newStdGen)
 
 -- |
+--
 main :: IO ()
 main = do
   hSetBuffering stdout NoBuffering

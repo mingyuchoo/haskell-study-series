@@ -3,7 +3,8 @@ module Lib
     ) where
 
 import           Data.Kind (Type)
-import           Flow ((<|))
+
+import           Flow      ((<|))
 
 {-
 # 문제
@@ -30,11 +31,15 @@ solution 메소드를 완성해주세요.
 9,949,999에 1을 더하면 9,950,000 이지만 0은 존재하지 안흐므로 9,951,111이 됩니다.
 -}
 
+-- |
+--
 someFunc :: IO ()
 someFunc = do
   print <| converter 9949999 1
   return ()
 
+-- |
+--
 converter :: Int -> Int -> Int
 converter x1 x2 =
   read <| concatMap replaceZero . show <| x1 + x2

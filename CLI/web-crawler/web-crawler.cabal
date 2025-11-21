@@ -1,6 +1,6 @@
-cabal-version: 3.16
+cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.36.0.
+-- This file has been generated from package.yaml by hpack version 0.38.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -30,9 +30,15 @@ library
       Lib
   other-modules:
       Paths_web_crawler
+  autogen-modules:
+      Paths_web_crawler
   hs-source-dirs:
       src
   default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
       StandaloneKindSignatures
       TypeApplications
   ghc-options: -Wall -O2 -haddock
@@ -51,9 +57,15 @@ executable web-crawler-exe
   main-is: Main.hs
   other-modules:
       Paths_web_crawler
+  autogen-modules:
+      Paths_web_crawler
   hs-source-dirs:
       app
   default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
       StandaloneKindSignatures
       TypeApplications
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
@@ -74,9 +86,15 @@ test-suite web-crawler-test
   main-is: Spec.hs
   other-modules:
       Paths_web_crawler
+  autogen-modules:
+      Paths_web_crawler
   hs-source-dirs:
       test
   default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
       StandaloneKindSignatures
       TypeApplications
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4

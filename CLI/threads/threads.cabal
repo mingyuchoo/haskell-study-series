@@ -1,6 +1,6 @@
-cabal-version: 3.16
+cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.36.0.
+-- This file has been generated from package.yaml by hpack version 0.38.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -29,10 +29,16 @@ library
   exposed-modules:
       Lib
   other-modules:
-      Paths_haskell_threads
+      Paths_threads
+  autogen-modules:
+      Paths_threads
   hs-source-dirs:
       src
   default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
       StandaloneKindSignatures
       TypeApplications
   ghc-options: -Wall -O2 -haddock
@@ -44,27 +50,39 @@ library
 executable threads-exe
   main-is: Main.hs
   other-modules:
-      Paths_haskell_threads
+      Paths_threads
+  autogen-modules:
+      Paths_threads
   hs-source-dirs:
       app
   default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
       StandaloneKindSignatures
       TypeApplications
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base
-    , threads
     , stm
+    , threads
   default-language: GHC2024
 
 test-suite threads-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Paths_haskell_threads
+      Paths_threads
+  autogen-modules:
+      Paths_threads
   hs-source-dirs:
       test
   default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
       StandaloneKindSignatures
       TypeApplications
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
@@ -72,7 +90,7 @@ test-suite threads-test
       base
     , doctest
     , doctest-discover
-    , threads
     , hspec
     , stm
+    , threads
   default-language: GHC2024

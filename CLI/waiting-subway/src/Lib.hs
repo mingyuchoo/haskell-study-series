@@ -65,4 +65,3 @@ someFunc = do
         mappedTimes = map (\x -> split x) subwayTimes
         timedTimes  = map (\x -> minutes x) mappedTimes
     putStrLn $ show $  min' $ map (diff currentTime) timedTimes
-

@@ -1,10 +1,10 @@
-cabal-version: 3.16
+cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.36.0.
+-- This file has been generated from package.yaml by hpack version 0.38.1.
 --
 -- see: https://github.com/sol/hpack
 
-name:                   monitoring-server
+name:           monitoring-server
 version:        0.1.0.0
 synopsis:       Short description of your package
 description:    Please see the README on GitHub at <https://github.com/mingyuchoo/monitoring-server#readme>
@@ -29,10 +29,16 @@ library
   exposed-modules:
       Lib
   other-modules:
-      Paths_haskell_monitoring_server
+      Paths_monitoring_server
+  autogen-modules:
+      Paths_monitoring_server
   hs-source-dirs:
       src
   default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
       StandaloneKindSignatures
       TypeApplications
   ghc-options: -Wall -O2 -haddock
@@ -52,10 +58,16 @@ library
 executable monitoring-server-exe
   main-is: Main.hs
   other-modules:
-      Paths_haskell_monitoring_server
+      Paths_monitoring_server
+  autogen-modules:
+      Paths_monitoring_server
   hs-source-dirs:
       app
   default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
       StandaloneKindSignatures
       TypeApplications
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
@@ -77,10 +89,16 @@ test-suite monitoring-server-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Paths_haskell_monitoring_server
+      Paths_monitoring_server
+  autogen-modules:
+      Paths_monitoring_server
   hs-source-dirs:
       test
   default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
       StandaloneKindSignatures
       TypeApplications
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
@@ -92,8 +110,8 @@ test-suite monitoring-server-test
     , doctest
     , doctest-discover
     , flow
-    , monitoring-server
     , hspec
+    , monitoring-server
     , network
     , parallel
     , safe-exceptions

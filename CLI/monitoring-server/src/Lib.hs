@@ -24,15 +24,20 @@ import           System.Environment
 import           System.Exit
 import           System.Signal
 
+-- |
+--
 type EventReport :: Type
 data EventReport = Success | Failure
      deriving (Eq)
 
+-- |
+--
 type SystemStatus :: Type
 data SystemStatus = Okay | Alarm
      deriving (Eq)
 
-
+-- |
+--
 someFunc :: IO ()
 someFunc = do
   args <- getArgs
@@ -40,6 +45,8 @@ someFunc = do
                ["send-demo-reports"] -> sendDemoReportsMain  -- 2
                _                     -> die "Invalid args"
 
+-- |
+--
 aggregateReportsMain :: IO ()
 aggregateReportsMain =
   withServerSocket $ \serverSocket -> do
@@ -53,25 +60,37 @@ aggregateReportsMain =
                 ]
   putStrLn "The monitoring server is stopping."
 
+-- |
+--
 waitForTerminationSignal :: IO ()
 waitForTerminationSignal = do
   terminate <- atomically $ newTVar False
   installHandler sigTERM $ \_signal -> atomically (writeTVar terminate True)
   atomically $ readTVar terminate >>= check
 
+-- |
+--
 encodeReport :: EventReport -> Char
 encodeReport r = case r of Failure -> '0'
                            Success -> '1'
 
+-- |
+--
 decodeReport :: Char -> Maybe EventReport
 decodeReport c = find (\r -> encodeReport r == c) [Failure, Success]
 
+-- |
+--
 serverAddress :: S.SockAddr
 serverAddress = S.SockAddrUnix "\0phrasebook/monitoring"
 
+-- |
+--
 openSocket :: IO S.Socket
 openSocket = S.socket S.AF_UNIX S.Stream S.defaultProtocol
 
+-- |
+--
 withServerSocket :: (S.Socket -> IO c) -> IO c
 withServerSocket action =
   bracket openSocket S.close $ \serverSocket -> do
@@ -79,6 +98,8 @@ withServerSocket action =
   S.listen serverSocket S.maxListenQueue  -- 2
   action serverSocket
 
+-- |
+--
 receiveReports :: S.Socket -> TQueue EventReport -> IO b
 receiveReports serverSocket reportQueue =
   forever $ mask $ \unmask -> do
@@ -87,6 +108,8 @@ receiveReports serverSocket reportQueue =
     (unmask (receiveReports' clientSocket reportQueue))
     (\_ -> S.close clientSocket)
 
+-- |
+--
 receiveReports' :: S.Socket -> TQueue EventReport -> IO ()
 receiveReports' clientSocket reportQueue = continue
   where
@@ -95,21 +118,31 @@ receiveReports' clientSocket reportQueue = continue
       case BS.length receivedBytes of 0 -> return ()
                                       _ -> receiveReports'' receivedBytes reportQueue >> continue
 
+-- |
+--
 receiveReports'' :: Data.ByteString.Char8.ByteString -> TQueue EventReport -> IO ()
 receiveReports'' receivedBytes reportQueue =
   for_ @[] (Data.ByteString.Char8.unpack receivedBytes) $ \c ->
   for_ @Maybe (decodeReport c) $ \r ->
   atomically (writeTQueue reportQueue r)
 
+-- |
+--
 reportWindowSize :: Int
 reportWindowSize = 10
 
+-- |
+--
 okayThreshold :: Ratio Int
 okayThreshold = 80 % 100
 
+-- |
+--
 alarmThreshold :: Ratio Int
 alarmThreshold = 50 % 100
 
+-- |
+--
 analysis :: Seq.Seq EventReport -> Maybe SystemStatus
 analysis reports  | Seq.length reports < reportWindowSize = Nothing
                   | successRate <= alarmThreshold         = Just Alarm
@@ -119,6 +152,8 @@ analysis reports  | Seq.length reports < reportWindowSize = Nothing
     successes   = Seq.filter (== Success) reports
     successRate = Seq.length successes % Seq.length reports
 
+-- |
+--
 analyzeReports :: TQueue EventReport -> TQueue SystemStatus -> IO b
 analyzeReports reportQueue alarmQueue = continue Nothing Seq.empty
   where
@@ -130,12 +165,16 @@ analyzeReports reportQueue alarmQueue = continue Nothing Seq.empty
       for_ @Maybe status' $ \s -> when (status /= status') $ atomically (writeTQueue alarmQueue s)
       continue status' reports
 
+-- |
+--
 sendAlarms :: TQueue SystemStatus -> IO b
 sendAlarms alarmQueue = forever $ do
   a <- atomically (readTQueue alarmQueue)
   case a of Alarm -> putStrLn "Alarm! System is in a degraded state."
             Okay  -> putStrLn "System status is normal."
 
+-- |
+--
 sendDemoReportsMain :: IO ()
 sendDemoReportsMain = do
   reportQueue <- atomically newTQueue
@@ -143,20 +182,28 @@ sendDemoReportsMain = do
                , sendReports reportQueue
                ]
 
+-- |
+--
 demoReports :: [EventReport]
 demoReports =  mapMaybe decodeReport "1111111111111010011000001000000100011101111110111111"
                                    --  successes          failures            successes
 
+-- |
+--
 generateReports :: TQueue EventReport -> IO ()
 generateReports reportQueue = for_ demoReports $ \r -> do
   atomically (writeTQueue reportQueue r)
   threadDelay 100_000
 
+-- |
+--
 withClientSocket :: (S.Socket -> IO c) -> IO c
 withClientSocket action = bracket openSocket S.close $ \clientSocket -> do
   S.connect clientSocket serverAddress
   action clientSocket
 
+-- |
+--
 sendReports :: TQueue EventReport -> IO c
 sendReports reportQueue = withClientSocket $ \clientSocket -> forever $ do
   r <- atomically (readTQueue reportQueue)

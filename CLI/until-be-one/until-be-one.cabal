@@ -1,6 +1,6 @@
-cabal-version: 3.16
+cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.34.4.
+-- This file has been generated from package.yaml by hpack version 0.38.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -11,7 +11,7 @@ homepage:       https://github.com/mingyuchoo/until-be-one#readme
 bug-reports:    https://github.com/mingyuchoo/until-be-one/issues
 author:         Mingyu Choo
 maintainer:     mingyuchoo@gmail.com
-copyright:      Mingyu Choo
+copyright:      2023 Mingyu Choo
 license:        BSD-3-Clause
 license-file:   LICENSE
 build-type:     Simple
@@ -28,39 +28,66 @@ library
       Lib
   other-modules:
       Paths_until_be_one
+  autogen-modules:
+      Paths_until_be_one
   hs-source-dirs:
       src
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
+      StandaloneKindSignatures
+      TypeApplications
+  ghc-options: -Wall -O2 -haddock
   build-depends:
       base
     , containers
     , flow
     , parallel
-  default-language: GHC2024
+  default-language: Haskell2010
 
 executable until-be-one-exe
   main-is: Main.hs
   other-modules:
       Paths_until_be_one
+  autogen-modules:
+      Paths_until_be_one
   hs-source-dirs:
       app
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -O2 -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
+      StandaloneKindSignatures
+      TypeApplications
+  ghc-options: -Wall -O2 -haddock -O2 -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base
     , containers
     , flow
     , parallel
     , until-be-one
-  default-language: GHC2024
+  default-language: Haskell2010
 
 test-suite until-be-one-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
       Paths_until_be_one
+  autogen-modules:
+      Paths_until_be_one
   hs-source-dirs:
       test
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -dynamic -threaded -rtsopts -with-rtsopts=-N4
+  default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
+      StandaloneKindSignatures
+      TypeApplications
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base
     , containers
@@ -69,4 +96,4 @@ test-suite until-be-one-test
     , hspec-discover
     , parallel
     , until-be-one
-  default-language: GHC2024
+  default-language: Haskell2010

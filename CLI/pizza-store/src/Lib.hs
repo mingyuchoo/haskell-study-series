@@ -1,4 +1,5 @@
-module Lib where
+module Lib
+    where
 
 -- |
 --
@@ -13,8 +14,8 @@ solution [] [] sum = sum + 0
 solution _  [] sum = sum + 0
 solution menu (x:xs) sum =
     if x == fst (head menu)
-      then solution menu xs (sum + (snd (head menu)))
-      else solution (tail menu) (x:xs) sum
+    then solution menu xs (sum + (snd (head menu)))
+    else solution (tail menu) (x:xs) sum
 
 -- |
 --

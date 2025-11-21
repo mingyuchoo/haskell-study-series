@@ -3,13 +3,25 @@ module Lib
 
 import           Control.Lens (element, (&), (.~))
 
+import           Data.Kind    (Type)
 import           Data.Maybe   (mapMaybe)
 
+type Direct :: Type
 type Direct = Int
+
+type Value :: Type
 type Value = Int
+
+type Row :: Type
 type Row = Int
+
+type Col :: Type
 type Col = Int
+
+type Matrix :: Type
 type Matrix = [[Int]]
+
+type Coord :: Type
 data Coord = Coord { row       :: Row
                    , column    :: Col
                    , direction :: Direct

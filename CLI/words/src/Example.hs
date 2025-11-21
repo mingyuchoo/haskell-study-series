@@ -85,21 +85,18 @@ foo2 = do
   y <- Just "!"
   Just (show x ++ y)
 
--- |
--- variant of outputGrid, for arbitrary Show-able structures
+-- | variant of outputGrid, for arbitrary Show-able structures
 --
 og :: Show a => [a] -> IO ()
 og = putStrLn . unlines . map show
 
--- |
--- check if divisible by 2
+-- | check if divisible by 2
 --
 div2 :: Integral a => a -> Bool
 div2 x = mod x 2 == 0
 
 
--- |
--- List monad notation
+-- | List monad notation
 --
 mapped :: [Integer]
 mapped = do
