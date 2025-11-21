@@ -18,4 +18,4 @@ main = do
 
   commands <- getLine
 
-  print $ foldl (move 5) (1,1) $ words commands
+  print $ foldl (move 5) (1, 1) $ words commands

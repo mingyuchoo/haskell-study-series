@@ -2,8 +2,6 @@ module Example
     where
 
 import           Control.Lens (element, (&), (.~))
-
-import           Data.Kind    (Type)
 import           Data.List    ((\\))
 
 -- |
@@ -25,7 +23,7 @@ graph = [ []
 visit :: [Bool]
 visit = v & element 1 .~ True
   where
-    v = take (length graph) [False, False ..]
+    v = replicate (length graph) False
 
 -- |
 --
@@ -35,7 +33,6 @@ setVisit v i = v & element i .~ True
 
 -- | DFS(Depth-First Search)
 --
-type BreadcrumbD :: Type
 type BreadcrumbD = ([Int], [Bool])
 
 -- |
@@ -47,10 +44,11 @@ dfsEval = reverse lst
 
 -- |
 --
-dfs :: BreadcrumbD -> [Int] ->  BreadcrumbD
-dfs b [] =
-  b dfs b@(r, v) (x:xs) | v !! x    = dfs b xs
-                        | otherwise = dfs (dfs (x:r, setVisit v x) (graph !! x)) xs
+dfs :: BreadcrumbD -> [Int] -> BreadcrumbD
+dfs b [] = b
+dfs b@(r, v) (x:xs)
+  | v !! x    = dfs b xs
+  | otherwise = dfs (dfs (x:r, setVisit v x) (graph !! x)) xs
 
 
 -- BFS(Breadth-First Search)
