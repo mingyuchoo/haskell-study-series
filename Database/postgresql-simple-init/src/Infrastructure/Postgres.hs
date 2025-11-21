@@ -1,12 +1,15 @@
 module Infrastructure.Postgres
-  ( loadConnectInfoFromEnv
-  , withConnection
-  ) where
+    ( loadConnectInfoFromEnv
+    , withConnection
+    ) where
 
-import           Control.Exception           (bracket)
+import           Control.Exception          (bracket)
+
 import           Database.PostgreSQL.Simple
-import           System.Environment          (lookupEnv)
-import           Text.Read                   (readMaybe)
+
+import           System.Environment         (lookupEnv)
+
+import           Text.Read                  (readMaybe)
 
 -- | 환경변수에서 접속정보 로드
 -- DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD

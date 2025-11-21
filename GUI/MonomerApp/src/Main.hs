@@ -1,26 +1,31 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskell   #-}
 
-module Main where
+module Main
+    where
 
-import Control.Lens
-import Data.Maybe
-import Data.Text (Text)
-import Monomer
-import Monomer.Lens qualified as L
-import System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
-import TextShow
+import           Control.Lens
+
+import           Data.Maybe
+import           Data.Text    (Text)
+
+import           Monomer
+import qualified Monomer.Lens as L
+
+import           System.IO    (BufferMode (NoBuffering), hSetBuffering, stdout)
+
+import           TextShow
 
 -- 1. 데이터 모델 정의 (상태)
-newtype AppModel = AppModel {_clickCount :: Int}
-  deriving (Eq, Show)
+newtype AppModel = AppModel { _clickCount :: Int }
+     deriving (Eq, Show)
 
 -- Lens 생성 (상태 업데이트를 쉽게 하기 위함)
 makeLenses 'AppModel
 
 -- 2. 이벤트 정의 (사용자 액션)
 data AppEvent = AppInit | AppIncrease
-  deriving (Eq, Show)
+     deriving (Eq, Show)
 
 -- 3. UI 빌드 (화면 구성)
 buildUI ::
@@ -49,7 +54,7 @@ handleEvent ::
   AppEvent ->
   [AppEventResponse AppModel AppEvent]
 handleEvent wenv node model evt = case evt of
-  AppInit -> []
+  AppInit     -> []
   AppIncrease -> [Model (model & clickCount +~ 1)]
 
 -- 5. 메인 함수

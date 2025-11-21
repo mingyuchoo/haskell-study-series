@@ -1,17 +1,23 @@
-{-# LANGUAGE BinaryLiterals #-}
-{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE BinaryLiterals      #-}
+{-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Main where
+module Main
+    where
 
-import Control.Lens
-import Data.Default
-import Data.Text (Text)
-import Monomer
-import Monomer.Lens qualified as L
-import System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
-import TextShow
-import TodoTypes
+import           Control.Lens
+
+import           Data.Default
+import           Data.Text    (Text)
+
+import           Monomer
+import qualified Monomer.Lens as L
+
+import           System.IO    (BufferMode (NoBuffering), hSetBuffering, stdout)
+
+import           TextShow
+
+import           TodoTypes
 
 type TodoWenv = WidgetEnv TodoModel TodoEvt
 
@@ -23,9 +29,9 @@ buildUI wenv model = widgetTree
   where
     sectionBg = wenv ^. L.theme . L.sectionColor
     isEditing = case model ^. action of
-      TodoAdding -> True
+      TodoAdding    -> True
       TodoEditing _ -> True
-      _ -> False
+      _             -> False
 
     countLabel = label caption `styleBasic` styles
       where
@@ -204,7 +210,7 @@ todoEdit wenv model = editNode
 
     (saveAction, saveLabel) = case model ^. action of
       TodoEditing idx -> (TodoSave idx, "Save")
-      _ -> (TodoAdd, "Add")
+      _               -> (TodoAdd, "Add")
 
     saveTodoBtn = mainButton saveLabel saveAction
 

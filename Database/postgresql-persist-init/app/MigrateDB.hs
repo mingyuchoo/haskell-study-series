@@ -6,8 +6,9 @@ import           Infrastructure.Persistence.PostgreSQL.UserRepositoryImpl (local
                                                                            migrateDB)
 
 import           System.Environment                                       (getArgs)
-
-import           System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
+import           System.IO                                                (BufferMode (NoBuffering),
+                                                                           hSetBuffering,
+                                                                           stdout)
 
 -- |
 main :: IO ()

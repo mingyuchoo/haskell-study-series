@@ -1,11 +1,12 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Infrastructure.Database.Connection
-    ( initializeDatabase
-    , createTables
+    ( createTables
+    , initializeDatabase
     ) where
 
 import           Database.SQLite.Simple
+
 import           Flow                   ((<|))
 
 -- | 데이터베이스 초기화

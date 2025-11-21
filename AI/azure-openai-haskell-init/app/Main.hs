@@ -1,20 +1,24 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Main
-  ( main,
-  )
-where
+    ( main
+    ) where
 
-import AzureOpenAI
-import Configuration.Dotenv (defaultConfig, loadFile)
-import Control.Exception (SomeException, catch)
-import Control.Monad (foldM)
-import Data.IORef
-import Data.Text qualified as T
-import Data.Text.IO qualified as TIO
-import System.Environment (lookupEnv)
-import System.Exit (die)
-import System.IO (BufferMode (NoBuffering), hFlush, hSetBuffering, stdout)
+import           AzureOpenAI
+
+import           Configuration.Dotenv (defaultConfig, loadFile)
+
+import           Control.Exception    (SomeException, catch)
+import           Control.Monad        (foldM)
+
+import           Data.IORef
+import qualified Data.Text            as T
+import qualified Data.Text.IO         as TIO
+
+import           System.Environment   (lookupEnv)
+import           System.Exit          (die)
+import           System.IO            (BufferMode (NoBuffering), hFlush,
+                                       hSetBuffering, stdout)
 
 -- | Load and validate environment variables
 loadConfig :: IO Config

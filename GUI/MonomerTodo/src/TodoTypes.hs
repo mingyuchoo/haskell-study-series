@@ -10,6 +10,7 @@ import           Data.Default
 import           Data.Text       (Text)
 
 import           Monomer
+
 import           TextShow
 
 -- 데이터 모델 정의 (상태)

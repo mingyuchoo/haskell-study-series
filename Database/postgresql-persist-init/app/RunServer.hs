@@ -5,8 +5,8 @@ module Main
 import qualified Infrastructure.Web.Server as Server
 
 import           System.Environment        (getArgs)
-
-import           System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
+import           System.IO                 (BufferMode (NoBuffering),
+                                            hSetBuffering, stdout)
 
 -- |
 main :: IO ()

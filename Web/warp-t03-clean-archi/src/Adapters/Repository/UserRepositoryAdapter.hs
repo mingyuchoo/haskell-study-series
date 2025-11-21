@@ -2,28 +2,30 @@
 {-# LANGUAGE RecordWildCards   #-}
 -- 어댑터 계층(Repository): SQLite 구체 구현
 module Adapters.Repository.UserRepositoryAdapter
-  ( createUser
-  , getUser
-  , getUsers
-  , updateUser
-  , deleteUser
-  ) where
+    ( createUser
+    , deleteUser
+    , getUser
+    , getUsers
+    , updateUser
+    ) where
 
-import           Domain.UserModel           (User(..))
-import           Database.SQLite.Simple     (Connection, Only(..), execute, query, query_)
+import           Database.SQLite.Simple           (Connection, Only (..),
+                                                   execute, query, query_)
 import           Database.SQLite.Simple.FromField ()
-import           Database.SQLite.Simple.FromRow   (FromRow(..), field)
-import           Database.SQLite.Simple.ToRow     (ToRow(..))
+import           Database.SQLite.Simple.FromRow   (FromRow (..), field)
+import           Database.SQLite.Simple.ToRow     (ToRow (..))
 
-import           Flow                       ((<|))
+import           Domain.UserModel                 (User (..))
+
+import           Flow                             ((<|))
 
 -- DB 전용 인스턴스 (도메인 밖)
 instance FromRow User where
   fromRow = User <$> field <*> field
 
 instance ToRow User where
-  toRow (User Nothing n)   = toRow (Only n)
-  toRow (User (Just i) n)  = toRow (i, n)
+  toRow (User Nothing n)  = toRow (Only n)
+  toRow (User (Just i) n) = toRow (i, n)
 
 -- 새 사용자 생성
 createUser :: Connection -> User -> IO User

@@ -2,15 +2,15 @@ module Lib
     ( someFunc
     ) where
 
-import           Crypto.Hash (hash, Digest, MD5)
-import           Data.Kind              (Type)
+import           Crypto.Hash            (Digest, MD5, hash)
 
+import           Data.ByteArray         (convert)
 import           Data.ByteString        (ByteString)
-import qualified Data.ByteString.Char8  as BS
 import qualified Data.ByteString.Base16 as B16
+import qualified Data.ByteString.Char8  as BS
+import           Data.Kind              (Type)
 import           Data.Text              (Text)
 import qualified Data.Text.Encoding     as TE
-import           Data.ByteArray         (convert)
 
 -- data Image = Image { hex     :: String
 --                    , color   :: (Int, Int, Int)

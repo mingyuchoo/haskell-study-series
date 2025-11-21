@@ -1,6 +1,7 @@
-module Lib where
+module Lib
+    where
 
-import Data.List
+import           Data.List
 
 someFunc :: IO ()
 someFunc = print $ solution list

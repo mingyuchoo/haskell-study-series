@@ -1,29 +1,32 @@
 module Lib
-  ( runApp
-  ) where
+    ( runApp
+    ) where
 
 -- | 애플리케이션 조립/부트스트랩 모듈
 -- 도메인/애플리케이션/어댑터/인프라 계층을 연결하고, 서버를 기동한다.
 
-import           Control.Monad                  (void)
-import           Network.Wai                    (Application, responseLBS)
-import qualified Network.Wai                    as Wai
-import           Network.HTTP.Types             (status200, status404)
-import           Network.Wai.Handler.Warp       (run)
-import qualified Data.ByteString.Lazy.Char8     as LBS
-import qualified Data.ByteString.Char8          as BS
-import           Text.Read                      (readMaybe)
+import           Adapters.PostgresRepository (PostgresRepo, initSchema, runWith)
 
-import           Application.UseCases           ( seedSampleData
-                                                , listAllUsers
-                                                , createUserUC
-                                                , updateUserUC
-                                                , deleteUserUC
-                                                , getUserUC
-                                                )
-import           Adapters.PostgresRepository    (PostgresRepo, initSchema, runWith)
-import           Infrastructure.Postgres                 (loadConnectInfoFromEnv, withConnection)
-import           Domain.Model                   (User(..))
+import           Application.UseCases        (createUserUC, deleteUserUC,
+                                              getUserUC, listAllUsers,
+                                              seedSampleData, updateUserUC)
+
+import           Control.Monad               (void)
+
+import qualified Data.ByteString.Char8       as BS
+import qualified Data.ByteString.Lazy.Char8  as LBS
+
+import           Domain.Model                (User (..))
+
+import           Infrastructure.Postgres     (loadConnectInfoFromEnv,
+                                              withConnection)
+
+import           Network.HTTP.Types          (status200, status404)
+import           Network.Wai                 (Application, responseLBS)
+import qualified Network.Wai                 as Wai
+import           Network.Wai.Handler.Warp    (run)
+
+import           Text.Read                   (readMaybe)
 
 -- | 간단한 라우팅: /health, /tests 두 엔드포인트 제공
 mkApp :: (forall a. PostgresRepo a -> IO a) -> Application

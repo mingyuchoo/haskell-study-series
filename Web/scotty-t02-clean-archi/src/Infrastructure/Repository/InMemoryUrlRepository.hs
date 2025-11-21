@@ -10,9 +10,11 @@ import           Control.Monad.IO.Class          (MonadIO, liftIO)
 import           Data.IORef                      (IORef, modifyIORef, readIORef)
 import           Data.Map                        (Map)
 import qualified Data.Map                        as M
-
-import           Domain.Entity.Url               (Url (..), TempUrl (..), UrlId, mkUrlWithMetadata, generateShortUrl)
 import           Data.Time                       (getCurrentTime)
+
+import           Domain.Entity.Url               (TempUrl (..), Url (..), UrlId,
+                                                  generateShortUrl,
+                                                  mkUrlWithMetadata)
 import           Domain.Repository.UrlRepository (UrlRepository (..))
 
 type UrlStore = (Int, Map UrlId Url)

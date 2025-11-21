@@ -1,20 +1,26 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Infrastructure.Web.Server
-  ( startServer,
-  )
-where
+    ( startServer
+    ) where
 
-import Application.UserService (UserService (..))
-import Control.Exception (SomeException, try)
-import Data.Aeson (object, (.=))
-import Database.SQLite.Simple (Error (..), SQLError (..))
-import Domain.UserModel (User (..))
-import Flow ((<|))
-import Network.HTTP.Types
-import Network.Wai.Middleware.Cors
-import Web.Scotty
+import           Application.UserService     (UserService (..))
+
+import           Control.Exception           (SomeException, try)
+
+import           Data.Aeson                  (object, (.=))
+
+import           Database.SQLite.Simple      (Error (..), SQLError (..))
+
+import           Domain.UserModel            (User (..))
+
+import           Flow                        ((<|))
+
+import           Network.HTTP.Types
+import           Network.Wai.Middleware.Cors
+
+import           Web.Scotty
 
 -- | Web server implementation
 startServer :: (UserService a) => a -> IO ()
@@ -60,7 +66,7 @@ startServer userService =
       maybeUser <- liftIO <| getUserById userService uid
       case maybeUser of
         Just user -> json user
-        Nothing -> status status404
+        Nothing   -> status status404
 
     -- \| Create new user
     post "/users" <| do

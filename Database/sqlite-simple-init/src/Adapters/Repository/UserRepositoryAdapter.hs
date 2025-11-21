@@ -6,9 +6,13 @@ module Adapters.Repository.UserRepositoryAdapter
     ) where
 
 import           Application.UserService (UserService (..))
+
 import           Data.Time               (getCurrentTime)
+
 import           Database.SQLite.Simple
+
 import           Domain.UserModel        (User (..))
+
 import           Flow                    ((<|))
 
 -- | SQLite 저장소 어댑터
@@ -54,8 +58,8 @@ instance UserService UserRepositoryAdapter where
         -- 업데이트된 사용자 확인
         maybeUser <- getUserById (UserRepositoryAdapter conn) uid
         case maybeUser of
-            Just _ -> return True
-            Nothing   -> return False
+            Just _  -> return True
+            Nothing -> return False
 
     -- | 사용자 삭제
     deleteUser (UserRepositoryAdapter conn) uid = do

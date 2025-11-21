@@ -2,12 +2,13 @@
 
 module Infrastructure.Repository.RedisUrlRepository
     ( RedisUrlRepo
-    , runRedisUrlRepo
     , createRedisConnection
+    , runRedisUrlRepo
     ) where
 
 
 import           Control.Monad.IO.Class          (MonadIO, liftIO)
+
 import           Data.Aeson                      (decode, encode)
 import qualified Data.ByteString.Lazy            as LBS
 import           Data.Map                        (Map)
@@ -16,11 +17,14 @@ import           Data.Text                       (Text)
 import qualified Data.Text                       as T
 import qualified Data.Text.Encoding              as TE
 import           Data.Time                       (getCurrentTime)
-import           Database.Redis                  (Connection, ConnectInfo (..), Redis, connect,
-                                                  defaultConnectInfo, get, hgetall,
-                                                  incr, runRedis, set)
 
-import           Domain.Entity.Url               (Url (..), TempUrl (..), UrlId, generateShortUrl,
+import           Database.Redis                  (ConnectInfo (..), Connection,
+                                                  Redis, connect,
+                                                  defaultConnectInfo, get,
+                                                  hgetall, incr, runRedis, set)
+
+import           Domain.Entity.Url               (TempUrl (..), Url (..), UrlId,
+                                                  generateShortUrl,
                                                   mkUrlWithMetadata)
 import           Domain.Repository.UrlRepository (UrlRepository (..))
 
@@ -57,7 +61,7 @@ instance UrlRepository RedisUrlRepo where
                     setResult <- set (TE.encodeUtf8 urlKey) urlJson
                     case setResult of
                         Left err -> error $ "Redis error: " ++ show err
-                        Right _ -> return urlId
+                        Right _  -> return urlId
         return result
 
     findUrl urlId = RedisUrlRepo $ \conn -> do
@@ -66,9 +70,9 @@ instance UrlRepository RedisUrlRepo where
         case result of
             Left _ -> return Nothing
             Right Nothing -> return Nothing
-            Right (Just urlJson) -> 
+            Right (Just urlJson) ->
                 case decode (LBS.fromStrict urlJson) of
-                    Nothing -> return Nothing
+                    Nothing  -> return Nothing
                     Just url -> return (Just url)
 
     getAllUrls = RedisUrlRepo $ \conn -> do
@@ -86,9 +90,9 @@ instance UrlRepository RedisUrlRepo where
                     case result of
                         Left _ -> return Nothing
                         Right Nothing -> return Nothing
-                        Right (Just urlJson) -> 
+                        Right (Just urlJson) ->
                             case decode (LBS.fromStrict urlJson) of
-                                Nothing -> return Nothing
+                                Nothing  -> return Nothing
                                 Just url -> return (Just (i, url))
                     ) [1..counter]
                 return $ M.fromList [(i, url) | Just (i, url) <- urls]

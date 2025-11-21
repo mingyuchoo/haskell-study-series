@@ -1,18 +1,25 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Adapters.Web.UserWebAdapter
     ( startWebServer
     ) where
 
-import           Application.UserService (UserService (..))
-import           Control.Exception       (SomeException, try)
-import           Data.Aeson              (object, (.=))
-import           Database.SQLite.Simple  (Error (..), SQLError (..))
-import           Domain.UserModel        (User (..))
-import           Flow                    ((<|))
+import           Application.UserService     (UserService (..))
+
+import           Control.Exception           (SomeException, try)
+
+import           Data.Aeson                  (object, (.=))
+
+import           Database.SQLite.Simple      (Error (..), SQLError (..))
+
+import           Domain.UserModel            (User (..))
+
+import           Flow                        ((<|))
+
 import           Network.HTTP.Types
 import           Network.Wai.Middleware.Cors
+
 import           Web.Scotty
 
 -- | 웹 서버 시작
@@ -54,7 +61,7 @@ startWebServer userService =
             maybeUser <- liftIO <| getUserById userService uid
             case maybeUser of
                 Just user -> json user
-                Nothing -> status status404
+                Nothing   -> status status404
 
         post "/users" <| do
             name <- formParam "name"

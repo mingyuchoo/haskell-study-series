@@ -11,9 +11,13 @@ module Infrastructure.Repository.UserRepository
     ) where
 
 import           Application.UserService (UserService (..))
+
 import           Data.Time               (getCurrentTime)
+
 import           Database.SQLite.Simple
+
 import           Domain.UserModel        (User (..))
+
 import           Flow                    ((<|))
 
 -- | SQLite implementation of UserService
@@ -71,8 +75,8 @@ instance UserService UserRepository where
         -- Get the updated user to return it
         maybeUser <- getUserById (UserRepository conn) uid
         case maybeUser of
-            Just _ -> return True
-            Nothing   -> return False
+            Just _  -> return True
+            Nothing -> return False
 
     -- | Delete user
     deleteUser (UserRepository conn) uid = do

@@ -4,11 +4,11 @@ module Lib
     ( shortener
     ) where
 
-import           Infrastructure.Repository.RedisUrlRepository (createRedisConnection)
-
-import           Adapters.Web.Controller.UrlController       (createUrlHandler,
+import           Adapters.Web.Controller.UrlController        (createUrlHandler,
                                                                homeHandler,
                                                                redirectHandler)
+
+import           Infrastructure.Repository.RedisUrlRepository (createRedisConnection)
 
 import           Web.Scotty
 

@@ -1,19 +1,29 @@
 {-# LANGUAGE OverloadedStrings #-}
 -- 어댑터 계층(Web): WAI 기반 HTTP 인터페이스
 module Adapters.Web.UserWebAdapter
-  ( app
-  ) where
+    ( app
+    ) where
 
-import           Application.UserService          (UserService(..))
-import           Data.Aeson                       (decode, encode, object)
-import qualified Data.ByteString.Lazy             as LBS
-import qualified Data.Text                        as T
-import           Domain.UserModel                 (User(..))
-import           Flow                             ((<|))
-import           Network.HTTP.Types               (Status, methodDelete, methodGet, methodPost, methodPut, status200, status201, status204, status400, status404)
-import           Network.HTTP.Types.Header        (hContentType)
-import           Network.Wai                      (Application, Request(..), Response, responseFile, responseLBS, strictRequestBody)
-import           Text.Read                        (readMaybe)
+import           Application.UserService   (UserService (..))
+
+import           Data.Aeson                (decode, encode, object)
+import qualified Data.ByteString.Lazy      as LBS
+import qualified Data.Text                 as T
+
+import           Domain.UserModel          (User (..))
+
+import           Flow                      ((<|))
+
+import           Network.HTTP.Types        (Status, methodDelete, methodGet,
+                                            methodPost, methodPut, status200,
+                                            status201, status204, status400,
+                                            status404)
+import           Network.HTTP.Types.Header (hContentType)
+import           Network.Wai               (Application, Request (..), Response,
+                                            responseFile, responseLBS,
+                                            strictRequestBody)
+
+import           Text.Read                 (readMaybe)
 
 -- WAI Application 구성
 app :: UserService -> Application

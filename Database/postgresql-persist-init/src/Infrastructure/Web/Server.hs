@@ -9,6 +9,8 @@ module Infrastructure.Web.Server
     , runEsqueletoServer
     ) where
 
+import           Application.UserService
+
 import           Control.Monad.Error.Class                                (throwError)
 import           Control.Monad.IO.Class                                   (liftIO)
 
@@ -22,9 +24,9 @@ import qualified Data.Text                                                as T
 import qualified Domain.Entities.User                                     as DU
 import           Domain.Repositories.UserRepository
 
-import           Application.UserService
 import           Infrastructure.Cache.Redis.CacheServiceImpl
 import           Infrastructure.Persistence.PostgreSQL.UserRepositoryImpl
+
 import           Interface.Web.Controllers.UserController
 import           Interface.Web.DTOs.UserDTO
 
@@ -64,7 +66,7 @@ basicServer = rootHandler :<|> basicUserAPI
               :<|> updateUserHandler
               :<|> patchUserHandler
               :<|> deleteUserHandler
-    
+
     getUserHandler :: Int64 -> Handler UserResponseDTO
     getUserHandler uid = do
         result <- liftIO $ runPostgreSQLUserRepository localConnString $ do
@@ -75,7 +77,7 @@ basicServer = rootHandler :<|> basicUserAPI
         case result of
             Left err -> throwError $ err404 { errBody = fromString (T.unpack err) }
             Right userDto -> return userDto
-    
+
     createUserHandler :: CreateUserRequestDTO -> Handler CreateUserResponseDTO
     createUserHandler req = do
         result <- liftIO $ runPostgreSQLUserRepository localConnString $ do
@@ -94,12 +96,12 @@ basicServer = rootHandler :<|> basicUserAPI
         case result of
             Left err -> throwError $ err400 { errBody = fromString (T.unpack err) }
             Right response -> return response
-    
+
     listUsersHandler :: Handler [UserResponseDTO]
     listUsersHandler = do
         users <- liftIO $ runPostgreSQLUserRepository localConnString findAllUsers
         return $ map userToResponseDTO users
-    
+
     updateUserHandler :: Int64 -> UpdateUserRequestDTO -> Handler NoContent
     updateUserHandler uid req = do
         result <- liftIO $ runPostgreSQLUserRepository localConnString $ do
@@ -115,10 +117,10 @@ basicServer = rootHandler :<|> basicUserAPI
         case result of
             Left err -> throwError $ err400 { errBody = fromString (T.unpack err) }
             Right _ -> return NoContent
-    
+
     patchUserHandler :: Int64 -> UpdateUserRequestDTO -> Handler NoContent
     patchUserHandler = updateUserHandler  -- Same implementation for now
-    
+
     deleteUserHandler :: Int64 -> Handler NoContent
     deleteUserHandler uid = do
         result <- liftIO $ runPostgreSQLUserRepository localConnString $ do
@@ -127,7 +129,7 @@ basicServer = rootHandler :<|> basicUserAPI
         case result of
             Left err -> throwError $ err404 { errBody = fromString (T.unpack err) }
             Right _ -> return NoContent
-    
+
     updateUserFields :: DU.User -> UpdateUserRequestDTO -> DU.User
     updateUserFields user req = user
         { DU.userName = maybe (DU.userName user) DU.UserName (urName req)
@@ -135,7 +137,7 @@ basicServer = rootHandler :<|> basicUserAPI
         , DU.userAge = maybe (DU.userAge user) DU.UserAge (urAge req)
         , DU.userOccupation = maybe (DU.userOccupation user) DU.UserOccupation (urOccupation req)
         }
-    
+
     fromString :: String -> LBS.ByteString
     fromString = LBS.pack . map (fromIntegral . ord)
 

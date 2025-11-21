@@ -1,6 +1,7 @@
-module Concepts where
+module Concepts
+    where
 
-import Data.Graph
+import           Data.Graph
 
 graph :: Graph
 (graph, _, _) =
@@ -39,7 +40,7 @@ graph' =
     ]
 
 newtype Stack a = Stack [a]
-  deriving (Show)
+     deriving (Show)
 
 emptyS :: Stack a
 emptyS = Stack []
@@ -54,11 +55,11 @@ push (Stack xs) x = Stack (x : xs)
 -- >>> pop $ Stack[3,2,1]
 -- (Just 3,Stack [2,1])
 pop :: Stack a -> (Maybe a, Stack a)
-pop (Stack []) = (Nothing, Stack [])
+pop (Stack [])       = (Nothing, Stack [])
 pop (Stack (x : xs)) = (Just x, Stack xs)
 
 newtype Queue a = Queue [a]
-  deriving (Show)
+     deriving (Show)
 
 emptyQ :: Queue a
 emptyQ = Queue []
@@ -73,5 +74,5 @@ enque (Queue xs) x = Queue (xs <> [x])
 -- >>> deque $ Queue[1,2,3]
 -- (Just 1,Queue [2,3])
 deque :: Queue a -> (Maybe a, Queue a)
-deque (Queue []) = (Nothing, Queue [])
+deque (Queue [])       = (Nothing, Queue [])
 deque (Queue (x : xs)) = (Just x, Queue xs)

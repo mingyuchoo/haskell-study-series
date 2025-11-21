@@ -1,14 +1,14 @@
 module Main
-  ( main,
-  )
-where
+    ( main
+    ) where
 
 -- -------------------------------------------------------------------
 -- Imports
 -- -------------------------------------------------------------------
 
-import Lib
-import System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
+import           Lib
+
+import           System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
 
 -- -------------------------------------------------------------------
 -- Application

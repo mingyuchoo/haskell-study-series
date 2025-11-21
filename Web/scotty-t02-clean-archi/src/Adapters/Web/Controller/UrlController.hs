@@ -6,23 +6,25 @@ module Adapters.Web.Controller.UrlController
     , redirectHandler
     ) where
 
-import           Application.UseCase.ListUrls                   (listUrls)
-import           Application.UseCase.RetrieveUrl                (retrieveUrl)
-import           Application.UseCase.ShortenUrl                 (shortenUrl)
+import           Adapters.Web.View.UrlView                    (renderHomePage)
 
-import           Control.Monad.IO.Class                         (liftIO)
+import           Application.UseCase.ListUrls                 (listUrls)
+import           Application.UseCase.RetrieveUrl              (retrieveUrl)
+import           Application.UseCase.ShortenUrl               (shortenUrl)
 
-import           Database.Redis                                 (Connection)
-import qualified Data.Text.Lazy                                 as LT
+import           Control.Monad.IO.Class                       (liftIO)
 
-import           Domain.Entity.Url                              (Url (..), TempUrl (..), mkUrl)
+import qualified Data.Text.Lazy                               as LT
 
-import           Infrastructure.Repository.RedisUrlRepository   (runRedisUrlRepo)
+import           Database.Redis                               (Connection)
 
-import           Adapters.Web.View.UrlView                     (renderHomePage)
+import           Domain.Entity.Url                            (TempUrl (..),
+                                                               Url (..), mkUrl)
 
-import           Network.HTTP.Types                             (status400,
-                                                                 status404)
+import           Infrastructure.Repository.RedisUrlRepository (runRedisUrlRepo)
+
+import           Network.HTTP.Types                           (status400,
+                                                               status404)
 
 import           Web.Scotty
 

@@ -1,11 +1,12 @@
 module Main
-  ( main,
-  )
-where
+    ( main
+    ) where
 
-import Lib
-import System.Directory (createDirectoryIfMissing)
-import System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
+import           Lib
+
+import           System.Directory (createDirectoryIfMissing)
+import           System.IO        (BufferMode (NoBuffering), hSetBuffering,
+                                   stdout)
 
 main :: IO ()
 main = do

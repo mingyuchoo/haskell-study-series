@@ -1,18 +1,21 @@
 module Adapters.PostgresRepository
-  ( PostgresRepo(..)
-  , withPostgresRepo
-  , initSchema
-  , runWith
-  ) where
+    ( PostgresRepo (..)
+    , initSchema
+    , runWith
+    , withPostgresRepo
+    ) where
 
-import           Control.Exception      (bracket)
-import           Control.Monad          (void)
-import           Data.Maybe             (listToMaybe)
+import           Control.Exception                  (bracket)
+import           Control.Monad                      (void)
+
+import           Data.Maybe                         (listToMaybe)
+
 import           Database.PostgreSQL.Simple
 import           Database.PostgreSQL.Simple.FromRow
 import           Database.PostgreSQL.Simple.ToRow
-import           Domain.Model           (User(..))
-import           Domain.Repository      (UserRepository(..))
+
+import           Domain.Model                       (User (..))
+import           Domain.Repository                  (UserRepository (..))
 
 -- | 내부 전용: DB 행 매핑
 instance FromRow User where

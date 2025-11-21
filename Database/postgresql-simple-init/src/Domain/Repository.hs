@@ -1,8 +1,8 @@
 module Domain.Repository
-  ( UserRepository(..)
-  ) where
+    ( UserRepository (..)
+    ) where
 
-import Domain.Model (User)
+import           Domain.Model (User)
 
 -- | 도메인 레포지토리 인터페이스 (포트)
 class UserRepository m where

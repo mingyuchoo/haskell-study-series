@@ -1,15 +1,15 @@
 module Application.UseCases
-  ( initializeDatabase
-  , seedSampleData
-  , listAllUsers
-  , createUserUC
-  , updateUserUC
-  , deleteUserUC
-  , getUserUC
-  ) where
+    ( createUserUC
+    , deleteUserUC
+    , getUserUC
+    , initializeDatabase
+    , listAllUsers
+    , seedSampleData
+    , updateUserUC
+    ) where
 
-import           Domain.Model (User(..))
-import           Domain.Repository (UserRepository(..))
+import           Domain.Model      (User (..))
+import           Domain.Repository (UserRepository (..))
 
 -- | 스키마 준비: 애플리케이션 계층은 인터페이스에만 의존
 initializeDatabase :: (UserRepository m, Applicative m) => m Bool

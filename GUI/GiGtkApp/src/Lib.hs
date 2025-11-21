@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedLabels #-}
+{-# LANGUAGE OverloadedLabels  #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 
@@ -6,8 +6,9 @@ module Lib
     ( someFunc
     ) where
 
-import qualified GI.Gtk as Gtk
-import Data.GI.Base
+import           Data.GI.Base
+
+import qualified GI.Gtk       as Gtk
 
 someFunc :: IO ()
 someFunc = do

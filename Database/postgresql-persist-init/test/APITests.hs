@@ -24,11 +24,13 @@ import           Infrastructure.Persistence.PostgreSQL.UserRepositoryImpl (PGInf
 import           Servant.Client                                           (ClientEnv,
                                                                            runClientM)
 
+import           System.IO                                                (BufferMode (NoBuffering),
+                                                                           hSetBuffering,
+                                                                           stdout)
+
 import           Test.Hspec
 
 import           TestUtils                                                (setupTests)
-
-import           System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
 
 -- |
 main :: IO ()

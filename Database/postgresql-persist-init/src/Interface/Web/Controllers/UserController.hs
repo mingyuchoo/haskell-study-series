@@ -11,7 +11,6 @@ module Interface.Web.Controllers.UserController
 
 import           Control.Monad.Error.Class  (throwError)
 
-
 import qualified Data.ByteString.Lazy       as LBS
 import           Data.Char                  (ord)
 import           Data.Int                   (Int64)

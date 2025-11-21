@@ -7,7 +7,9 @@ module Domain.UserModel
 
 import           Data.Aeson             (FromJSON, ToJSON)
 import           Data.Time
+
 import           Database.SQLite.Simple
+
 import           GHC.Generics
 
 -- Core domain entity

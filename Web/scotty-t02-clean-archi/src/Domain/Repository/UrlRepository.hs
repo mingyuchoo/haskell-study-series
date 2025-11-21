@@ -4,7 +4,7 @@ module Domain.Repository.UrlRepository
 
 import           Data.Map          (Map)
 
-import           Domain.Entity.Url (Url, TempUrl, UrlId)
+import           Domain.Entity.Url (TempUrl, Url, UrlId)
 
 class Monad m => UrlRepository m where
     storeUrl :: TempUrl -> m UrlId

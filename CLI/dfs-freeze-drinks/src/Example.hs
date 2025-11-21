@@ -2,6 +2,7 @@ module Example
     where
 
 import           Control.Lens (element, (&), (.~))
+
 import           Data.List    ((\\))
 
 -- |

@@ -9,7 +9,7 @@ import           Data.Map                      (Map)
 import qualified Data.Map                      as M
 import qualified Data.Text                     as T
 import qualified Data.Text.Lazy                as LT
-import           Data.Time                     (formatTime, defaultTimeLocale)
+import           Data.Time                     (defaultTimeLocale, formatTime)
 
 import           Domain.Entity.Url             (Url (..))
 
