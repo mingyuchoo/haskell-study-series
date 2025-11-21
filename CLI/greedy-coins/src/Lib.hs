@@ -39,10 +39,10 @@ calc1 x y =
 --
 calc2 :: Change -> Coin -> Int
 calc2 x y
-  | y >= 500 = calc2 (x + 1) (y - 500)
-  | y >= 100 = calc2 (x + 1) (y - 100)
-  | y >=  50 = calc2 (x + 1) (y -  50)
-  | y >=  10 = calc2 (x + 1) (y -  10)
+  | y >= 500  = calc2 (x + 1) (y - 500)
+  | y >= 100  = calc2 (x + 1) (y - 100)
+  | y >=  50  = calc2 (x + 1) (y -  50)
+  | y >=  10  = calc2 (x + 1) (y -  10)
   | otherwise = x
 
 

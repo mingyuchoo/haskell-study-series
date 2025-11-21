@@ -35,7 +35,12 @@ library
   hs-source-dirs:
       src
   default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
       StandaloneKindSignatures
+      TypeApplications
   ghc-options: -Wall -O2 -haddock
   build-depends:
       base
@@ -53,7 +58,12 @@ executable functors-exe
   hs-source-dirs:
       app
   default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
       StandaloneKindSignatures
+      TypeApplications
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base
@@ -73,7 +83,12 @@ test-suite functors-test
   hs-source-dirs:
       test
   default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
       StandaloneKindSignatures
+      TypeApplications
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base

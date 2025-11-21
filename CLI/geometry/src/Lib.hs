@@ -3,12 +3,12 @@ module Lib
     ) where
 
 import           Data.Kind (Type)
-import           Flow ((<|))
+
+import           Flow      ((<|))
 
 someFunc :: IO ()
 someFunc = do
-  let
-    count = 5
+  let count = 5
   putStr <| triangle1 count
   putStr <| triangle2 count
   putStr <| triangle2' count

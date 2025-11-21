@@ -16,9 +16,11 @@ extra-source-files:
 dependencies:
 - base
 - bytestring
+- base16-bytestring
 - cryptonite
 - flow
 - text
+- memory
 
 default-extensions:
   - DataKinds

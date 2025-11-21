@@ -1,10 +1,10 @@
-cabal-version: 3.16
+cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.36.0.
+-- This file has been generated from package.yaml by hpack version 0.38.1.
 --
 -- see: https://github.com/sol/hpack
 
-name:                   geometry
+name:           geometry
 version:        0.1.0.0
 synopsis:       Short description of your package
 description:    Please see the README on GitHub at <https://github.com/mingyuchoo/geometry#readme>
@@ -29,11 +29,18 @@ library
   exposed-modules:
       Lib
   other-modules:
-      Paths_haskell_geometry
+      Paths_geometry
+  autogen-modules:
+      Paths_geometry
   hs-source-dirs:
       src
   default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
       StandaloneKindSignatures
+      TypeApplications
   ghc-options: -Wall -O2 -haddock
   build-depends:
       base
@@ -45,11 +52,18 @@ library
 executable geometry-exe
   main-is: Main.hs
   other-modules:
-      Paths_haskell_geometry
+      Paths_geometry
+  autogen-modules:
+      Paths_geometry
   hs-source-dirs:
       app
   default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
       StandaloneKindSignatures
+      TypeApplications
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base
@@ -63,11 +77,18 @@ test-suite geometry-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Paths_haskell_geometry
+      Paths_geometry
+  autogen-modules:
+      Paths_geometry
   hs-source-dirs:
       test
   default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
       StandaloneKindSignatures
+      TypeApplications
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N4
   build-depends:
       base

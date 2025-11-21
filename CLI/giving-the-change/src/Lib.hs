@@ -1,4 +1,5 @@
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
+
 module Lib
     where
 
@@ -14,12 +15,15 @@ calc x y  z
 -- |
 --
 driver :: (Integral a) => a -> a
-driver x = calc x  [10, 50, 100, 500, 1000, 5000, 10000, 50000] 0
+driver x =
+    calc x  [10, 50, 100, 500, 1000, 5000, 10000, 50000] 0
 
 -- |
 --
 someFunc :: IO ()
 someFunc = do
     putStrLn "Input price to be changed"
+
     input <- readLn
+
     print (driver input::Int)
