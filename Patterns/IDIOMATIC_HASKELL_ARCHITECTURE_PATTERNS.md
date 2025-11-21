@@ -7,16 +7,27 @@
 | 패턴                | 핵심 개념                            | 장점                 | 단점                  | 적합한 경우                          |
 | ----------------- | -------------------------------- | ------------------ | ------------------- | ------------------------------- |
 | **MTL**           | 모나드 스택 + 타입클래스 능력                | 단순, 빠름, 실용적        | 스택 의존성, 타입 오류 복잡    | 중소 규모 프로젝트, 일반적인 Haskell        |
-| **Free Monad**    | 프로그램을 “명령어 트리/DSL”로 만들고 해석기에서 실행 | 완전한 분리, 매우 테스트 친화적 | 성능 느림, 코드 복잡        | DSL, 복잡한 워크플로우, 테스트 중심 개발       |
 | **Tagless Final** | 인터페이스(타입클래스)와 구현을 분리한 고성능 추상화    | 고성능, 유연함, 현대적      | 난해한 타입 에러, 고급 개념 필요 | 대규모 프로젝트, 고성능 요구, 다중 backend 필요 |
+| **Free Monad**    | 프로그램을 “명령어 트리/DSL”로 만들고 해석기에서 실행 | 완전한 분리, 매우 테스트 친화적 | 성능 느림, 코드 복잡        | DSL, 복잡한 워크플로우, 테스트 중심 개발       |
 
 ---
 
 ### 어떤 패턴을 선택해야 할까?
 
-- 작은 프로젝트 / 실용성 중시 → **MTL**
-- 로직을 명령어/DSL로 다뤄야 함 → **Free Monad**
-- 대규모 / 고성능 / 추상화 수준 높게 유지 → **Tagless Final**
+**MTL**
+
+- 일반적인 백엔드 애플리케이션
+- 작은 프로젝트 / 실용성 중시
+
+**Free Monad**
+
+- 도메인 특화 언어(DSL) 제작 / 복잡한 실행 제어
+- 로직을 명령어/DSL로 다뤄야 함
+
+**Tagless Final**
+
+- 라이브러리 설계자/고성능 요구
+- 대규모 / 고성능 / 추상화 수준 높게 유지
 
 ---
 
@@ -61,57 +72,7 @@ foo = do
 
 ---
 
-### **2. Free Monad 패턴**
-
-#### ■ 개념
-
-**프로그램을 “추상 명령어의 리스트”처럼 표현**하고,
-그 명령어를 **나중에 해석기(Interpreter)** 를 통해 실행시키는 구조입니다.
-
-즉,
-
-> “로직의 구조(What)”와 “효과의 실제 실행(How)”을 완전히 분리
-
-#### ■ 핵심 아이디어
-
-- DSL(도메인 명령어)을 Functor로 정의
-- Free Monad로 lift
-- Interpreter로 IO 등 실제 부수효과 구현
-
-#### ■ 예시 (단순화)
-
-```haskell
-data ConsoleF x
-  = PrintLn String x
-  | ReadLn (String -> x)
-
-type Console = Free ConsoleF
-
-printLn :: String -> Console ()
-printLn s = liftF (PrintLn s ())
-
-interpret :: Console a -> IO a
-interpret (Free (PrintLn s next)) = putStrLn s >> interpret next
-interpret (Free (ReadLn f)) = getLine >>= interpret . f
-interpret (Pure x) = return x
-```
-
-#### ■ 장점
-
-- **로직을 완전히 순수하게 유지 가능**
-- 여러 개의 해석기(테스트용, 실제 IO용 등)를 쉽게 교체 가능
-- 프로그램을 “데이터”처럼 다룰 수 있어 분석·리팩터링이 용이
-- 복잡한 트랜잭션, 순서 제어, mock 테스트에 매우 강력
-
-#### ■ 단점
-
-- **성능이 느릴 수 있음** (특히 깊은 Free 체인)
-- 코드가 장황해지고 Functor/MFunctor/MonadFree 등 구조가 복잡해짐
-- 초보자에게 난해한 추상화
-
----
-
-### **3. Tagless Final**
+### **2. Tagless Final**
 
 #### ■ 개념
 
@@ -161,6 +122,56 @@ instance Console IO where
 - 타입 추론이 어렵거나 오류 메시지가 난해할 수 있음
 - Free Monad처럼 "프로그램을 데이터로 다루는 방식"은 어려움
 - 고급 타입기술(XML-like 타입클래스 구조 등)이 필요한 경우가 많음
+
+---
+
+### **3. Free Monad 패턴**
+
+#### ■ 개념
+
+**프로그램을 “추상 명령어의 리스트”처럼 표현**하고,
+그 명령어를 **나중에 해석기(Interpreter)** 를 통해 실행시키는 구조입니다.
+
+즉,
+
+> “로직의 구조(What)”와 “효과의 실제 실행(How)”을 완전히 분리
+
+#### ■ 핵심 아이디어
+
+- DSL(도메인 명령어)을 Functor로 정의
+- Free Monad로 lift
+- Interpreter로 IO 등 실제 부수효과 구현
+
+#### ■ 예시 (단순화)
+
+```haskell
+data ConsoleF x
+  = PrintLn String x
+  | ReadLn (String -> x)
+
+type Console = Free ConsoleF
+
+printLn :: String -> Console ()
+printLn s = liftF (PrintLn s ())
+
+interpret :: Console a -> IO a
+interpret (Free (PrintLn s next)) = putStrLn s >> interpret next
+interpret (Free (ReadLn f)) = getLine >>= interpret . f
+interpret (Pure x) = return x
+```
+
+#### ■ 장점
+
+- **로직을 완전히 순수하게 유지 가능**
+- 여러 개의 해석기(테스트용, 실제 IO용 등)를 쉽게 교체 가능
+- 프로그램을 “데이터”처럼 다룰 수 있어 분석·리팩터링이 용이
+- 복잡한 트랜잭션, 순서 제어, mock 테스트에 매우 강력
+
+#### ■ 단점
+
+- **성능이 느릴 수 있음** (특히 깊은 Free 체인)
+- 코드가 장황해지고 Functor/MFunctor/MonadFree 등 구조가 복잡해짐
+- 초보자에게 난해한 추상화
 
 ---
 
@@ -247,7 +258,38 @@ listTodoMTL :: MonadTodoMTL m => m TodoList
 listTodoMTL = loadTodos
 
 ------------------------------------------------------------
--- 2) Free Monad 기반 구현
+-- 2) Tagless Final 기반 구현
+------------------------------------------------------------
+
+class Monad m => TodoTagless m where
+  loadT :: m TodoList
+  saveT :: TodoList -> m ()
+
+addTodoTF :: TodoTagless m => String -> m ()
+addTodoTF title = do
+  ts <- loadT
+  let newId = TodoId (length ts + 1)
+  saveT (ts ++ [Todo newId title False])
+
+completeTodoTF :: TodoTagless m => TodoId -> m ()
+completeTodoTF tid = do
+  ts <- loadT
+  let ts' = map (\t -> if todoId t == tid then t { todoDone = True } else t) ts
+  saveT ts'
+
+listTodoTF :: TodoTagless m => m TodoList
+listTodoTF = loadT
+
+-- Tagless Final 인터프리터: IORef 사용
+newtype AppTF a = AppTF { runAppTF :: ReaderT (IORef TodoList) IO a }
+  deriving (Functor, Applicative, Monad, MonadIO, MonadReader (IORef TodoList))
+
+instance TodoTagless AppTF where
+  loadT = do ref <- ask; liftIO (readIORef ref)
+  saveT ts = do ref <- ask; liftIO (writeIORef ref ts)
+
+------------------------------------------------------------
+-- 3) Free Monad 기반 구현
 ------------------------------------------------------------
 
 import Control.Monad.Free
@@ -284,37 +326,6 @@ runFreeIO :: IORef TodoList -> TodoFree a -> IO a
 runFreeIO ref (Free (LoadF next)) = readIORef ref >>= runFreeIO ref . next
 runFreeIO ref (Free (SaveF ts next)) = writeIORef ref ts >> runFreeIO ref next
 runFreeIO _   (Pure x) = pure x
-
-------------------------------------------------------------
--- 3) Tagless Final 기반 구현
-------------------------------------------------------------
-
-class Monad m => TodoTagless m where
-  loadT :: m TodoList
-  saveT :: TodoList -> m ()
-
-addTodoTF :: TodoTagless m => String -> m ()
-addTodoTF title = do
-  ts <- loadT
-  let newId = TodoId (length ts + 1)
-  saveT (ts ++ [Todo newId title False])
-
-completeTodoTF :: TodoTagless m => TodoId -> m ()
-completeTodoTF tid = do
-  ts <- loadT
-  let ts' = map (\t -> if todoId t == tid then t { todoDone = True } else t) ts
-  saveT ts'
-
-listTodoTF :: TodoTagless m => m TodoList
-listTodoTF = loadT
-
--- Tagless Final 인터프리터: IORef 사용
-newtype AppTF a = AppTF { runAppTF :: ReaderT (IORef TodoList) IO a }
-  deriving (Functor, Applicative, Monad, MonadIO, MonadReader (IORef TodoList))
-
-instance TodoTagless AppTF where
-  loadT = do ref <- ask; liftIO (readIORef ref)
-  saveT ts = do ref <- ask; liftIO (writeIORef ref ts)
 
 ------------------------------------------------------------
 -- END: 세 패턴 비교 코드
