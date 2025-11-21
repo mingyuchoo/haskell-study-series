@@ -58,7 +58,7 @@ library
     , uuid
     , wai
     , warp
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable warp-t03-clean-archi-exe
   main-is: Main.hs
@@ -86,7 +86,7 @@ executable warp-t03-clean-archi-exe
     , wai
     , warp
     , warp-t03-clean-archi
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite warp-t03-clean-archi-test
   type: exitcode-stdio-1.0
@@ -118,4 +118,4 @@ test-suite warp-t03-clean-archi-test
     , wai
     , warp
     , warp-t03-clean-archi
-  default-language: Haskell2010
+  default-language: GHC2024

@@ -45,7 +45,7 @@ library
     , containers
     , flow
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable biggest-sum-exe
   main-is: Main.hs
@@ -69,7 +69,7 @@ executable biggest-sum-exe
     , containers
     , flow
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite biggest-sum-test
   type: exitcode-stdio-1.0
@@ -96,4 +96,4 @@ test-suite biggest-sum-test
     , hspec
     , hspec-discover
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024

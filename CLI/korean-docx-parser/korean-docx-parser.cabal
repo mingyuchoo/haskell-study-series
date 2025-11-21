@@ -43,7 +43,7 @@ library
     , text
     , xml-conduit
     , zip-archive
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable korean-docx-parser-exe
   main-is: Main.hs
@@ -65,7 +65,7 @@ executable korean-docx-parser-exe
     , text
     , xml-conduit
     , zip-archive
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite korean-docx-parser-test
   type: exitcode-stdio-1.0
@@ -89,4 +89,4 @@ test-suite korean-docx-parser-test
     , text
     , xml-conduit
     , zip-archive
-  default-language: Haskell2010
+  default-language: GHC2024

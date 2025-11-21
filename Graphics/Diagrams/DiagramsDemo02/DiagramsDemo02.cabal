@@ -38,7 +38,7 @@ library
     , diagrams
     , diagrams-lib
     , diagrams-svg
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable DiagramsDemo02-exe
   main-is: Main.hs
@@ -55,7 +55,7 @@ executable DiagramsDemo02-exe
     , diagrams
     , diagrams-lib
     , diagrams-svg
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite DiagramsDemo02-test
   type: exitcode-stdio-1.0
@@ -73,4 +73,4 @@ test-suite DiagramsDemo02-test
     , diagrams
     , diagrams-lib
     , diagrams-svg
-  default-language: Haskell2010
+  default-language: GHC2024

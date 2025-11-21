@@ -36,7 +36,7 @@ library
     , containers
     , flow
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable ioref-counter-exe
   main-is: Main.hs
@@ -51,7 +51,7 @@ executable ioref-counter-exe
     , flow
     , ioref-counter
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite ioref-counter-test
   type: exitcode-stdio-1.0
@@ -69,4 +69,4 @@ test-suite ioref-counter-test
     , hspec-discover
     , ioref-counter
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024

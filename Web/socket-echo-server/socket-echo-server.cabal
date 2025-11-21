@@ -41,7 +41,7 @@ library
   build-depends:
       base
     , network
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable socket-echo-server-exe
   main-is: Main.hs
@@ -59,7 +59,7 @@ executable socket-echo-server-exe
       base
     , network
     , socket-echo-server
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite socket-echo-server-test
   type: exitcode-stdio-1.0
@@ -81,4 +81,4 @@ test-suite socket-echo-server-test
     , hspec
     , network
     , socket-echo-server
-  default-language: Haskell2010
+  default-language: GHC2024

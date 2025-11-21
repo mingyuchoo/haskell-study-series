@@ -36,7 +36,7 @@ library
   build-depends:
       base >=4.7 && <5
     , gloss
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable GlossDemo03-exe
   main-is: Main.hs
@@ -51,7 +51,7 @@ executable GlossDemo03-exe
       GlossDemo03
     , base >=4.7 && <5
     , gloss
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite GlossDemo03-test
   type: exitcode-stdio-1.0
@@ -67,4 +67,4 @@ test-suite GlossDemo03-test
       GlossDemo03
     , base >=4.7 && <5
     , gloss
-  default-language: Haskell2010
+  default-language: GHC2024

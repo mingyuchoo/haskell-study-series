@@ -42,7 +42,7 @@ library
     , flow
     , generic-deriving
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable inverting-functions-exe
   main-is: Main.hs
@@ -61,7 +61,7 @@ executable inverting-functions-exe
     , generic-deriving
     , inverting-functions
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite inverting-functions-test
   type: exitcode-stdio-1.0
@@ -84,4 +84,4 @@ test-suite inverting-functions-test
     , inverting-functions
     , hspec
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024

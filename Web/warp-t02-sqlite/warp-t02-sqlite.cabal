@@ -51,7 +51,7 @@ library
     , uuid
     , wai
     , warp
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable warp-t02-sqlite-exe
   main-is: Main.hs
@@ -78,7 +78,7 @@ executable warp-t02-sqlite-exe
     , wai
     , warp
     , warp-t02-sqlite
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite warp-t02-sqlite-test
   type: exitcode-stdio-1.0
@@ -109,4 +109,4 @@ test-suite warp-t02-sqlite-test
     , wai
     , warp
     , warp-t02-sqlite
-  default-language: Haskell2010
+  default-language: GHC2024

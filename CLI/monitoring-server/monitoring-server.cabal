@@ -47,7 +47,7 @@ library
     , safe-exceptions
     , signal
     , stm
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable monitoring-server-exe
   main-is: Main.hs
@@ -71,7 +71,7 @@ executable monitoring-server-exe
     , safe-exceptions
     , signal
     , stm
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite monitoring-server-test
   type: exitcode-stdio-1.0
@@ -99,4 +99,4 @@ test-suite monitoring-server-test
     , safe-exceptions
     , signal
     , stm
-  default-language: Haskell2010
+  default-language: GHC2024

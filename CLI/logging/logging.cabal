@@ -46,7 +46,7 @@ library
       base
     , directory
     , safe-exceptions
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable logging-exe
   main-is: Main.hs
@@ -69,7 +69,7 @@ executable logging-exe
     , directory
     , logging
     , safe-exceptions
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite logging-test
   type: exitcode-stdio-1.0
@@ -96,4 +96,4 @@ test-suite logging-test
     , hspec
     , logging
     , safe-exceptions
-  default-language: Haskell2010
+  default-language: GHC2024

@@ -40,7 +40,7 @@ library
     , containers
     , flow
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable no-zero-world-exe
   main-is: Main.hs
@@ -57,7 +57,7 @@ executable no-zero-world-exe
     , flow
     , no-zero-world
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite no-zero-world-test
   type: exitcode-stdio-1.0
@@ -78,4 +78,4 @@ test-suite no-zero-world-test
     , hspec
     , no-zero-world
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024

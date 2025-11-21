@@ -36,7 +36,7 @@ library
   build-depends:
       GLUT
     , base >=4.7 && <5
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable OpenGLDemo01-exe
   main-is: Main.hs
@@ -51,7 +51,7 @@ executable OpenGLDemo01-exe
       GLUT
     , OpenGLDemo01
     , base >=4.7 && <5
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite OpenGLDemo01-test
   type: exitcode-stdio-1.0
@@ -67,4 +67,4 @@ test-suite OpenGLDemo01-test
       GLUT
     , OpenGLDemo01
     , base >=4.7 && <5
-  default-language: Haskell2010
+  default-language: GHC2024

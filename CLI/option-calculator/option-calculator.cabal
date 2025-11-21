@@ -39,7 +39,7 @@ library
   build-depends:
       base
     , statistics
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable option-calculator-exe
   main-is: Main.hs
@@ -55,7 +55,7 @@ executable option-calculator-exe
       base
     , option-calculator
     , statistics
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite option-calculator-test
   type: exitcode-stdio-1.0
@@ -75,4 +75,4 @@ test-suite option-calculator-test
     , hspec
     , option-calculator
     , statistics
-  default-language: Haskell2010
+  default-language: GHC2024

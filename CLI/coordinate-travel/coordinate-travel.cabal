@@ -45,7 +45,7 @@ library
     , containers
     , flow
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable coordinate-travel-exe
   main-is: Main.hs
@@ -69,7 +69,7 @@ executable coordinate-travel-exe
     , coordinate-travel
     , flow
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite coordinate-travel-test
   type: exitcode-stdio-1.0
@@ -96,4 +96,4 @@ test-suite coordinate-travel-test
     , hspec
     , hspec-discover
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024

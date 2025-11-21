@@ -36,7 +36,7 @@ ghc-options:
   - -O2
   - -haddock
 
-language: Haskell2010
+language: GHC2024
 
 library:
   source-dirs: src

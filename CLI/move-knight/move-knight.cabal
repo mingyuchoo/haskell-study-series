@@ -36,7 +36,7 @@ library
     , containers
     , flow
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable move-knight-exe
   main-is: Main.hs
@@ -51,7 +51,7 @@ executable move-knight-exe
     , flow
     , move-knight
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite move-knight-test
   type: exitcode-stdio-1.0
@@ -69,4 +69,4 @@ test-suite move-knight-test
     , hspec-discover
     , move-knight
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024

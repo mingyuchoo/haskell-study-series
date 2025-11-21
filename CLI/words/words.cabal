@@ -43,7 +43,7 @@ library
     , flow
     , parallel
     , random
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable words-exe
   main-is: Main.hs
@@ -61,7 +61,7 @@ executable words-exe
     , parallel
     , random
     , words
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite words-test
   type: exitcode-stdio-1.0
@@ -83,4 +83,4 @@ test-suite words-test
     , parallel
     , random
     , words
-  default-language: Haskell2010
+  default-language: GHC2024

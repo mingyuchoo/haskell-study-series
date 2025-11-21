@@ -48,7 +48,7 @@ library
     , flow
     , hashable
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable hashing-exe
   main-is: Main.hs
@@ -73,7 +73,7 @@ executable hashing-exe
     , hashable
     , hashing
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite hashing-test
   type: exitcode-stdio-1.0
@@ -102,4 +102,4 @@ test-suite hashing-test
     , hashing
     , hspec
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024

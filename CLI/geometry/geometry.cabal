@@ -47,7 +47,7 @@ library
     , containers
     , flow
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable geometry-exe
   main-is: Main.hs
@@ -71,7 +71,7 @@ executable geometry-exe
     , flow
     , geometry
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite geometry-test
   type: exitcode-stdio-1.0
@@ -99,4 +99,4 @@ test-suite geometry-test
     , geometry
     , hspec
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024

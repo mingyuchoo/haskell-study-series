@@ -49,7 +49,7 @@ library
     , time
     , wai
     , warp
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable servant-t00-init-exe
   main-is: Main.hs
@@ -75,7 +75,7 @@ executable servant-t00-init-exe
     , time
     , wai
     , warp
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite servant-t00-init-test
   type: exitcode-stdio-1.0
@@ -105,4 +105,4 @@ test-suite servant-t00-init-test
     , time
     , wai
     , warp
-  default-language: Haskell2010
+  default-language: GHC2024

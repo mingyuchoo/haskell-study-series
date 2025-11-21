@@ -47,7 +47,7 @@ library
     , containers
     , flow
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable dynamic-typing-exe
   main-is: Main.hs
@@ -71,7 +71,7 @@ executable dynamic-typing-exe
     , dynamic-typing
     , flow
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite dynamic-typing-test
   type: exitcode-stdio-1.0
@@ -99,4 +99,4 @@ test-suite dynamic-typing-test
     , flow
     , hspec
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024

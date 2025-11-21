@@ -58,7 +58,7 @@ library
     , mtl
     , parallel
     , random
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable learnyouahaskell-exe
   main-is: Main.hs
@@ -81,7 +81,7 @@ executable learnyouahaskell-exe
     , mtl
     , parallel
     , random
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite learnyouahaskell-test
   type: exitcode-stdio-1.0
@@ -111,4 +111,4 @@ test-suite learnyouahaskell-test
     , mtl
     , parallel
     , random
-  default-language: Haskell2010
+  default-language: GHC2024

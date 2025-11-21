@@ -41,7 +41,7 @@ library
     , containers
     , flow
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable palindromes-exe
   main-is: Main.hs
@@ -59,7 +59,7 @@ executable palindromes-exe
     , flow
     , palindromes
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite palindromes-test
   type: exitcode-stdio-1.0
@@ -81,4 +81,4 @@ test-suite palindromes-test
     , hspec
     , palindromes
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024

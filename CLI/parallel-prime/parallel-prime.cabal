@@ -36,7 +36,7 @@ library
     , containers
     , flow
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable parallel-prime-exe
   main-is: Main.hs
@@ -51,7 +51,7 @@ executable parallel-prime-exe
     , flow
     , parallel
     , parallel-prime
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite parallel-prime-test
   type: exitcode-stdio-1.0
@@ -70,4 +70,4 @@ test-suite parallel-prime-test
     , hspec
     , parallel
     , parallel-prime
-  default-language: Haskell2010
+  default-language: GHC2024

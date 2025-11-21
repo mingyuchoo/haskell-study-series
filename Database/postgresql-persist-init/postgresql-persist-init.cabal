@@ -84,7 +84,7 @@ library
     , time
     , transformers
     , warp
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable migrate-db
   main-is: MigrateDB.hs
@@ -126,7 +126,7 @@ executable migrate-db
     , time
     , transformers
     , warp
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable migrate-db-esq
   main-is: MigrateDBEsq.hs
@@ -168,7 +168,7 @@ executable migrate-db-esq
     , time
     , transformers
     , warp
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable run-server
   main-is: RunServer.hs
@@ -210,7 +210,7 @@ executable run-server
     , time
     , transformers
     , warp
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite api-tests
   type: exitcode-stdio-1.0
@@ -261,4 +261,4 @@ test-suite api-tests
     , time
     , transformers
     , warp
-  default-language: Haskell2010
+  default-language: GHC2024

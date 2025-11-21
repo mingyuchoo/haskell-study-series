@@ -40,7 +40,7 @@ library
     , containers
     , flow
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable stdin-exe
   main-is: Main.hs
@@ -57,7 +57,7 @@ executable stdin-exe
     , flow
     , stdin
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite stdin-test
   type: exitcode-stdio-1.0
@@ -78,4 +78,4 @@ test-suite stdin-test
     , stdin
     , hspec
     , parallel
-  default-language: Haskell2010
+  default-language: GHC2024
