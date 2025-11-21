@@ -6,8 +6,12 @@ import qualified Infrastructure.Web.Server as Server
 
 import           System.Environment        (getArgs)
 
+import           System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
+
+-- |
 main :: IO ()
 main = do
+  hSetBuffering stdout NoBuffering
   args <- getArgs
   choose args
   where

@@ -28,8 +28,12 @@ import           Test.Hspec
 
 import           TestUtils                                                (setupTests)
 
+import           System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
+
+-- |
 main :: IO ()
 main = do
+  hSetBuffering stdout NoBuffering
   (pgInfo, redisInfo, clientEnv, tid) <- setupTests
   hspec $ do
     describe "Basic server functionality" $ do

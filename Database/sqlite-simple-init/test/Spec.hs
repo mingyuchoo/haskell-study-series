@@ -13,8 +13,12 @@ import           Domain.UserModel                        (User (..))
 import           Infrastructure.Repository.UserRepository (UserRepository (..), initDB)
 
 -- | Clean up the database before running tests
+import           System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
+
+-- |
 main :: IO ()
 main = do
+  hSetBuffering stdout NoBuffering
     cleanupDB
 
     conn <- initDB

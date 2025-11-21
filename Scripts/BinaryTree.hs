@@ -2,11 +2,13 @@
 -- stack --resolver lts-24.11 script --package flow
 
 import Flow
+import System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
 
 -- Binary Tree Data Structure
-data BinaryTree a = Empty
-                  | Node a (BinaryTree a) (BinaryTree a)
-                  deriving (Show, Eq)
+data BinaryTree a
+  = Empty
+  | Node a (BinaryTree a) (BinaryTree a)
+  deriving (Show, Eq)
 
 -- Pre-order traversal
 preOrder :: BinaryTree a -> [a]
@@ -25,29 +27,35 @@ postOrder (Node value left right) = postOrder left <> postOrder right <> [value]
 
 -- Level-order traversal
 levelOrder :: BinaryTree a -> [a]
-levelOrder tree = concatMap level [0..height tree]
+levelOrder tree = concatMap level [0 .. height tree]
   where
     level n = levelN n tree
     levelN _ Empty = []
     levelN 0 (Node value _ _) = [value]
-    levelN n (Node _ left right) = levelN (n-1) left <> levelN (n-1) right
-
+    levelN n (Node _ left right) = levelN (n - 1) left <> levelN (n - 1) right
 
 height :: BinaryTree a -> Int
 height Empty = -1
 height (Node _ left right) = 1 + max (height left) (height right)
 
-
 -- Main
+
 main :: IO ()
 main = do
-  let tree = Node 1
-        (Node 2
-          (Node 4 Empty Empty)
-          (Node 5 Empty Empty))
-        (Node 3
-          (Node 6 Empty Empty)
-          Empty)
+  hSetBuffering stdout NoBuffering
+  let tree =
+        Node
+          1
+          ( Node
+              2
+              (Node 4 Empty Empty)
+              (Node 5 Empty Empty)
+          )
+          ( Node
+              3
+              (Node 6 Empty Empty)
+              Empty
+          )
 
   print <| preOrder tree
   print <| inOrder tree

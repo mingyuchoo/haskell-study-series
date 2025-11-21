@@ -1,17 +1,16 @@
 module Main
-    ( main
-    ) where
+  ( main,
+  )
+where
 
-import           Control.Monad (when)
-
-import qualified Data.Set      as Set
-
-import           HaskellGPT
-
-import           System.IO     (hFlush, stdout)
+import Control.Monad (when)
+import Data.Set qualified as Set
+import HaskellGPT
+import System.IO (BufferMode (NoBuffering), hFlush, hSetBuffering, stdout)
 
 main :: IO ()
 main = do
+  hSetBuffering stdout NoBuffering
   putStrLn "HaskellGPT - Transformer-based Language Model"
   putStrLn "=============================================="
   putStrLn ""
@@ -25,7 +24,6 @@ main = do
       putStrLn $ "Error loading dataset: " ++ err
       putStrLn "Please ensure data files exist in the data/ directory"
       return ()
-
     Right dataset -> do
       let pretrainData = datasetPretraining dataset
       let chatData = datasetChatTraining dataset
@@ -116,11 +114,11 @@ createLLM vocab = do
 
   -- Wrap layers in SomeLayer existential type
   let network =
-        [ SomeLayer embeddings
-        , SomeLayer transformer1
-        , SomeLayer transformer2
-        , SomeLayer transformer3
-        , SomeLayer outputProj
+        [ SomeLayer embeddings,
+          SomeLayer transformer1,
+          SomeLayer transformer2,
+          SomeLayer transformer3,
+          SomeLayer outputProj
         ]
 
   return $ newLLM vocab network

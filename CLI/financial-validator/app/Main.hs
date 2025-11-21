@@ -1,18 +1,18 @@
 module Main
-    ( main
-    ) where
+  ( main,
+  )
+where
 
-import qualified Data.Text  as T
-import           Data.Time  (UTCTime, getCurrentTime)
-
-import           Settlement
-
-import           Types
-
-import           Validation
+import Data.Text qualified as T
+import Data.Time (UTCTime, getCurrentTime)
+import Settlement
+import System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
+import Types
+import Validation
 
 main :: IO ()
 main = do
+  hSetBuffering stdout NoBuffering
   putStrLn "=== 금융 거래 검증 시스템 ==="
   putStrLn ""
 
@@ -20,11 +20,13 @@ main = do
   currentTime <- getCurrentTime
 
   -- 테스트 계좌 생성
-  let testAccount = Account { accId         = AccountId "ACC001"
-                            , accBalance    = USD 10000
-                            , accDailyLimit = USD 5000
-                            , accDailySpent = USD 1000
-                            }
+  let testAccount =
+        Account
+          { accId = AccountId "ACC001",
+            accBalance = USD 10000,
+            accDailyLimit = USD 5000,
+            accDailySpent = USD 1000
+          }
 
   -- 테스트 거래들 생성
   let transactions = createTestTransactions currentTime
@@ -58,28 +60,28 @@ main = do
 -- | 테스트 거래 생성
 createTestTransactions :: UTCTime -> [Transaction]
 createTestTransactions time =
-  [ Transaction (TransactionId "TX001") (AccountId "ACC001") Withdrawal                      (USD 500) time Pending
-  , Transaction (TransactionId "TX002") (AccountId "ACC001") (Payment "Amazon")              (USD 150) time Pending
-  , Transaction (TransactionId "TX003") (AccountId "ACC001") Withdrawal                      (USD 5000) time Pending  -- 일일 한도 초과
-  , Transaction (TransactionId "TX004") (AccountId "ACC001") Deposit                         (USD 2000) time Pending
-  , Transaction (TransactionId "TX005") (AccountId "ACC001") (Transfer (AccountId "ACC002")) (USD 300) time Pending
-  , Transaction (TransactionId "TX006") (AccountId "ACC001") Withdrawal                      (USD (-100)) time Pending  -- 잘못된 금액
+  [ Transaction (TransactionId "TX001") (AccountId "ACC001") Withdrawal (USD 500) time Pending,
+    Transaction (TransactionId "TX002") (AccountId "ACC001") (Payment "Amazon") (USD 150) time Pending,
+    Transaction (TransactionId "TX003") (AccountId "ACC001") Withdrawal (USD 5000) time Pending, -- 일일 한도 초과
+    Transaction (TransactionId "TX004") (AccountId "ACC001") Deposit (USD 2000) time Pending,
+    Transaction (TransactionId "TX005") (AccountId "ACC001") (Transfer (AccountId "ACC002")) (USD 300) time Pending,
+    Transaction (TransactionId "TX006") (AccountId "ACC001") Withdrawal (USD (-100)) time Pending -- 잘못된 금액
   ]
 
 -- | 거래 출력
 printTransaction :: Transaction -> IO ()
 printTransaction tx =
   let (TransactionId tid) = txId tx
-      (USD amt)           = txAmount tx
+      (USD amt) = txAmount tx
    in putStrLn $ T.unpack tid ++ ": " ++ show (txType tx) ++ " $" ++ show amt ++ " - " ++ statusToString (txStatus tx)
 
 -- | 상태를 문자열로 변환
 statusToString :: TransactionStatus -> String
 statusToString status = case status of
-  Pending         -> "대기 중"
-  Approved        -> "✅ 승인됨"
+  Pending -> "대기 중"
+  Approved -> "✅ 승인됨"
   Rejected reason -> "❌ 거부됨: " ++ show reason
-  Settled         -> "💎 정산 완료"
+  Settled -> "💎 정산 완료""
 
 -- | 정산 보고서 출력
 printSettlementReport :: SettlementReport -> IO ()
@@ -101,9 +103,9 @@ printSettlementReport report =
 printAccount :: Account -> IO ()
 printAccount account =
   let (AccountId aid) = accId account
-      (USD balance)   = accBalance account
-      (USD spent)     = accDailySpent account
-      (USD limit)     = accDailyLimit account
+      (USD balance) = accBalance account
+      (USD spent) = accDailySpent account
+      (USD limit) = accDailyLimit account
    in do
         putStrLn $ "계좌번호: " ++ T.unpack aid
         putStrLn $ "잔액: $" ++ show balance

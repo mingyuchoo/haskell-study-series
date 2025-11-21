@@ -20,7 +20,7 @@
 
 ---
 
-###  **1. MTL (Monad Transformer Library)**
+### **1. MTL (Monad Transformer Library)**
 
 #### ■ 개념
 
@@ -29,10 +29,10 @@
 
 #### ■ 핵심 아이디어
 
-* `MonadReader env m`
-* `MonadState s m`
-* `MonadError e m`
-* `MonadIO m`
+- `MonadReader env m`
+- `MonadState s m`
+- `MonadError e m`
+- `MonadIO m`
 
 이런 **MTL 타입클래스 제약을 함수 서명에 넣어 효과(Effect)를 추상화**합니다.
 
@@ -47,21 +47,21 @@ foo = do
 
 #### ■ 장점
 
-* 사용이 간단하고 학습 비용이 낮습니다.
-* 기존 Haskell 생태계와 자연스럽게 맞습니다.
-* 런타임 비용이 거의 없습니다.
-* 테스트 시 ReaderT/StateT 같은 모나드를 갈아끼우기 쉬움.
+- 사용이 간단하고 학습 비용이 낮습니다.
+- 기존 Haskell 생태계와 자연스럽게 맞습니다.
+- 런타임 비용이 거의 없습니다.
+- 테스트 시 ReaderT/StateT 같은 모나드를 갈아끼우기 쉬움.
 
 #### ■ 단점
 
-* 깊게 중첩된 모나드 스택은 디버깅이 어렵습니다.
-* 스택의 구성이 바뀌면 코드가 깨질 위험이 있습니다.
-* Type error 메시지가 길어질 수 있음.
-* 모나드 스택에 종속되어 있고, 재사용성이 한정됩니다.
+- 깊게 중첩된 모나드 스택은 디버깅이 어렵습니다.
+- 스택의 구성이 바뀌면 코드가 깨질 위험이 있습니다.
+- Type error 메시지가 길어질 수 있음.
+- 모나드 스택에 종속되어 있고, 재사용성이 한정됩니다.
 
 ---
 
-###  **2. Free Monad 패턴**
+### **2. Free Monad 패턴**
 
 #### ■ 개념
 
@@ -74,9 +74,9 @@ foo = do
 
 #### ■ 핵심 아이디어
 
-* DSL(도메인 명령어)을 Functor로 정의
-* Free Monad로 lift
-* Interpreter로 IO 등 실제 부수효과 구현
+- DSL(도메인 명령어)을 Functor로 정의
+- Free Monad로 lift
+- Interpreter로 IO 등 실제 부수효과 구현
 
 #### ■ 예시 (단순화)
 
@@ -98,16 +98,16 @@ interpret (Pure x) = return x
 
 #### ■ 장점
 
-* **로직을 완전히 순수하게 유지 가능**
-* 여러 개의 해석기(테스트용, 실제 IO용 등)를 쉽게 교체 가능
-* 프로그램을 “데이터”처럼 다룰 수 있어 분석·리팩터링이 용이
-* 복잡한 트랜잭션, 순서 제어, mock 테스트에 매우 강력
+- **로직을 완전히 순수하게 유지 가능**
+- 여러 개의 해석기(테스트용, 실제 IO용 등)를 쉽게 교체 가능
+- 프로그램을 “데이터”처럼 다룰 수 있어 분석·리팩터링이 용이
+- 복잡한 트랜잭션, 순서 제어, mock 테스트에 매우 강력
 
 #### ■ 단점
 
-* **성능이 느릴 수 있음** (특히 깊은 Free 체인)
-* 코드가 장황해지고 Functor/MFunctor/MonadFree 등 구조가 복잡해짐
-* 초보자에게 난해한 추상화
+- **성능이 느릴 수 있음** (특히 깊은 Free 체인)
+- 코드가 장황해지고 Functor/MFunctor/MonadFree 등 구조가 복잡해짐
+- 초보자에게 난해한 추상화
 
 ---
 
@@ -150,17 +150,17 @@ instance Console IO where
 
 #### ■ 장점
 
-* Free Monad보다 **성능이 매우 좋음** (zero cost abstraction에 가까움)
-* 로직을 완전히 인터페이스로 분리
-* 여러 인터프리터를 쉽게 사용 가능
-* 타입 안전성이 매우 높고, 복잡한 도메인 모델에 적합
-* 대규모 프로젝트에서 가장 현대적인 방식
+- Free Monad보다 **성능이 매우 좋음** (zero cost abstraction에 가까움)
+- 로직을 완전히 인터페이스로 분리
+- 여러 인터프리터를 쉽게 사용 가능
+- 타입 안전성이 매우 높고, 복잡한 도메인 모델에 적합
+- 대규모 프로젝트에서 가장 현대적인 방식
 
 #### ■ 단점
 
-* 타입 추론이 어렵거나 오류 메시지가 난해할 수 있음
-* Free Monad처럼 "프로그램을 데이터로 다루는 방식"은 어려움
-* 고급 타입기술(XML-like 타입클래스 구조 등)이 필요한 경우가 많음
+- 타입 추론이 어렵거나 오류 메시지가 난해할 수 있음
+- Free Monad처럼 "프로그램을 데이터로 다루는 방식"은 어려움
+- 고급 타입기술(XML-like 타입클래스 구조 등)이 필요한 경우가 많음
 
 ---
 
@@ -172,21 +172,21 @@ instance Console IO where
 
 ### 포함된 내용
 
-* 공통 도메인 타입 (`Todo`, `TodoId`, `TodoList`)
-* **MTL 버전**
+- 공통 도메인 타입 (`Todo`, `TodoId`, `TodoList`)
+- **MTL 버전**
 
-  * `MonadTodoMTL` 타입클래스
-  * `AppMTL` 모나드
-  * `addTodoMTL`, `completeTodoMTL`, `listTodoMTL`
-* **Free Monad 버전**
+  - `MonadTodoMTL` 타입클래스
+  - `AppMTL` 모나드
+  - `addTodoMTL`, `completeTodoMTL`, `listTodoMTL`
+- **Free Monad 버전**
 
-  * `TodoF` Functor
-  * `TodoFree` DSL
-  * `runFreeIO` 인터프리터
-* **Tagless Final 버전**
+  - `TodoF` Functor
+  - `TodoFree` DSL
+  - `runFreeIO` 인터프리터
+- **Tagless Final 버전**
 
-  * `TodoTagless` 인터페이스
-  * `AppTF` 인터프리터
+  - `TodoTagless` 인터페이스
+  - `AppTF` 인터프리터
 
 ### 예시 코드
 
@@ -334,22 +334,22 @@ instance TodoTagless AppTF where
 
 → **도메인 로직(TodoStore)의 추상화 계층**
 
-* IO, DB, 테스트 백엔드를 자유롭게 교체 가능
-* 가장 타입 안전하고 고성능
+- IO, DB, 테스트 백엔드를 자유롭게 교체 가능
+- 가장 타입 안전하고 고성능
 
 #### ✔ Free Monad
 
 → **고수준 워크플로우 / 시나리오 / DSL 표현**
 
-* 비즈니스 로직을 “스크립트처럼” 정의할 수 있음
-* 여러 인터프리터 가능 (log-only, dry-run 등)
+- 비즈니스 로직을 “스크립트처럼” 정의할 수 있음
+- 여러 인터프리터 가능 (log-only, dry-run 등)
 
 #### ✔ MTL (ReaderT AppEnv IO)
 
 → **애플리케이션 환경/리소스 관리**
 
-* IORef / DB Pool / 설정 / 캐시 주입
-* 부수효과를 안전하게 캡슐화
+- IORef / DB Pool / 설정 / 캐시 주입
+- 부수효과를 안전하게 캡슐화
 
 #### 전체 구조 요약
 
@@ -471,8 +471,12 @@ runWorkflow (Free (ShowAll f)) = f <$> loadTodos >>= runWorkflow
 -- 4) 실제 실행 예시
 ------------------------------------------------------------
 
+import           System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
+
+-- |
 main :: IO ()
 main = do
+  hSetBuffering stdout NoBuffering
   ref <- newIORef []
   let app = do
         runWorkflow $ do

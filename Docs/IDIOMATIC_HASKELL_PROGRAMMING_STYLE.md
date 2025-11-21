@@ -274,8 +274,10 @@ printTodo (Todo (TodoId i) (Title t) done) =
 usage :: IO ()
 usage = putStrLn "Usage: todo add <title> | todo list | todo done <id>"
 
+-- |
 main :: IO ()
 main = do
+  hSetBuffering stdout NoBuffering
   args <- getArgs
   case args of
     ("add":xs) ->
@@ -310,7 +312,7 @@ main = do
 
 ---
 
-###  **1. MTL (Monad Transformer Library)**
+### **1. MTL (Monad Transformer Library)**
 
 #### ■ 개념
 
@@ -351,7 +353,7 @@ foo = do
 
 ---
 
-###  **2. Free Monad 패턴**
+### **2. Free Monad 패턴**
 
 #### ■ 개념
 

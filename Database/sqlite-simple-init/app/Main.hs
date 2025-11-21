@@ -1,12 +1,17 @@
 module Main
-    ( main
-    ) where
+  ( main,
+  )
+where
 
-import           Lib
-import           System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
+import Lib
+import System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
 
--- | Entry point of the application.
 main :: IO ()
 main = do
-    hSetBuffering stdout NoBuffering
+  hSetBuffering
+    stdout
+    NoBuffering
+    hSetBuffering
+    stdout
+    NoBuffering
     startApp

@@ -7,8 +7,12 @@ import           Infrastructure.Persistence.PostgreSQL.UserRepositoryImpl (local
 
 import           System.Environment                                       (getArgs)
 
+import           System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
+
+-- |
 main :: IO ()
 main = do
+  hSetBuffering stdout NoBuffering
   args <- getArgs
   choose args
   where
