@@ -1,20 +1,32 @@
 module Lib
     where
 
+import           Data.Kind (Constraint, Type)
+
 -- |
 --
+type TypeA :: Type
 data TypeA = DataA0
      deriving (Show)
 
+-- |
+--
+type TypeB :: Type -> Type
 data TypeB a = DataB0
              | DataB1 a
      deriving (Show)
 
+-- |
+--
+type TypeC :: Type -> Type
 data TypeC a = DataC0
              | DataC1 a
              | DataC2 a a
      deriving (Show)
 
+-- |
+--
+type TypeD :: Type -> Type
 data TypeD a = DataD0
              | DataD1 a
              | DataD2 a a
@@ -23,15 +35,19 @@ data TypeD a = DataD0
 
 -- |
 --
+type TypeClassA :: Type -> Constraint
 class TypeClassA a where
   typeClassFunctionA :: a -> String
 
+type TypeClassB :: Type -> Constraint
 class TypeClassA a => TypeClassB a where
   typeClassFunctionB :: a -> String
 
+type TypeClassC :: Type -> Constraint
 class TypeClassB a => TypeClassC a where
   typeClassFunctionC :: a -> String
 
+type TypeClassD :: Type -> Constraint
 class TypeClassC a => TypeClassD a where
   typeClassFunctionD :: a -> String
 
@@ -110,12 +126,16 @@ myFunctionD (DataD3 _ _ _) = "TypeD - DataD3"
 
 -- |
 --
+type Car :: Type
 data Car = Car { company :: String
                , model   :: String
                , year    :: Int
                }
      deriving (Show)
 
+-- |
+--
+type Passenger :: Type -> Type -> Type -> Type
 data Passenger a b c = Passenger { name   :: a
                                  , gender :: b
                                  , age    :: c
@@ -153,7 +173,7 @@ dobuleMe' x = x ++ x
 -- |
 --
 doubleUs :: (Num a) => a -> a -> a
-doubleUs x y = x*2 + y*2
+doubleUs x y = x * 2 + y * 2
 
 
 -- |
@@ -196,9 +216,8 @@ hundred x y = x + (hundred x (y - 1))
 -- |
 --
 someFunc :: IO ()
-someFunc = do
---   print $ tellPassenger (Passenger {name="Choo", gender="M", age=40})
---   print $ tellCar (Car {company="For", model="Musting", year=1967})
-  let result = doubleUs 1 2 + doubleMe 3
-  print result
-  return ()
+someFunc =
+  let
+    result = doubleUs 1 2 + doubleMe 3
+  in
+    print result

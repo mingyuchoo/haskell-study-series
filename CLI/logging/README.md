@@ -31,6 +31,14 @@ stack run
 ```
 You can also use `Makefile` for these works.
 
+## How to use `ghcid` or `ghci`
+
+```bash
+stack ghci --package safe-exceptions
+# or
+ghci -package safe-exceptions
+```
+
 ## References
 
 - <https://typeclasses.com/phrasebook/logging>

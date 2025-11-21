@@ -7,7 +7,7 @@ module Lib
     ( someFunc
     ) where
 
-import           Data.Kind (Type)
+import           Data.Kind              (Type)
 import qualified Data.Map.Strict        as Map
 
 import           Flow                   ((<|))
@@ -16,24 +16,38 @@ import           GHC.Generics           (Generic)
 
 import           Generics.Deriving.Enum (GEnum (genum))
 
+
+-- |
+--
+type Product :: Type
 data Product = Basic | Standard | Pro
      deriving stock (Generic, Show)
      deriving anyclass (GEnum)
 
+-- |
+--
+type Frequency :: Type
 data Frequency = Monthly | Annual
      deriving stock (Generic, Show)
      deriving anyclass (GEnum)
 
+-- |
+--
+type Bill :: Type
 data Bill = Bill Product Frequency
      deriving stock (Generic, Show)
      deriving anyclass (GEnum)
 
+-- |
+--
 encodeProduct :: Product -> String
 encodeProduct = \case
   Basic    -> "p1"
   Standard -> "p2"
   Pro      -> "p3"
 
+-- |
+--
 encodeBill :: Bill -> Integer
 encodeBill = \case
   Bill Basic Monthly    -> 10
@@ -43,18 +57,26 @@ encodeBill = \case
   Bill Pro Monthly      -> 30
   Bill Pro Annual       -> 31
 
+-- |
+--
 invert :: (GEnum a, Ord b) => (a -> b) -> b -> Maybe a
 invert f =
     \b -> Map.lookup b reverseMap
   where
     reverseMap = foldMap (\a -> Map.singleton (f a) a) genum
 
+-- |
+--
 decodeProduct :: String -> Maybe Product
 decodeProduct = invert encodeProduct
 
+-- |
+--
 decodeBill :: Integer -> Maybe Bill
 decodeBill = invert encodeBill
 
+-- |
+--
 someFunc :: IO ()
 someFunc = do
   putStrLn <| encodeProduct Basic

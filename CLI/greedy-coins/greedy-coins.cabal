@@ -45,7 +45,7 @@ library
     , containers
     , flow
     , parallel
-  default-language: GHC2024
+  default-language: Haskell2010
 
 executable greedy-coins-exe
   main-is: Main.hs
@@ -69,7 +69,7 @@ executable greedy-coins-exe
     , flow
     , greedy-coins
     , parallel
-  default-language: GHC2024
+  default-language: Haskell2010
 
 test-suite greedy-coins-test
   type: exitcode-stdio-1.0
@@ -94,4 +94,4 @@ test-suite greedy-coins-test
     , flow
     , greedy-coins
     , parallel
-  default-language: GHC2024
+  default-language: Haskell2010

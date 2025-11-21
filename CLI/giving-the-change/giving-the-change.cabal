@@ -42,7 +42,7 @@ library
   ghc-options: -Wall -O2 -haddock
   build-depends:
       base
-  default-language: GHC2024
+  default-language: Haskell2010
 
 executable giving-the-change-exe
   main-is: Main.hs
@@ -63,7 +63,7 @@ executable giving-the-change-exe
   build-depends:
       base
     , giving-the-change
-  default-language: GHC2024
+  default-language: Haskell2010
 
 test-suite giving-the-change-test
   type: exitcode-stdio-1.0
@@ -88,4 +88,4 @@ test-suite giving-the-change-test
     , doctest-discover
     , giving-the-change
     , hspec
-  default-language: GHC2024
+  default-language: Haskell2010

@@ -1,9 +1,9 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Lib
-    ( parseDocxToMarkdown
-    , extractTextToMarkdown
+    ( extractTextToMarkdown
     , getHeadingLevel
+    , parseDocxToMarkdown
     ) where
 
 import           Codec.Archive.Zip
@@ -16,7 +16,7 @@ import qualified Data.Text.IO         as TIO
 import           Text.XML
 import           Text.XML.Cursor
 
--- DOCX 파일을 파싱하여 Markdown으로 변환
+-- | DOCX 파일을 파싱하여 Markdown으로 변환
 parseDocxToMarkdown :: FilePath -> FilePath -> IO ()
 parseDocxToMarkdown inputPath outputPath = do
     -- DOCX 파일 읽기 (ZIP 아카이브)
@@ -35,7 +35,7 @@ parseDocxToMarkdown inputPath outputPath = do
                     TIO.writeFile outputPath markdown
                     putStrLn $ "Successfully converted: " ++ outputPath
 
--- XML 문서에서 텍스트와 스타일 정보를 추출하여 Markdown으로 변환
+-- | XML 문서에서 텍스트와 스타일 정보를 추출하여 Markdown으로 변환
 extractTextToMarkdown :: Document -> Text
 extractTextToMarkdown doc =
     let cursor = fromDocument doc
@@ -43,7 +43,7 @@ extractTextToMarkdown doc =
         markdownLines = map processParagraph paragraphs
     in T.unlines markdownLines
 
--- 단락 처리
+-- | 단락 처리
 processParagraph :: Cursor -> Text
 processParagraph pCursor =
     let runs = pCursor $// element (wName "r")
@@ -58,7 +58,7 @@ processParagraph pCursor =
            Just level -> T.replicate level "#" <> " " <> paraText
            Nothing    -> paraText
 
--- Run (텍스트 조각) 처리
+-- | Run (텍스트 조각) 처리
 processRun :: Cursor -> Text
 processRun rCursor =
     let textNodes = rCursor $/ element (wName "t") &/ content
@@ -69,7 +69,7 @@ processRun rCursor =
         isUnderline = not $ null $ rCursor $/ element (wName "rPr") &/ element (wName "u")
     in applyStyles isBold isItalic isUnderline text
 
--- 스타일 적용
+-- | 스타일 적용
 applyStyles :: Bool -> Bool -> Bool -> Text -> Text
 applyStyles bold italic underline text
     | T.null text = ""
@@ -79,7 +79,7 @@ applyStyles bold italic underline text
     | underline = "_" <> text <> "_"
     | otherwise = text
 
--- 제목 레벨 추출
+-- | 제목 레벨 추출
 getHeadingLevel :: Text -> Maybe Int
 getHeadingLevel style
     | T.null style = Nothing
@@ -89,6 +89,6 @@ getHeadingLevel style
     | "Heading4" `T.isInfixOf` style || "heading 4" `T.isInfixOf` style = Just 4
     | otherwise = Nothing
 
--- Word XML 네임스페이스 헬퍼
+-- | Word XML 네임스페이스 헬퍼
 wName :: Text -> Name
 wName localName = Name localName (Just "http://schemas.openxmlformats.org/wordprocessingml/2006/main") (Just "w")

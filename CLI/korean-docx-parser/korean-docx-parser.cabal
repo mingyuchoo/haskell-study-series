@@ -32,18 +32,26 @@ library
       Paths_korean_docx_parser
   hs-source-dirs:
       src
+  default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
+      StandaloneKindSignatures
+      TypeApplications
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base
     , bytestring
     , directory
     , filepath
+    , flow
     , hspec
     , hspec-discover
     , text
     , xml-conduit
     , zip-archive
-  default-language: GHC2024
+  default-language: Haskell2010
 
 executable korean-docx-parser-exe
   main-is: Main.hs
@@ -53,19 +61,27 @@ executable korean-docx-parser-exe
       Paths_korean_docx_parser
   hs-source-dirs:
       app
+  default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
+      StandaloneKindSignatures
+      TypeApplications
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base
     , bytestring
     , directory
     , filepath
+    , flow
     , hspec
     , hspec-discover
     , korean-docx-parser
     , text
     , xml-conduit
     , zip-archive
-  default-language: GHC2024
+  default-language: Haskell2010
 
 test-suite korean-docx-parser-test
   type: exitcode-stdio-1.0
@@ -77,16 +93,24 @@ test-suite korean-docx-parser-test
       Paths_korean_docx_parser
   hs-source-dirs:
       test
+  default-extensions:
+      DataKinds
+      ExplicitForAll
+      GADTs
+      KindSignatures
+      StandaloneKindSignatures
+      TypeApplications
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base
     , bytestring
     , directory
     , filepath
+    , flow
     , hspec
     , hspec-discover
     , korean-docx-parser
     , text
     , xml-conduit
     , zip-archive
-  default-language: GHC2024
+  default-language: Haskell2010
