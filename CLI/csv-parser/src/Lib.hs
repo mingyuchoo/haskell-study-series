@@ -1,26 +1,27 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Lib
-  ( someFunc,
-  )
-where
+    ( someFunc
+    ) where
 
-import Control.Exception (IOException, tryJust)
-import Control.Monad (unless)
-import Data.ByteString.Lazy qualified as B
-import Data.Csv
-import Data.Kind (Type)
-import Data.Vector qualified as V
-import System.Directory (doesFileExist)
-import System.IO.Error
+import           Control.Exception    (IOException, tryJust)
+import           Control.Monad        (unless)
+
+import qualified Data.ByteString.Lazy as B
+import           Data.Csv
+import           Data.Kind            (Type)
+import qualified Data.Vector          as V
+
+import           System.Directory     (doesFileExist)
+import           System.IO.Error
 
 -- | CSV 파일의 각 행을 나타내는 데이터 타입 정의 (필요에 따라 조정)
-data Person = Person
-  { name :: String,
-    age :: Int,
-    city :: String
-  }
-  deriving (Show)
+type Person :: Type
+data Person = Person { name :: String
+                     , age  :: Int
+                     , city :: String
+                     }
+     deriving (Show)
 
 -- FromNamedRecord 인스턴스 정의 (헤더를 기반으로 파싱)
 instance FromNamedRecord Person where
@@ -50,7 +51,7 @@ loadAndParseCSV filePath = do
   case result of
     Left err -> return $ Left $ show err
     Right csvData -> case decodeByName csvData of
-      Left err -> return $ Left err
+      Left err           -> return $ Left err
       Right (_, records) -> return $ Right (V.toList records)
 
 -- | Main 로직

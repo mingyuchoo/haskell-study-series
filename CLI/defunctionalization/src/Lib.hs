@@ -1,11 +1,10 @@
 module Lib
-  ( someFunc,
-  )
-where
+    ( someFunc
+    ) where
 
-import Data.Kind (Type)
+import           Data.Kind (Type)
 
--- Higher-Order Functions
+-- | Higher-Order Functions
 -- -----------------------------------------------
 
 increment :: [Int] -> [Int]
@@ -20,7 +19,7 @@ double = map (* 2)
 square :: [Int] -> [Int]
 square = map (^ 2)
 
--- Defunctionalization from HOF
+-- | Defunctionalization from HOF
 -- -----------------------------------------------
 
 -- Step 1: Find all functions
@@ -28,22 +27,22 @@ square = map (^ 2)
 
 -- Step 2: Make SumDataType representing the all functions
 type ListOperation :: Type
-data ListOperation
-  = Increment
-  | IncrementBy Int
-  | Double
-  | Square
+data ListOperation = Increment
+                   | IncrementBy Int
+                   | Double
+                   | Square
 
 -- Step 3: Change function calls to "appy SumDataType"
 applyOperation :: ListOperation -> [Int] -> [Int]
-applyOperation Increment = increment
+applyOperation Increment       = increment
 applyOperation (IncrementBy x) = incrementBy x
-applyOperation Double = double
-applyOperation Square = square
+applyOperation Double          = double
+applyOperation Square          = square
 
+-- | Main
 -- -----------------------------------------------
-
 someFunc :: IO ()
+
 someFunc = do
   let nums :: [Int]
       nums = [1, 2, 3, 4]
