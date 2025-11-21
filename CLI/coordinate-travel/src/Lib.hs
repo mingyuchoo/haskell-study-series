@@ -2,8 +2,6 @@ module Lib
     where
 
 -- |
---
---
 move :: Int        -- ^ 최대 공간 크기
      -> (Int, Int) -- ^ 좌표 값
      -> String     -- ^ 이동 명령
@@ -15,8 +13,6 @@ move n (x, y) c | c == "L" = bound (x, y - 1) n
                 | otherwise = error "error: coordinate-travel is incorrect."
 
 -- |
---
---
 bound :: (Int, Int) -- ^ 좌표 값
       -> Int        -- ^ 최대 공간 크기
       -> (Int, Int) -- ^ 경계 처리한 좌표 값

@@ -1,6 +1,6 @@
-cabal-version: 3.16
+cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.36.0.
+-- This file has been generated from package.yaml by hpack version 0.38.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -28,6 +28,8 @@ library
       Lib
   other-modules:
       Paths_coordinate_travel
+  autogen-modules:
+      Paths_coordinate_travel
   hs-source-dirs:
       src
   default-extensions:
@@ -43,6 +45,8 @@ library
 executable coordinate-travel-exe
   main-is: Main.hs
   other-modules:
+      Paths_coordinate_travel
+  autogen-modules:
       Paths_coordinate_travel
   hs-source-dirs:
       app
@@ -61,6 +65,8 @@ test-suite coordinate-travel-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      Paths_coordinate_travel
+  autogen-modules:
       Paths_coordinate_travel
   hs-source-dirs:
       test

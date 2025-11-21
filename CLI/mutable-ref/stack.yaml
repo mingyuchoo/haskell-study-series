@@ -11,7 +11,7 @@ flags: {}
 docker:
   enable: true
   image: "fpco/stack-build:lts-24.20"
-  container-name: "sample-name"
+  container-name: "mutable-ref"
   auto-pull: true
   persist: false
   set-user: true

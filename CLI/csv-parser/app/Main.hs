@@ -12,7 +12,7 @@ main = do
 
   -- 실행
   someFunc filePath
-
--- CSV 파일 경로
-filePath :: FilePath
-filePath = "data.csv"
+  where
+    -- CSV 파일 경로
+    filePath :: FilePath
+    filePath = "data.csv"

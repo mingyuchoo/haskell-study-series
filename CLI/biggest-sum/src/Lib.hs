@@ -35,20 +35,19 @@ k = 3
 --
 --
 solution :: [Int] -> Int
-solution xs =
-   (first xs * k * quotient) + (second xs * remainder)
-    where
-      rsort :: [Int] -> Int -> Int
-      rsort l x = (reverse . sort) l !! x
+solution xs = (first xs * k * quotient) + (second xs * remainder)
+  where
+    rsort :: [Int] -> Int -> Int
+    rsort l x = (reverse . sort) l !! x
 
-      first :: [Int] -> Int
-      first l = rsort l 0
+    first :: [Int] -> Int
+    first l = rsort l 0
 
-      second :: [Int] -> Int
-      second l = rsort l 1
+    second :: [Int] -> Int
+    second l = rsort l 1
 
-      quotient :: Int
-      quotient = div m k
+    quotient :: Int
+    quotient = div m k
 
-      remainder :: Int
-      remainder = mod m k
+    remainder :: Int
+    remainder = mod m k

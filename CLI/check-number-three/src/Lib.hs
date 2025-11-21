@@ -4,8 +4,6 @@ module Lib
 import           Flow ((<|))
 
 -- |
---
---
 someFunc :: IO ()
 someFunc = do
   putStr "Input hour to find out including the number 3> "
@@ -14,15 +12,12 @@ someFunc = do
   print <| solution2 (read number)
 
 -- |
---
---
 solution1 :: Int -> Int
-solution1 n =
-  length <| find [ hour <> minute <> second
-                 | hour   <- hours n
-                 , minute <- minutes
-                 , second <- seconds
-                 ]
+solution1 n = length <| find [ hour <> minute <> second
+                             | hour   <- hours n
+                             , minute <- minutes
+                             , second <- seconds
+                             ]
 
   where
     hours :: Int -> [String]
@@ -37,7 +32,7 @@ solution1 n =
     find :: [String] -> [String]
     find = filter (elem '3')
 
-
+-- |
 solution2 :: Int -> Int
 solution2 x = ((x+1) - nums x) * ((60-15)*15 + 15*60) + (nums x * 60 * 60)
   where
