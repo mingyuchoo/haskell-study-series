@@ -8,9 +8,11 @@ copyright: 2025, Mingyu Choo
 synopsis: Short description of your package
 category: CLI
 description: Please see the README on GitHub at <https://github.com/mingyuchoo/web-crawler#readme>
+
 extra-source-files:
   - README.md
   - CHANGELOG.md
+
 dependencies:
   - base
   - bytestring
@@ -20,16 +22,25 @@ dependencies:
   - http-conduit
   - tagsoup
   - text
+
 default-extensions:
+  - DataKinds
+  - ExplicitForAll
+  - GADTs
+  - KindSignatures
   - StandaloneKindSignatures
   - TypeApplications
+
 ghc-options:
   - -Wall
   - -O2
   - -haddock
+
 language: Haskell2010
+
 library:
   source-dirs: src
+
 executables:
   web-crawler-exe:
     main: Main.hs
@@ -41,6 +52,7 @@ executables:
       - -with-rtsopts=-N4
     dependencies:
       - web-crawler
+      
 tests:
   web-crawler-test:
     main: Spec.hs

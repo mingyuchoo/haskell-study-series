@@ -2,6 +2,7 @@ module Lib
     ( someFunc
     ) where
 
+import           Data.Kind (Type)
 someFunc :: IO ()
 someFunc = do
   putStrLn $ solution ""                        --

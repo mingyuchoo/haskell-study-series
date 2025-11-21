@@ -7,6 +7,7 @@ module Lib
     ( someFunc
     ) where
 
+import           Data.Kind (Type)
 import qualified Data.Map.Strict        as Map
 
 import           Flow                   ((<|))

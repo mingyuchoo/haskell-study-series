@@ -30,6 +30,14 @@ dependencies:
 - hspec
 - hspec-discover
 
+default-extensions:
+  - DataKinds
+  - ExplicitForAll
+  - GADTs
+  - KindSignatures
+  - StandaloneKindSignatures
+  - TypeApplications
+
 ghc-options:
 - -Wall
 - -Wcompat

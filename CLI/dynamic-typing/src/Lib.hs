@@ -2,6 +2,7 @@ module Lib
     ( someFunc
     ) where
 
+import           Data.Kind (Type)
 import           Data.Dynamic  (Dynamic, dynTypeRep, fromDynamic, toDyn)
 import           Data.Foldable (asum, for_)
 

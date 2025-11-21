@@ -2,6 +2,7 @@ module Lib
     ( someFunc
     ) where
 
+import           Data.Kind (Type)
 import           Crypto.Hash
 
 import           Data.ByteString        (ByteString)

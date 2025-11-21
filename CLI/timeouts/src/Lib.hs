@@ -5,6 +5,7 @@ module Lib
     ( someFunc
     ) where
 
+import           Data.Kind (Type)
 import           Control.Concurrent          (forkIO, threadDelay)
 import           Control.Concurrent.STM      (atomically, retry)
 import           Control.Concurrent.STM.TVar (newTVar, readTVar, writeTVar)

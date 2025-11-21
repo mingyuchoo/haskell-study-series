@@ -4,6 +4,7 @@ module Lib
     ( someFunc
     ) where
 
+import           Data.Kind (Type)
 import qualified Data.ByteString.Lazy as BL
 import           Data.Text            (Text)
 import           Data.Text.Encoding   (decodeUtf8)

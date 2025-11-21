@@ -2,6 +2,7 @@ module Lib
     ( someFunc
     ) where
 
+import           Data.Kind (Type)
 import           Control.Concurrent          (forkIO, threadDelay)
 import           Control.Concurrent.STM.TVar
 import           Control.Monad               (forever)

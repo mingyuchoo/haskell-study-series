@@ -7,6 +7,7 @@ module Lib
     ( someFunc
     ) where
 
+import           Data.Kind (Type)
 import           Control.Exception  (bracketOnError)
 import           Control.Monad      (mapM, mapM_, (>>))
 

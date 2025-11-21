@@ -1,25 +1,26 @@
 module Lib
-    ( someFunc
-    ) where
+  ( someFunc,
+  )
+where
 
-import           Control.Exception.Safe (displayException, tryAny)
-
-import           Data.Foldable          (fold)
-
-import           System.Directory       (getPermissions, writable)
-import           System.Environment     (getEnv)
-import           System.IO              (hPutStr, stderr, stdout)
+import Control.Exception.Safe (displayException, tryAny)
+import Data.Foldable (fold)
+import Data.Kind (Type)
+import System.Directory (getPermissions, writable)
+import System.Environment (getEnv)
+import System.IO (hPutStr, stderr, stdout)
 
 data Level = Info | Error
 
 data Event = Event Level String
 
-data Log = Log { record :: Event -> IO ()
-               }
+data Log = Log
+  { record :: Event -> IO ()
+  }
 
 consoleLog = Log $ \(Event level message) -> hPutStr (standardStream level) (message <> "\n")
   where
-    standardStream Info  = stdout
+    standardStream Info = stdout
     standardStream Error = stderr
 
 fileLog path = Log $ \(Event level message) -> appendFile (path level) (message <> "\n")
@@ -36,7 +37,7 @@ paren x = "(" <> x <> ")"
 
 x ! y = x <> " " <> y
 
-levelString Info  = "info"
+levelString Info = "info"
 levelString Error = "error"
 
 multiLog log1 log2 = Log $ \event -> do
@@ -58,8 +59,6 @@ recoverFromException log action = do
     Right x -> do
       return (Just x)
 
-
-
 someFunc :: IO ()
 someFunc = do
   let bootLog = formattedLog "Boot" consoleLog
@@ -69,22 +68,20 @@ someFunc = do
   let appLog = formattedLog "App" consoleLog <> fold fileLog
   record appLog (Event Info "Application started")
 
-
 initFileLog = do
-    infoPath <- envLogPath "INFO"
-    errorPath <- envLogPath "ERROR"
-    let
-      path Info  = infoPath
+  infoPath <- envLogPath "INFO"
+  errorPath <- envLogPath "ERROR"
+  let path Info = infoPath
       path Error = errorPath
-    return (fileLog path)
+  return (fileLog path)
 
 envLogPath varName = do
-    path <- getEnv varName
-    assertWritable path
-    return path
+  path <- getEnv varName
+  assertWritable path
+  return path
 
 assertWritable path = do
-    permissions <- getPermissions path
-    case writable permissions of
-      True  -> return ()
-      False -> fail ("Log path" ! path ! "is not wriable")
+  permissions <- getPermissions path
+  case writable permissions of
+    True -> return ()
+    False -> fail ("Log path" ! path ! "is not wriable")

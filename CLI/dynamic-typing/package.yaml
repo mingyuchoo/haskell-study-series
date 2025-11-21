@@ -20,6 +20,10 @@ dependencies:
 - parallel
 
 default-extensions:
+  - DataKinds
+  - ExplicitForAll
+  - GADTs
+  - KindSignatures
   - StandaloneKindSignatures
   - TypeApplications
 

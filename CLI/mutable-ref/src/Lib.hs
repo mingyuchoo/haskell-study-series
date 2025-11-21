@@ -2,6 +2,7 @@ module Lib
     ( someFunc
     ) where
 
+import           Data.Kind (Type)
 import           Control.Concurrent.STM.TVar (modifyTVar, modifyTVar', newTVar,
                                               readTVar, writeTVar)
 import           Control.Monad.STM           (atomically)

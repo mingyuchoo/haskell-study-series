@@ -24,7 +24,12 @@ dependencies:
 - vector
 
 default-extensions:
-- StandaloneKindSignatures
+  - DataKinds
+  - ExplicitForAll
+  - GADTs
+  - KindSignatures
+  - StandaloneKindSignatures
+  - TypeApplications
 
 ghc-options:
 - -Wall

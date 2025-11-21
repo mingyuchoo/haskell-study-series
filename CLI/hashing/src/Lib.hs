@@ -6,6 +6,7 @@ module Lib
     ( someFunc
     ) where
 
+import           Data.Kind (Type)
 import           Data.Hashable (Hashable (hash))
 import           Data.Word     (Word8)
 

@@ -16,6 +16,7 @@ module Lib
     ( someFunc
     ) where
 
+import           Data.Kind (Type)
 import           Data.List
 
 
