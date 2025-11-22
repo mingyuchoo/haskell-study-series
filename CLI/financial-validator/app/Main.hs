@@ -3,7 +3,7 @@ module Main
   )
 where
 
-import Data.Text qualified as T
+import qualified Data.Text as T
 import Data.Time (UTCTime, getCurrentTime)
 import Settlement
 import System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
@@ -81,7 +81,7 @@ statusToString status = case status of
   Pending -> "대기 중"
   Approved -> "✅ 승인됨"
   Rejected reason -> "❌ 거부됨: " ++ show reason
-  Settled -> "💎 정산 완료""
+  Settled -> "💎 정산 완료"
 
 -- | 정산 보고서 출력
 printSettlementReport :: SettlementReport -> IO ()

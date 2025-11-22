@@ -47,7 +47,7 @@ library
     , containers
     , text
     , time
-  default-language: GHC2024
+  default-language: Haskell2010
 
 executable financial-validator-exe
   main-is: Main.hs
@@ -71,7 +71,7 @@ executable financial-validator-exe
     , financial-validator
     , text
     , time
-  default-language: GHC2024
+  default-language: Haskell2010
 
 test-suite financial-validator-test
   type: exitcode-stdio-1.0
@@ -96,4 +96,4 @@ test-suite financial-validator-test
     , financial-validator
     , text
     , time
-  default-language: GHC2024
+  default-language: Haskell2010
