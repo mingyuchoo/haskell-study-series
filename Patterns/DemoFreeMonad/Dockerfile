@@ -1,5 +1,5 @@
 ARG PROJECT_NAME=servant-t02-todolist
-FROM fpco/stack-build:lts-24.20
+FROM fpco/stack-build:lts
 WORKDIR /app
 
 ARG PROJECT_NAME

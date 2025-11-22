@@ -1,7 +1,7 @@
 # 프로젝트 이름을 ARG로 받아서 사용
 ARG PROJECT_NAME=scotty-t02-clean-archi
 # 빌드와 실행을 동일한 이미지에서 진행
-FROM fpco/stack-build:lts-24.20
+FROM fpco/stack-build:lts
 WORKDIR /app
 
 # Install curl for health checks

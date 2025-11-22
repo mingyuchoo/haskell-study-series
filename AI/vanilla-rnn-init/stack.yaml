@@ -5,7 +5,7 @@ packages:
 
 docker:
   enable: true
-  image: fpco/stack-build:lts-24.20
+  image: fpco/stack-build:lts
   auto-pull: true
   persist: false
   container-name: "vanilla-rnn-init"

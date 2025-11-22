@@ -10,7 +10,7 @@ flags: {}
 
 docker:
   enable: true
-  image: "fpco/stack-build:lts-24.20"
+  image: "fpco/stack-build:lts"
   container-name: "keep-biggest-card"
   auto-pull: true
   persist: false
