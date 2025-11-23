@@ -1,25 +1,27 @@
+{-# LANGUAGE BlockArguments    #-}
+{-# LANGUAGE DeriveGeneric     #-}
+{-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE BlockArguments #-}
-{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE TemplateHaskell   #-}
 
 module Lib
     ( someFunc
     ) where
 
-import Data.Text (Text)
-import GHC.Generics (Generic)
-import Polysemy
-import Polysemy.State
+import           Data.Text      (Text)
+
+import           GHC.Generics   (Generic)
+
+import           Polysemy
+import           Polysemy.State
 
 data Todo = Todo { todoId :: Int
-                 , title :: Text
-                 } deriving (Show, Generic)
+                 , title  :: Text
+                 }
+     deriving (Generic, Show)
 
-data TodoEffect m a where
-  AddTodo :: Text -> TodoEffect m Todo
-  ListTodos :: TodoEffect m [Todo]
+data TodoEffect m a where AddTodo :: Text -> TodoEffect m Todo
+                          ListTodos :: TodoEffect m [Todo]
 
 makeSem ''TodoEffect
 

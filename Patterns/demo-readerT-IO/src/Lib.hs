@@ -1,28 +1,30 @@
+{-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE DeriveGeneric #-}
 
 module Lib
     ( someFunc
     ) where
 
-import Data.Text (Text)
-import GHC.Generics (Generic)
+import           Control.Monad.Reader
 
-import Control.Monad.Reader
-import Data.IORef
+import           Data.IORef
+import           Data.Text            (Text)
+
+import           GHC.Generics         (Generic)
 
 -- | 공통기능 사양
 --
 data Todo = Todo { todoId :: Int
                  , title  :: Text
-                 } deriving (Show, Generic)
+                 }
+     deriving (Generic, Show)
 
 -- | ReaderT + IO Pattern
 data Env = Env { db :: IORef [Todo]
                }
 
-newtype App a = App { runApp :: ReaderT Env IO a
-                    } deriving (Functor, Applicative, Monad, MonadIO, MonadReader Env)
+newtype App a = App { runApp :: ReaderT Env IO a }
+     deriving (Applicative, Functor, Monad, MonadIO, MonadReader Env)
 
 addTodo :: Text -> App Todo
 addTodo t = do

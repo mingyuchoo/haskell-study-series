@@ -1,26 +1,28 @@
+{-# LANGUAGE DeriveFunctor     #-}
+{-# LANGUAGE DeriveGeneric     #-}
+{-# LANGUAGE FlexibleContexts  #-}
+{-# LANGUAGE GADTs             #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE GADTs #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE DeriveFunctor #-}
 
 module Lib
     ( someFunc
     ) where
 
-import Data.Text (Text)
-import GHC.Generics (Generic)
-import Control.Monad.Free
-import Data.IORef
+import           Control.Monad.Free
+
+import           Data.IORef
+import           Data.Text          (Text)
+
+import           GHC.Generics       (Generic)
 
 
 data Todo = Todo { todoId :: Int
-                 , title :: Text
-                 } deriving (Show, Generic)
+                 , title  :: Text
+                 }
+     deriving (Generic, Show)
 
-data TodoF next where
-  AddTodo :: Text -> (Todo -> next) -> TodoF next
-  ListTodos :: ([Todo] -> next) -> TodoF next
+data TodoF next where AddTodo :: Text -> (Todo -> next) -> TodoF next
+                      ListTodos :: ([Todo] -> next) -> TodoF next
 
 
 
