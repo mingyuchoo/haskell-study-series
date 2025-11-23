@@ -1,0 +1,66 @@
+name:                demo-Polysemy-todo
+version:             0.1.0.0
+github:              mingyuchoo/demo-Polysemy-todo
+license:             BSD-3-Clause
+author:              Mingyu Choo
+maintainer:          mingyuchoo@gmail.com
+copyright:           Mingyu Choo 2025
+synopsis:            Short description of your package
+category:            Web
+description:         Please see the README on GitHub at <https://github.com/mingyuchoo/demo-Polysemy-todo#readme>
+
+extra-source-files:
+- README.md
+- CHANGELOG.md
+
+dependencies:
+- base >= 4.18 && < 5
+- containers
+- flow
+- mtl
+- parallel
+- polysemy
+- text
+
+default-extensions:
+- DataKinds
+- ExplicitForAll
+- StandaloneKindSignatures
+- TypeApplications
+
+ghc-options:
+- -Wall
+- -O2
+- -haddock
+
+language: GHC2021
+
+library:
+  source-dirs: src
+
+executables:
+  demo-Polysemy-todo-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - demo-Polysemy-todo
+
+tests:
+  demo-Polysemy-todo-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - demo-Polysemy-todo
+    - hspec
+    - doctest
+    - doctest-discover
