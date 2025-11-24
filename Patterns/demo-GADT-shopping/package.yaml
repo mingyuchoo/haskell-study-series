@@ -1,0 +1,70 @@
+name:                demo-GADT-shopping
+version:             0.1.0.0
+github:              mingyuchoo/demo-GADT-shopping
+license:             BSD-3-Clause
+author:              Mingyu Choo
+maintainer:          mingyuchoo@gmail.com
+copyright:           2026 Mingyu Choo
+synopsis:            Short description of your package
+category:            Web
+description:         Please see the README on GitHub at <https://github.com/mingyuchoo/demo-GADT-shopping#readme>
+
+extra-source-files:
+- README.md
+- CHANGELOG.md
+
+dependencies:
+- base >= 4.18 && < 5
+- containers
+- flow
+- parallel
+- text
+- transformers
+- aeson
+- servant
+- servant-server
+- wai
+- warp
+
+default-extensions:
+- DataKinds
+- ExplicitForAll
+- StandaloneKindSignatures
+- TypeApplications
+
+ghc-options:
+- -Wall
+- -O2
+- -haddock
+
+language: GHC2021
+
+library:
+  source-dirs: src
+
+executables:
+  demo-GADT-shopping-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - demo-GADT-shopping
+
+tests:
+  demo-GADT-shopping-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - demo-GADT-shopping
+    - hspec
+    - doctest
+    - doctest-discover
