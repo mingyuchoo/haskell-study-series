@@ -16,6 +16,15 @@ import Lens.Micro ((^.), (&), (.~), (%~))
 import Lens.Micro.TH (makeLenses)
 import Data.Time.Clock (getCurrentTime)
 import Data.Time.Format (formatTime, defaultTimeLocale)
+import Control.Monad.IO.Class (liftIO)
+
+-- 모드: 목록 보기 vs 입력 모드
+data Mode = ViewMode | InputMode
+  deriving (Eq, Show)
+
+-- 리소스 이름
+data Name = TodoList | InputField
+  deriving (Eq, Ord, Show)
 
 -- Todo 항목 데이터 타입
 data Todo = Todo
@@ -34,14 +43,6 @@ data AppState = AppState
   } deriving (Show)
 
 makeLenses ''AppState
-
--- 모드: 목록 보기 vs 입력 모드
-data Mode = ViewMode | InputMode
-  deriving (Eq, Show)
-
--- 리소스 이름
-data Name = TodoList | InputField
-  deriving (Eq, Ord, Show)
 
 -- UI 그리기
 drawUI :: AppState -> [Widget Name]
@@ -121,17 +122,12 @@ handleViewMode (VtyEvent (V.EvKey V.KEsc [])) = halt
 handleViewMode (VtyEvent (V.EvKey (V.KChar 'a') [])) = do
   modify $ mode .~ InputMode
 handleViewMode (VtyEvent (V.EvKey (V.KChar ' ') [])) = do
-  s <- get
-  case listSelectedElement (s ^. todoList) of
-    Nothing -> return ()
-    Just (idx, _) -> do
-      modify $ todoList %~ listModify (todoCompleted %~ not) idx
+  modify $ todoList %~ listModify (todoCompleted %~ not)
 handleViewMode (VtyEvent (V.EvKey (V.KChar 'd') [])) = do
   s <- get
-  case listSelectedElement (s ^. todoList) of
+  case listSelected (s ^. todoList) of
     Nothing -> return ()
-    Just (idx, _) -> do
-      modify $ todoList %~ listRemove idx
+    Just idx -> modify $ todoList %~ listRemove idx
 handleViewMode (VtyEvent ev) = do
   zoom todoList $ handleListEvent ev
 handleViewMode _ = return ()
@@ -157,7 +153,7 @@ handleInputMode (VtyEvent (V.EvKey V.KEnter [])) = do
       modify $ inputEditor .~ E.editor InputField (Just 1) ""
     else
       modify $ mode .~ ViewMode
-handleInputMode (VtyEvent ev) = do
+handleInputMode ev@(VtyEvent _) = do
   zoom inputEditor $ E.handleEditorEvent ev
 handleInputMode _ = return ()
 
@@ -180,9 +176,9 @@ theMap = attrMap V.defAttr
 app :: App AppState e Name
 app = App
   { appDraw = drawUI
-  , appChooseCursor = \s -> case s ^. mode of
-      InputMode -> showFirstCursor s [InputField]
-      ViewMode -> neverShowCursor s
+  , appChooseCursor = \s locs -> case s ^. mode of
+      InputMode -> showCursorNamed InputField locs
+      ViewMode -> Nothing
   , appHandleEvent = handleEvent
   , appStartEvent = return ()
   , appAttrMap = const theMap
