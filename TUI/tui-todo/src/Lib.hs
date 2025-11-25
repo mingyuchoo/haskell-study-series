@@ -1,61 +1,72 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskell   #-}
 
 module Lib
-  ( tuiMain,
-    trim,
-    Todo (..),
-    todoText,
-    todoCompleted,
-    todoCreatedAt,
-    Mode (..),
-    Name (..),
-    AppState (..),
-    todoList,
-    inputEditor,
-    mode,
-  )
-where
+    ( AppState (..)
+    , Mode (..)
+    , Name (..)
+    , Todo (..)
+    , inputEditor
+    , mode
+    , todoCompleted
+    , todoCreatedAt
+    , todoList
+    , todoText
+    , trim
+    , tuiMain
+    ) where
 
-import Brick
-import Brick.Widgets.Border (border, borderWithLabel, hBorder)
-import Brick.Widgets.Center (center, hCenter)
-import Brick.Widgets.Edit qualified as E
-import Brick.Widgets.List
-import Control.Monad.IO.Class (liftIO)
-import Data.Time.Clock (getCurrentTime)
-import Data.Time.Format (defaultTimeLocale, formatTime)
-import Data.Vector qualified as Vec
-import Flow ((<|))
-import Graphics.Vty qualified as V
-import Lens.Micro ((%~), (&), (.~), (^.))
-import Lens.Micro.TH (makeLenses)
+import           Brick                  (App (..), AttrMap,
+                                         BrickEvent (VtyEvent), EventM,
+                                         Padding (Max), Widget, attrMap,
+                                         attrName, defaultMain, fg, get, hBox,
+                                         halt, modify, on, padAll, padLeft,
+                                         padTopBottom, showCursorNamed, str,
+                                         vBox, vLimit, withAttr, zoom)
+import           Brick.Widgets.Border   (borderWithLabel, hBorder)
+import           Brick.Widgets.Center   (center, hCenter)
+import qualified Brick.Widgets.Edit     as E
+import           Brick.Widgets.List     (GenericList (listSelected), List,
+                                         handleListEvent, list, listElementsL,
+                                         listInsert, listModify, listRemove,
+                                         listSelectedAttr, renderList)
+
+import           Control.Monad.IO.Class (liftIO)
+
+import           Data.Time.Clock        (getCurrentTime)
+import           Data.Time.Format       (defaultTimeLocale, formatTime)
+import qualified Data.Vector            as Vec
+
+import           Flow                   ((<|))
+
+import qualified Graphics.Vty           as V
+
+import           Lens.Micro             ((%~), (.~), (^.))
+import           Lens.Micro.TH          (makeLenses)
 
 -- 모드: 목록 보기 vs 입력 모드
 data Mode = ViewMode | InputMode
-  deriving (Eq, Show)
+     deriving (Eq, Show)
 
 -- 리소스 이름
 data Name = TodoList | InputField
-  deriving (Eq, Ord, Show)
+     deriving (Eq, Ord, Show)
 
 -- Todo 항목 데이터 타입
-data Todo = Todo
-  { _todoText :: String,
-    _todoCompleted :: Bool,
-    _todoCreatedAt :: String
-  }
-  deriving (Show)
+data Todo = Todo { _todoText      :: String
+                 , _todoCompleted :: Bool
+                 , _todoCreatedAt :: String
+                 }
+     deriving (Show)
 
 makeLenses ''Todo
 
 -- 애플리케이션 상태
-data AppState = AppState
-  { _todoList :: List Name Todo,
-    _inputEditor :: E.Editor String Name,
-    _mode :: Mode
-  }
-  deriving (Show)
+data AppState = AppState { _todoList    :: List Name Todo
+                         , _inputEditor :: E.Editor String Name
+                         , _mode        :: Mode
+                         }
+     deriving (Show)
 
 makeLenses ''AppState
 
@@ -137,7 +148,7 @@ handleEvent :: BrickEvent Name e -> EventM Name AppState ()
 handleEvent ev = do
   s <- get
   case s ^. mode of
-    ViewMode -> handleViewMode ev
+    ViewMode  -> handleViewMode ev
     InputMode -> handleInputMode ev
 
 handleViewMode :: BrickEvent Name e -> EventM Name AppState ()
@@ -150,7 +161,7 @@ handleViewMode (VtyEvent (V.EvKey (V.KChar ' ') [])) = do
 handleViewMode (VtyEvent (V.EvKey (V.KChar 'd') [])) = do
   s <- get
   case listSelected (s ^. todoList) of
-    Nothing -> return ()
+    Nothing  -> return ()
     Just idx -> modify <| todoList %~ listRemove idx
 handleViewMode (VtyEvent ev) = do
   zoom todoList <| handleListEvent ev
@@ -206,7 +217,7 @@ app =
     { appDraw = drawUI,
       appChooseCursor = \s locs -> case s ^. mode of
         InputMode -> showCursorNamed InputField locs
-        ViewMode -> Nothing,
+        ViewMode  -> Nothing,
       appHandleEvent = handleEvent,
       appStartEvent = return (),
       appAttrMap = const theMap
@@ -221,9 +232,9 @@ tuiMain = do
 
   let initialTodos =
         Vec.fromList
-          [ Todo "Welcome to Todo Manager!" False timestamp,
-            Todo "Press 'a' to add a new todo" False timestamp,
-            Todo "Press Space to toggle completion" True timestamp
+          [ Todo { _todoText = "Welcome to Todo Manager!", _todoCompleted = False, _todoCreatedAt = timestamp },
+            Todo { _todoText = "Press 'a' to add a new todo", _todoCompleted = False, _todoCreatedAt = timestamp },
+            Todo { _todoText = "Press Space to toggle completion", _todoCompleted = True, _todoCreatedAt = timestamp }
           ]
       initialState =
         AppState
