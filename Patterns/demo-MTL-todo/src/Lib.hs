@@ -20,13 +20,12 @@ data Todo = Todo { todoId :: Int
                  }
      deriving (Generic, Show)
 
+newtype App a = App { unApp :: StateT [Todo] IO a }
+     deriving (Applicative, Functor, Monad, MonadIO, MonadState [Todo])
 
 class Monad m => MonadTodo m where
   addTodo :: Text -> m Todo
   listTodos :: m [Todo]
-
-newtype App a = App { unApp :: StateT [Todo] IO a }
-     deriving (Applicative, Functor, Monad, MonadIO, MonadState [Todo])
 
 instance MonadTodo App where
   addTodo t = do
