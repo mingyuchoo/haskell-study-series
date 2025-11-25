@@ -1,19 +1,21 @@
-{-# LANGUAGE DeriveFunctor    #-}
+{-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE FlexibleContexts #-}
 
 module Lib
-    ( someFunc
-    ) where
+  ( someFunc,
+  )
+where
 
-import           Control.Monad.Free
+import Control.Monad.Free
 
 -- ----------------------------------------------
 -- 1. 언어(DSL) 정의 - Functor여야 함
 -- 'next'는 다음으로 실행할 작업을 의미합니다.
 -- ----------------------------------------------
-data AppF next = LogMsg String next
-               | GetUser Int (String -> next)
-     deriving (Functor)
+data AppF next
+  = LogMsg String next
+  | GetUser Int (String -> next)
+  deriving (Functor)
 
 -- ----------------------------------------------
 -- 2. Free Monad 타입 별칭
@@ -36,9 +38,9 @@ getUser uid = liftF (GetUser uid id)
 -- ----------------------------------------------
 program :: App ()
 program = do
-    logMsg "Starting Free Monad app..."
-    user <- getUser 99
-    logMsg $ "Got user: " ++ user
+  logMsg "Starting Free Monad app..."
+  user <- getUser 99
+  logMsg $ "Got user: " ++ user
 
 -- ----------------------------------------------
 -- 5. 인터프리터 (Natural Transformation to IO)
@@ -47,12 +49,12 @@ program = do
 runApp :: App a -> IO a
 runApp (Pure a) = return a
 runApp (Free (LogMsg msg next)) = do
-    putStrLn $ "[FreeLog] " ++ msg
-    runApp next
+  putStrLn $ "[FreeLog] " ++ msg
+  runApp next
 runApp (Free (GetUser uid next)) = do
-    putStrLn "Querying DB..."
-    let user = "User_" ++ show uid
-    runApp (next user)
+  putStrLn "Querying DB..."
+  let user = "User_" ++ show uid
+  runApp (next user)
 
 -- ----------------------------------------------
 -- 6. 실행

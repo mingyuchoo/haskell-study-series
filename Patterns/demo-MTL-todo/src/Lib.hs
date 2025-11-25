@@ -1,17 +1,21 @@
-{-# LANGUAGE DeriveGeneric              #-}
-{-# LANGUAGE FlexibleInstances          #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE MultiParamTypeClasses      #-}
-{-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Lib
-    ( someFunc
-    ) where
+  ( someFunc,
+  )
+where
 
-import           Control.Monad.Reader
-import           Control.Monad.State
+import Control.Monad.Reader
+import Control.Monad.State
+import Data.Text (Text)
 
-import           Data.Text            (Text)
+data Todo = Todo
+  { todoId :: Int,
+    title :: Text
+  }
+  deriving (Show)
 
 import           GHC.Generics         (Generic)
 
