@@ -4,9 +4,9 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
       args:
-        PROJECT_NAME: ${PROJECT_NAME:-warp-t03-clean-archi}
-    image: ${PROJECT_NAME:-warp-t03-clean-archi}:latest
-    container_name: ${PROJECT_NAME:-warp-t03-clean-archi}-app
+        PROJECT_NAME: ${PROJECT_NAME}
+    image: ${PROJECT_NAME}:latest
+    container_name: ${PROJECT_NAME}-app
     ports:
       - "8000:8000"
     volumes:
