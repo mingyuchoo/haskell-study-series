@@ -12,6 +12,7 @@ module Lib
     , todoCreatedAt
     , todoList
     , todoText
+    , todoId
     , trim
     , tuiMain
     ) where
@@ -32,9 +33,8 @@ import           Brick.Widgets.List     (GenericList (listSelected), List,
                                          listSelectedAttr, renderList)
 
 import           Control.Monad.IO.Class (liftIO)
+import           Database.SQLite.Simple (Connection, open)
 
-import           Data.Time.Clock        (getCurrentTime)
-import           Data.Time.Format       (defaultTimeLocale, formatTime)
 import qualified Data.Vector            as Vec
 
 import           Flow                   ((<|))
@@ -44,6 +44,9 @@ import qualified Graphics.Vty           as V
 import           Lens.Micro             ((%~), (.~), (^.))
 import           Lens.Micro.TH          (makeLenses)
 
+import qualified App
+import qualified DB
+
 -- 모드: 목록 보기 vs 입력 모드
 data Mode = ViewMode | InputMode
      deriving (Eq, Show)
@@ -52,8 +55,9 @@ data Mode = ViewMode | InputMode
 data Name = TodoList | InputField
      deriving (Eq, Ord, Show)
 
--- Todo 항목 데이터 타입
-data Todo = Todo { _todoText      :: String
+-- Todo 항목 데이터 타입 (DB ID 포함)
+data Todo = Todo { _todoId        :: DB.TodoId
+                 , _todoText      :: String
                  , _todoCompleted :: Bool
                  , _todoCreatedAt :: String
                  }
@@ -65,8 +69,8 @@ makeLenses ''Todo
 data AppState = AppState { _todoList    :: List Name Todo
                          , _inputEditor :: E.Editor String Name
                          , _mode        :: Mode
+                         , _dbConn      :: Connection
                          }
-     deriving (Show)
 
 makeLenses ''AppState
 
@@ -157,12 +161,32 @@ handleViewMode (VtyEvent (V.EvKey V.KEsc [])) = halt
 handleViewMode (VtyEvent (V.EvKey (V.KChar 'a') [])) = do
   modify <| mode .~ InputMode
 handleViewMode (VtyEvent (V.EvKey (V.KChar ' ') [])) = do
-  modify <| todoList %~ listModify (todoCompleted %~ not)
+  s <- get
+  case listSelected (s ^. todoList) of
+    Nothing -> return ()
+    Just idx -> do
+      let todos = s ^. todoList . listElementsL
+      case todos Vec.!? idx of
+        Nothing -> return ()
+        Just todo -> do
+          let tid = todo ^. todoId
+              conn = s ^. dbConn
+          liftIO $ App.runAppM (App.AppEnv conn) (App.toggleTodoInDB tid)
+          -- UI 상태도 업데이트
+          modify <| todoList %~ listModify (todoCompleted %~ not)
 handleViewMode (VtyEvent (V.EvKey (V.KChar 'd') [])) = do
   s <- get
   case listSelected (s ^. todoList) of
     Nothing  -> return ()
-    Just idx -> modify <| todoList %~ listRemove idx
+    Just idx -> do
+      let todos = s ^. todoList . listElementsL
+      case todos Vec.!? idx of
+        Nothing -> return ()
+        Just todo -> do
+          let tid = todo ^. todoId
+              conn = s ^. dbConn
+          liftIO $ App.runAppM (App.AppEnv conn) (App.deleteTodoFromDB tid)
+          modify <| todoList %~ listRemove idx
 handleViewMode (VtyEvent ev) = do
   zoom todoList <| handleListEvent ev
 handleViewMode _ = return ()
@@ -177,11 +201,18 @@ handleInputMode (VtyEvent (V.EvKey V.KEnter [])) = do
       trimmedText = trim text
   if not (null trimmedText)
     then do
-      timestamp <-
-        liftIO <| do
-          time <- getCurrentTime
-          return <| formatTime defaultTimeLocale "%Y-%m-%d %H:%M" time
-      let newTodo = Todo trimmedText False timestamp
+      let conn = s ^. dbConn
+      -- 데이터베이스에 저장하고 새 ID 받기
+      (newId, timestamp) <- liftIO $ App.runAppM (App.AppEnv conn) $ do
+        tid <- App.saveTodoToDB trimmedText
+        -- 저장 후 다시 로드하여 타임스탬프 가져오기
+        todos <- App.loadTodosFromDB
+        let maybeTodo = Vec.find (\(id', _, _, _) -> id' == tid) todos
+        case maybeTodo of
+          Just (_, _, _, ts) -> return (tid, ts)
+          Nothing -> return (tid, "")
+      
+      let newTodo = Todo newId trimmedText False timestamp
           currentList = s ^. todoList
           newList = listInsert 0 newTodo currentList
       modify <| todoList .~ newList
@@ -225,22 +256,21 @@ app =
 
 tuiMain :: IO ()
 tuiMain = do
-  -- 초기 샘플 데이터
-  timestamp <- do
-    time <- getCurrentTime
-    return <| formatTime defaultTimeLocale "%Y-%m-%d %H:%M" time
-
-  let initialTodos =
-        Vec.fromList
-          [ Todo { _todoText = "Welcome to Todo Manager!", _todoCompleted = False, _todoCreatedAt = timestamp },
-            Todo { _todoText = "Press 'a' to add a new todo", _todoCompleted = False, _todoCreatedAt = timestamp },
-            Todo { _todoText = "Press Space to toggle completion", _todoCompleted = True, _todoCreatedAt = timestamp }
-          ]
+  -- 데이터베이스 연결 및 초기화
+  conn <- open "todos.db"
+  DB.initDB conn
+  
+  -- 데이터베이스에서 Todo 로드
+  todos <- App.runAppM (App.AppEnv conn) App.loadTodosFromDB
+  
+  let initialTodos = Vec.map (\(tid, text, completed, createdAt) -> 
+                        Todo tid text completed createdAt) todos
       initialState =
         AppState
           { _todoList = list TodoList initialTodos 1,
             _inputEditor = E.editor InputField (Just 1) "",
-            _mode = ViewMode
+            _mode = ViewMode,
+            _dbConn = conn
           }
 
   _ <- defaultMain app initialState

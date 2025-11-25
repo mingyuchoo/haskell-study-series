@@ -26,6 +26,8 @@ dependencies:
 - time
 - vector
 - vty
+- sqlite-simple
+- transformers
 
 default-extensions:
 - DataKinds

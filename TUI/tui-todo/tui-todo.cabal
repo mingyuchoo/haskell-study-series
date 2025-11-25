@@ -27,6 +27,8 @@ source-repository head
 
 library
   exposed-modules:
+      App
+      DB
       Lib
   other-modules:
       Paths_tui_todo
@@ -54,8 +56,10 @@ library
     , microlens-th
     , mtl
     , parallel
+    , sqlite-simple
     , text
     , time
+    , transformers
     , vector
     , vty
   default-language: GHC2021
@@ -88,8 +92,10 @@ executable tui-todo-exe
     , microlens-th
     , mtl
     , parallel
+    , sqlite-simple
     , text
     , time
+    , transformers
     , tui-todo
     , vector
     , vty
@@ -127,8 +133,10 @@ test-suite tui-todo-test
     , microlens-th
     , mtl
     , parallel
+    , sqlite-simple
     , text
     , time
+    , transformers
     , tui-todo
     , vector
     , vty
