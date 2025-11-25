@@ -3,6 +3,17 @@
 
 module Lib
     ( tuiMain
+    , trim
+    , Todo(..)
+    , todoText
+    , todoCompleted
+    , todoCreatedAt
+    , Mode(..)
+    , Name(..)
+    , AppState(..)
+    , todoList
+    , inputEditor
+    , mode
     ) where
 
 import Brick
