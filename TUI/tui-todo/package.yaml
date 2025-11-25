@@ -1,0 +1,76 @@
+name:                tui-todo
+version:             0.1.0.0
+github:              mingyuchoo/tui-todo
+license:             BSD-3-Clause
+author:              Mingyu Choo
+maintainer:          mingyuchoo@gmail.com
+copyright:           Mingyu Choo 2025
+synopsis:            Short description of your package
+category:            Web
+description:         Please see the README on GitHub at <https://github.com/mingyuchoo/tui-todo#readme>
+
+extra-source-files:
+- README.md
+- CHANGELOG.md
+
+dependencies:
+- base >= 4.18 && < 5
+- brick
+- containers
+- flow
+- microlens
+- microlens-th
+- mtl
+- parallel
+- text
+- time
+- vector
+- vty
+
+default-extensions:
+- DataKinds
+- DeriveGeneric
+- ExplicitForAll
+- GADTs
+- KindSignatures
+- StandaloneKindSignatures
+- OverloadedStrings
+- TemplateHaskell
+- TypeApplications
+
+ghc-options:
+- -Wall
+- -O2
+- -haddock
+
+language: GHC2021
+
+library:
+  source-dirs: src
+
+executables:
+  tui-todo-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - tui-todo
+
+tests:
+  tui-todo-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - tui-todo
+    - hspec
+    - doctest
+    - doctest-discover
