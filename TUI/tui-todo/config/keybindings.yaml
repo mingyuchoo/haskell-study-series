@@ -1,0 +1,27 @@
+# TUI Todo Manager - 키바인딩 설정
+# 각 액션에 대한 키를 설정할 수 있습니다.
+# 특수 키: Enter, Esc, Space, Up, Down, Left, Right, Tab, Backspace
+# 일반 키: 'a', 'b', 'q' 등 (작은따옴표로 감싸기)
+
+keybindings:
+  # 애플리케이션 종료
+  quit: ['q', 'Esc']
+  
+  # Todo 추가 모드로 전환
+  add_todo: ['a']
+  
+  # Todo 완료 상태 토글
+  toggle_complete: ['Space']
+  
+  # Todo 삭제
+  delete_todo: ['d']
+  
+  # 목록 탐색
+  navigate_up: ['Up', 'k']
+  navigate_down: ['Down', 'j']
+  
+  # 입력 모드에서 저장
+  save_input: ['Enter']
+  
+  # 입력 모드에서 취소
+  cancel_input: ['Esc']

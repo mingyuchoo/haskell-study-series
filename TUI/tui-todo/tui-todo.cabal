@@ -28,6 +28,7 @@ source-repository head
 library
   exposed-modules:
       App
+      Config
       DB
       Lib
   other-modules:
@@ -48,9 +49,12 @@ library
       TypeApplications
   ghc-options: -Wall -O2 -haddock
   build-depends:
-      base >=4.18 && <5
+      aeson
+    , base >=4.18 && <5
     , brick
+    , bytestring
     , containers
+    , directory
     , flow
     , microlens
     , microlens-th
@@ -62,6 +66,7 @@ library
     , transformers
     , vector
     , vty
+    , yaml
   default-language: GHC2021
 
 executable tui-todo-exe
@@ -84,9 +89,12 @@ executable tui-todo-exe
       TypeApplications
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.18 && <5
+      aeson
+    , base >=4.18 && <5
     , brick
+    , bytestring
     , containers
+    , directory
     , flow
     , microlens
     , microlens-th
@@ -99,6 +107,7 @@ executable tui-todo-exe
     , tui-todo
     , vector
     , vty
+    , yaml
   default-language: GHC2021
 
 test-suite tui-todo-test
@@ -122,9 +131,12 @@ test-suite tui-todo-test
       TypeApplications
   ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.18 && <5
+      aeson
+    , base >=4.18 && <5
     , brick
+    , bytestring
     , containers
+    , directory
     , doctest
     , doctest-discover
     , flow
@@ -140,4 +152,5 @@ test-suite tui-todo-test
     , tui-todo
     , vector
     , vty
+    , yaml
   default-language: GHC2021

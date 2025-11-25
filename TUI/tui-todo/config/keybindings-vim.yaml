@@ -1,0 +1,12 @@
+# Vim 스타일 키바인딩 예시
+# 이 파일을 keybindings.yaml로 복사하여 사용할 수 있습니다.
+
+keybindings:
+  quit: ['q']
+  add_todo: ['i', 'a']
+  toggle_complete: ['Space', 'x']
+  delete_todo: ['d']
+  navigate_up: ['k', 'Up']
+  navigate_down: ['j', 'Down']
+  save_input: ['Enter']
+  cancel_input: ['Esc']

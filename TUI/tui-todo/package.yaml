@@ -28,6 +28,10 @@ dependencies:
 - vty
 - sqlite-simple
 - transformers
+- aeson
+- yaml
+- bytestring
+- directory
 
 default-extensions:
 - DataKinds
