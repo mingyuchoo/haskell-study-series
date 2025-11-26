@@ -28,7 +28,7 @@ type TodoId = Int
 
 data TodoRow = TodoRow
     { todoId        :: TodoId
-    , todoText      :: String
+    , todoAction      :: String
     , todoCompleted :: Bool
     , todoCreatedAt :: String
     } deriving (Show)

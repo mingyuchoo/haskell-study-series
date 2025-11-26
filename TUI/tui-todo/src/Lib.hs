@@ -12,7 +12,7 @@ module Lib
     , todoCompleted
     , todoCreatedAt
     , todoList
-    , todoText
+    , todoAction
     , todoId
     , trim
     , tuiMain
@@ -59,7 +59,7 @@ data Name = TodoList | InputField
 
 -- Todo 항목 데이터 타입 (DB ID 포함)
 data Todo = Todo { _todoId        :: DB.TodoId
-                 , _todoText      :: String
+                 , _todoAction      :: String
                  , _todoCompleted :: Bool
                  , _todoCreatedAt :: String
                  }
@@ -128,7 +128,7 @@ drawTodo selected todo =
             str <|
               todo ^. todoCreatedAt
    in withAttr selectAttr <|
-        hBox [checkbox, str (todo ^. todoText), timestamp]
+        hBox [checkbox, str (todo ^. todoAction), timestamp]
 
 drawInput :: AppState -> Widget Name
 drawInput s =

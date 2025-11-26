@@ -42,7 +42,7 @@ loadTodosFromDB :: AppM (Vec.Vector (DB.TodoId, String, Bool, String))
 loadTodosFromDB = do
     conn <- getConnection
     todos <- liftIO $ DB.getAllTodos conn
-    return $ Vec.fromList $ map (\t -> (DB.todoId t, DB.todoText t, DB.todoCompleted t, DB.todoCreatedAt t)) todos
+    return $ Vec.fromList $ map (\t -> (DB.todoId t, DB.todoAction t, DB.todoCompleted t, DB.todoCreatedAt t)) todos
 
 -- 데이터베이스에 Todo 저장
 saveTodoToDB :: String -> AppM DB.TodoId

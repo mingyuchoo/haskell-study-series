@@ -31,8 +31,8 @@ spec = do
   describe "Todo 데이터 타입" $ do
     let sampleTodo = Todo "Test task" False "2024-01-01 10:00"
     
-    it "todoText 렌즈가 올바르게 동작해야 함" $ do
-      sampleTodo ^. todoText `shouldBe` "Test task"
+    it "todoAction 렌즈가 올바르게 동작해야 함" $ do
+      sampleTodo ^. todoAction `shouldBe` "Test task"
     
     it "todoCompleted 렌즈가 올바르게 동작해야 함" $ do
       sampleTodo ^. todoCompleted `shouldBe` False
