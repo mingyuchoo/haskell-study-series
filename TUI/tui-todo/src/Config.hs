@@ -15,6 +15,8 @@ import qualified Data.ByteString  as BS
 import           Data.List        (find)
 import qualified Data.Yaml        as Yaml
 
+import           Flow             ((<|))
+
 import           GHC.Generics     (Generic)
 
 import qualified Graphics.Vty     as V
@@ -38,7 +40,7 @@ data KeyBindings = KeyBindings { quit            :: ![String]
      deriving (Generic, Show)
 
 instance FromJSON KeyBindings where
-    parseJSON = withObject "KeyBindings" $ \v -> do
+    parseJSON = withObject "KeyBindings" <| \v -> do
         kb <- v .: "keybindings"
         KeyBindings
             <$> kb .: "quit"
@@ -69,12 +71,12 @@ loadKeyBindings path = do
     exists <- doesFileExist path
     if exists
         then loadFromFile
-        else useDefault $ "설정 파일을 찾을 수 없습니다: " ++ path
+        else useDefault <| "설정 파일을 찾을 수 없습니다: " ++ path
   where
     loadFromFile = do
         content <- BS.readFile path
         case Yaml.decodeEither' content of
-            Left err -> useDefault $ "키바인딩 설정 파일 로드 실패: " ++ show err
+            Left err -> useDefault <| "키바인딩 설정 파일 로드 실패: " ++ show err
             Right kb -> do
                 putStrLn "키바인딩 설정을 로드했습니다."
                 pure kb

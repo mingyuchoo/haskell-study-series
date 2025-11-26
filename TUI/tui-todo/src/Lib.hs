@@ -156,11 +156,11 @@ drawTodoList s =
           else renderList drawTodo True (s ^. todoList)
 
 drawTodo :: Bool -> Todo -> Widget Name
-drawTodo selected todo = withAttr selectAttr $ hBox [checkbox, str mainInfo, timestamp]
+drawTodo selected todo = withAttr selectAttr <| hBox [checkbox, str mainInfo, timestamp]
   where
-    checkbox = str $ if todo ^. todoCompleted then "[✓] " else "[ ] "
+    checkbox = str <| if todo ^. todoCompleted then "[✓] " else "[ ] "
 
-    todoAttr = attrName $ if todo ^. todoCompleted then "completed" else "normal"
+    todoAttr = attrName <| if todo ^. todoCompleted then "completed" else "normal"
     selectAttr = if selected then attrName "selected" else todoAttr
 
     showField _ Nothing    = ""
@@ -175,7 +175,7 @@ drawTodo selected todo = withAttr selectAttr $ hBox [checkbox, str mainInfo, tim
 
     completedTimeText = maybe "" (\t -> "완료: " ++ t ++ " | ") (todo ^. todoCompletedAt)
 
-    timestamp = padLeft Max $ withAttr (attrName "timestamp") $
+    timestamp = padLeft Max <| withAttr (attrName "timestamp") $
         str (completedTimeText ++ "생성: " ++ todo ^. todoCreatedAt)
 
 drawDetailView :: AppState -> Widget Name
@@ -332,7 +332,7 @@ drawHelp s =
             upKeys = head (Config.navigate_up kb)
             downKeys = head (Config.navigate_down kb)
         in vBox
-          [ str $ addKeys ++ ": Add | e: Edit | " ++ toggleKeys ++ ": Toggle | "
+          [ str <| addKeys ++ ": Add | e: Edit | " ++ toggleKeys ++ ": Toggle | "
                   ++ deleteKeys ++ ": Delete | " ++ upKeys ++ "/" ++ downKeys
                   ++ ": Navigate | " ++ quitKeys ++ ": Quit"
           ]
@@ -367,12 +367,12 @@ handleViewMode (VtyEvent (V.EvKey key [])) = do
               let tid = todo ^. todoId
                   conn = s' ^. dbConn
                   env = App.AppEnv conn
-              liftIO $ App.runAppM env (App.toggleTodo tid)
+              liftIO <| App.runAppM env (App.toggleTodo tid)
               -- Reload updated todo from DB
-              updatedRows <- liftIO $ App.runAppM env App.loadTodos
+              updatedRows <- liftIO <| App.runAppM env App.loadTodos
               case find (\row -> DB.todoId row == tid) updatedRows of
                 Just row ->
-                  modify $ todoList %~ listModify (\t -> t
+                  modify <| todoList %~ listModify (\t -> t
                     { _todoCompleted = DB.todoCompleted row
                     , _todoCompletedAt = DB.todoCompletedAt row
                     })
@@ -388,8 +388,8 @@ handleViewMode (VtyEvent (V.EvKey key [])) = do
             Just todo -> do
               let tid = todo ^. todoId
                   conn = s' ^. dbConn
-              liftIO $ App.runAppM (App.AppEnv conn) (App.deleteTodo tid)
-              modify $ todoList %~ listRemove idx
+              liftIO <| App.runAppM (App.AppEnv conn) (App.deleteTodo tid)
+              modify <| todoList %~ listRemove idx
     Just Config.NavigateUp -> zoom todoList <| handleListEvent (V.EvKey V.KUp [])
     Just Config.NavigateDown -> zoom todoList <| handleListEvent (V.EvKey V.KDown [])
     _ -> case key of
@@ -402,13 +402,13 @@ handleViewMode (VtyEvent (V.EvKey key [])) = do
             case todos Vec.!? idx of
               Nothing -> pure ()
               Just todo -> do
-                modify $ (mode .~ EditMode (todo ^. todoId))
+                modify <| (mode .~ EditMode (todo ^. todoId))
                        . (editingIndex .~ Just idx)
                        . (focusedField .~ FocusAction)
                        . (actionEditor .~ E.editor ActionField (Just 1) (todo ^. todoAction))
-                       . (subjectEditor .~ E.editor SubjectField (Just 1) (fromMaybe "" $ todo ^. todoSubject))
-                       . (indirectObjectEditor .~ E.editor IndirectObjectField (Just 1) (fromMaybe "" $ todo ^. todoIndirectObject))
-                       . (directObjectEditor .~ E.editor DirectObjectField (Just 1) (fromMaybe "" $ todo ^. todoDirectObject))
+                       . (subjectEditor .~ E.editor SubjectField (Just 1) (fromMaybe "" <| todo ^. todoSubject))
+                       . (indirectObjectEditor .~ E.editor IndirectObjectField (Just 1) (fromMaybe "" <| todo ^. todoIndirectObject))
+                       . (directObjectEditor .~ E.editor DirectObjectField (Just 1) (fromMaybe "" <| todo ^. todoDirectObject))
       _ -> pure ()
 handleViewMode _ = pure ()
 
@@ -420,10 +420,10 @@ handleInputMode (VtyEvent (V.EvKey key [])) = do
     Just Config.CancelInput -> clearEditorsAndReturnToView
     Just Config.SaveInput -> do
       s' <- get
-      let action      = trim $ unlines $ E.getEditContents (s' ^. actionEditor)
-          subject     = trim $ unlines $ E.getEditContents (s' ^. subjectEditor)
-          indirectObj = trim $ unlines $ E.getEditContents (s' ^. indirectObjectEditor)
-          directObj   = trim $ unlines $ E.getEditContents (s' ^. directObjectEditor)
+      let action      = trim <| unlines <| E.getEditContents (s' ^. actionEditor)
+          subject     = trim <| unlines <| E.getEditContents (s' ^. subjectEditor)
+          indirectObj = trim <| unlines <| E.getEditContents (s' ^. indirectObjectEditor)
+          directObj   = trim <| unlines <| E.getEditContents (s' ^. directObjectEditor)
 
           toMaybe s = if null s then Nothing else Just s
 
@@ -431,20 +431,20 @@ handleInputMode (VtyEvent (V.EvKey key [])) = do
         then do
           let conn = s' ^. dbConn
               env = App.AppEnv conn
-          newTodoRow <- liftIO $ App.runAppM env $ do
+          newTodoRow <- liftIO <| App.runAppM env <| do
             tid <- App.createTodoWithFields action (toMaybe subject) (toMaybe indirectObj) (toMaybe directObj)
             rows <- App.loadTodos
-            pure $ find (\row -> DB.todoId row == tid) rows
+            pure <| find (\row -> DB.todoId row == tid) rows
 
           case newTodoRow of
             Just row -> do
               let newTodo = fromTodoRow row
-              modify $ (todoList %~ listInsert 0 newTodo)
+              modify <| (todoList %~ listInsert 0 newTodo)
                      . (mode .~ ViewMode)
               clearEditors
-            Nothing -> modify $ mode .~ ViewMode
+            Nothing -> modify <| mode .~ ViewMode
         else
-          modify $ mode .~ ViewMode
+          modify <| mode .~ ViewMode
     _ -> case key of
       V.KChar '\t' -> do
         s' <- get
@@ -476,20 +476,20 @@ handleEditMode (VtyEvent (V.EvKey key [])) = do
   let kb = s ^. keyBindings
   case Config.matchesKey kb key of
     Just Config.CancelInput -> do
-      modify $ (mode .~ ViewMode) . (editingIndex .~ Nothing)
+      modify <| (mode .~ ViewMode) . (editingIndex .~ Nothing)
       clearEditors
     Just Config.SaveInput -> do
       s' <- get
-      let action      = trim $ unlines $ E.getEditContents (s' ^. actionEditor)
-          subject     = trim $ unlines $ E.getEditContents (s' ^. subjectEditor)
-          indirectObj = trim $ unlines $ E.getEditContents (s' ^. indirectObjectEditor)
-          directObj   = trim $ unlines $ E.getEditContents (s' ^. directObjectEditor)
+      let action      = trim <| unlines <| E.getEditContents (s' ^. actionEditor)
+          subject     = trim <| unlines <| E.getEditContents (s' ^. subjectEditor)
+          indirectObj = trim <| unlines <| E.getEditContents (s' ^. indirectObjectEditor)
+          directObj   = trim <| unlines <| E.getEditContents (s' ^. directObjectEditor)
 
           toMaybe s = if null s then Nothing else Just s
 
       case s' ^. mode of
         EditMode tid -> do
-          when (not $ null action) $ do
+          when (not <| null action) <| do
             let conn = s' ^. dbConn
                 env = App.AppEnv conn
             case s' ^. editingIndex of
@@ -499,7 +499,7 @@ handleEditMode (VtyEvent (V.EvKey key [])) = do
                 case todos Vec.!? idx of
                   Nothing -> pure ()
                   Just oldTodo -> do
-                    liftIO $ App.runAppM env $
+                    liftIO <| App.runAppM env $
                       App.updateTodo tid action (toMaybe subject) (toMaybe indirectObj) (toMaybe directObj)
 
                     let updatedTodo = oldTodo
@@ -508,9 +508,9 @@ handleEditMode (VtyEvent (V.EvKey key [])) = do
                           , _todoIndirectObject = toMaybe indirectObj
                           , _todoDirectObject = toMaybe directObj
                           }
-                    modify $ todoList %~ listModify (const updatedTodo)
+                    modify <| todoList %~ listModify (const updatedTodo)
 
-          modify $ (mode .~ ViewMode) . (editingIndex .~ Nothing)
+          modify <| (mode .~ ViewMode) . (editingIndex .~ Nothing)
           clearEditors
         _ -> pure ()
     _ -> case key of
@@ -551,7 +551,7 @@ clearEditors = modify $
 
 clearEditorsAndReturnToView :: EventM Name AppState ()
 clearEditorsAndReturnToView = do
-    modify $ mode .~ ViewMode
+    modify <| mode .~ ViewMode
     clearEditors
 
 -- 속성 맵
@@ -603,7 +603,7 @@ tuiMain = do
   let env = App.AppEnv conn
   todoRows <- App.runAppM env App.loadTodos
 
-  let initialTodos = Vec.fromList $ map fromTodoRow todoRows
+  let initialTodos = Vec.fromList <| map fromTodoRow todoRows
       initialState = AppState
           { _todoList             = list TodoList initialTodos 1
           , _actionEditor         = E.editor ActionField (Just 1) ""
@@ -617,4 +617,4 @@ tuiMain = do
           , _editingIndex         = Nothing
           }
 
-  void $ defaultMain app initialState
+  void <| defaultMain app initialState

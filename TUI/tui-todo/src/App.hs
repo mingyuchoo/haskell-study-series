@@ -22,6 +22,8 @@ import qualified DB
 
 import           Database.SQLite.Simple (Connection)
 
+import           Flow                   ((<|))
+
 -- Application environment containing dependencies
 newtype AppEnv = AppEnv { envConnection :: Connection }
 
@@ -44,13 +46,13 @@ runAppM env = flip runReaderT env . unAppM
 loadTodos :: MonadApp m => m [DB.TodoRow]
 loadTodos = do
     conn <- getConnection
-    liftIO $ DB.getAllTodos conn
+    liftIO <| DB.getAllTodos conn
 
 -- Create a new todo with action text only
 createTodo :: MonadApp m => String -> m DB.TodoId
 createTodo text = do
     conn <- getConnection
-    liftIO $ DB.createTodo conn text
+    liftIO <| DB.createTodo conn text
 
 -- Create a new todo with all fields
 createTodoWithFields :: MonadApp m
@@ -61,7 +63,7 @@ createTodoWithFields :: MonadApp m
                      -> m DB.TodoId
 createTodoWithFields action subj indObj dirObj = do
     conn <- getConnection
-    liftIO $ DB.createTodoWithFields conn action subj indObj dirObj
+    liftIO <| DB.createTodoWithFields conn action subj indObj dirObj
 
 -- Update an existing todo
 updateTodo :: MonadApp m
@@ -73,16 +75,16 @@ updateTodo :: MonadApp m
            -> m ()
 updateTodo tid action subj indObj dirObj = do
     conn <- getConnection
-    liftIO $ DB.updateTodoWithFields conn tid action subj indObj dirObj
+    liftIO <| DB.updateTodoWithFields conn tid action subj indObj dirObj
 
 -- Delete a todo
 deleteTodo :: MonadApp m => DB.TodoId -> m ()
 deleteTodo tid = do
     conn <- getConnection
-    liftIO $ DB.deleteTodo conn tid
+    liftIO <| DB.deleteTodo conn tid
 
 -- Toggle todo completion status
 toggleTodo :: MonadApp m => DB.TodoId -> m ()
 toggleTodo tid = do
     conn <- getConnection
-    liftIO $ DB.toggleTodoComplete conn tid
+    liftIO <| DB.toggleTodoComplete conn tid
