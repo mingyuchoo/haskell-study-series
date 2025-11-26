@@ -64,17 +64,17 @@ handleEvent ev = do
 
 -- | ViewMode 이벤트 처리 (Effectful)
 handleViewMode :: BrickEvent Name e -> EventM Name AppState ()
-handleViewMode (VtyEvent (V.EvKey key [])) = do
+handleViewMode (VtyEvent (V.EvKey key mods)) = do
   s <- get
   let kb = s ^. keyBindings
-  case Config.matchesKey kb key of
+  case Config.matchesKeyWithMods kb key mods of
     Just Config.QuitApp        -> halt
     Just Config.AddTodo        -> enterInputMode
     Just Config.ToggleComplete -> cycleStatusForward
     Just Config.DeleteTodo     -> deleteTodo
     Just Config.NavigateUp     -> zoom todoList <| handleListEvent (V.EvKey V.KUp [])
     Just Config.NavigateDown   -> zoom todoList <| handleListEvent (V.EvKey V.KDown [])
-    _                          -> handleEditKey key
+    _                          -> handleEditKey key mods
 handleViewMode _ = pure ()
 
 -- | InputMode로 전환 (Effectful)
@@ -146,8 +146,8 @@ deleteTodoFromDB s tid idx = do
   modify <| todoList %~ listRemove idx
 
 -- | 편집 키 처리 (Effectful)
-handleEditKey :: V.Key -> EventM Name AppState ()
-handleEditKey (V.KChar 'e') = do
+handleEditKey :: V.Key -> [V.Modifier] -> EventM Name AppState ()
+handleEditKey (V.KChar 'e') [] = do
   s <- get
   case listSelected (s ^. todoList) of
     Nothing -> pure ()
@@ -156,7 +156,7 @@ handleEditKey (V.KChar 'e') = do
       case todos Vec.!? idx of
         Nothing   -> pure ()
         Just todo -> enterEditMode todo idx
-handleEditKey _ = pure ()
+handleEditKey _ _ = pure ()
 
 -- | EditMode로 전환 (Effectful)
 enterEditMode :: Todo -> Int -> EventM Name AppState ()
@@ -172,13 +172,13 @@ enterEditMode todo idx = do
 
 -- | InputMode 이벤트 처리 (Effectful)
 handleInputMode :: BrickEvent Name e -> EventM Name AppState ()
-handleInputMode (VtyEvent (V.EvKey key [])) = do
+handleInputMode (VtyEvent (V.EvKey key mods)) = do
   s <- get
   let kb = s ^. keyBindings
-  case Config.matchesKey kb key of
+  case Config.matchesKeyWithMods kb key mods of
     Just Config.CancelInput -> clearEditorsAndReturnToView
     Just Config.SaveInput   -> saveNewTodo
-    _                       -> handleInputModeKey key
+    _                       -> handleInputModeKey key mods
 handleInputMode ev@(VtyEvent _) = handleEditorEvent ev
 handleInputMode _ = return ()
 
@@ -218,25 +218,25 @@ createAndInsertTodo s action subject indirectObj directObj = do
     Nothing -> modify <| mode .~ ViewMode
 
 -- | InputMode 키 처리 (Effectful)
-handleInputModeKey :: V.Key -> EventM Name AppState ()
-handleInputModeKey (V.KChar '\t') = cycleFieldFocus
-handleInputModeKey key = do
+handleInputModeKey :: V.Key -> [V.Modifier] -> EventM Name AppState ()
+handleInputModeKey (V.KChar '\t') [] = cycleFieldFocus
+handleInputModeKey key mods = do
   s <- get
   case s ^. focusedField of
-    FocusAction         -> zoom actionEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key []))
-    FocusSubject        -> zoom subjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key []))
-    FocusIndirectObject -> zoom indirectObjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key []))
-    FocusDirectObject   -> zoom directObjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key []))
+    FocusAction         -> zoom actionEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
+    FocusSubject        -> zoom subjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
+    FocusIndirectObject -> zoom indirectObjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
+    FocusDirectObject   -> zoom directObjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
 
 -- | EditMode 이벤트 처리 (Effectful)
 handleEditMode :: BrickEvent Name e -> EventM Name AppState ()
-handleEditMode (VtyEvent (V.EvKey key [])) = do
+handleEditMode (VtyEvent (V.EvKey key mods)) = do
   s <- get
   let kb = s ^. keyBindings
-  case Config.matchesKey kb key of
+  case Config.matchesKeyWithMods kb key mods of
     Just Config.CancelInput -> cancelEdit
     Just Config.SaveInput   -> saveEditedTodo
-    _                       -> handleEditModeKey key
+    _                       -> handleEditModeKey key mods
 handleEditMode ev@(VtyEvent _) = handleEditorEvent ev
 handleEditMode _ = return ()
 
@@ -291,15 +291,15 @@ updateTodoInDB s tid action subject indirectObj directObj = do
           modify <| todoList %~ listModify (const updatedTodo)
 
 -- | EditMode 키 처리 (Effectful)
-handleEditModeKey :: V.Key -> EventM Name AppState ()
-handleEditModeKey (V.KChar '\t') = cycleFieldFocus
-handleEditModeKey key = do
+handleEditModeKey :: V.Key -> [V.Modifier] -> EventM Name AppState ()
+handleEditModeKey (V.KChar '\t') [] = cycleFieldFocus
+handleEditModeKey key mods = do
   s <- get
   case s ^. focusedField of
-    FocusAction         -> zoom actionEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key []))
-    FocusSubject        -> zoom subjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key []))
-    FocusIndirectObject -> zoom indirectObjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key []))
-    FocusDirectObject   -> zoom directObjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key []))
+    FocusAction         -> zoom actionEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
+    FocusSubject        -> zoom subjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
+    FocusIndirectObject -> zoom indirectObjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
+    FocusDirectObject   -> zoom directObjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
 
 -- | 필드 포커스 순환 (Effectful)
 cycleFieldFocus :: EventM Name AppState ()

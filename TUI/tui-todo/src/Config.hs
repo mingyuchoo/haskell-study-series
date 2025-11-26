@@ -28,6 +28,7 @@ module Config
     , loadKeyBindings
     , loadKeyBindingsWithMessages
     , matchesKey
+    , matchesKeyWithMods
     ) where
 
 import           Data.Aeson       (FromJSON, parseJSON, withObject, (.:))
@@ -130,11 +131,23 @@ keyToString = \case
   V.KFun n -> "F" <> show n
   _ -> ""
 
+-- | Convert Vty key with modifiers to string representation (Pure)
+keyWithModsToString :: V.Key -> [V.Modifier] -> String
+keyWithModsToString key mods
+  | V.MCtrl `elem` mods = case key of
+      V.KChar c -> "C-" <> [c]
+      _         -> keyToString key
+  | otherwise = keyToString key
+
 -- | Match a key to its corresponding action (Pure)
 matchesKey :: KeyBindings -> V.Key -> Maybe KeyAction
-matchesKey kb key = snd <$> find (keyMatches keyStr . fst) actions
+matchesKey kb key = matchesKeyWithMods kb key []
+
+-- | Match a key with modifiers to its corresponding action (Pure)
+matchesKeyWithMods :: KeyBindings -> V.Key -> [V.Modifier] -> Maybe KeyAction
+matchesKeyWithMods kb key mods = snd <$> find (keyMatches keyStr . fst) actions
   where
-    keyStr = keyToString key
+    keyStr = keyWithModsToString key mods
     keyMatches str keys = str `elem` keys
     actions =
       [ (quit kb, QuitApp),

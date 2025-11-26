@@ -1,6 +1,5 @@
-# TUI Todo Manager - 키바인딩 설정 (Emacs 스타일)
+# Emacs 스타일 키바인딩
 # Emacs의 일반적인 키 조합을 따릅니다.
-# 특수 키: Enter, Esc, Space, Up, Down, Left, Right, Tab, Backspace
 # Ctrl 키: C-a, C-b, C-c 등 (Ctrl + 문자)
 
 keybindings:
