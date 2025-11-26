@@ -31,14 +31,14 @@ module Lib
     , mode
     , subjectEditor
     , todoAction
-    , todoCompleted
-    , todoCompletedAt
     , todoCreatedAt
     , todoDirectObject
     , todoId
     , todoIndirectObject
     , todoList
     , todoObject
+    , todoStatus
+    , todoStatusChangedAt
     , todoSubject
     , trim
     ) where

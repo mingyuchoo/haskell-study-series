@@ -19,7 +19,10 @@ module DB
     , getAllTodos
     , initDB
     , initDBWithMessages
-    , toggleTodoComplete
+    , transitionToCancelled
+    , transitionToCompleted
+    , transitionToInProgress
+    , transitionToRegistered
     , updateTodo
     , updateTodoWithFields
     ) where
@@ -33,18 +36,20 @@ import           Database.SQLite.Simple (Connection, FromRow (..), Only (..),
 
 import qualified I18n
 
+import qualified TodoStatus
+
 type TodoId = Int
 
 -- | Domain model for a Todo item (Effectful)
-data TodoRow = TodoRow { todoId             :: !TodoId
-                       , todoAction         :: !String
-                       , todoCompleted      :: !Bool
-                       , todoCreatedAt      :: !String
-                       , todoSubject        :: !(Maybe String)
-                       , todoObject         :: !(Maybe String)
-                       , todoIndirectObject :: !(Maybe String)
-                       , todoDirectObject   :: !(Maybe String)
-                       , todoCompletedAt    :: !(Maybe String)
+data TodoRow = TodoRow { todoId              :: !TodoId
+                       , todoAction          :: !String
+                       , todoStatus          :: !String
+                       , todoCreatedAt       :: !String
+                       , todoSubject         :: !(Maybe String)
+                       , todoObject          :: !(Maybe String)
+                       , todoIndirectObject  :: !(Maybe String)
+                       , todoDirectObject    :: !(Maybe String)
+                       , todoStatusChangedAt :: !(Maybe String)
                        }
      deriving (Eq, Show)
 
@@ -54,8 +59,8 @@ instance FromRow TodoRow where
         <*> field <*> field <*> field <*> field <*> field
 
 instance ToRow TodoRow where
-    toRow (TodoRow tid txt comp created subj obj indObj dirObj compAt) =
-        toRow (tid, txt, comp, created, subj, obj, indObj, dirObj, compAt)
+    toRow (TodoRow tid txt status created subj obj indObj dirObj statusChangedAt) =
+        toRow (tid, txt, status, created, subj, obj, indObj, dirObj, statusChangedAt)
 
 -- | Initialize database schema and seed data (Effectful)
 initDB :: Connection -> IO ()
@@ -71,13 +76,13 @@ initDBWithMessages conn msgs = do
         "CREATE TABLE IF NOT EXISTS todos \
         \(id INTEGER PRIMARY KEY AUTOINCREMENT, \
         \ text TEXT NOT NULL, \
-        \ completed INTEGER NOT NULL DEFAULT 0, \
+        \ status TEXT NOT NULL DEFAULT 'registered', \
         \ created_at TEXT NOT NULL, \
         \ subject TEXT, \
         \ object TEXT, \
         \ indirect_object TEXT, \
         \ direct_object TEXT, \
-        \ completed_at TEXT)"
+        \ status_changed_at TEXT)"
 
     seedInitialData = do
         count <- query_ conn "SELECT COUNT(*) FROM todos" :: IO [Only Int]
@@ -88,27 +93,28 @@ initDBWithMessages conn msgs = do
     insertSampleTodos = do
         timestamp <- getCurrentTime
         let timeStr = formatTime defaultTimeLocale "%Y-%m-%d %H:%M" timestamp
-            insertTodo txt completed = execute conn
-                "INSERT INTO todos (text, completed, created_at, subject, object, \
-                \indirect_object, direct_object, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-                (txt :: String, completed, timeStr,
+            insertTodo txt status = execute conn
+                "INSERT INTO todos (text, status, created_at, subject, object, \
+                \indirect_object, direct_object, status_changed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+                (txt :: String, status :: String, timeStr,
                  Nothing :: Maybe String, Nothing :: Maybe String,
                  Nothing :: Maybe String, Nothing :: Maybe String,
-                 if completed then Just timeStr else Nothing :: Maybe String)
+                 if status == "completed" then Just timeStr else Nothing :: Maybe String)
             samples = I18n.sample_todos msgs
 
-        insertTodo (I18n.welcome samples) False
-        insertTodo (I18n.add_hint samples) False
-        insertTodo (I18n.toggle_hint samples) True
+        insertTodo (I18n.welcome samples) "registered"
+        insertTodo (I18n.add_hint samples) "in_progress"
+        insertTodo (I18n.toggle_hint samples) "completed"
 
 -- | Create a new todo with action text only (Effectful)
 createTodo :: Connection -> String -> IO TodoId
 createTodo conn text = do
     timeStr <- formatCurrentTime
+    let status = TodoStatus.statusToString TodoStatus.registered
     execute conn
-        "INSERT INTO todos (text, completed, created_at, subject, object, \
-        \indirect_object, direct_object, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-        (text, False, timeStr,
+        "INSERT INTO todos (text, status, created_at, subject, object, \
+        \indirect_object, direct_object, status_changed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+        (text, status, timeStr,
          Nothing :: Maybe String, Nothing :: Maybe String,
          Nothing :: Maybe String, Nothing :: Maybe String,
          Nothing :: Maybe String)
@@ -118,27 +124,28 @@ createTodo conn text = do
 createTodoWithFields :: Connection -> String -> Maybe String -> Maybe String -> Maybe String -> IO TodoId
 createTodoWithFields conn text subj indObj dirObj = do
     timeStr <- formatCurrentTime
+    let status = TodoStatus.statusToString TodoStatus.registered
     execute conn
-        "INSERT INTO todos (text, completed, created_at, subject, object, \
-        \indirect_object, direct_object, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-        (text, False, timeStr, subj, Nothing :: Maybe String, indObj, dirObj,
+        "INSERT INTO todos (text, status, created_at, subject, object, \
+        \indirect_object, direct_object, status_changed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+        (text, status, timeStr, subj, Nothing :: Maybe String, indObj, dirObj,
          Nothing :: Maybe String)
     fromIntegral <$> lastInsertRowId conn
 
 -- | Retrieve all todos ordered by ID descending (Effectful)
 getAllTodos :: Connection -> IO [TodoRow]
 getAllTodos conn = query_ conn
-    "SELECT id, text, completed, created_at, subject, object, \
-    \indirect_object, direct_object, completed_at \
+    "SELECT id, text, status, created_at, subject, object, \
+    \indirect_object, direct_object, status_changed_at \
     \FROM todos ORDER BY id DESC"
 
 -- | Update all fields of a todo (Effectful)
-updateTodo :: Connection -> TodoId -> String -> Bool -> Maybe String -> Maybe String -> Maybe String -> Maybe String -> Maybe String -> IO ()
-updateTodo conn tid text completed subj obj indObj dirObj compAt =
+updateTodo :: Connection -> TodoId -> String -> String -> Maybe String -> Maybe String -> Maybe String -> Maybe String -> Maybe String -> IO ()
+updateTodo conn tid text status subj obj indObj dirObj statusChangedAt =
     execute conn
-        "UPDATE todos SET text = ?, completed = ?, subject = ?, object = ?, \
-        \indirect_object = ?, direct_object = ?, completed_at = ? WHERE id = ?"
-        (text, completed, subj, obj, indObj, dirObj, compAt, tid)
+        "UPDATE todos SET text = ?, status = ?, subject = ?, object = ?, \
+        \indirect_object = ?, direct_object = ?, status_changed_at = ? WHERE id = ?"
+        (text, status, subj, obj, indObj, dirObj, statusChangedAt, tid)
 
 -- | Update specific fields of a todo (Effectful)
 updateTodoWithFields :: Connection -> TodoId -> String -> Maybe String -> Maybe String -> Maybe String -> IO ()
@@ -152,14 +159,37 @@ updateTodoWithFields conn tid text subj indObj dirObj =
 deleteTodo :: Connection -> TodoId -> IO ()
 deleteTodo conn tid = execute conn "DELETE FROM todos WHERE id = ?" (Only tid)
 
--- | Toggle completion status of a todo (Effectful)
-toggleTodoComplete :: Connection -> TodoId -> IO ()
-toggleTodoComplete conn tid = do
+-- | Transition todo from Registered to InProgress (Effectful)
+transitionToInProgress :: Connection -> TodoId -> IO ()
+transitionToInProgress conn tid = do
     timeStr <- formatCurrentTime
     execute conn
-        "UPDATE todos SET completed = NOT completed, \
-        \completed_at = CASE WHEN completed = 0 THEN ? ELSE NULL END WHERE id = ?"
-        (timeStr, tid)
+        "UPDATE todos SET status = ?, status_changed_at = ? WHERE id = ? AND status = ?"
+        (TodoStatus.statusToString (TodoStatus.startProgress TodoStatus.registered), timeStr, tid, "registered" :: String)
+
+-- | Transition todo from InProgress to Cancelled (Effectful)
+transitionToCancelled :: Connection -> TodoId -> IO ()
+transitionToCancelled conn tid = do
+    timeStr <- formatCurrentTime
+    execute conn
+        "UPDATE todos SET status = ?, status_changed_at = ? WHERE id = ?"
+        (TodoStatus.statusToString (TodoStatus.cancel TodoStatus.StatusInProgress), timeStr, tid)
+
+-- | Transition todo from Cancelled to Completed (Effectful)
+transitionToCompleted :: Connection -> TodoId -> IO ()
+transitionToCompleted conn tid = do
+    timeStr <- formatCurrentTime
+    execute conn
+        "UPDATE todos SET status = ?, status_changed_at = ? WHERE id = ?"
+        ("completed" :: String, timeStr, tid)
+
+-- | Transition todo from Completed to Registered (Effectful)
+transitionToRegistered :: Connection -> TodoId -> IO ()
+transitionToRegistered conn tid = do
+    timeStr <- formatCurrentTime
+    execute conn
+        "UPDATE todos SET status = ?, status_changed_at = ? WHERE id = ?"
+        (TodoStatus.statusToString TodoStatus.registered, timeStr, tid)
 
 -- | Helper function to format current time (Effectful)
 formatCurrentTime :: IO String

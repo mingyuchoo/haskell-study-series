@@ -82,17 +82,24 @@ drawTodoList s =
 
 -- | 개별 Todo 항목 그리기 (Pure)
 drawTodo :: I18n.I18nMessages -> Bool -> Todo -> Widget Name
-drawTodo msgs selected todo = withAttr selectAttr <| hBox [checkbox, str mainInfo, timestamp]
+drawTodo msgs selected todo = withAttr selectAttr <| hBox [statusIcon, str mainInfo, timestamp]
   where
     listMsgs = I18n.list msgs
+    status = todo ^. todoStatus
 
-    checkbox =
+    statusIcon =
       str $
-        if todo ^. todoCompleted
-          then I18n.checkbox_done listMsgs
-          else I18n.checkbox_todo listMsgs
+        case status of
+          "registered"  -> "[R] "
+          "in_progress" -> "[P] "
+          "cancelled"   -> "[X] "
+          "completed"   -> "[✓] "
+          _             -> "[ ] "
 
-    todoAttr = attrName <| if todo ^. todoCompleted then "completed" else "normal"
+    todoAttr = attrName <| case status of
+      "completed" -> "completed"
+      "cancelled" -> "cancelled"
+      _           -> "normal"
     selectAttr = if selected then attrName "selected" else todoAttr
 
     showField _ Nothing    = ""
@@ -106,12 +113,12 @@ drawTodo msgs selected todo = withAttr selectAttr <| hBox [checkbox, str mainInf
           showField (I18n.field_direct listMsgs) (todo ^. todoDirectObject)
         ]
 
-    completedTimeText = maybe "" (\t -> I18n.completed_prefix listMsgs <> t <> I18n.field_separator listMsgs) (todo ^. todoCompletedAt)
+    statusChangedText = maybe "" (\t -> "Status: " <> t <> I18n.field_separator listMsgs) (todo ^. todoStatusChangedAt)
 
     timestamp =
       padLeft Max $
         withAttr (attrName "timestamp") $
-          str (completedTimeText <> I18n.created_prefix listMsgs <> todo ^. todoCreatedAt)
+          str (statusChangedText <> I18n.created_prefix listMsgs <> todo ^. todoCreatedAt)
 
 -- | 상세 뷰 그리기 (Pure)
 drawDetailView :: AppState -> Widget Name
@@ -186,8 +193,17 @@ drawTodoDetail :: I18n.I18nMessages -> I18n.UIMessages -> Todo -> Bool -> Widget
 drawTodoDetail msgs uiMsgs todo _ =
   let fieldMsgs = I18n.fields msgs
       statusMsgs = I18n.status msgs
-      statusText = if todo ^. todoCompleted then I18n.completed statusMsgs else I18n.in_progress statusMsgs
-      statusAttr = if todo ^. todoCompleted then attrName "completed" else attrName "normal"
+      status = todo ^. todoStatus
+      statusText = case status of
+        "registered"  -> "Registered"
+        "in_progress" -> I18n.in_progress statusMsgs
+        "cancelled"   -> "Cancelled"
+        "completed"   -> I18n.completed statusMsgs
+        _             -> "Unknown"
+      statusAttr = attrName <| case status of
+        "completed" -> "completed"
+        "cancelled" -> "cancelled"
+        _           -> "normal"
 
       showDetailField _ Nothing = str ""
       showDetailField lbl (Just val) =
@@ -196,11 +212,11 @@ drawTodoDetail msgs uiMsgs todo _ =
             str val
           ]
 
-      completedInfo = case todo ^. todoCompletedAt of
-        Just compTime ->
+      statusChangedInfo = case todo ^. todoStatusChangedAt of
+        Just changeTime ->
           hBox
-            [ withAttr (attrName "detailLabel") <| str (I18n.completed_at_label fieldMsgs <> ": "),
-              withAttr (attrName "timestamp") <| str compTime
+            [ withAttr (attrName "detailLabel") <| str ("Status Changed: "),
+              withAttr (attrName "timestamp") <| str changeTime
             ]
         Nothing -> str ""
    in borderWithLabel (str <| I18n.detail_title uiMsgs) $
@@ -226,7 +242,7 @@ drawTodoDetail msgs uiMsgs todo _ =
                   [ withAttr (attrName "detailLabel") <| str (I18n.created_at_label fieldMsgs <> ": "),
                     withAttr (attrName "timestamp") <| str (todo ^. todoCreatedAt)
                   ],
-                completedInfo
+                statusChangedInfo
               ]
 
 -- | Todo 상세 정보 그리기 (Pure, 편집 가능)
@@ -234,14 +250,23 @@ drawTodoDetailWithEditors :: AppState -> I18n.I18nMessages -> I18n.UIMessages ->
 drawTodoDetailWithEditors s msgs _uiMsgs todo title =
   let fieldMsgs = I18n.fields msgs
       statusMsgs = I18n.status msgs
-      statusText = if todo ^. todoCompleted then I18n.completed statusMsgs else I18n.in_progress statusMsgs
-      statusAttr = if todo ^. todoCompleted then attrName "completed" else attrName "normal"
+      status = todo ^. todoStatus
+      statusText = case status of
+        "registered"  -> "Registered"
+        "in_progress" -> I18n.in_progress statusMsgs
+        "cancelled"   -> "Cancelled"
+        "completed"   -> I18n.completed statusMsgs
+        _             -> "Unknown"
+      statusAttr = attrName <| case status of
+        "completed" -> "completed"
+        "cancelled" -> "cancelled"
+        _           -> "normal"
 
-      completedInfo = case todo ^. todoCompletedAt of
-        Just compTime ->
+      statusChangedInfo = case todo ^. todoStatusChangedAt of
+        Just changeTime ->
           hBox
-            [ withAttr (attrName "detailLabel") <| str (I18n.completed_at_label fieldMsgs <> ": "),
-              withAttr (attrName "timestamp") <| str compTime
+            [ withAttr (attrName "detailLabel") <| str ("Status Changed: "),
+              withAttr (attrName "timestamp") <| str changeTime
             ]
         Nothing -> str ""
    in borderWithLabel (str title) $
@@ -264,7 +289,7 @@ drawTodoDetailWithEditors s msgs _uiMsgs todo title =
                   [ withAttr (attrName "detailLabel") <| str (I18n.created_at_label fieldMsgs <> ": "),
                     withAttr (attrName "timestamp") <| str (todo ^. todoCreatedAt)
                   ],
-                completedInfo
+                statusChangedInfo
               ]
 
 -- | 편집 가능한 필드 렌더링 (Pure)

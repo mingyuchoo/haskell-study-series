@@ -27,6 +27,7 @@ theMap =
       (attrName "selected", V.black `on` V.cyan),
       (attrName "normal", V.defAttr),
       (attrName "completed", fg V.green `V.withStyle` V.dim),
+      (attrName "cancelled", fg V.red `V.withStyle` V.dim),
       (attrName "timestamp", fg V.yellow),
       (attrName "inputHelp", fg V.cyan `V.withStyle` V.dim),
       (attrName "focusedField", fg V.cyan `V.withStyle` V.bold),

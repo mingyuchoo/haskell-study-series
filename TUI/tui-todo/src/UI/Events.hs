@@ -70,7 +70,7 @@ handleViewMode (VtyEvent (V.EvKey key [])) = do
   case Config.matchesKey kb key of
     Just Config.QuitApp        -> halt
     Just Config.AddTodo        -> enterInputMode
-    Just Config.ToggleComplete -> toggleTodoComplete
+    Just Config.ToggleComplete -> cycleStatusForward
     Just Config.DeleteTodo     -> deleteTodo
     Just Config.NavigateUp     -> zoom todoList <| handleListEvent (V.EvKey V.KUp [])
     Just Config.NavigateDown   -> zoom todoList <| handleListEvent (V.EvKey V.KDown [])
@@ -83,9 +83,9 @@ enterInputMode = do
   modify <| mode .~ InputMode
   modify <| focusedField .~ FocusAction
 
--- | Todo 완료 상태 토글 (Effectful)
-toggleTodoComplete :: EventM Name AppState ()
-toggleTodoComplete = do
+-- | 상태를 순환 전환 (Registered -> InProgress -> Cancelled -> Completed -> Registered) (Effectful)
+cycleStatusForward :: EventM Name AppState ()
+cycleStatusForward = do
   s <- get
   case listSelected (s ^. todoList) of
     Nothing -> pure ()
@@ -93,15 +93,24 @@ toggleTodoComplete = do
       let todos = s ^. todoList . listElementsL
       case todos Vec.!? idx of
         Nothing   -> pure ()
-        Just todo -> toggleTodoInDB s (todo ^. todoId) idx
+        Just todo -> transitionStatus s (todo ^. todoId) (todo ^. todoStatus) idx
 
--- | DB에서 Todo 토글 (Effectful)
-toggleTodoInDB :: AppState -> DB.TodoId -> Int -> EventM Name AppState ()
-toggleTodoInDB s tid _idx = do
+-- | 상태 전환 처리 (Effectful)
+transitionStatus :: AppState -> DB.TodoId -> String -> Int -> EventM Name AppState ()
+transitionStatus s tid currentStatus _idx = do
   let conn = s ^. dbConn
       msgs = s ^. i18nMessages
       env = App.AppEnv conn msgs
-  liftIO <| App.runAppM env (App.toggleTodo tid)
+
+  -- 현재 상태에 따라 다음 상태로 전환: 등록 -> 진행 -> 취소 -> 완료 -> 등록
+  case currentStatus of
+    "registered"  -> liftIO <| App.runAppM env (App.transitionToInProgress tid)
+    "in_progress" -> liftIO <| App.runAppM env (App.transitionToCancelled tid)
+    "cancelled"   -> liftIO <| App.runAppM env (App.transitionToCompleted tid)
+    "completed"   -> liftIO <| App.runAppM env (App.transitionToRegistered tid)
+    _             -> pure ()
+
+  -- DB에서 업데이트된 데이터 가져오기
   updatedRows <- liftIO <| App.runAppM env App.loadTodos
   case find (\row -> DB.todoId row == tid) updatedRows of
     Just row ->
@@ -110,8 +119,8 @@ toggleTodoInDB s tid _idx = do
           %~ listModify
             ( \t ->
                 t
-                  { _todoCompleted = DB.todoCompleted row,
-                    _todoCompletedAt = DB.todoCompletedAt row
+                  { _todoStatus = DB.todoStatus row,
+                    _todoStatusChangedAt = DB.todoStatusChangedAt row
                   }
             )
     Nothing -> pure ()

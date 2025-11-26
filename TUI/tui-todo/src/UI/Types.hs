@@ -29,14 +29,14 @@ module UI.Types
     , mode
     , subjectEditor
     , todoAction
-    , todoCompleted
-    , todoCompletedAt
     , todoCreatedAt
     , todoDirectObject
     , todoId
     , todoIndirectObject
     , todoList
     , todoObject
+    , todoStatus
+    , todoStatusChangedAt
     , todoSubject
     ) where
 
@@ -68,15 +68,15 @@ data FocusedField = FocusAction | FocusSubject | FocusIndirectObject | FocusDire
      deriving (Eq, Show)
 
 -- | UI representation of a Todo item (Pure)
-data Todo = Todo { _todoId             :: !DB.TodoId
-                 , _todoAction         :: !String
-                 , _todoCompleted      :: !Bool
-                 , _todoCreatedAt      :: !String
-                 , _todoSubject        :: !(Maybe String)
-                 , _todoObject         :: !(Maybe String)
-                 , _todoIndirectObject :: !(Maybe String)
-                 , _todoDirectObject   :: !(Maybe String)
-                 , _todoCompletedAt    :: !(Maybe String)
+data Todo = Todo { _todoId              :: !DB.TodoId
+                 , _todoAction          :: !String
+                 , _todoStatus          :: !String
+                 , _todoCreatedAt       :: !String
+                 , _todoSubject         :: !(Maybe String)
+                 , _todoObject          :: !(Maybe String)
+                 , _todoIndirectObject  :: !(Maybe String)
+                 , _todoDirectObject    :: !(Maybe String)
+                 , _todoStatusChangedAt :: !(Maybe String)
                  }
      deriving (Eq, Show)
 
@@ -104,11 +104,11 @@ fromTodoRow row =
   Todo
     { _todoId = DB.todoId row,
       _todoAction = DB.todoAction row,
-      _todoCompleted = DB.todoCompleted row,
+      _todoStatus = DB.todoStatus row,
       _todoCreatedAt = DB.todoCreatedAt row,
       _todoSubject = DB.todoSubject row,
       _todoObject = DB.todoObject row,
       _todoIndirectObject = DB.todoIndirectObject row,
       _todoDirectObject = DB.todoDirectObject row,
-      _todoCompletedAt = DB.todoCompletedAt row
+      _todoStatusChangedAt = DB.todoStatusChangedAt row
     }

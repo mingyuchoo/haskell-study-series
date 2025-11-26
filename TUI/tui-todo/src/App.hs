@@ -21,7 +21,10 @@ module App
     , deleteTodo
     , loadTodos
     , runAppM
-    , toggleTodo
+    , transitionToCancelled
+    , transitionToCompleted
+    , transitionToInProgress
+    , transitionToRegistered
     , updateTodo
     ) where
 
@@ -89,8 +92,26 @@ deleteTodo tid = do
     conn <- getConnection
     liftIO <| DB.deleteTodo conn tid
 
--- | Toggle todo completion status (Effectful)
-toggleTodo :: MonadApp m => DB.TodoId -> m ()
-toggleTodo tid = do
+-- | Transition todo to InProgress (Effectful)
+transitionToInProgress :: MonadApp m => DB.TodoId -> m ()
+transitionToInProgress tid = do
     conn <- getConnection
-    liftIO <| DB.toggleTodoComplete conn tid
+    liftIO <| DB.transitionToInProgress conn tid
+
+-- | Transition todo to Cancelled (Effectful)
+transitionToCancelled :: MonadApp m => DB.TodoId -> m ()
+transitionToCancelled tid = do
+    conn <- getConnection
+    liftIO <| DB.transitionToCancelled conn tid
+
+-- | Transition todo to Completed (Effectful)
+transitionToCompleted :: MonadApp m => DB.TodoId -> m ()
+transitionToCompleted tid = do
+    conn <- getConnection
+    liftIO <| DB.transitionToCompleted conn tid
+
+-- | Transition todo to Registered (Effectful)
+transitionToRegistered :: MonadApp m => DB.TodoId -> m ()
+transitionToRegistered tid = do
+    conn <- getConnection
+    liftIO <| DB.transitionToRegistered conn tid
