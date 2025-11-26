@@ -5,8 +5,13 @@ module Lib
     ( AppState (..)
     , Mode (..)
     , Name (..)
+    , FocusedField (..)
     , Todo (..)
-    , inputEditor
+    , actionEditor
+    , subjectEditor
+    , indirectObjectEditor
+    , directObjectEditor
+    , focusedField
     , keyBindings
     , mode
     , todoCompleted
@@ -60,8 +65,16 @@ data Mode = ViewMode | InputMode | EditMode DB.TodoId
      deriving (Eq, Show)
 
 -- 리소스 이름
-data Name = TodoList | InputField
+data Name = TodoList 
+          | ActionField 
+          | SubjectField 
+          | IndirectObjectField 
+          | DirectObjectField
      deriving (Eq, Ord, Show)
+
+-- 현재 포커스된 필드
+data FocusedField = FocusAction | FocusSubject | FocusIndirectObject | FocusDirectObject
+     deriving (Eq, Show)
 
 -- Todo 항목 데이터 타입 (DB ID 포함)
 data Todo = Todo { _todoId             :: DB.TodoId
@@ -79,12 +92,16 @@ data Todo = Todo { _todoId             :: DB.TodoId
 makeLenses ''Todo
 
 -- 애플리케이션 상태
-data AppState = AppState { _todoList     :: List Name Todo
-                         , _inputEditor  :: E.Editor String Name
-                         , _mode         :: Mode
-                         , _dbConn       :: Connection
-                         , _keyBindings  :: Config.KeyBindings
-                         , _editingIndex :: Maybe Int
+data AppState = AppState { _todoList            :: List Name Todo
+                         , _actionEditor        :: E.Editor String Name
+                         , _subjectEditor       :: E.Editor String Name
+                         , _indirectObjectEditor :: E.Editor String Name
+                         , _directObjectEditor  :: E.Editor String Name
+                         , _focusedField        :: FocusedField
+                         , _mode                :: Mode
+                         , _dbConn              :: Connection
+                         , _keyBindings         :: Config.KeyBindings
+                         , _editingIndex        :: Maybe Int
                          }
 
 makeLenses ''AppState
@@ -140,38 +157,63 @@ drawTodo selected todo =
       showField lbl (Just val) = " | " ++ lbl ++ ": " ++ val
       
       -- 각 필드 구성
-      actionText = "행위: " ++ todo ^. todoAction
+      actionText = "할일: " ++ todo ^. todoAction
       subjectText = showField "주체자" (todo ^. todoSubject)
-      indirectObjText = showField "대상" (todo ^. todoIndirectObject)
-      directObjText = showField "실행개체" (todo ^. todoDirectObject)
+      indirectObjText = showField "대상자" (todo ^. todoIndirectObject)
+      directObjText = showField "작업대상" (todo ^. todoDirectObject)
       
       -- 메인 정보 라인
       mainInfo = actionText ++ subjectText ++ indirectObjText ++ directObjText
       
+      -- 완료 시각 표시
+      completedTimeText = case todo ^. todoCompletedAt of
+        Just compTime -> "완료: " ++ compTime ++ " | "
+        Nothing -> ""
+      
       timestamp =
         padLeft Max <|
           withAttr (attrName "timestamp") <|
-            str ("생성: " ++ todo ^. todoCreatedAt)
+            str (completedTimeText ++ "생성: " ++ todo ^. todoCreatedAt)
    in withAttr selectAttr <|
         hBox [checkbox, str mainInfo, timestamp]
 
 drawInput :: AppState -> Widget Name
 drawInput s =
   let (label, isEditing) = case s ^. mode of
-        InputMode -> (" Add New Todo (Enter to save, Esc to cancel) ", True)
-        EditMode _ -> (" Edit Todo (Enter to save, Esc to cancel) ", True)
+        InputMode -> (" Add New Todo (Tab: 다음 필드, Enter: 저장, Esc: 취소) ", True)
+        EditMode _ -> (" Edit Todo (Tab: 다음 필드, Enter: 저장, Esc: 취소) ", True)
         ViewMode -> (" Input (press 'a' to add, 'e' to edit) ", False)
-      helpText = 
-        if isEditing
-          then padLeft (Pad 2) <| withAttr (attrName "inputHelp") <| 
-                 str "형식: 행위 | 주체자: 값 | 대상: 값 | 실행개체: 값"
-          else str ""
-   in vBox
-        [ borderWithLabel (str label) <|
-            padAll 1 <|
-              E.renderEditor (str . unlines) isEditing (s ^. inputEditor)
-        , helpText
-        ]
+      
+      -- 각 필드의 포커스 상태
+      actionFocused = isEditing && s ^. focusedField == FocusAction
+      subjectFocused = isEditing && s ^. focusedField == FocusSubject
+      indirectObjFocused = isEditing && s ^. focusedField == FocusIndirectObject
+      directObjFocused = isEditing && s ^. focusedField == FocusDirectObject
+      
+      -- 필드 렌더링 헬퍼
+      renderField fieldLabel editor isFocused =
+        let fieldAttr = if isFocused 
+                          then attrName "focusedField"
+                          else attrName "normalField"
+            labelWidget = withAttr fieldAttr <| str (fieldLabel ++ ": ")
+            editorWidget = E.renderEditor (str . unlines) isFocused editor
+        in hBox [labelWidget, editorWidget]
+      
+   in if isEditing
+        then borderWithLabel (str label) <|
+               padAll 1 <|
+                 vBox
+                   [ renderField "할일 (필수)" (s ^. actionEditor) actionFocused
+                   , str " "
+                   , renderField "주체자" (s ^. subjectEditor) subjectFocused
+                   , str " "
+                   , renderField "대상자" (s ^. indirectObjectEditor) indirectObjFocused
+                   , str " "
+                   , renderField "작업대상" (s ^. directObjectEditor) directObjFocused
+                   ]
+        else borderWithLabel (str label) <|
+               padAll 1 <|
+                 str "(press 'a' to add, 'e' to edit)"
 
 drawHelp :: AppState -> Widget Name
 drawHelp s =
@@ -208,7 +250,9 @@ handleViewMode (VtyEvent (V.EvKey key [])) = do
   let kb = s ^. keyBindings
   case Config.matchesKey kb key of
     Just Config.QuitApp -> halt
-    Just Config.AddTodo -> modify <| mode .~ InputMode
+    Just Config.AddTodo -> do
+      modify <| mode .~ InputMode
+      modify <| focusedField .~ FocusAction
     Just Config.ToggleComplete -> do
       s' <- get
       case listSelected (s' ^. todoList) of
@@ -221,7 +265,12 @@ handleViewMode (VtyEvent (V.EvKey key [])) = do
               let tid = todo ^. todoId
                   conn = s' ^. dbConn
               liftIO $ App.runAppM (App.AppEnv conn) (App.toggleTodoInDB tid)
-              modify <| todoList %~ listModify (todoCompleted %~ not)
+              -- DB에서 업데이트된 todo 다시 로드
+              updatedTodos <- liftIO $ App.runAppM (App.AppEnv conn) App.loadTodosFromDB
+              case Vec.find (\(id', _, _, _, _, _, _, _, _) -> id' == tid) updatedTodos of
+                Just (_, _, newCompleted, _, _, _, _, _, newCompletedAt) ->
+                  modify <| todoList %~ listModify (\t -> t { _todoCompleted = newCompleted, _todoCompletedAt = newCompletedAt })
+                Nothing -> return ()
     Just Config.DeleteTodo -> do
       s' <- get
       case listSelected (s' ^. todoList) of
@@ -248,10 +297,13 @@ handleViewMode (VtyEvent (V.EvKey key [])) = do
               Nothing -> return ()
               Just todo -> do
                 let tid = todo ^. todoId
-                    editText = formatTodoForEdit todo
                 modify <| mode .~ EditMode tid
                 modify <| editingIndex .~ Just idx
-                modify <| inputEditor .~ E.editor InputField (Just 1) editText
+                modify <| focusedField .~ FocusAction
+                modify <| actionEditor .~ E.editor ActionField (Just 1) (todo ^. todoAction)
+                modify <| subjectEditor .~ E.editor SubjectField (Just 1) (maybe "" id (todo ^. todoSubject))
+                modify <| indirectObjectEditor .~ E.editor IndirectObjectField (Just 1) (maybe "" id (todo ^. todoIndirectObject))
+                modify <| directObjectEditor .~ E.editor DirectObjectField (Just 1) (maybe "" id (todo ^. todoDirectObject))
       _ -> return ()
 handleViewMode _ = return ()
 
@@ -262,37 +314,66 @@ handleInputMode (VtyEvent (V.EvKey key [])) = do
   case Config.matchesKey kb key of
     Just Config.CancelInput -> do
       modify <| mode .~ ViewMode
-      modify <| inputEditor .~ E.editor InputField (Just 1) ""
+      modify <| actionEditor .~ E.editor ActionField (Just 1) ""
+      modify <| subjectEditor .~ E.editor SubjectField (Just 1) ""
+      modify <| indirectObjectEditor .~ E.editor IndirectObjectField (Just 1) ""
+      modify <| directObjectEditor .~ E.editor DirectObjectField (Just 1) ""
     Just Config.SaveInput -> do
       s' <- get
-      let text = unlines <| E.getEditContents (s' ^. inputEditor)
-          trimmedText = trim text
-      if not (null trimmedText)
+      let action = trim $ unlines $ E.getEditContents (s' ^. actionEditor)
+          subject = trim $ unlines $ E.getEditContents (s' ^. subjectEditor)
+          indirectObj = trim $ unlines $ E.getEditContents (s' ^. indirectObjectEditor)
+          directObj = trim $ unlines $ E.getEditContents (s' ^. directObjectEditor)
+          
+          subjectMaybe = if null subject then Nothing else Just subject
+          indirectObjMaybe = if null indirectObj then Nothing else Just indirectObj
+          directObjMaybe = if null directObj then Nothing else Just directObj
+      
+      if not (null action)
         then do
           let conn = s' ^. dbConn
-              (action, subject, indirectObj, directObj) = parseTodoInput trimmedText
+          (newId, timestamp) <- liftIO $ App.runAppM (App.AppEnv conn) $ do
+            tid <- App.saveTodoWithFieldsToDB action subjectMaybe indirectObjMaybe directObjMaybe
+            todos <- App.loadTodosFromDB
+            let maybeTodo = Vec.find (\(id', _, _, _, _, _, _, _, _) -> id' == tid) todos
+            case maybeTodo of
+              Just (_, _, _, ts, _, _, _, _, _) -> return (tid, ts)
+              Nothing -> return (tid, "")
           
-          if null action
-            then modify <| mode .~ ViewMode
-            else do
-              (newId, timestamp) <- liftIO $ App.runAppM (App.AppEnv conn) $ do
-                tid <- App.saveTodoWithFieldsToDB action subject indirectObj directObj
-                todos <- App.loadTodosFromDB
-                let maybeTodo = Vec.find (\(id', _, _, _, _, _, _, _, _) -> id' == tid) todos
-                case maybeTodo of
-                  Just (_, _, _, ts, _, _, _, _, _) -> return (tid, ts)
-                  Nothing -> return (tid, "")
-              
-              let newTodo = Todo newId action False timestamp subject Nothing indirectObj directObj Nothing
-                  currentList = s' ^. todoList
-                  newList = listInsert 0 newTodo currentList
-              modify <| todoList .~ newList
-              modify <| mode .~ ViewMode
-              modify <| inputEditor .~ E.editor InputField (Just 1) ""
+          let newTodo = Todo newId action False timestamp subjectMaybe Nothing indirectObjMaybe directObjMaybe Nothing
+              currentList = s' ^. todoList
+              newList = listInsert 0 newTodo currentList
+          modify <| todoList .~ newList
+          modify <| mode .~ ViewMode
+          modify <| actionEditor .~ E.editor ActionField (Just 1) ""
+          modify <| subjectEditor .~ E.editor SubjectField (Just 1) ""
+          modify <| indirectObjectEditor .~ E.editor IndirectObjectField (Just 1) ""
+          modify <| directObjectEditor .~ E.editor DirectObjectField (Just 1) ""
         else
           modify <| mode .~ ViewMode
-    _ -> zoom inputEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key []))
-handleInputMode ev@(VtyEvent _) = zoom inputEditor <| E.handleEditorEvent ev
+    _ -> case key of
+      V.KChar '\t' -> do
+        s' <- get
+        let nextField = case s' ^. focusedField of
+              FocusAction -> FocusSubject
+              FocusSubject -> FocusIndirectObject
+              FocusIndirectObject -> FocusDirectObject
+              FocusDirectObject -> FocusAction
+        modify <| focusedField .~ nextField
+      _ -> do
+        s' <- get
+        case s' ^. focusedField of
+          FocusAction -> zoom actionEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key []))
+          FocusSubject -> zoom subjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key []))
+          FocusIndirectObject -> zoom indirectObjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key []))
+          FocusDirectObject -> zoom directObjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key []))
+handleInputMode ev@(VtyEvent _) = do
+  s <- get
+  case s ^. focusedField of
+    FocusAction -> zoom actionEditor <| E.handleEditorEvent ev
+    FocusSubject -> zoom subjectEditor <| E.handleEditorEvent ev
+    FocusIndirectObject -> zoom indirectObjectEditor <| E.handleEditorEvent ev
+    FocusDirectObject -> zoom directObjectEditor <| E.handleEditorEvent ev
 handleInputMode _ = return ()
 
 handleEditMode :: BrickEvent Name e -> EventM Name AppState ()
@@ -303,103 +384,84 @@ handleEditMode (VtyEvent (V.EvKey key [])) = do
     Just Config.CancelInput -> do
       modify <| mode .~ ViewMode
       modify <| editingIndex .~ Nothing
-      modify <| inputEditor .~ E.editor InputField (Just 1) ""
+      modify <| actionEditor .~ E.editor ActionField (Just 1) ""
+      modify <| subjectEditor .~ E.editor SubjectField (Just 1) ""
+      modify <| indirectObjectEditor .~ E.editor IndirectObjectField (Just 1) ""
+      modify <| directObjectEditor .~ E.editor DirectObjectField (Just 1) ""
     Just Config.SaveInput -> do
       s' <- get
-      let text = unlines <| E.getEditContents (s' ^. inputEditor)
-          trimmedText = trim text
+      let action = trim $ unlines $ E.getEditContents (s' ^. actionEditor)
+          subject = trim $ unlines $ E.getEditContents (s' ^. subjectEditor)
+          indirectObj = trim $ unlines $ E.getEditContents (s' ^. indirectObjectEditor)
+          directObj = trim $ unlines $ E.getEditContents (s' ^. directObjectEditor)
+          
+          subjectMaybe = if null subject then Nothing else Just subject
+          indirectObjMaybe = if null indirectObj then Nothing else Just indirectObj
+          directObjMaybe = if null directObj then Nothing else Just directObj
+      
       case s' ^. mode of
         EditMode tid -> do
-          if not (null trimmedText)
+          if not (null action)
             then do
               let conn = s' ^. dbConn
-                  (action, subject, indirectObj, directObj) = parseTodoInput trimmedText
-              
-              if null action
-                then do
-                  modify <| mode .~ ViewMode
-                  modify <| editingIndex .~ Nothing
-                else do
-                  -- DB 업데이트
-                  case s' ^. editingIndex of
+              -- DB 업데이트
+              case s' ^. editingIndex of
+                Nothing -> return ()
+                Just idx -> do
+                  let todos = s' ^. todoList . listElementsL
+                  case todos Vec.!? idx of
                     Nothing -> return ()
-                    Just idx -> do
-                      let todos = s' ^. todoList . listElementsL
-                      case todos Vec.!? idx of
-                        Nothing -> return ()
-                        Just oldTodo -> do
-                          liftIO $ App.runAppM (App.AppEnv conn) $ 
-                            App.updateTodoInDB tid action subject indirectObj directObj
-                          
-                          -- 리스트 업데이트
-                          let updatedTodo = oldTodo 
-                                { _todoAction = action
-                                , _todoSubject = subject
-                                , _todoIndirectObject = indirectObj
-                                , _todoDirectObject = directObj
-                                }
-                          modify <| todoList %~ listModify (const updatedTodo)
-                  
-                  modify <| mode .~ ViewMode
-                  modify <| editingIndex .~ Nothing
-                  modify <| inputEditor .~ E.editor InputField (Just 1) ""
+                    Just oldTodo -> do
+                      liftIO $ App.runAppM (App.AppEnv conn) $ 
+                        App.updateTodoInDB tid action subjectMaybe indirectObjMaybe directObjMaybe
+                      
+                      -- 리스트 업데이트
+                      let updatedTodo = oldTodo 
+                            { _todoAction = action
+                            , _todoSubject = subjectMaybe
+                            , _todoIndirectObject = indirectObjMaybe
+                            , _todoDirectObject = directObjMaybe
+                            }
+                      modify <| todoList %~ listModify (const updatedTodo)
+              
+              modify <| mode .~ ViewMode
+              modify <| editingIndex .~ Nothing
+              modify <| actionEditor .~ E.editor ActionField (Just 1) ""
+              modify <| subjectEditor .~ E.editor SubjectField (Just 1) ""
+              modify <| indirectObjectEditor .~ E.editor IndirectObjectField (Just 1) ""
+              modify <| directObjectEditor .~ E.editor DirectObjectField (Just 1) ""
             else do
               modify <| mode .~ ViewMode
               modify <| editingIndex .~ Nothing
         _ -> return ()
-    _ -> zoom inputEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key []))
-handleEditMode ev@(VtyEvent _) = zoom inputEditor <| E.handleEditorEvent ev
+    _ -> case key of
+      V.KChar '\t' -> do
+        s' <- get
+        let nextField = case s' ^. focusedField of
+              FocusAction -> FocusSubject
+              FocusSubject -> FocusIndirectObject
+              FocusIndirectObject -> FocusDirectObject
+              FocusDirectObject -> FocusAction
+        modify <| focusedField .~ nextField
+      _ -> do
+        s' <- get
+        case s' ^. focusedField of
+          FocusAction -> zoom actionEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key []))
+          FocusSubject -> zoom subjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key []))
+          FocusIndirectObject -> zoom indirectObjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key []))
+          FocusDirectObject -> zoom directObjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key []))
+handleEditMode ev@(VtyEvent _) = do
+  s <- get
+  case s ^. focusedField of
+    FocusAction -> zoom actionEditor <| E.handleEditorEvent ev
+    FocusSubject -> zoom subjectEditor <| E.handleEditorEvent ev
+    FocusIndirectObject -> zoom indirectObjectEditor <| E.handleEditorEvent ev
+    FocusDirectObject -> zoom directObjectEditor <| E.handleEditorEvent ev
 handleEditMode _ = return ()
 
 -- 유틸리티 함수
 trim :: String -> String
 trim = unwords . words
-
--- Todo 입력 파싱 함수
--- 형식: "행위 | 주체자: 값 | 대상: 값 | 실행개체: 값"
-parseTodoInput :: String -> (String, Maybe String, Maybe String, Maybe String)
-parseTodoInput input =
-  let parts = map trim $ splitOn '|' input
-      (action, fields) = case parts of
-        [] -> ("", [])
-        (a:fs) -> (a, fs)
-      
-      findField prefix = 
-        case filter (startsWith prefix) fields of
-          [] -> Nothing
-          (f:_) -> Just $ trim $ drop (length prefix) f
-      
-      subject = findField "주체자:"
-      indirectObj = findField "대상:"
-      directObj = findField "실행개체:"
-  in (action, subject, indirectObj, directObj)
-
-splitOn :: Char -> String -> [String]
-splitOn _ "" = [""]
-splitOn delim (c:cs)
-  | c == delim = "" : rest
-  | otherwise = case rest of
-      [] -> [[c]]
-      (r:rs) -> (c : r) : rs
-  where rest = splitOn delim cs
-
-startsWith :: String -> String -> Bool
-startsWith prefix s = take (length prefix) s == prefix
-
--- Todo를 편집 가능한 형식으로 변환
-formatTodoForEdit :: Todo -> String
-formatTodoForEdit todo =
-  let action = todo ^. todoAction
-      subjectPart = case todo ^. todoSubject of
-        Nothing -> ""
-        Just s -> " | 주체자: " ++ s
-      indirectObjPart = case todo ^. todoIndirectObject of
-        Nothing -> ""
-        Just io -> " | 대상: " ++ io
-      directObjPart = case todo ^. todoDirectObject of
-        Nothing -> ""
-        Just d -> " | 실행개체: " ++ d
-  in action ++ subjectPart ++ indirectObjPart ++ directObjPart
 
 -- 속성 맵
 theMap :: AttrMap
@@ -412,6 +474,8 @@ theMap =
       (attrName "completed", fg V.green `V.withStyle` V.dim),
       (attrName "timestamp", fg V.yellow),
       (attrName "inputHelp", fg V.cyan `V.withStyle` V.dim),
+      (attrName "focusedField", fg V.cyan `V.withStyle` V.bold),
+      (attrName "normalField", fg V.white),
       (listSelectedAttr, V.black `on` V.cyan)
     ]
 
@@ -421,8 +485,16 @@ app =
   App
     { appDraw = drawUI,
       appChooseCursor = \s locs -> case s ^. mode of
-        InputMode -> showCursorNamed InputField locs
-        EditMode _ -> showCursorNamed InputField locs
+        InputMode -> case s ^. focusedField of
+          FocusAction -> showCursorNamed ActionField locs
+          FocusSubject -> showCursorNamed SubjectField locs
+          FocusIndirectObject -> showCursorNamed IndirectObjectField locs
+          FocusDirectObject -> showCursorNamed DirectObjectField locs
+        EditMode _ -> case s ^. focusedField of
+          FocusAction -> showCursorNamed ActionField locs
+          FocusSubject -> showCursorNamed SubjectField locs
+          FocusIndirectObject -> showCursorNamed IndirectObjectField locs
+          FocusDirectObject -> showCursorNamed DirectObjectField locs
         ViewMode  -> Nothing,
       appHandleEvent = handleEvent,
       appStartEvent = return (),
@@ -446,7 +518,11 @@ tuiMain = do
       initialState =
         AppState
           { _todoList = list TodoList initialTodos 1,
-            _inputEditor = E.editor InputField (Just 1) "",
+            _actionEditor = E.editor ActionField (Just 1) "",
+            _subjectEditor = E.editor SubjectField (Just 1) "",
+            _indirectObjectEditor = E.editor IndirectObjectField (Just 1) "",
+            _directObjectEditor = E.editor DirectObjectField (Just 1) "",
+            _focusedField = FocusAction,
             _mode = ViewMode,
             _dbConn = conn,
             _keyBindings = kb,
