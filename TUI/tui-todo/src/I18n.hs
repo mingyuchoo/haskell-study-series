@@ -91,6 +91,12 @@ data HelpMessages = HelpMessages
     { view_mode  :: !String
     , edit_mode  :: !String
     , input_mode :: !String
+    , add        :: !String
+    , edit       :: !String
+    , toggle     :: !String
+    , delete     :: !String
+    , navigate   :: !String
+    , quit       :: !String
     }
      deriving (Generic, Show)
 
@@ -181,6 +187,12 @@ defaultMessages = I18nMessages
         { view_mode = "Tab: Next Field | Enter: Save | Esc: Cancel"
         , edit_mode = "Tab: Next Field | Enter: Save | Esc: Cancel"
         , input_mode = "Tab: Next Field | Enter: Save | Esc: Cancel"
+        , add = "Add"
+        , edit = "Edit"
+        , toggle = "Toggle"
+        , delete = "Delete"
+        , navigate = "Navigate"
+        , quit = "Quit"
         }
     , messages = SystemMessages
         { config_not_found = "Configuration file not found"

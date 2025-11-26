@@ -352,10 +352,19 @@ drawHelp s =
                deleteKeys = fromMaybe "d" (listToMaybe (Config.delete_todo kb))
                upKeys = fromMaybe "k" (listToMaybe (Config.navigate_up kb))
                downKeys = fromMaybe "j" (listToMaybe (Config.navigate_down kb))
+               
+               addLabel = I18n.add helpMsgs
+               editLabel = I18n.edit helpMsgs
+               toggleLabel = I18n.toggle helpMsgs
+               deleteLabel = I18n.delete helpMsgs
+               navigateLabel = I18n.navigate helpMsgs
+               quitLabel = I18n.quit helpMsgs
            in vBox
-             [ str <| addKeys ++ ": Add | e: Edit | " ++ toggleKeys ++ ": Toggle | "
-                     ++ deleteKeys ++ ": Delete | " ++ upKeys ++ "/" ++ downKeys
-                     ++ ": Navigate | " ++ quitKeys ++ ": Quit"
+             [ str <| addKeys ++ ": " ++ addLabel ++ " | e: " ++ editLabel ++ " | " 
+                     ++ toggleKeys ++ ": " ++ toggleLabel ++ " | "
+                     ++ deleteKeys ++ ": " ++ deleteLabel ++ " | " 
+                     ++ upKeys ++ "/" ++ downKeys ++ ": " ++ navigateLabel ++ " | " 
+                     ++ quitKeys ++ ": " ++ quitLabel
              ]
 
 -- 이벤트 처리

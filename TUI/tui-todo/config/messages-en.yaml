@@ -42,6 +42,12 @@ help:
   view_mode: "Tab: Next Field | Enter: Save | Esc: Cancel"
   edit_mode: "Tab: Next Field | Enter: Save | Esc: Cancel"
   input_mode: "Tab: Next Field | Enter: Save | Esc: Cancel"
+  add: "Add"
+  edit: "Edit"
+  toggle: "Toggle"
+  delete: "Delete"
+  navigate: "Navigate"
+  quit: "Quit"
 
 messages:
   config_not_found: "Configuration file not found"

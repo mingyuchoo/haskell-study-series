@@ -42,6 +42,12 @@ help:
   view_mode: "Tab: 다음 필드 | Enter: 저장 | Esc: 취소"
   edit_mode: "Tab: 다음 필드 | Enter: 저장 | Esc: 취소"
   input_mode: "Tab: 다음 필드 | Enter: 저장 | Esc: 취소"
+  add: "추가"
+  edit: "편집"
+  toggle: "토글"
+  delete: "삭제"
+  navigate: "이동"
+  quit: "종료"
 
 messages:
   config_not_found: "설정 파일을 찾을 수 없습니다"
