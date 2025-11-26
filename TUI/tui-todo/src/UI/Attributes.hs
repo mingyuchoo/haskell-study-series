@@ -4,9 +4,10 @@ module UI.Attributes
     ( theMap
     ) where
 
-import           Brick                (AttrMap, attrMap, attrName, fg, on)
-import           Brick.Widgets.List   (listSelectedAttr)
-import qualified Graphics.Vty         as V
+import           Brick              (AttrMap, attrMap, attrName, fg, on)
+import           Brick.Widgets.List (listSelectedAttr)
+
+import qualified Graphics.Vty       as V
 
 -- | 속성 맵
 theMap :: AttrMap

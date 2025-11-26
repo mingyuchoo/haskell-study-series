@@ -30,9 +30,9 @@ module Lib
     , trim
     ) where
 
-import           Brick (App (..), showCursorNamed)
+import           Brick         (App (..), showCursorNamed)
 
-import           Lens.Micro ((^.))
+import           Lens.Micro    ((^.))
 
 import           UI.Attributes (theMap)
 import           UI.Draw       (drawUI)

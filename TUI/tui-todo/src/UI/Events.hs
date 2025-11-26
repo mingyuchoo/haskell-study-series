@@ -5,22 +5,28 @@ module UI.Events
     , trim
     ) where
 
+import qualified App
+
 import           Brick                  (BrickEvent (VtyEvent), EventM, get,
                                          halt, modify, zoom)
 import qualified Brick.Widgets.Edit     as E
-import           Brick.Widgets.List     (listModify, listRemove, listSelected,
-                                         handleListEvent, listElementsL,
-                                         listInsert)
+import           Brick.Widgets.List     (handleListEvent, listElementsL,
+                                         listInsert, listModify, listRemove,
+                                         listSelected)
 
-import qualified App
 import qualified Config
+
 import           Control.Monad          (when)
 import           Control.Monad.IO.Class (liftIO)
+
 import qualified DB
+
 import           Data.List              (find)
 import           Data.Maybe             (fromMaybe)
 import qualified Data.Vector            as Vec
+
 import qualified Graphics.Vty           as V
+
 import           Lens.Micro             ((%~), (.~), (^.))
 
 import           UI.Types

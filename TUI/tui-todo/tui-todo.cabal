@@ -119,6 +119,13 @@ test-suite tui-todo-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      AppSpec
+      ConfigSpec
+      DBSpec
+      I18nSpec
+      UI.AttributesSpec
+      UI.EventsSpec
+      UI.TypesSpec
       Paths_tui_todo
   autogen-modules:
       Paths_tui_todo

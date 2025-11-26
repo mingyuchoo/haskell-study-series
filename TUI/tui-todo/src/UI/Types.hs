@@ -29,15 +29,18 @@ module UI.Types
     , todoSubject
     ) where
 
-import qualified Brick.Widgets.Edit as E
-import           Brick.Widgets.List (List)
+import qualified Brick.Widgets.Edit     as E
+import           Brick.Widgets.List     (List)
 
 import qualified Config
+
 import qualified DB
+
 import           Database.SQLite.Simple (Connection)
+
 import qualified I18n
 
-import           Lens.Micro.TH (makeLenses)
+import           Lens.Micro.TH          (makeLenses)
 
 -- | Application modes
 data Mode = ViewMode

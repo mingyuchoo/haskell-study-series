@@ -5,17 +5,19 @@ module UI.Draw
     ) where
 
 import           Brick                (Padding (..), Widget, attrName, hBox,
-                                       padAll, padLeft, padTopBottom, str,
-                                       vBox, vLimit, withAttr)
+                                       padAll, padLeft, padTopBottom, str, vBox,
+                                       vLimit, withAttr)
 import           Brick.Widgets.Border (borderWithLabel, hBorder)
 import           Brick.Widgets.Center (center, hCenter)
 import qualified Brick.Widgets.Edit   as E
 import           Brick.Widgets.List   (listElementsL, listSelected, renderList)
 
 import qualified Config
+
 import qualified Data.Vector          as Vec
 
 import qualified I18n
+
 import           Lens.Micro           ((^.))
 
 import           UI.Types
