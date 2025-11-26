@@ -1,0 +1,201 @@
+cabal-version: 2.2
+
+-- This file has been generated from package.yaml by hpack version 0.38.1.
+--
+-- see: https://github.com/sol/hpack
+
+name:           fzh
+version:        0.1.0.0
+synopsis:       Short description of your package
+description:    Please see the README on GitHub at <https://github.com/mingyuchoo/fzh#readme>
+category:       Web
+homepage:       https://github.com/mingyuchoo/fzh#readme
+bug-reports:    https://github.com/mingyuchoo/fzh/issues
+author:         Mingyu Choo
+maintainer:     mingyuchoo@gmail.com
+copyright:      Mingyu Choo 2025
+license:        BSD-3-Clause
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/mingyuchoo/fzh
+
+library
+  exposed-modules:
+      AppState
+      Cache
+      FuzzySearch
+      InputReader
+      Lib
+      ParallelFilter
+      UI
+  other-modules:
+      Paths_fzh
+  autogen-modules:
+      Paths_fzh
+  hs-source-dirs:
+      src
+  default-extensions:
+      DataKinds
+      DeriveGeneric
+      ExplicitForAll
+      GADTs
+      KindSignatures
+      StandaloneKindSignatures
+      OverloadedStrings
+      TemplateHaskell
+      TypeApplications
+  ghc-options: -Wall -O2 -haddock
+  build-depends:
+      async
+    , base >=4.18 && <5
+    , brick
+    , bytestring
+    , containers
+    , criterion
+    , flow
+    , microlens
+    , microlens-th
+    , mtl
+    , parallel
+    , stm
+    , streaming
+    , streaming-bytestring
+    , text
+    , time
+    , vector
+    , vty
+  default-language: GHC2021
+
+executable fzh-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_fzh
+  autogen-modules:
+      Paths_fzh
+  hs-source-dirs:
+      app
+  default-extensions:
+      DataKinds
+      DeriveGeneric
+      ExplicitForAll
+      GADTs
+      KindSignatures
+      StandaloneKindSignatures
+      OverloadedStrings
+      TemplateHaskell
+      TypeApplications
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      async
+    , base >=4.18 && <5
+    , brick
+    , bytestring
+    , containers
+    , criterion
+    , flow
+    , fzh
+    , microlens
+    , microlens-th
+    , mtl
+    , parallel
+    , stm
+    , streaming
+    , streaming-bytestring
+    , text
+    , time
+    , vector
+    , vty
+  default-language: GHC2021
+
+test-suite fzh-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_fzh
+  autogen-modules:
+      Paths_fzh
+  hs-source-dirs:
+      test
+  default-extensions:
+      DataKinds
+      DeriveGeneric
+      ExplicitForAll
+      GADTs
+      KindSignatures
+      StandaloneKindSignatures
+      OverloadedStrings
+      TemplateHaskell
+      TypeApplications
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      async
+    , base >=4.18 && <5
+    , brick
+    , bytestring
+    , containers
+    , criterion
+    , doctest
+    , doctest-discover
+    , flow
+    , fzh
+    , hspec
+    , microlens
+    , microlens-th
+    , mtl
+    , parallel
+    , stm
+    , streaming
+    , streaming-bytestring
+    , text
+    , time
+    , vector
+    , vty
+  default-language: GHC2021
+
+benchmark fzh-bench
+  type: exitcode-stdio-1.0
+  main-is: Benchmark.hs
+  other-modules:
+      Paths_fzh
+  autogen-modules:
+      Paths_fzh
+  hs-source-dirs:
+      bench
+  default-extensions:
+      DataKinds
+      DeriveGeneric
+      ExplicitForAll
+      GADTs
+      KindSignatures
+      StandaloneKindSignatures
+      OverloadedStrings
+      TemplateHaskell
+      TypeApplications
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N -O2
+  build-depends:
+      async
+    , base >=4.18 && <5
+    , brick
+    , bytestring
+    , containers
+    , criterion
+    , flow
+    , fzh
+    , microlens
+    , microlens-th
+    , mtl
+    , parallel
+    , stm
+    , streaming
+    , streaming-bytestring
+    , text
+    , time
+    , vector
+    , vty
+  default-language: GHC2021

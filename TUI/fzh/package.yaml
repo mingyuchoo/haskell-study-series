@@ -1,0 +1,96 @@
+name:                fzh
+version:             0.1.0.0
+github:              mingyuchoo/fzh
+license:             BSD-3-Clause
+author:              Mingyu Choo
+maintainer:          mingyuchoo@gmail.com
+copyright:           Mingyu Choo 2025
+synopsis:            Short description of your package
+category:            Web
+description:         Please see the README on GitHub at <https://github.com/mingyuchoo/fzh#readme>
+
+extra-source-files:
+- README.md
+- CHANGELOG.md
+
+dependencies:
+- base >= 4.18 && < 5
+- async
+- brick
+- bytestring
+- containers
+- criterion
+- flow
+- microlens
+- microlens-th
+- mtl
+- parallel
+- stm
+- streaming
+- streaming-bytestring
+- text
+- time
+- vector
+- vty
+
+default-extensions:
+- DataKinds
+- DeriveGeneric
+- ExplicitForAll
+- GADTs
+- KindSignatures
+- StandaloneKindSignatures
+- OverloadedStrings
+- TemplateHaskell
+- TypeApplications
+
+ghc-options:
+- -Wall
+- -O2
+- -haddock
+
+language: GHC2021
+
+library:
+  source-dirs: src
+
+executables:
+  fzh-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - fzh
+
+tests:
+  fzh-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - fzh
+    - hspec
+    - doctest
+    - doctest-discover
+
+benchmarks:
+  fzh-bench:
+    main:                Benchmark.hs
+    source-dirs:         bench
+    ghc-options:
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -O2
+    dependencies:
+    - fzh
+    - criterion
