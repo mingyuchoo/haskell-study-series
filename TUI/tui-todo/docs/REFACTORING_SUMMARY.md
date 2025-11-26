@@ -44,7 +44,7 @@ Refactored the TUI Todo application to follow idiomatic Haskell patterns and pro
   - Extracted helper functions (`clearEditors`, `clearEditorsAndReturnToView`)
 - Removed tuple unpacking, now uses proper domain types
 - Better use of `Maybe` functions (`fromMaybe`, `maybe`)
-- Improved `tuiMain` initialization logic
+- Improved `app` initialization logic
 - Fixed shadowing warnings
 
 ## MTL Architecture Benefits

@@ -9,16 +9,16 @@
 
 ## 언어 설정
 
-기본 언어는 한국어입니다. 언어를 변경하려면 `src/Lib.hs`의 `tuiMain` 함수를 수정하세요:
+기본 언어는 한국어입니다. 언어를 변경하려면 `src/Lib.hs`의 `app` 함수를 수정하세요:
 
 ```haskell
 -- | 한국어 사용 (기본값)
-tuiMain :: IO ()
-tuiMain = tuiMainWithLanguage I18n.Korean
+app :: IO ()
+app = appWithLanguage I18n.Korean
 
 -- | 영어 사용
-tuiMain :: IO ()
-tuiMain = tuiMainWithLanguage I18n.English
+app :: IO ()
+app = appWithLanguage I18n.English
 ```
 
 ## 메시지 파일 구조

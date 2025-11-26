@@ -47,8 +47,8 @@ MTL 패턴에 맞게 수정:
 - `drawTodo`: 개별 할일 항목 표시
 - `drawDetailView`: 상세 정보 (보기/편집/추가 모드)
 - `drawHelp`: 도움말 메시지
-- `tuiMain`: 기본 언어 설정 (한국어)
-- `tuiMainWithLanguage`: 언어 선택 가능한 진입점
+- `app`: 기본 언어 설정 (한국어)
+- `appWithLanguage`: 언어 선택 가능한 진입점
 
 ## 다국어 처리된 텍스트
 
@@ -92,8 +92,8 @@ stack exec tui-todo-exe
 ### 영어로 변경
 `src/Lib.hs` 수정:
 ```haskell
-tuiMain :: IO ()
-tuiMain = tuiMainWithLanguage I18n.English
+app :: IO ()
+app = appWithLanguage I18n.English
 ```
 
 그 후 재빌드:
