@@ -12,7 +12,6 @@ module Config
 import           Data.Aeson          (FromJSON, parseJSON, withObject, (.:))
 import qualified Data.ByteString     as BS
 import           Data.List           (find)
-import qualified Data.Text           as T
 import qualified Data.Yaml           as Yaml
 import           GHC.Generics        (Generic)
 import qualified Graphics.Vty        as V
@@ -90,16 +89,17 @@ loadKeyBindings path = do
 
 -- Vty 키를 문자열로 변환
 keyToString :: V.Key -> String
-keyToString (V.KChar c) = [c]
-keyToString V.KEnter    = "Enter"
-keyToString V.KEsc      = "Esc"
-keyToString V.KUp       = "Up"
-keyToString V.KDown     = "Down"
-keyToString V.KLeft     = "Left"
-keyToString V.KRight    = "Right"
-keyToString V.KBS       = "Backspace"
-keyToString (V.KFun n)  = "F" ++ show n
-keyToString _           = ""
+keyToString (V.KChar ' ') = "Space"
+keyToString (V.KChar c)   = [c]
+keyToString V.KEnter      = "Enter"
+keyToString V.KEsc        = "Esc"
+keyToString V.KUp         = "Up"
+keyToString V.KDown       = "Down"
+keyToString V.KLeft       = "Left"
+keyToString V.KRight      = "Right"
+keyToString V.KBS         = "Backspace"
+keyToString (V.KFun n)    = "F" ++ show n
+keyToString _             = ""
 
 -- 키가 특정 액션과 매칭되는지 확인
 matchesKey :: KeyBindings -> V.Key -> Maybe KeyAction

@@ -11,7 +11,7 @@ keybindings:
   add_todo: ['a']
   
   # Todo 완료 상태 토글
-  toggle_complete: ['Space']
+  toggle_complete: ['Space', 'x']
   
   # Todo 삭제
   delete_todo: ['d']
