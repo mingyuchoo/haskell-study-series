@@ -7,6 +7,7 @@ module Config
     , KeyBindings (..)
     , defaultKeyBindings
     , loadKeyBindings
+    , loadKeyBindingsWithMessages
     , matchesKey
     ) where
 
@@ -20,6 +21,8 @@ import           Flow             ((<|))
 import           GHC.Generics     (Generic)
 
 import qualified Graphics.Vty     as V
+
+import qualified I18n
 
 import           System.Directory (doesFileExist)
 
@@ -67,23 +70,28 @@ defaultKeyBindings = KeyBindings
 
 -- Load key bindings from configuration file
 loadKeyBindings :: FilePath -> IO KeyBindings
-loadKeyBindings path = do
+loadKeyBindings path = loadKeyBindingsWithMessages path I18n.defaultMessages
+
+-- Load key bindings with custom messages
+loadKeyBindingsWithMessages :: FilePath -> I18n.I18nMessages -> IO KeyBindings
+loadKeyBindingsWithMessages path msgs = do
+    let sysMsgs = I18n.messages msgs
     exists <- doesFileExist path
     if exists
-        then loadFromFile
-        else useDefault <| "설정 파일을 찾을 수 없습니다: " ++ path
+        then loadFromFile sysMsgs
+        else useDefault sysMsgs <| I18n.config_not_found sysMsgs ++ ": " ++ path
   where
-    loadFromFile = do
+    loadFromFile sysMsgs = do
         content <- BS.readFile path
         case Yaml.decodeEither' content of
-            Left err -> useDefault <| "키바인딩 설정 파일 로드 실패: " ++ show err
+            Left err -> useDefault sysMsgs <| I18n.config_load_failed sysMsgs ++ ": " ++ show err
             Right kb -> do
-                putStrLn "키바인딩 설정을 로드했습니다."
+                putStrLn <| I18n.config_loaded sysMsgs
                 pure kb
 
-    useDefault msg = do
+    useDefault sysMsgs msg = do
         putStrLn msg
-        putStrLn "기본 키바인딩을 사용합니다."
+        putStrLn <| I18n.using_default sysMsgs
         pure defaultKeyBindings
 
 -- Convert Vty key to string representation

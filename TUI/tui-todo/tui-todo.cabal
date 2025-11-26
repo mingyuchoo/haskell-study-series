@@ -30,6 +30,7 @@ library
       App
       Config
       DB
+      I18n
       Lib
   other-modules:
       Paths_tui_todo

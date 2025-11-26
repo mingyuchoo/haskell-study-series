@@ -11,6 +11,7 @@ module Lib
     , directObjectEditor
     , editingIndex
     , focusedField
+    , i18nMessages
     , indirectObjectEditor
     , keyBindings
     , mode
@@ -27,6 +28,7 @@ module Lib
     , todoSubject
     , trim
     , tuiMain
+    , tuiMainWithLanguage
     ) where
 
 import qualified App
@@ -62,6 +64,8 @@ import           Database.SQLite.Simple (Connection, open)
 import           Flow                   ((<|))
 
 import qualified Graphics.Vty           as V
+
+import qualified I18n
 
 import           Lens.Micro             ((%~), (.~), (^.))
 import           Lens.Micro.TH          (makeLenses)
@@ -106,6 +110,7 @@ data AppState = AppState { _todoList             :: !(List Name Todo)
                          , _dbConn               :: !Connection
                          , _keyBindings          :: !Config.KeyBindings
                          , _editingIndex         :: !(Maybe Int)
+                         , _i18nMessages         :: !I18n.I18nMessages
                          }
 
 makeLenses ''AppState
@@ -130,7 +135,7 @@ drawUI s = [ui]
   where
     ui =
       vBox
-        [ drawHeader,
+        [ drawHeader s,
           hBorder,
           drawTodoList s,
           hBorder,
@@ -139,63 +144,75 @@ drawUI s = [ui]
           drawHelp s
         ]
 
-drawHeader :: Widget Name
-drawHeader =
+drawHeader :: AppState -> Widget Name
+drawHeader s =
   withAttr (attrName "header") <|
     hCenter <|
       padTopBottom 1 <|
-        str "📝 Todo Manager"
+        str <| I18n.header (I18n.ui (s ^. i18nMessages))
 
 drawTodoList :: AppState -> Widget Name
 drawTodoList s =
-  borderWithLabel (str " Todos ") <|
-    padAll 1 <|
-      vLimit 20 <|
-        if null (s ^. todoList . listElementsL)
-          then center <| str "No todos yet. Press 'a' to add one!"
-          else renderList drawTodo True (s ^. todoList)
+  let msgs = s ^. i18nMessages
+      uiMsgs = I18n.ui msgs
+  in borderWithLabel (str <| I18n.todos_title uiMsgs) <|
+       padAll 1 <|
+         vLimit 20 <|
+           if null (s ^. todoList . listElementsL)
+             then center <| str <| I18n.no_todos uiMsgs
+             else renderList (drawTodo msgs) True (s ^. todoList)
 
-drawTodo :: Bool -> Todo -> Widget Name
-drawTodo selected todo = withAttr selectAttr <| hBox [checkbox, str mainInfo, timestamp]
+drawTodo :: I18n.I18nMessages -> Bool -> Todo -> Widget Name
+drawTodo msgs selected todo = withAttr selectAttr <| hBox [checkbox, str mainInfo, timestamp]
   where
-    checkbox = str <| if todo ^. todoCompleted then "[✓] " else "[ ] "
+    listMsgs = I18n.list msgs
+    
+    checkbox = str <| if todo ^. todoCompleted
+                        then I18n.checkbox_done listMsgs
+                        else I18n.checkbox_todo listMsgs
 
     todoAttr = attrName <| if todo ^. todoCompleted then "completed" else "normal"
     selectAttr = if selected then attrName "selected" else todoAttr
 
     showField _ Nothing    = ""
-    showField lbl (Just v) = " | " ++ lbl ++ ": " ++ v
+    showField lbl (Just v) = I18n.field_separator listMsgs ++ lbl ++ ": " ++ v
 
     mainInfo = concat
-        [ "할일: " ++ todo ^. todoAction
-        , showField "주체자" (todo ^. todoSubject)
-        , showField "대상자" (todo ^. todoIndirectObject)
-        , showField "작업대상" (todo ^. todoDirectObject)
+        [ I18n.field_action listMsgs ++ ": " ++ todo ^. todoAction
+        , showField (I18n.field_subject listMsgs) (todo ^. todoSubject)
+        , showField (I18n.field_indirect listMsgs) (todo ^. todoIndirectObject)
+        , showField (I18n.field_direct listMsgs) (todo ^. todoDirectObject)
         ]
 
-    completedTimeText = maybe "" (\t -> "완료: " ++ t ++ " | ") (todo ^. todoCompletedAt)
+    completedTimeText = maybe "" (\t -> I18n.completed_prefix listMsgs ++ t ++ I18n.field_separator listMsgs) (todo ^. todoCompletedAt)
 
     timestamp = padLeft Max <| withAttr (attrName "timestamp") $
-        str (completedTimeText ++ "생성: " ++ todo ^. todoCreatedAt)
+        str (completedTimeText ++ I18n.created_prefix listMsgs ++ todo ^. todoCreatedAt)
 
 drawDetailView :: AppState -> Widget Name
 drawDetailView s =
-  case s ^. mode of
+  let msgs = s ^. i18nMessages
+      uiMsgs = I18n.ui msgs
+      fieldMsgs = I18n.fields msgs
+      statusMsgs = I18n.status msgs
+  in case s ^. mode of
     ViewMode ->
       case listSelected (s ^. todoList) of
         Nothing ->
-          borderWithLabel (str " 상세 정보 ") <|
+          borderWithLabel (str <| I18n.detail_title uiMsgs) <|
             padAll 1 <|
-              center <| str "선택된 할일이 없습니다"
+              center <| str <| I18n.no_selection uiMsgs
         Just idx ->
           let todos = s ^. todoList . listElementsL
           in case todos Vec.!? idx of
             Nothing ->
-              borderWithLabel (str " 상세 정보 ") <|
+              borderWithLabel (str <| I18n.detail_title uiMsgs) <|
                 padAll 1 <|
-                  center <| str "선택된 할일이 없습니다"
+                  center <| str <| I18n.no_selection uiMsgs
             Just todo ->
-              let statusText = if todo ^. todoCompleted then "✓ 완료됨" else "○ 진행중"
+              let statusText = if todo ^. todoCompleted
+                                 then I18n.completed statusMsgs
+                                 else I18n.in_progress statusMsgs
                   statusAttr = if todo ^. todoCompleted
                                  then attrName "completed"
                                  else attrName "normal"
@@ -207,42 +224,44 @@ drawDetailView s =
 
                   completedInfo = case todo ^. todoCompletedAt of
                     Just compTime ->
-                      hBox [withAttr (attrName "detailLabel") <| str "완료 시각: ",
+                      hBox [withAttr (attrName "detailLabel") <| str (I18n.completed_at_label fieldMsgs ++ ": "),
                             withAttr (attrName "timestamp") <| str compTime]
                     Nothing -> str ""
 
-              in borderWithLabel (str " 상세 정보 ") <|
+              in borderWithLabel (str <| I18n.detail_title uiMsgs) <|
                    padAll 1 <|
                      vLimit 8 <|
                        vBox
-                         [ hBox [withAttr (attrName "detailLabel") <| str "ID: ",
+                         [ hBox [withAttr (attrName "detailLabel") <| str (I18n.id_label fieldMsgs ++ ": "),
                                  str (show (todo ^. todoId))]
-                         , hBox [withAttr (attrName "detailLabel") <| str "상태: ",
+                         , hBox [withAttr (attrName "detailLabel") <| str (I18n.status_label fieldMsgs ++ ": "),
                                  withAttr statusAttr <| str statusText]
-                         , hBox [withAttr (attrName "detailLabel") <| str "할일: ",
+                         , hBox [withAttr (attrName "detailLabel") <| str (I18n.action_label fieldMsgs ++ ": "),
                                  str (todo ^. todoAction)]
-                         , showDetailField "주체자" (todo ^. todoSubject)
-                         , showDetailField "대상자" (todo ^. todoIndirectObject)
-                         , showDetailField "작업대상" (todo ^. todoDirectObject)
-                         , hBox [withAttr (attrName "detailLabel") <| str "생성 시각: ",
+                         , showDetailField (I18n.subject_label fieldMsgs) (todo ^. todoSubject)
+                         , showDetailField (I18n.indirect_object_label fieldMsgs) (todo ^. todoIndirectObject)
+                         , showDetailField (I18n.direct_object_label fieldMsgs) (todo ^. todoDirectObject)
+                         , hBox [withAttr (attrName "detailLabel") <| str (I18n.created_at_label fieldMsgs ++ ": "),
                                  withAttr (attrName "timestamp") <| str (todo ^. todoCreatedAt)]
                          , completedInfo
                          ]
     EditMode _ ->
       case s ^. editingIndex of
         Nothing ->
-          borderWithLabel (str " 상세 정보 (편집 모드) ") <|
+          borderWithLabel (str <| I18n.detail_edit_title uiMsgs) <|
             padAll 1 <|
-              center <| str "편집할 항목을 찾을 수 없습니다"
+              center <| str <| I18n.not_found uiMsgs
         Just idx ->
           let todos = s ^. todoList . listElementsL
           in case todos Vec.!? idx of
             Nothing ->
-              borderWithLabel (str " 상세 정보 (편집 모드) ") <|
+              borderWithLabel (str <| I18n.detail_edit_title uiMsgs) <|
                 padAll 1 <|
-                  center <| str "편집할 항목을 찾을 수 없습니다"
+                  center <| str <| I18n.not_found uiMsgs
             Just todo ->
-              let statusText = if todo ^. todoCompleted then "✓ 완료됨" else "○ 진행중"
+              let statusText = if todo ^. todoCompleted
+                                 then I18n.completed statusMsgs
+                                 else I18n.in_progress statusMsgs
                   statusAttr = if todo ^. todoCompleted
                                  then attrName "completed"
                                  else attrName "normal"
@@ -264,23 +283,23 @@ drawDetailView s =
 
                   completedInfo = case todo ^. todoCompletedAt of
                     Just compTime ->
-                      hBox [withAttr (attrName "detailLabel") <| str "완료 시각: ",
+                      hBox [withAttr (attrName "detailLabel") <| str (I18n.completed_at_label fieldMsgs ++ ": "),
                             withAttr (attrName "timestamp") <| str compTime]
                     Nothing -> str ""
 
-              in borderWithLabel (str " 상세 정보 (편집 모드 - Tab: 다음 필드, Enter: 저장, Esc: 취소) ") <|
+              in borderWithLabel (str <| I18n.detail_edit_title uiMsgs) <|
                    padAll 1 <|
                      vLimit 8 <|
                        vBox
-                         [ hBox [withAttr (attrName "detailLabel") <| str "ID: ",
+                         [ hBox [withAttr (attrName "detailLabel") <| str (I18n.id_label fieldMsgs ++ ": "),
                                  str (show (todo ^. todoId))]
-                         , hBox [withAttr (attrName "detailLabel") <| str "상태: ",
+                         , hBox [withAttr (attrName "detailLabel") <| str (I18n.status_label fieldMsgs ++ ": "),
                                  withAttr statusAttr <| str statusText]
-                         , renderEditField "할일 (필수)" (s ^. actionEditor) actionFocused
-                         , renderEditField "주체자" (s ^. subjectEditor) subjectFocused
-                         , renderEditField "대상자" (s ^. indirectObjectEditor) indirectObjFocused
-                         , renderEditField "작업대상" (s ^. directObjectEditor) directObjFocused
-                         , hBox [withAttr (attrName "detailLabel") <| str "생성 시각: ",
+                         , renderEditField (I18n.action_required_label fieldMsgs) (s ^. actionEditor) actionFocused
+                         , renderEditField (I18n.subject_label fieldMsgs) (s ^. subjectEditor) subjectFocused
+                         , renderEditField (I18n.indirect_object_label fieldMsgs) (s ^. indirectObjectEditor) indirectObjFocused
+                         , renderEditField (I18n.direct_object_label fieldMsgs) (s ^. directObjectEditor) directObjFocused
+                         , hBox [withAttr (attrName "detailLabel") <| str (I18n.created_at_label fieldMsgs ++ ": "),
                                  withAttr (attrName "timestamp") <| str (todo ^. todoCreatedAt)]
                          , completedInfo
                          ]
@@ -300,42 +319,44 @@ drawDetailView s =
                 editorWidget = E.renderEditor (str . unlines) isFocused editor
             in hBox [labelWidget, editorWidget]
 
-       in borderWithLabel (str " 새 할일 추가 (Tab: 다음 필드, Enter: 저장, Esc: 취소) ") <|
+       in borderWithLabel (str <| I18n.detail_add_title uiMsgs) <|
             padAll 1 <|
               vLimit 8 <|
                 vBox
-                  [ hBox [withAttr (attrName "detailLabel") <| str "ID: ",
-                          withAttr (attrName "timestamp") <| str "(자동 생성)"]
-                  , hBox [withAttr (attrName "detailLabel") <| str "상태: ",
-                          str "○ 진행중"]
-                  , renderEditField "할일 (필수)" (s ^. actionEditor) actionFocused
-                  , renderEditField "주체자" (s ^. subjectEditor) subjectFocused
-                  , renderEditField "대상자" (s ^. indirectObjectEditor) indirectObjFocused
-                  , renderEditField "작업대상" (s ^. directObjectEditor) directObjFocused
-                  , hBox [withAttr (attrName "detailLabel") <| str "생성 시각: ",
-                          withAttr (attrName "timestamp") <| str "(자동 생성)"]
+                  [ hBox [withAttr (attrName "detailLabel") <| str (I18n.id_label fieldMsgs ++ ": "),
+                          withAttr (attrName "timestamp") <| str <| I18n.auto_generated_label fieldMsgs]
+                  , hBox [withAttr (attrName "detailLabel") <| str (I18n.status_label fieldMsgs ++ ": "),
+                          str <| I18n.in_progress statusMsgs]
+                  , renderEditField (I18n.action_required_label fieldMsgs) (s ^. actionEditor) actionFocused
+                  , renderEditField (I18n.subject_label fieldMsgs) (s ^. subjectEditor) subjectFocused
+                  , renderEditField (I18n.indirect_object_label fieldMsgs) (s ^. indirectObjectEditor) indirectObjFocused
+                  , renderEditField (I18n.direct_object_label fieldMsgs) (s ^. directObjectEditor) directObjFocused
+                  , hBox [withAttr (attrName "detailLabel") <| str (I18n.created_at_label fieldMsgs ++ ": "),
+                          withAttr (attrName "timestamp") <| str <| I18n.auto_generated_label fieldMsgs]
                   , str ""
                   ]
 
 drawHelp :: AppState -> Widget Name
 drawHelp s =
-  padAll 1 <|
-    case s ^. mode of
-      InputMode -> str "Tab: 다음 필드 | Enter: 저장 | Esc: 취소"
-      EditMode _ -> str "Tab: 다음 필드 | Enter: 저장 | Esc: 취소"
-      ViewMode ->
-        let kb = s ^. keyBindings
-            quitKeys = fromMaybe "q" (listToMaybe (Config.quit kb))
-            addKeys = fromMaybe "a" (listToMaybe (Config.add_todo kb))
-            toggleKeys = fromMaybe "t" (listToMaybe (Config.toggle_complete kb))
-            deleteKeys = fromMaybe "d" (listToMaybe (Config.delete_todo kb))
-            upKeys = fromMaybe "k" (listToMaybe (Config.navigate_up kb))
-            downKeys = fromMaybe "j" (listToMaybe (Config.navigate_down kb))
-        in vBox
-          [ str <| addKeys ++ ": Add | e: Edit | " ++ toggleKeys ++ ": Toggle | "
-                  ++ deleteKeys ++ ": Delete | " ++ upKeys ++ "/" ++ downKeys
-                  ++ ": Navigate | " ++ quitKeys ++ ": Quit"
-          ]
+  let msgs = s ^. i18nMessages
+      helpMsgs = I18n.help msgs
+  in padAll 1 <|
+       case s ^. mode of
+         InputMode -> str <| I18n.input_mode helpMsgs
+         EditMode _ -> str <| I18n.edit_mode helpMsgs
+         ViewMode ->
+           let kb = s ^. keyBindings
+               quitKeys = fromMaybe "q" (listToMaybe (Config.quit kb))
+               addKeys = fromMaybe "a" (listToMaybe (Config.add_todo kb))
+               toggleKeys = fromMaybe "t" (listToMaybe (Config.toggle_complete kb))
+               deleteKeys = fromMaybe "d" (listToMaybe (Config.delete_todo kb))
+               upKeys = fromMaybe "k" (listToMaybe (Config.navigate_up kb))
+               downKeys = fromMaybe "j" (listToMaybe (Config.navigate_down kb))
+           in vBox
+             [ str <| addKeys ++ ": Add | e: Edit | " ++ toggleKeys ++ ": Toggle | "
+                     ++ deleteKeys ++ ": Delete | " ++ upKeys ++ "/" ++ downKeys
+                     ++ ": Navigate | " ++ quitKeys ++ ": Quit"
+             ]
 
 -- 이벤트 처리
 handleEvent :: BrickEvent Name e -> EventM Name AppState ()
@@ -366,7 +387,8 @@ handleViewMode (VtyEvent (V.EvKey key [])) = do
             Just todo -> do
               let tid = todo ^. todoId
                   conn = s' ^. dbConn
-                  env = App.AppEnv conn
+                  msgs = s' ^. i18nMessages
+                  env = App.AppEnv conn msgs
               liftIO <| App.runAppM env (App.toggleTodo tid)
               -- Reload updated todo from DB
               updatedRows <- liftIO <| App.runAppM env App.loadTodos
@@ -388,7 +410,8 @@ handleViewMode (VtyEvent (V.EvKey key [])) = do
             Just todo -> do
               let tid = todo ^. todoId
                   conn = s' ^. dbConn
-              liftIO <| App.runAppM (App.AppEnv conn) (App.deleteTodo tid)
+                  msgs = s' ^. i18nMessages
+              liftIO <| App.runAppM (App.AppEnv conn msgs) (App.deleteTodo tid)
               modify <| todoList %~ listRemove idx
     Just Config.NavigateUp -> zoom todoList <| handleListEvent (V.EvKey V.KUp [])
     Just Config.NavigateDown -> zoom todoList <| handleListEvent (V.EvKey V.KDown [])
@@ -430,7 +453,8 @@ handleInputMode (VtyEvent (V.EvKey key [])) = do
       if not (null action)
         then do
           let conn = s' ^. dbConn
-              env = App.AppEnv conn
+              msgs = s' ^. i18nMessages
+              env = App.AppEnv conn msgs
           newTodoRow <- liftIO <| App.runAppM env <| do
             tid <- App.createTodoWithFields action (toMaybe subject) (toMaybe indirectObj) (toMaybe directObj)
             rows <- App.loadTodos
@@ -491,7 +515,8 @@ handleEditMode (VtyEvent (V.EvKey key [])) = do
         EditMode tid -> do
           when (not <| null action) <| do
             let conn = s' ^. dbConn
-                env = App.AppEnv conn
+                msgs = s' ^. i18nMessages
+                env = App.AppEnv conn msgs
             case s' ^. editingIndex of
               Nothing -> pure ()
               Just idx -> do
@@ -594,13 +619,17 @@ app =
     }
 
 tuiMain :: IO ()
-tuiMain = do
-  kb <- Config.loadKeyBindings "config/keybindings.yaml"
+tuiMain = tuiMainWithLanguage I18n.Korean
+
+tuiMainWithLanguage :: I18n.Language -> IO ()
+tuiMainWithLanguage lang = do
+  msgs <- I18n.loadMessages lang
+  kb <- Config.loadKeyBindingsWithMessages "config/keybindings.yaml" msgs
 
   conn <- open "todos.db"
-  DB.initDB conn
+  DB.initDBWithMessages conn msgs
 
-  let env = App.AppEnv conn
+  let env = App.AppEnv conn msgs
   todoRows <- App.runAppM env App.loadTodos
 
   let initialTodos = Vec.fromList <| map fromTodoRow todoRows
@@ -615,6 +644,7 @@ tuiMain = do
           , _dbConn               = conn
           , _keyBindings          = kb
           , _editingIndex         = Nothing
+          , _i18nMessages         = msgs
           }
 
   void <| defaultMain app initialState

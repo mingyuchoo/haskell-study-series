@@ -1,0 +1,59 @@
+# 한국어 메시지
+language: ko
+
+ui:
+  header: "📝 할일 관리자"
+  todos_title: " 할일 목록 "
+  detail_title: " 상세 정보 "
+  detail_edit_title: " 상세 정보 (편집 모드 - Tab: 다음 필드, Enter: 저장, Esc: 취소) "
+  detail_add_title: " 새 할일 추가 (Tab: 다음 필드, Enter: 저장, Esc: 취소) "
+  no_todos: "할일이 없습니다. 'a'를 눌러 추가하세요!"
+  no_selection: "선택된 할일이 없습니다"
+  not_found: "편집할 항목을 찾을 수 없습니다"
+
+fields:
+  id_label: "ID"
+  status_label: "상태"
+  action_label: "할일"
+  action_required_label: "할일 (필수)"
+  subject_label: "주체자"
+  indirect_object_label: "대상자"
+  direct_object_label: "작업대상"
+  created_at_label: "생성 시각"
+  completed_at_label: "완료 시각"
+  auto_generated_label: "(자동 생성)"
+
+status:
+  completed: "✓ 완료됨"
+  in_progress: "○ 진행중"
+
+list:
+  checkbox_done: "[✓] "
+  checkbox_todo: "[ ] "
+  field_separator: " | "
+  field_action: "할일"
+  field_subject: "주체자"
+  field_indirect: "대상자"
+  field_direct: "작업대상"
+  completed_prefix: "완료: "
+  created_prefix: "생성: "
+
+help:
+  view_mode: "Tab: 다음 필드 | Enter: 저장 | Esc: 취소"
+  edit_mode: "Tab: 다음 필드 | Enter: 저장 | Esc: 취소"
+  input_mode: "Tab: 다음 필드 | Enter: 저장 | Esc: 취소"
+
+messages:
+  config_not_found: "설정 파일을 찾을 수 없습니다"
+  config_load_failed: "키바인딩 설정 파일 로드 실패"
+  config_loaded: "키바인딩 설정을 로드했습니다."
+  using_default: "기본 키바인딩을 사용합니다."
+  i18n_not_found: "다국어 파일을 찾을 수 없습니다"
+  i18n_load_failed: "다국어 파일 로드 실패"
+  i18n_loaded: "다국어 설정을 로드했습니다."
+  using_default_lang: "기본 언어(영어)를 사용합니다."
+
+sample_todos:
+  welcome: "할일 관리자에 오신 것을 환영합니다!"
+  add_hint: "'a'를 눌러 새 할일을 추가하세요"
+  toggle_hint: "Space를 눌러 완료 상태를 변경하세요"

@@ -1,0 +1,59 @@
+# English messages
+language: en
+
+ui:
+  header: "📝 Todo Manager"
+  todos_title: " Todos "
+  detail_title: " Details "
+  detail_edit_title: " Details (Edit Mode - Tab: Next Field, Enter: Save, Esc: Cancel) "
+  detail_add_title: " Add New Todo (Tab: Next Field, Enter: Save, Esc: Cancel) "
+  no_todos: "No todos yet. Press 'a' to add one!"
+  no_selection: "No todo selected"
+  not_found: "Item to edit not found"
+
+fields:
+  id_label: "ID"
+  status_label: "Status"
+  action_label: "Action"
+  action_required_label: "Action (required)"
+  subject_label: "Subject"
+  indirect_object_label: "Indirect Object"
+  direct_object_label: "Direct Object"
+  created_at_label: "Created At"
+  completed_at_label: "Completed At"
+  auto_generated_label: "(auto-generated)"
+
+status:
+  completed: "✓ Completed"
+  in_progress: "○ In Progress"
+
+list:
+  checkbox_done: "[✓] "
+  checkbox_todo: "[ ] "
+  field_separator: " | "
+  field_action: "Action"
+  field_subject: "Subject"
+  field_indirect: "Indirect"
+  field_direct: "Direct"
+  completed_prefix: "Done: "
+  created_prefix: "Created: "
+
+help:
+  view_mode: "Tab: Next Field | Enter: Save | Esc: Cancel"
+  edit_mode: "Tab: Next Field | Enter: Save | Esc: Cancel"
+  input_mode: "Tab: Next Field | Enter: Save | Esc: Cancel"
+
+messages:
+  config_not_found: "Configuration file not found"
+  config_load_failed: "Failed to load keybindings configuration"
+  config_loaded: "Keybindings configuration loaded."
+  using_default: "Using default keybindings."
+  i18n_not_found: "Internationalization file not found"
+  i18n_load_failed: "Failed to load internationalization file"
+  i18n_loaded: "Internationalization settings loaded."
+  using_default_lang: "Using default language (English)."
+
+sample_todos:
+  welcome: "Welcome to Todo Manager!"
+  add_hint: "Press 'a' to add a new todo"
+  toggle_hint: "Press Space to toggle completion"

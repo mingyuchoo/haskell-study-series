@@ -8,6 +8,7 @@ module DB
     , deleteTodo
     , getAllTodos
     , initDB
+    , initDBWithMessages
     , toggleTodoComplete
     , updateTodo
     , updateTodoWithFields
@@ -19,6 +20,8 @@ import           Data.Time.Format       (defaultTimeLocale, formatTime)
 import           Database.SQLite.Simple (Connection, FromRow (..), Only (..),
                                          ToRow (..), execute, execute_, field,
                                          lastInsertRowId, query_)
+
+import qualified I18n
 
 type TodoId = Int
 
@@ -46,7 +49,11 @@ instance ToRow TodoRow where
 
 -- Initialize database schema and seed data
 initDB :: Connection -> IO ()
-initDB conn = do
+initDB conn = initDBWithMessages conn I18n.defaultMessages
+
+-- Initialize database with custom messages
+initDBWithMessages :: Connection -> I18n.I18nMessages -> IO ()
+initDBWithMessages conn msgs = do
     createTodosTable
     seedInitialData
   where
@@ -78,10 +85,11 @@ initDB conn = do
                  Nothing :: Maybe String, Nothing :: Maybe String,
                  Nothing :: Maybe String, Nothing :: Maybe String,
                  if completed then Just timeStr else Nothing :: Maybe String)
+            samples = I18n.sample_todos msgs
 
-        insertTodo "Welcome to Todo Manager!" False
-        insertTodo "Press 'a' to add a new todo" False
-        insertTodo "Press Space to toggle completion" True
+        insertTodo (I18n.welcome samples) False
+        insertTodo (I18n.add_hint samples) False
+        insertTodo (I18n.toggle_hint samples) True
 
 -- Create a new todo with action text only
 createTodo :: Connection -> String -> IO TodoId
