@@ -1,43 +1,46 @@
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE DeriveGeneric     #-}
+{-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Config
-  ( KeyAction (..),
-    KeyBindings (..),
-    defaultKeyBindings,
-    loadKeyBindings,
-    loadKeyBindingsWithMessages,
-    matchesKey,
-  )
-where
+    ( KeyAction (..)
+    , KeyBindings (..)
+    , defaultKeyBindings
+    , loadKeyBindings
+    , loadKeyBindingsWithMessages
+    , matchesKey
+    ) where
 
-import Data.Aeson (FromJSON, parseJSON, withObject, (.:))
-import Data.ByteString qualified as BS
-import Data.List (find)
-import Data.Yaml qualified as Yaml
-import Flow ((<|))
-import GHC.Generics (Generic)
-import Graphics.Vty qualified as V
-import I18n qualified
-import System.Directory (doesFileExist)
+import           Data.Aeson       (FromJSON, parseJSON, withObject, (.:))
+import qualified Data.ByteString  as BS
+import           Data.List        (find)
+import qualified Data.Yaml        as Yaml
+
+import           Flow             ((<|))
+
+import           GHC.Generics     (Generic)
+
+import qualified Graphics.Vty     as V
+
+import qualified I18n
+
+import           System.Directory (doesFileExist)
 
 -- | Key action types
 data KeyAction = QuitApp | AddTodo | ToggleComplete | DeleteTodo | NavigateUp | NavigateDown | SaveInput | CancelInput
-  deriving (Eq, Generic, Show)
+     deriving (Eq, Generic, Show)
 
 -- | Key bindings configuration
-data KeyBindings = KeyBindings
-  { quit :: ![String],
-    add_todo :: ![String],
-    toggle_complete :: ![String],
-    delete_todo :: ![String],
-    navigate_up :: ![String],
-    navigate_down :: ![String],
-    save_input :: ![String],
-    cancel_input :: ![String]
-  }
-  deriving (Generic, Show)
+data KeyBindings = KeyBindings { quit            :: ![String]
+                               , add_todo        :: ![String]
+                               , toggle_complete :: ![String]
+                               , delete_todo     :: ![String]
+                               , navigate_up     :: ![String]
+                               , navigate_down   :: ![String]
+                               , save_input      :: ![String]
+                               , cancel_input    :: ![String]
+                               }
+     deriving (Generic, Show)
 
 instance FromJSON KeyBindings where
   parseJSON =

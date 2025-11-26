@@ -1,138 +1,117 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskell   #-}
 
 module Lib
-  ( AppState (..),
-    FocusedField (..),
-    Mode (..),
-    Name (..),
-    Todo (..),
-    actionEditor,
-    directObjectEditor,
-    editingIndex,
-    focusedField,
-    i18nMessages,
-    indirectObjectEditor,
-    keyBindings,
-    mode,
-    subjectEditor,
-    todoAction,
-    todoCompleted,
-    todoCompletedAt,
-    todoCreatedAt,
-    todoDirectObject,
-    todoId,
-    todoIndirectObject,
-    todoList,
-    todoObject,
-    todoSubject,
-    trim,
-    tuiMain,
-    tuiMainWithLanguage,
-  )
-where
+    ( AppState (..)
+    , FocusedField (..)
+    , Mode (..)
+    , Name (..)
+    , Todo (..)
+    , actionEditor
+    , directObjectEditor
+    , editingIndex
+    , focusedField
+    , i18nMessages
+    , indirectObjectEditor
+    , keyBindings
+    , mode
+    , subjectEditor
+    , todoAction
+    , todoCompleted
+    , todoCompletedAt
+    , todoCreatedAt
+    , todoDirectObject
+    , todoId
+    , todoIndirectObject
+    , todoList
+    , todoObject
+    , todoSubject
+    , trim
+    , tuiMain
+    , tuiMainWithLanguage
+    ) where
 
-import App qualified
-import Brick
-  ( App (..),
-    AttrMap,
-    BrickEvent (VtyEvent),
-    EventM,
-    Padding (..),
-    Widget,
-    attrMap,
-    attrName,
-    defaultMain,
-    fg,
-    get,
-    hBox,
-    halt,
-    modify,
-    on,
-    padAll,
-    padLeft,
-    padTopBottom,
-    showCursorNamed,
-    str,
-    vBox,
-    vLimit,
-    withAttr,
-    zoom,
-  )
-import Brick.Widgets.Border (borderWithLabel, hBorder)
-import Brick.Widgets.Center (center, hCenter)
-import Brick.Widgets.Edit qualified as E
-import Brick.Widgets.List
-  ( GenericList (listSelected),
-    List,
-    handleListEvent,
-    list,
-    listElementsL,
-    listInsert,
-    listModify,
-    listRemove,
-    listSelectedAttr,
-    renderList,
-  )
-import Config qualified
-import Control.Monad (void, when)
-import Control.Monad.IO.Class (liftIO)
-import DB qualified
-import Data.List (find)
-import Data.Maybe (fromMaybe, listToMaybe)
-import Data.Vector qualified as Vec
-import Database.SQLite.Simple (Connection, open)
-import Flow ((<|))
-import Graphics.Vty qualified as V
-import I18n qualified
-import Lens.Micro ((%~), (.~), (^.))
-import Lens.Micro.TH (makeLenses)
+import qualified App
+
+import           Brick                  (App (..), AttrMap,
+                                         BrickEvent (VtyEvent), EventM,
+                                         Padding (..), Widget, attrMap,
+                                         attrName, defaultMain, fg, get, hBox,
+                                         halt, modify, on, padAll, padLeft,
+                                         padTopBottom, showCursorNamed, str,
+                                         vBox, vLimit, withAttr, zoom)
+import           Brick.Widgets.Border   (borderWithLabel, hBorder)
+import           Brick.Widgets.Center   (center, hCenter)
+import qualified Brick.Widgets.Edit     as E
+import           Brick.Widgets.List     (GenericList (listSelected), List,
+                                         handleListEvent, list, listElementsL,
+                                         listInsert, listModify, listRemove,
+                                         listSelectedAttr, renderList)
+
+import qualified Config
+
+import           Control.Monad          (void, when)
+import           Control.Monad.IO.Class (liftIO)
+
+import qualified DB
+
+import           Data.List              (find)
+import           Data.Maybe             (fromMaybe, listToMaybe)
+import qualified Data.Vector            as Vec
+
+import           Database.SQLite.Simple (Connection, open)
+
+import           Flow                   ((<|))
+
+import qualified Graphics.Vty           as V
+
+import qualified I18n
+
+import           Lens.Micro             ((%~), (.~), (^.))
+import           Lens.Micro.TH          (makeLenses)
 
 -- | Application modes
-data Mode
-  = ViewMode
-  | InputMode
-  | EditMode DB.TodoId
-  deriving (Eq, Show)
+data Mode = ViewMode
+          | InputMode
+          | EditMode DB.TodoId
+     deriving (Eq, Show)
 
 -- | Widget resource names
 data Name = TodoList | ActionField | SubjectField | IndirectObjectField | DirectObjectField
-  deriving (Eq, Ord, Show)
+     deriving (Eq, Ord, Show)
 
 -- | Field focus tracking
 data FocusedField = FocusAction | FocusSubject | FocusIndirectObject | FocusDirectObject
-  deriving (Eq, Show)
+     deriving (Eq, Show)
 
 -- | UI representation of a Todo item
-data Todo = Todo
-  { _todoId :: !DB.TodoId,
-    _todoAction :: !String,
-    _todoCompleted :: !Bool,
-    _todoCreatedAt :: !String,
-    _todoSubject :: !(Maybe String),
-    _todoObject :: !(Maybe String),
-    _todoIndirectObject :: !(Maybe String),
-    _todoDirectObject :: !(Maybe String),
-    _todoCompletedAt :: !(Maybe String)
-  }
-  deriving (Eq, Show)
+data Todo = Todo { _todoId             :: !DB.TodoId
+                 , _todoAction         :: !String
+                 , _todoCompleted      :: !Bool
+                 , _todoCreatedAt      :: !String
+                 , _todoSubject        :: !(Maybe String)
+                 , _todoObject         :: !(Maybe String)
+                 , _todoIndirectObject :: !(Maybe String)
+                 , _todoDirectObject   :: !(Maybe String)
+                 , _todoCompletedAt    :: !(Maybe String)
+                 }
+     deriving (Eq, Show)
 
 makeLenses ''Todo
 
 -- | Application state
-data AppState = AppState
-  { _todoList :: !(List Name Todo),
-    _actionEditor :: !(E.Editor String Name),
-    _subjectEditor :: !(E.Editor String Name),
-    _indirectObjectEditor :: !(E.Editor String Name),
-    _directObjectEditor :: !(E.Editor String Name),
-    _focusedField :: !FocusedField,
-    _mode :: !Mode,
-    _dbConn :: !Connection,
-    _keyBindings :: !Config.KeyBindings,
-    _editingIndex :: !(Maybe Int),
-    _i18nMessages :: !I18n.I18nMessages
-  }
+data AppState = AppState { _todoList             :: !(List Name Todo)
+                         , _actionEditor         :: !(E.Editor String Name)
+                         , _subjectEditor        :: !(E.Editor String Name)
+                         , _indirectObjectEditor :: !(E.Editor String Name)
+                         , _directObjectEditor   :: !(E.Editor String Name)
+                         , _focusedField         :: !FocusedField
+                         , _mode                 :: !Mode
+                         , _dbConn               :: !Connection
+                         , _keyBindings          :: !Config.KeyBindings
+                         , _editingIndex         :: !(Maybe Int)
+                         , _i18nMessages         :: !I18n.I18nMessages
+                         }
 
 makeLenses ''AppState
 
@@ -166,6 +145,7 @@ drawUI s = [ui]
           drawHelp s
         ]
 
+-- |
 drawHeader :: AppState -> Widget Name
 drawHeader s =
   withAttr (attrName "header") <|
@@ -174,6 +154,7 @@ drawHeader s =
         str <|
           I18n.header (I18n.ui (s ^. i18nMessages))
 
+-- |
 drawTodoList :: AppState -> Widget Name
 drawTodoList s =
   let msgs = s ^. i18nMessages
@@ -185,6 +166,7 @@ drawTodoList s =
               then center <| str <| I18n.no_todos uiMsgs
               else renderList (drawTodo msgs) True (s ^. todoList)
 
+-- |
 drawTodo :: I18n.I18nMessages -> Bool -> Todo -> Widget Name
 drawTodo msgs selected todo = withAttr selectAttr <| hBox [checkbox, str mainInfo, timestamp]
   where
@@ -199,7 +181,7 @@ drawTodo msgs selected todo = withAttr selectAttr <| hBox [checkbox, str mainInf
     todoAttr = attrName <| if todo ^. todoCompleted then "completed" else "normal"
     selectAttr = if selected then attrName "selected" else todoAttr
 
-    showField _ Nothing = ""
+    showField _ Nothing    = ""
     showField lbl (Just v) = I18n.field_separator listMsgs <> lbl <> ": " <> v
 
     mainInfo =
@@ -217,6 +199,7 @@ drawTodo msgs selected todo = withAttr selectAttr <| hBox [checkbox, str mainInf
         withAttr (attrName "timestamp") $
           str (completedTimeText <> I18n.created_prefix listMsgs <> todo ^. todoCreatedAt)
 
+-- |
 drawDetailView :: AppState -> Widget Name
 drawDetailView s =
   let msgs = s ^. i18nMessages
@@ -401,6 +384,7 @@ drawDetailView s =
                         str ""
                       ]
 
+-- |
 drawHelp :: AppState -> Widget Name
 drawHelp s =
   let msgs = s ^. i18nMessages
@@ -456,10 +440,11 @@ handleEvent :: BrickEvent Name e -> EventM Name AppState ()
 handleEvent ev = do
   s <- get
   case s ^. mode of
-    ViewMode -> handleViewMode ev
-    InputMode -> handleInputMode ev
+    ViewMode   -> handleViewMode ev
+    InputMode  -> handleInputMode ev
     EditMode _ -> handleEditMode ev
 
+-- |
 handleViewMode :: BrickEvent Name e -> EventM Name AppState ()
 handleViewMode (VtyEvent (V.EvKey key [])) = do
   s <- get
@@ -534,6 +519,7 @@ handleViewMode (VtyEvent (V.EvKey key [])) = do
       _ -> pure ()
 handleViewMode _ = pure ()
 
+-- |
 handleInputMode :: BrickEvent Name e -> EventM Name AppState ()
 handleInputMode (VtyEvent (V.EvKey key [])) = do
   s <- get
@@ -574,10 +560,10 @@ handleInputMode (VtyEvent (V.EvKey key [])) = do
       V.KChar '\t' -> do
         s' <- get
         let nextField = case s' ^. focusedField of
-              FocusAction -> FocusSubject
-              FocusSubject -> FocusIndirectObject
+              FocusAction         -> FocusSubject
+              FocusSubject        -> FocusIndirectObject
               FocusIndirectObject -> FocusDirectObject
-              FocusDirectObject -> FocusAction
+              FocusDirectObject   -> FocusAction
         modify <| focusedField .~ nextField
       _ -> do
         s' <- get
@@ -589,12 +575,13 @@ handleInputMode (VtyEvent (V.EvKey key [])) = do
 handleInputMode ev@(VtyEvent _) = do
   s <- get
   case s ^. focusedField of
-    FocusAction -> zoom actionEditor <| E.handleEditorEvent ev
-    FocusSubject -> zoom subjectEditor <| E.handleEditorEvent ev
+    FocusAction         -> zoom actionEditor <| E.handleEditorEvent ev
+    FocusSubject        -> zoom subjectEditor <| E.handleEditorEvent ev
     FocusIndirectObject -> zoom indirectObjectEditor <| E.handleEditorEvent ev
-    FocusDirectObject -> zoom directObjectEditor <| E.handleEditorEvent ev
+    FocusDirectObject   -> zoom directObjectEditor <| E.handleEditorEvent ev
 handleInputMode _ = return ()
 
+-- |
 handleEditMode :: BrickEvent Name e -> EventM Name AppState ()
 handleEditMode (VtyEvent (V.EvKey key [])) = do
   s <- get
@@ -645,10 +632,10 @@ handleEditMode (VtyEvent (V.EvKey key [])) = do
       V.KChar '\t' -> do
         s' <- get
         let nextField = case s' ^. focusedField of
-              FocusAction -> FocusSubject
-              FocusSubject -> FocusIndirectObject
+              FocusAction         -> FocusSubject
+              FocusSubject        -> FocusIndirectObject
               FocusIndirectObject -> FocusDirectObject
-              FocusDirectObject -> FocusAction
+              FocusDirectObject   -> FocusAction
         modify <| focusedField .~ nextField
       _ -> do
         s' <- get
@@ -660,16 +647,17 @@ handleEditMode (VtyEvent (V.EvKey key [])) = do
 handleEditMode ev@(VtyEvent _) = do
   s <- get
   case s ^. focusedField of
-    FocusAction -> zoom actionEditor <| E.handleEditorEvent ev
-    FocusSubject -> zoom subjectEditor <| E.handleEditorEvent ev
+    FocusAction         -> zoom actionEditor <| E.handleEditorEvent ev
+    FocusSubject        -> zoom subjectEditor <| E.handleEditorEvent ev
     FocusIndirectObject -> zoom indirectObjectEditor <| E.handleEditorEvent ev
-    FocusDirectObject -> zoom directObjectEditor <| E.handleEditorEvent ev
+    FocusDirectObject   -> zoom directObjectEditor <| E.handleEditorEvent ev
 handleEditMode _ = return ()
 
 -- | Utility functions
 trim :: String -> String
 trim = unwords . words
 
+-- |
 clearEditors :: EventM Name AppState ()
 clearEditors =
   modify $
@@ -678,6 +666,7 @@ clearEditors =
       . (indirectObjectEditor .~ E.editor IndirectObjectField (Just 1) "")
       . (directObjectEditor .~ E.editor DirectObjectField (Just 1) "")
 
+-- |
 clearEditorsAndReturnToView :: EventM Name AppState ()
 clearEditorsAndReturnToView = do
   modify <| mode .~ ViewMode
@@ -707,24 +696,26 @@ app =
     { appDraw = drawUI,
       appChooseCursor = \s locs -> case s ^. mode of
         InputMode -> case s ^. focusedField of
-          FocusAction -> showCursorNamed ActionField locs
-          FocusSubject -> showCursorNamed SubjectField locs
+          FocusAction         -> showCursorNamed ActionField locs
+          FocusSubject        -> showCursorNamed SubjectField locs
           FocusIndirectObject -> showCursorNamed IndirectObjectField locs
-          FocusDirectObject -> showCursorNamed DirectObjectField locs
+          FocusDirectObject   -> showCursorNamed DirectObjectField locs
         EditMode _ -> case s ^. focusedField of
-          FocusAction -> showCursorNamed ActionField locs
-          FocusSubject -> showCursorNamed SubjectField locs
+          FocusAction         -> showCursorNamed ActionField locs
+          FocusSubject        -> showCursorNamed SubjectField locs
           FocusIndirectObject -> showCursorNamed IndirectObjectField locs
-          FocusDirectObject -> showCursorNamed DirectObjectField locs
+          FocusDirectObject   -> showCursorNamed DirectObjectField locs
         ViewMode -> Nothing,
       appHandleEvent = handleEvent,
       appStartEvent = return (),
       appAttrMap = const theMap
     }
 
+-- |
 tuiMain :: IO ()
 tuiMain = tuiMainWithLanguage I18n.Korean
 
+-- |
 tuiMainWithLanguage :: I18n.Language -> IO ()
 tuiMainWithLanguage lang = do
   msgs <- I18n.loadMessages lang

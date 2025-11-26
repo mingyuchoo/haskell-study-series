@@ -1,142 +1,136 @@
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module I18n
-  ( FieldLabels (..),
-    HelpMessages (..),
-    I18nMessages (..),
-    Language (..),
-    ListMessages (..),
-    SampleTodos (..),
-    StatusMessages (..),
-    SystemMessages (..),
-    UIMessages (..),
-    defaultMessages,
-    loadMessages,
-  )
-where
+    ( FieldLabels (..)
+    , HelpMessages (..)
+    , I18nMessages (..)
+    , Language (..)
+    , ListMessages (..)
+    , SampleTodos (..)
+    , StatusMessages (..)
+    , SystemMessages (..)
+    , UIMessages (..)
+    , defaultMessages
+    , loadMessages
+    ) where
 
-import Data.Aeson (FromJSON)
-import Data.ByteString qualified as BS
-import Data.Yaml qualified as Yaml
-import Flow ((<|))
-import GHC.Generics (Generic)
-import System.Directory (doesFileExist)
+import           Data.Aeson       (FromJSON)
+import qualified Data.ByteString  as BS
+import qualified Data.Yaml        as Yaml
+
+import           Flow             ((<|))
+
+import           GHC.Generics     (Generic)
+
+import           System.Directory (doesFileExist)
 
 -- | Supported languages
 data Language = English | Korean
-  deriving (Eq, Generic, Show)
+     deriving (Eq, Generic, Show)
 
 -- | UI messages structure
-data UIMessages = UIMessages
-  { header :: !String,
-    todos_title :: !String,
-    detail_title :: !String,
-    detail_edit_title :: !String,
-    detail_add_title :: !String,
-    no_todos :: !String,
-    no_selection :: !String,
-    not_found :: !String
-  }
-  deriving (Generic, Show)
+data UIMessages = UIMessages { header            :: !String
+                             , todos_title       :: !String
+                             , detail_title      :: !String
+                             , detail_edit_title :: !String
+                             , detail_add_title  :: !String
+                             , no_todos          :: !String
+                             , no_selection      :: !String
+                             , not_found         :: !String
+                             }
+     deriving (Generic, Show)
 
 instance FromJSON UIMessages
 
 -- | Field labels
-data FieldLabels = FieldLabels
-  { id_label :: !String,
-    status_label :: !String,
-    action_label :: !String,
-    action_required_label :: !String,
-    subject_label :: !String,
-    indirect_object_label :: !String,
-    direct_object_label :: !String,
-    created_at_label :: !String,
-    completed_at_label :: !String,
-    auto_generated_label :: !String
-  }
-  deriving (Generic, Show)
+data FieldLabels = FieldLabels { id_label              :: !String
+                               , status_label          :: !String
+                               , action_label          :: !String
+                               , action_required_label :: !String
+                               , subject_label         :: !String
+                               , indirect_object_label :: !String
+                               , direct_object_label   :: !String
+                               , created_at_label      :: !String
+                               , completed_at_label    :: !String
+                               , auto_generated_label  :: !String
+                               }
+     deriving (Generic, Show)
 
 instance FromJSON FieldLabels
 
 -- | Status messages
-data StatusMessages = StatusMessages
-  { completed :: !String,
-    in_progress :: !String
-  }
-  deriving (Generic, Show)
+data StatusMessages = StatusMessages { completed   :: !String
+                                     , in_progress :: !String
+                                     }
+     deriving (Generic, Show)
 
 instance FromJSON StatusMessages
 
 -- | List display messages
-data ListMessages = ListMessages
-  { checkbox_done :: !String,
-    checkbox_todo :: !String,
-    field_separator :: !String,
-    field_action :: !String,
-    field_subject :: !String,
-    field_indirect :: !String,
-    field_direct :: !String,
-    completed_prefix :: !String,
-    created_prefix :: !String
-  }
-  deriving (Generic, Show)
+data ListMessages = ListMessages { checkbox_done    :: !String
+                                 , checkbox_todo    :: !String
+                                 , field_separator  :: !String
+                                 , field_action     :: !String
+                                 , field_subject    :: !String
+                                 , field_indirect   :: !String
+                                 , field_direct     :: !String
+                                 , completed_prefix :: !String
+                                 , created_prefix   :: !String
+                                 }
+     deriving (Generic, Show)
 
 instance FromJSON ListMessages
 
 -- | Help messages
-data HelpMessages = HelpMessages
-  { view_mode :: !String,
-    edit_mode :: !String,
-    input_mode :: !String,
-    add :: !String,
-    edit :: !String,
-    toggle :: !String,
-    delete :: !String,
-    navigate :: !String,
-    quit :: !String
-  }
-  deriving (Generic, Show)
+data HelpMessages = HelpMessages { view_mode  :: !String
+                                 , edit_mode  :: !String
+                                 , input_mode :: !String
+                                 , add        :: !String
+                                 , edit       :: !String
+                                 , toggle     :: !String
+                                 , delete     :: !String
+                                 , navigate   :: !String
+                                 , quit       :: !String
+                                 }
+     deriving (Generic, Show)
 
 instance FromJSON HelpMessages
 
 -- | System messages
-data SystemMessages = SystemMessages
-  { config_not_found :: !String,
-    config_load_failed :: !String,
-    config_loaded :: !String,
-    using_default :: !String,
-    i18n_not_found :: !String,
-    i18n_load_failed :: !String,
-    i18n_loaded :: !String,
-    using_default_lang :: !String
-  }
-  deriving (Generic, Show)
+data SystemMessages = SystemMessages { config_not_found   :: !String
+                                     , config_load_failed :: !String
+                                     , config_loaded      :: !String
+                                     , using_default      :: !String
+                                     , i18n_not_found     :: !String
+                                     , i18n_load_failed   :: !String
+                                     , i18n_loaded        :: !String
+                                     , using_default_lang :: !String
+                                     }
+     deriving (Generic, Show)
 
 instance FromJSON SystemMessages
 
 -- | Sample todos
-data SampleTodos = SampleTodos
-  { welcome :: !String,
-    add_hint :: !String,
-    toggle_hint :: !String
-  }
-  deriving (Generic, Show)
+data SampleTodos = SampleTodos { welcome     :: !String
+                               , add_hint    :: !String
+                               , toggle_hint :: !String
+                               }
+     deriving (Generic, Show)
 
 instance FromJSON SampleTodos
 
 -- | Complete internationalization messages
-data I18nMessages = I18nMessages
-  { language :: !String,
-    ui :: !UIMessages,
-    fields :: !FieldLabels,
-    status :: !StatusMessages,
-    list :: !ListMessages,
-    help :: !HelpMessages,
-    messages :: !SystemMessages,
-    sample_todos :: !SampleTodos
-  }
-  deriving (Generic, Show)
+data I18nMessages = I18nMessages { language     :: !String
+                                 , ui           :: !UIMessages
+                                 , fields       :: !FieldLabels
+                                 , status       :: !StatusMessages
+                                 , list         :: !ListMessages
+                                 , help         :: !HelpMessages
+                                 , messages     :: !SystemMessages
+                                 , sample_todos :: !SampleTodos
+                                 }
+     deriving (Generic, Show)
 
 instance FromJSON I18nMessages
 
@@ -222,7 +216,7 @@ loadMessages :: Language -> IO I18nMessages
 loadMessages lang = do
   let path = case lang of
         English -> "config/messages-en.yaml"
-        Korean -> "config/messages-ko.yaml"
+        Korean  -> "config/messages-ko.yaml"
   exists <- doesFileExist path
   if exists
     then loadFromFile path
