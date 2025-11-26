@@ -1,5 +1,25 @@
 {-# LANGUAGE OverloadedStrings #-}
 
+-- | Event handling logic (MIXED: Pure + Effectful)
+--
+-- This module handles user input events and updates application state.
+--
+-- Pure functions:
+--   - trim: String trimming utility
+--
+-- Effectful functions:
+--   - handleEvent: Main event handler (EventM monad)
+--   - handleViewMode: View mode event handling
+--   - handleInputMode: Input mode event handling
+--   - handleEditMode: Edit mode event handling
+--   - All database operation wrappers
+--
+-- Effects:
+--   - State modifications (EventM monad)
+--   - Database operations (via liftIO and App module)
+--   - UI state updates
+--
+-- Purity: MINIMAL - Only utility functions are pure
 module UI.Events
     ( handleEvent
     , trim
@@ -31,7 +51,7 @@ import           Lens.Micro             ((%~), (.~), (^.))
 
 import           UI.Types
 
--- | 이벤트 처리
+-- | 이벤트 처리 (Effectful)
 handleEvent :: BrickEvent Name e -> EventM Name AppState ()
 handleEvent ev = do
   s <- get
@@ -40,7 +60,7 @@ handleEvent ev = do
     InputMode  -> handleInputMode ev
     EditMode _ -> handleEditMode ev
 
--- | ViewMode 이벤트 처리
+-- | ViewMode 이벤트 처리 (Effectful)
 handleViewMode :: BrickEvent Name e -> EventM Name AppState ()
 handleViewMode (VtyEvent (V.EvKey key [])) = do
   s <- get
@@ -55,13 +75,13 @@ handleViewMode (VtyEvent (V.EvKey key [])) = do
     _                          -> handleEditKey key
 handleViewMode _ = pure ()
 
--- | InputMode로 전환
+-- | InputMode로 전환 (Effectful)
 enterInputMode :: EventM Name AppState ()
 enterInputMode = do
   modify $ mode .~ InputMode
   modify $ focusedField .~ FocusAction
 
--- | Todo 완료 상태 토글
+-- | Todo 완료 상태 토글 (Effectful)
 toggleTodoComplete :: EventM Name AppState ()
 toggleTodoComplete = do
   s <- get
@@ -73,7 +93,7 @@ toggleTodoComplete = do
         Nothing   -> pure ()
         Just todo -> toggleTodoInDB s (todo ^. todoId) idx
 
--- | DB에서 Todo 토글
+-- | DB에서 Todo 토글 (Effectful)
 toggleTodoInDB :: AppState -> DB.TodoId -> Int -> EventM Name AppState ()
 toggleTodoInDB s tid _idx = do
   let conn = s ^. dbConn
@@ -94,7 +114,7 @@ toggleTodoInDB s tid _idx = do
             )
     Nothing -> pure ()
 
--- | Todo 삭제
+-- | Todo 삭제 (Effectful)
 deleteTodo :: EventM Name AppState ()
 deleteTodo = do
   s <- get
@@ -106,7 +126,7 @@ deleteTodo = do
         Nothing   -> pure ()
         Just todo -> deleteTodoFromDB s (todo ^. todoId) idx
 
--- | DB에서 Todo 삭제
+-- | DB에서 Todo 삭제 (Effectful)
 deleteTodoFromDB :: AppState -> DB.TodoId -> Int -> EventM Name AppState ()
 deleteTodoFromDB s tid idx = do
   let conn = s ^. dbConn
@@ -114,7 +134,7 @@ deleteTodoFromDB s tid idx = do
   liftIO $ App.runAppM (App.AppEnv conn msgs) (App.deleteTodo tid)
   modify $ todoList %~ listRemove idx
 
--- | 편집 키 처리
+-- | 편집 키 처리 (Effectful)
 handleEditKey :: V.Key -> EventM Name AppState ()
 handleEditKey (V.KChar 'e') = do
   s <- get
@@ -127,7 +147,7 @@ handleEditKey (V.KChar 'e') = do
         Just todo -> enterEditMode todo idx
 handleEditKey _ = pure ()
 
--- | EditMode로 전환
+-- | EditMode로 전환 (Effectful)
 enterEditMode :: Todo -> Int -> EventM Name AppState ()
 enterEditMode todo idx = do
   modify $
@@ -139,7 +159,7 @@ enterEditMode todo idx = do
       . (indirectObjectEditor .~ E.editor IndirectObjectField (Just 1) (fromMaybe "" $ todo ^. todoIndirectObject))
       . (directObjectEditor .~ E.editor DirectObjectField (Just 1) (fromMaybe "" $ todo ^. todoDirectObject))
 
--- | InputMode 이벤트 처리
+-- | InputMode 이벤트 처리 (Effectful)
 handleInputMode :: BrickEvent Name e -> EventM Name AppState ()
 handleInputMode (VtyEvent (V.EvKey key [])) = do
   s <- get
@@ -151,7 +171,7 @@ handleInputMode (VtyEvent (V.EvKey key [])) = do
 handleInputMode ev@(VtyEvent _) = handleEditorEvent ev
 handleInputMode _ = return ()
 
--- | 새 Todo 저장
+-- | 새 Todo 저장 (Effectful)
 saveNewTodo :: EventM Name AppState ()
 saveNewTodo = do
   s <- get
@@ -165,7 +185,7 @@ saveNewTodo = do
     then createAndInsertTodo s action (toMaybe subject) (toMaybe indirectObj) (toMaybe directObj)
     else modify $ mode .~ ViewMode
 
--- | Todo 생성 및 삽입
+-- | Todo 생성 및 삽입 (Effectful)
 createAndInsertTodo :: AppState -> String -> Maybe String -> Maybe String -> Maybe String -> EventM Name AppState ()
 createAndInsertTodo s action subject indirectObj directObj = do
   let conn = s ^. dbConn
@@ -186,7 +206,7 @@ createAndInsertTodo s action subject indirectObj directObj = do
       clearEditors
     Nothing -> modify $ mode .~ ViewMode
 
--- | InputMode 키 처리
+-- | InputMode 키 처리 (Effectful)
 handleInputModeKey :: V.Key -> EventM Name AppState ()
 handleInputModeKey (V.KChar '\t') = cycleFieldFocus
 handleInputModeKey key = do
@@ -197,7 +217,7 @@ handleInputModeKey key = do
     FocusIndirectObject -> zoom indirectObjectEditor $ E.handleEditorEvent (VtyEvent (V.EvKey key []))
     FocusDirectObject   -> zoom directObjectEditor $ E.handleEditorEvent (VtyEvent (V.EvKey key []))
 
--- | EditMode 이벤트 처리
+-- | EditMode 이벤트 처리 (Effectful)
 handleEditMode :: BrickEvent Name e -> EventM Name AppState ()
 handleEditMode (VtyEvent (V.EvKey key [])) = do
   s <- get
@@ -209,13 +229,13 @@ handleEditMode (VtyEvent (V.EvKey key [])) = do
 handleEditMode ev@(VtyEvent _) = handleEditorEvent ev
 handleEditMode _ = return ()
 
--- | 편집 취소
+-- | 편집 취소 (Effectful)
 cancelEdit :: EventM Name AppState ()
 cancelEdit = do
   modify $ (mode .~ ViewMode) . (editingIndex .~ Nothing)
   clearEditors
 
--- | 편집된 Todo 저장
+-- | 편집된 Todo 저장 (Effectful)
 saveEditedTodo :: EventM Name AppState ()
 saveEditedTodo = do
   s <- get
@@ -233,7 +253,7 @@ saveEditedTodo = do
       clearEditors
     _ -> pure ()
 
--- | DB에서 Todo 업데이트
+-- | DB에서 Todo 업데이트 (Effectful)
 updateTodoInDB :: AppState -> DB.TodoId -> String -> Maybe String -> Maybe String -> Maybe String -> EventM Name AppState ()
 updateTodoInDB s tid action subject indirectObj directObj = do
   let conn = s ^. dbConn
@@ -259,7 +279,7 @@ updateTodoInDB s tid action subject indirectObj directObj = do
                   }
           modify $ todoList %~ listModify (const updatedTodo)
 
--- | EditMode 키 처리
+-- | EditMode 키 처리 (Effectful)
 handleEditModeKey :: V.Key -> EventM Name AppState ()
 handleEditModeKey (V.KChar '\t') = cycleFieldFocus
 handleEditModeKey key = do
@@ -270,7 +290,7 @@ handleEditModeKey key = do
     FocusIndirectObject -> zoom indirectObjectEditor $ E.handleEditorEvent (VtyEvent (V.EvKey key []))
     FocusDirectObject   -> zoom directObjectEditor $ E.handleEditorEvent (VtyEvent (V.EvKey key []))
 
--- | 필드 포커스 순환
+-- | 필드 포커스 순환 (Effectful)
 cycleFieldFocus :: EventM Name AppState ()
 cycleFieldFocus = do
   s <- get
@@ -281,7 +301,7 @@ cycleFieldFocus = do
         FocusDirectObject   -> FocusAction
   modify $ focusedField .~ nextField
 
--- | 에디터 이벤트 처리
+-- | 에디터 이벤트 처리 (Effectful)
 handleEditorEvent :: BrickEvent Name e -> EventM Name AppState ()
 handleEditorEvent ev = do
   s <- get
@@ -291,11 +311,11 @@ handleEditorEvent ev = do
     FocusIndirectObject -> zoom indirectObjectEditor $ E.handleEditorEvent ev
     FocusDirectObject   -> zoom directObjectEditor $ E.handleEditorEvent ev
 
--- | Utility: 문자열 trim
+-- | Utility: 문자열 trim (Pure)
 trim :: String -> String
 trim = unwords . words
 
--- | 에디터 초기화
+-- | 에디터 초기화 (Effectful)
 clearEditors :: EventM Name AppState ()
 clearEditors =
   modify $
@@ -304,7 +324,7 @@ clearEditors =
       . (indirectObjectEditor .~ E.editor IndirectObjectField (Just 1) "")
       . (directObjectEditor .~ E.editor DirectObjectField (Just 1) "")
 
--- | 에디터 초기화 및 ViewMode로 복귀
+-- | 에디터 초기화 및 ViewMode로 복귀 (Effectful)
 clearEditorsAndReturnToView :: EventM Name AppState ()
 clearEditorsAndReturnToView = do
   modify $ mode .~ ViewMode

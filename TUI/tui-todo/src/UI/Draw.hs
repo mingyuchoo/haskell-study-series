@@ -1,5 +1,25 @@
 {-# LANGUAGE OverloadedStrings #-}
 
+-- | UI rendering functions (Pure)
+--
+-- This module contains all UI rendering logic.
+-- All functions are pure - they take state and return Widget structures
+-- without performing any side effects.
+--
+-- Pure components:
+--   - drawUI: Main UI rendering
+--   - drawHeader: Header rendering
+--   - drawTodoList: Todo list rendering
+--   - drawTodo: Individual todo item rendering
+--   - drawDetailView: Detail view rendering
+--   - drawHelp: Help text rendering
+--   - All helper functions
+--
+-- Effects: NONE - All functions are pure
+--
+-- Note: While these functions return Widget types (which will eventually
+-- be rendered to the terminal), the functions themselves are pure.
+-- They only construct data structures describing what to render.
 module UI.Draw
     ( drawUI
     ) where
@@ -22,7 +42,7 @@ import           Lens.Micro           ((^.))
 
 import           UI.Types
 
--- | UI 그리기
+-- | UI 그리기 (Pure)
 drawUI :: AppState -> [Widget Name]
 drawUI s = [ui]
   where
@@ -37,7 +57,7 @@ drawUI s = [ui]
           drawHelp s
         ]
 
--- | 헤더 그리기
+-- | 헤더 그리기 (Pure)
 drawHeader :: AppState -> Widget Name
 drawHeader s =
   withAttr (attrName "header") $
@@ -46,7 +66,7 @@ drawHeader s =
         str $
           I18n.header (I18n.ui (s ^. i18nMessages))
 
--- | Todo 리스트 그리기
+-- | Todo 리스트 그리기 (Pure)
 drawTodoList :: AppState -> Widget Name
 drawTodoList s =
   let msgs = s ^. i18nMessages
@@ -58,7 +78,7 @@ drawTodoList s =
               then center $ str $ I18n.no_todos uiMsgs
               else renderList (drawTodo msgs) True (s ^. todoList)
 
--- | 개별 Todo 항목 그리기
+-- | 개별 Todo 항목 그리기 (Pure)
 drawTodo :: I18n.I18nMessages -> Bool -> Todo -> Widget Name
 drawTodo msgs selected todo = withAttr selectAttr $ hBox [checkbox, str mainInfo, timestamp]
   where
@@ -91,7 +111,7 @@ drawTodo msgs selected todo = withAttr selectAttr $ hBox [checkbox, str mainInfo
         withAttr (attrName "timestamp") $
           str (completedTimeText <> I18n.created_prefix listMsgs <> todo ^. todoCreatedAt)
 
--- | 상세 뷰 그리기
+-- | 상세 뷰 그리기 (Pure)
 drawDetailView :: AppState -> Widget Name
 drawDetailView s =
   let msgs = s ^. i18nMessages
@@ -101,7 +121,7 @@ drawDetailView s =
         EditMode _ -> drawEditModeDetail s msgs uiMsgs
         InputMode  -> drawInputModeDetail s msgs uiMsgs
 
--- | ViewMode 상세 뷰
+-- | ViewMode 상세 뷰 (Pure)
 drawViewModeDetail :: AppState -> I18n.I18nMessages -> I18n.UIMessages -> Widget Name
 drawViewModeDetail s msgs uiMsgs =
   case listSelected (s ^. todoList) of
@@ -112,7 +132,7 @@ drawViewModeDetail s msgs uiMsgs =
             Nothing   -> emptyDetailView uiMsgs (I18n.no_selection uiMsgs)
             Just todo -> drawTodoDetail msgs uiMsgs todo False
 
--- | EditMode 상세 뷰
+-- | EditMode 상세 뷰 (Pure)
 drawEditModeDetail :: AppState -> I18n.I18nMessages -> I18n.UIMessages -> Widget Name
 drawEditModeDetail s msgs uiMsgs =
   case s ^. editingIndex of
@@ -123,7 +143,7 @@ drawEditModeDetail s msgs uiMsgs =
             Nothing   -> emptyDetailView uiMsgs (I18n.not_found uiMsgs)
             Just todo -> drawTodoDetailWithEditors s msgs uiMsgs todo (I18n.detail_edit_title uiMsgs)
 
--- | InputMode 상세 뷰
+-- | InputMode 상세 뷰 (Pure)
 drawInputModeDetail :: AppState -> I18n.I18nMessages -> I18n.UIMessages -> Widget Name
 drawInputModeDetail s msgs uiMsgs =
   let fieldMsgs = I18n.fields msgs
@@ -151,7 +171,7 @@ drawInputModeDetail s msgs uiMsgs =
                 str ""
               ]
 
--- | 빈 상세 뷰
+-- | 빈 상세 뷰 (Pure)
 emptyDetailView :: I18n.UIMessages -> String -> Widget Name
 emptyDetailView uiMsgs msg =
   borderWithLabel (str $ I18n.detail_title uiMsgs) $
@@ -159,7 +179,7 @@ emptyDetailView uiMsgs msg =
       center $
         str msg
 
--- | Todo 상세 정보 그리기 (읽기 전용)
+-- | Todo 상세 정보 그리기 (Pure, 읽기 전용)
 drawTodoDetail :: I18n.I18nMessages -> I18n.UIMessages -> Todo -> Bool -> Widget Name
 drawTodoDetail msgs uiMsgs todo _ =
   let fieldMsgs = I18n.fields msgs
@@ -207,7 +227,7 @@ drawTodoDetail msgs uiMsgs todo _ =
                 completedInfo
               ]
 
--- | Todo 상세 정보 그리기 (편집 가능)
+-- | Todo 상세 정보 그리기 (Pure, 편집 가능)
 drawTodoDetailWithEditors :: AppState -> I18n.I18nMessages -> I18n.UIMessages -> Todo -> String -> Widget Name
 drawTodoDetailWithEditors s msgs _uiMsgs todo title =
   let fieldMsgs = I18n.fields msgs
@@ -245,7 +265,7 @@ drawTodoDetailWithEditors s msgs _uiMsgs todo title =
                 completedInfo
               ]
 
--- | 편집 가능한 필드 렌더링
+-- | 편집 가능한 필드 렌더링 (Pure)
 renderEditField :: AppState -> I18n.FieldLabels -> String -> E.Editor String Name -> FocusedField -> Widget Name
 renderEditField s _ fieldLabel editor fieldType =
   let isFocused = s ^. focusedField == fieldType
@@ -254,7 +274,7 @@ renderEditField s _ fieldLabel editor fieldType =
       editorWidget = E.renderEditor (str . unlines) isFocused editor
    in hBox [labelWidget, editorWidget]
 
--- | 도움말 그리기
+-- | 도움말 그리기 (Pure)
 drawHelp :: AppState -> Widget Name
 drawHelp s =
   let msgs = s ^. i18nMessages
@@ -265,7 +285,7 @@ drawHelp s =
           EditMode _ -> str $ I18n.edit_mode helpMsgs
           ViewMode   -> drawViewModeHelp s helpMsgs
 
--- | ViewMode 도움말
+-- | ViewMode 도움말 (Pure)
 drawViewModeHelp :: AppState -> I18n.HelpMessages -> Widget Name
 drawViewModeHelp s helpMsgs =
   let kb = s ^. keyBindings

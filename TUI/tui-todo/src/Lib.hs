@@ -1,5 +1,18 @@
 {-# LANGUAGE OverloadedStrings #-}
 
+-- | Application entry point and integration (MIXED: Pure + Effectful)
+--
+-- This module integrates all components and defines the Brick application.
+--
+-- Pure components:
+--   - app: Brick application definition (structure)
+--   - Re-exports from UI.Types
+--
+-- Effectful components:
+--   - appHandleEvent: References UI.Events.handleEvent (effectful)
+--
+-- Note: While the app definition itself is pure data, it references
+-- effectful event handlers, making the overall application effectful.
 module Lib
     ( AppState (..)
     , FocusedField (..)
@@ -39,7 +52,7 @@ import           UI.Draw       (drawUI)
 import           UI.Events     (handleEvent, trim)
 import           UI.Types
 
--- | 애플리케이션 정의
+-- | 애플리케이션 정의 (Pure)
 app :: App AppState e Name
 app =
   App

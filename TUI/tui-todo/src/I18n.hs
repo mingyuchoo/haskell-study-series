@@ -1,6 +1,21 @@
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
+-- | Internationalization support (MIXED: Pure + Effectful)
+--
+-- This module provides multi-language support for the application.
+--
+-- Pure components:
+--   - Data types: Language, I18nMessages, UIMessages, etc.
+--   - defaultMessages: Default English messages
+--
+-- Effectful functions:
+--   - loadMessages: Load messages from YAML file (IO)
+--
+-- Effects:
+--   - File system access (doesFileExist, readFile)
+--   - YAML parsing
+--   - Console output (putStrLn)
 module I18n
     ( FieldLabels (..)
     , HelpMessages (..)
@@ -25,11 +40,11 @@ import           GHC.Generics     (Generic)
 
 import           System.Directory (doesFileExist)
 
--- | Supported languages
+-- | Supported languages (Pure)
 data Language = English | Korean
      deriving (Eq, Generic, Show)
 
--- | UI messages structure
+-- | UI messages structure (Pure)
 data UIMessages = UIMessages { header            :: !String
                              , todos_title       :: !String
                              , detail_title      :: !String
@@ -43,7 +58,7 @@ data UIMessages = UIMessages { header            :: !String
 
 instance FromJSON UIMessages
 
--- | Field labels
+-- | Field labels (Pure)
 data FieldLabels = FieldLabels { id_label              :: !String
                                , status_label          :: !String
                                , action_label          :: !String
@@ -59,7 +74,7 @@ data FieldLabels = FieldLabels { id_label              :: !String
 
 instance FromJSON FieldLabels
 
--- | Status messages
+-- | Status messages (Pure)
 data StatusMessages = StatusMessages { completed   :: !String
                                      , in_progress :: !String
                                      }
@@ -67,7 +82,7 @@ data StatusMessages = StatusMessages { completed   :: !String
 
 instance FromJSON StatusMessages
 
--- | List display messages
+-- | List display messages (Pure)
 data ListMessages = ListMessages { checkbox_done    :: !String
                                  , checkbox_todo    :: !String
                                  , field_separator  :: !String
@@ -82,7 +97,7 @@ data ListMessages = ListMessages { checkbox_done    :: !String
 
 instance FromJSON ListMessages
 
--- | Help messages
+-- | Help messages (Pure)
 data HelpMessages = HelpMessages { view_mode  :: !String
                                  , edit_mode  :: !String
                                  , input_mode :: !String
@@ -97,7 +112,7 @@ data HelpMessages = HelpMessages { view_mode  :: !String
 
 instance FromJSON HelpMessages
 
--- | System messages
+-- | System messages (Pure)
 data SystemMessages = SystemMessages { config_not_found   :: !String
                                      , config_load_failed :: !String
                                      , config_loaded      :: !String
@@ -111,7 +126,7 @@ data SystemMessages = SystemMessages { config_not_found   :: !String
 
 instance FromJSON SystemMessages
 
--- | Sample todos
+-- | Sample todos (Pure)
 data SampleTodos = SampleTodos { welcome     :: !String
                                , add_hint    :: !String
                                , toggle_hint :: !String
@@ -120,7 +135,7 @@ data SampleTodos = SampleTodos { welcome     :: !String
 
 instance FromJSON SampleTodos
 
--- | Complete internationalization messages
+-- | Complete internationalization messages (Pure)
 data I18nMessages = I18nMessages { language     :: !String
                                  , ui           :: !UIMessages
                                  , fields       :: !FieldLabels
@@ -134,7 +149,7 @@ data I18nMessages = I18nMessages { language     :: !String
 
 instance FromJSON I18nMessages
 
--- | Default English messages
+-- | Default English messages (Pure)
 defaultMessages :: I18nMessages
 defaultMessages =
   I18nMessages
@@ -211,7 +226,7 @@ defaultMessages =
           }
     }
 
--- | Load messages from file
+-- | Load messages from file (Effectful)
 loadMessages :: Language -> IO I18nMessages
 loadMessages lang = do
   let path = case lang of

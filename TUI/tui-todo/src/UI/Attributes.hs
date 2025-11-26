@@ -1,5 +1,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 
+-- | UI attributes and styles (Pure)
+--
+-- This module defines visual attributes for the terminal UI.
+-- All definitions are pure data.
+--
+-- Pure components:
+--   - theMap: Attribute map for colors and styles
+--
+-- Effects: NONE - Pure configuration data
 module UI.Attributes
     ( theMap
     ) where
@@ -9,7 +18,7 @@ import           Brick.Widgets.List (listSelectedAttr)
 
 import qualified Graphics.Vty       as V
 
--- | 속성 맵
+-- | 속성 맵 (Pure)
 theMap :: AttrMap
 theMap =
   attrMap

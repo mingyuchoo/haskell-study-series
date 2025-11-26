@@ -2,6 +2,24 @@
 {-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE OverloadedStrings #-}
 
+-- | Configuration management (MIXED: Pure + Effectful)
+--
+-- This module handles keybindings configuration.
+--
+-- Pure functions:
+--   - keyToString: Convert Vty key to string
+--   - matchesKey: Match key to action
+--   - getFirstKey: Get first key from list
+--   - defaultKeyBindings: Default configuration
+--
+-- Effectful functions:
+--   - loadKeyBindings: Load from YAML file (IO)
+--   - loadKeyBindingsWithMessages: Load with custom messages (IO)
+--
+-- Effects:
+--   - File system access (doesFileExist, readFile)
+--   - YAML parsing
+--   - Console output (putStrLn)
 module Config
     ( KeyAction (..)
     , KeyBindings (..)
@@ -27,11 +45,11 @@ import qualified I18n
 
 import           System.Directory (doesFileExist)
 
--- | Key action types
+-- | Key action types (Pure)
 data KeyAction = QuitApp | AddTodo | ToggleComplete | DeleteTodo | NavigateUp | NavigateDown | SaveInput | CancelInput
      deriving (Eq, Generic, Show)
 
--- | Key bindings configuration
+-- | Key bindings configuration (Pure)
 data KeyBindings = KeyBindings { quit            :: ![String]
                                , add_todo        :: ![String]
                                , toggle_complete :: ![String]
@@ -57,7 +75,7 @@ instance FromJSON KeyBindings where
         <*> kb .: "save_input"
         <*> kb .: "cancel_input"
 
--- | Default key bindings
+-- | Default key bindings (Pure)
 defaultKeyBindings :: KeyBindings
 defaultKeyBindings =
   KeyBindings
@@ -71,11 +89,11 @@ defaultKeyBindings =
       cancel_input = ["Esc"]
     }
 
--- | Load key bindings from configuration file
+-- | Load key bindings from configuration file(Effectful)
 loadKeyBindings :: FilePath -> IO KeyBindings
 loadKeyBindings path = loadKeyBindingsWithMessages path I18n.defaultMessages
 
--- | Load key bindings with custom messages
+-- | Load key bindings with custom messages(Effectful)
 loadKeyBindingsWithMessages :: FilePath -> I18n.I18nMessages -> IO KeyBindings
 loadKeyBindingsWithMessages path msgs = do
   let sysMsgs = I18n.messages msgs
@@ -97,7 +115,7 @@ loadKeyBindingsWithMessages path msgs = do
       putStrLn <| I18n.using_default sysMsgs
       pure defaultKeyBindings
 
--- | Convert Vty key to string representation
+-- | Convert Vty key to string representation (Pure)
 keyToString :: V.Key -> String
 keyToString = \case
   V.KChar ' ' -> "Space"
@@ -112,7 +130,7 @@ keyToString = \case
   V.KFun n -> "F" <> show n
   _ -> ""
 
--- | Match a key to its corresponding action
+-- | Match a key to its corresponding action (Pure)
 matchesKey :: KeyBindings -> V.Key -> Maybe KeyAction
 matchesKey kb key = snd <$> find (keyMatches keyStr . fst) actions
   where
@@ -129,7 +147,7 @@ matchesKey kb key = snd <$> find (keyMatches keyStr . fst) actions
         (cancel_input kb, CancelInput)
       ]
 
--- | Get the first key from a list of keys, or return a default
+-- | Get the first key from a list of keys, or return a default (Pure)
 getFirstKey :: [String] -> String -> String
 getFirstKey [] def     = def
 getFirstKey (k:_) _def = k
