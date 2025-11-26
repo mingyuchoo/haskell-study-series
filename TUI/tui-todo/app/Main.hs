@@ -24,8 +24,19 @@ import qualified I18n
 
 import           Lib
 
+import           System.Directory       (createDirectoryIfMissing,
+                                         getHomeDirectory)
+import           System.FilePath        ((</>))
 import           System.IO              (BufferMode (NoBuffering),
                                          hSetBuffering, stdout)
+
+-- | Get the database file path in $HOME/.config/tui-todo/
+getDBPath :: IO FilePath
+getDBPath = do
+  homeDir <- getHomeDirectory
+  let configDir = homeDir </> ".config" </> "tui-todo"
+  createDirectoryIfMissing True configDir
+  return <| configDir </> "todos.db"
 
 -- |
 main :: IO ()
@@ -39,7 +50,8 @@ appWithLanguage lang = do
   msgs <- I18n.loadMessages lang
   kb <- Config.loadKeyBindingsWithMessages "config/keybindings.yaml" msgs
 
-  conn <- open "todos.db"
+  dbPath <- getDBPath
+  conn <- open dbPath
   DB.initDBWithMessages conn msgs
 
   let env = App.AppEnv conn msgs

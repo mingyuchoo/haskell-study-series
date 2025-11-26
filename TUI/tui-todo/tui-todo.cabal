@@ -60,6 +60,7 @@ library
     , bytestring
     , containers
     , directory
+    , filepath
     , flow
     , microlens
     , microlens-th
@@ -100,6 +101,7 @@ executable tui-todo-exe
     , bytestring
     , containers
     , directory
+    , filepath
     , flow
     , microlens
     , microlens-th
@@ -151,6 +153,7 @@ test-suite tui-todo-test
     , directory
     , doctest
     , doctest-discover
+    , filepath
     , flow
     , hspec
     , microlens

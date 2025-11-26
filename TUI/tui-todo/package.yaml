@@ -32,6 +32,7 @@ dependencies:
 - yaml
 - bytestring
 - directory
+- filepath
 
 default-extensions:
 - DataKinds
