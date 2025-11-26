@@ -6,6 +6,7 @@ module Config
     ( KeyAction (..)
     , KeyBindings (..)
     , defaultKeyBindings
+    , getFirstKey
     , loadKeyBindings
     , loadKeyBindingsWithMessages
     , matchesKey
@@ -127,3 +128,8 @@ matchesKey kb key = snd <$> find (keyMatches keyStr . fst) actions
         (save_input kb, SaveInput),
         (cancel_input kb, CancelInput)
       ]
+
+-- | Get the first key from a list of keys, or return a default
+getFirstKey :: [String] -> String -> String
+getFirstKey [] def     = def
+getFirstKey (k:_) _def = k

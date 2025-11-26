@@ -2,9 +2,30 @@ module Main
     ( main
     ) where
 
+import qualified App
+
+import           Brick                  (defaultMain)
+import qualified Brick.Widgets.Edit     as E
+import           Brick.Widgets.List     (list)
+
+import qualified Config
+
+import           Control.Monad          (void)
+
+import qualified DB
+
+import qualified Data.Vector            as Vec
+
+import           Database.SQLite.Simple (open)
+
+import           Flow                   ((<|))
+
+import qualified I18n
+
 import           Lib
 
-import           System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)
+import           System.IO              (BufferMode (NoBuffering),
+                                         hSetBuffering, stdout)
 
 -- |
 main :: IO ()

@@ -33,6 +33,10 @@ library
       I18n
       Lib
   other-modules:
+      Types
+      UI.Attributes
+      UI.Draw
+      UI.Events
       Paths_tui_todo
   autogen-modules:
       Paths_tui_todo
