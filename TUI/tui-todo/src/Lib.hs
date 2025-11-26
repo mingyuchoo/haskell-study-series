@@ -116,6 +116,8 @@ drawUI s = [ui]
           hBorder,
           drawTodoList s,
           hBorder,
+          drawDetailView s,
+          hBorder,
           drawInput s,
           hBorder,
           drawHelp s
@@ -132,7 +134,7 @@ drawTodoList :: AppState -> Widget Name
 drawTodoList s =
   borderWithLabel (str " Todos ") <|
     padAll 1 <|
-      vLimit 20 <|
+      vLimit 15 <|
         if null (s ^. todoList . listElementsL)
           then center <| str "No todos yet. Press 'a' to add one!"
           else renderList drawTodo True (s ^. todoList)
@@ -177,50 +179,159 @@ drawTodo selected todo =
    in withAttr selectAttr <|
         hBox [checkbox, str mainInfo, timestamp]
 
+drawDetailView :: AppState -> Widget Name
+drawDetailView s =
+  case s ^. mode of
+    ViewMode -> 
+      case listSelected (s ^. todoList) of
+        Nothing -> 
+          borderWithLabel (str " 상세 정보 ") <|
+            padAll 1 <|
+              center <| str "선택된 할일이 없습니다"
+        Just idx ->
+          let todos = s ^. todoList . listElementsL
+          in case todos Vec.!? idx of
+            Nothing -> 
+              borderWithLabel (str " 상세 정보 ") <|
+                padAll 1 <|
+                  center <| str "선택된 할일이 없습니다"
+            Just todo ->
+              let statusText = if todo ^. todoCompleted then "✓ 완료됨" else "○ 진행중"
+                  statusAttr = if todo ^. todoCompleted 
+                                 then attrName "completed" 
+                                 else attrName "normal"
+                  
+                  showDetailField _ Nothing = str ""
+                  showDetailField lbl (Just val) = 
+                    hBox [withAttr (attrName "detailLabel") <| str (lbl ++ ": "), 
+                          str val]
+                  
+                  completedInfo = case todo ^. todoCompletedAt of
+                    Just compTime -> 
+                      hBox [withAttr (attrName "detailLabel") <| str "완료 시각: ", 
+                            withAttr (attrName "timestamp") <| str compTime]
+                    Nothing -> str ""
+                  
+              in borderWithLabel (str " 상세 정보 ") <|
+                   padAll 1 <|
+                     vLimit 8 <|
+                       vBox
+                         [ hBox [withAttr (attrName "detailLabel") <| str "ID: ", 
+                                 str (show (todo ^. todoId))]
+                         , hBox [withAttr (attrName "detailLabel") <| str "상태: ", 
+                                 withAttr statusAttr <| str statusText]
+                         , hBox [withAttr (attrName "detailLabel") <| str "할일: ", 
+                                 str (todo ^. todoAction)]
+                         , showDetailField "주체자" (todo ^. todoSubject)
+                         , showDetailField "대상자" (todo ^. todoIndirectObject)
+                         , showDetailField "작업대상" (todo ^. todoDirectObject)
+                         , hBox [withAttr (attrName "detailLabel") <| str "생성 시각: ", 
+                                 withAttr (attrName "timestamp") <| str (todo ^. todoCreatedAt)]
+                         , completedInfo
+                         ]
+    EditMode _ -> 
+      case s ^. editingIndex of
+        Nothing -> 
+          borderWithLabel (str " 상세 정보 (편집 모드) ") <|
+            padAll 1 <|
+              center <| str "편집할 항목을 찾을 수 없습니다"
+        Just idx ->
+          let todos = s ^. todoList . listElementsL
+          in case todos Vec.!? idx of
+            Nothing -> 
+              borderWithLabel (str " 상세 정보 (편집 모드) ") <|
+                padAll 1 <|
+                  center <| str "편집할 항목을 찾을 수 없습니다"
+            Just todo ->
+              let statusText = if todo ^. todoCompleted then "✓ 완료됨" else "○ 진행중"
+                  statusAttr = if todo ^. todoCompleted 
+                                 then attrName "completed" 
+                                 else attrName "normal"
+                  
+                  -- 각 필드의 포커스 상태
+                  actionFocused = s ^. focusedField == FocusAction
+                  subjectFocused = s ^. focusedField == FocusSubject
+                  indirectObjFocused = s ^. focusedField == FocusIndirectObject
+                  directObjFocused = s ^. focusedField == FocusDirectObject
+                  
+                  -- 편집 가능한 필드 렌더링
+                  renderEditField fieldLabel editor isFocused =
+                    let fieldAttr = if isFocused 
+                                      then attrName "focusedField"
+                                      else attrName "detailLabel"
+                        labelWidget = withAttr fieldAttr <| str (fieldLabel ++ ": ")
+                        editorWidget = E.renderEditor (str . unlines) isFocused editor
+                    in hBox [labelWidget, editorWidget]
+                  
+                  completedInfo = case todo ^. todoCompletedAt of
+                    Just compTime -> 
+                      hBox [withAttr (attrName "detailLabel") <| str "완료 시각: ", 
+                            withAttr (attrName "timestamp") <| str compTime]
+                    Nothing -> str ""
+                  
+              in borderWithLabel (str " 상세 정보 (편집 모드 - Tab: 다음 필드, Enter: 저장, Esc: 취소) ") <|
+                   padAll 1 <|
+                     vLimit 8 <|
+                       vBox
+                         [ hBox [withAttr (attrName "detailLabel") <| str "ID: ", 
+                                 str (show (todo ^. todoId))]
+                         , hBox [withAttr (attrName "detailLabel") <| str "상태: ", 
+                                 withAttr statusAttr <| str statusText]
+                         , renderEditField "할일 (필수)" (s ^. actionEditor) actionFocused
+                         , renderEditField "주체자" (s ^. subjectEditor) subjectFocused
+                         , renderEditField "대상자" (s ^. indirectObjectEditor) indirectObjFocused
+                         , renderEditField "작업대상" (s ^. directObjectEditor) directObjFocused
+                         , hBox [withAttr (attrName "detailLabel") <| str "생성 시각: ", 
+                                 withAttr (attrName "timestamp") <| str (todo ^. todoCreatedAt)]
+                         , completedInfo
+                         ]
+    _ -> 
+      borderWithLabel (str " 상세 정보 ") <|
+        padAll 1 <|
+          vLimit 8 <|
+            center <| str ""
+
 drawInput :: AppState -> Widget Name
 drawInput s =
-  let (label, isEditing) = case s ^. mode of
-        InputMode -> (" Add New Todo (Tab: 다음 필드, Enter: 저장, Esc: 취소) ", True)
-        EditMode _ -> (" Edit Todo (Tab: 다음 필드, Enter: 저장, Esc: 취소) ", True)
-        ViewMode -> (" Input (press 'a' to add, 'e' to edit) ", False)
-      
-      -- 각 필드의 포커스 상태
-      actionFocused = isEditing && s ^. focusedField == FocusAction
-      subjectFocused = isEditing && s ^. focusedField == FocusSubject
-      indirectObjFocused = isEditing && s ^. focusedField == FocusIndirectObject
-      directObjFocused = isEditing && s ^. focusedField == FocusDirectObject
-      
-      -- 필드 렌더링 헬퍼
-      renderField fieldLabel editor isFocused =
-        let fieldAttr = if isFocused 
-                          then attrName "focusedField"
-                          else attrName "normalField"
-            labelWidget = withAttr fieldAttr <| str (fieldLabel ++ ": ")
-            editorWidget = E.renderEditor (str . unlines) isFocused editor
-        in hBox [labelWidget, editorWidget]
-      
-   in if isEditing
-        then borderWithLabel (str label) <|
-               padAll 1 <|
-                 vBox
-                   [ renderField "할일 (필수)" (s ^. actionEditor) actionFocused
-                   , str " "
-                   , renderField "주체자" (s ^. subjectEditor) subjectFocused
-                   , str " "
-                   , renderField "대상자" (s ^. indirectObjectEditor) indirectObjFocused
-                   , str " "
-                   , renderField "작업대상" (s ^. directObjectEditor) directObjFocused
-                   ]
-        else borderWithLabel (str label) <|
-               padAll 1 <|
-                 str "(press 'a' to add, 'e' to edit)"
+  case s ^. mode of
+    InputMode ->
+      let -- 각 필드의 포커스 상태
+          actionFocused = s ^. focusedField == FocusAction
+          subjectFocused = s ^. focusedField == FocusSubject
+          indirectObjFocused = s ^. focusedField == FocusIndirectObject
+          directObjFocused = s ^. focusedField == FocusDirectObject
+          
+          -- 필드 렌더링 헬퍼
+          renderField fieldLabel editor isFocused =
+            let fieldAttr = if isFocused 
+                              then attrName "focusedField"
+                              else attrName "normalField"
+                labelWidget = withAttr fieldAttr <| str (fieldLabel ++ ": ")
+                editorWidget = E.renderEditor (str . unlines) isFocused editor
+            in hBox [labelWidget, editorWidget]
+          
+       in borderWithLabel (str " Add New Todo (Tab: 다음 필드, Enter: 저장, Esc: 취소) ") <|
+            padAll 1 <|
+              vBox
+                [ renderField "할일 (필수)" (s ^. actionEditor) actionFocused
+                , str " "
+                , renderField "주체자" (s ^. subjectEditor) subjectFocused
+                , str " "
+                , renderField "대상자" (s ^. indirectObjectEditor) indirectObjFocused
+                , str " "
+                , renderField "작업대상" (s ^. directObjectEditor) directObjFocused
+                ]
+    _ -> 
+      borderWithLabel (str " Input ") <|
+        padAll 1 <|
+          str "(press 'a' to add new todo)"
 
 drawHelp :: AppState -> Widget Name
 drawHelp s =
   padAll 1 <|
     case s ^. mode of
-      InputMode -> str "Enter: Save | Esc: Cancel"
-      EditMode _ -> str "Enter: Save | Esc: Cancel"
+      InputMode -> str "Tab: 다음 필드 | Enter: 저장 | Esc: 취소"
+      EditMode _ -> str "Tab: 다음 필드 | Enter: 저장 | Esc: 취소"
       ViewMode ->
         let kb = s ^. keyBindings
             quitKeys = head (Config.quit kb)
@@ -476,6 +587,7 @@ theMap =
       (attrName "inputHelp", fg V.cyan `V.withStyle` V.dim),
       (attrName "focusedField", fg V.cyan `V.withStyle` V.bold),
       (attrName "normalField", fg V.white),
+      (attrName "detailLabel", fg V.cyan `V.withStyle` V.bold),
       (listSelectedAttr, V.black `on` V.cyan)
     ]
 
