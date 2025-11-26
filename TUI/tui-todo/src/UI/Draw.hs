@@ -97,9 +97,11 @@ drawTodo msgs selected todo = withAttr selectAttr <| hBox [statusIcon, str mainI
           _             -> "[ ] "
 
     todoAttr = attrName <| case status of
-      "completed" -> "completed"
-      "cancelled" -> "cancelled"
-      _           -> "normal"
+      "registered"  -> "registered"
+      "in_progress" -> "in_progress"
+      "cancelled"   -> "cancelled"
+      "completed"   -> "completed"
+      _             -> "normal"
     selectAttr = if selected then attrName "selected" else todoAttr
 
     showField _ Nothing    = ""
@@ -201,9 +203,11 @@ drawTodoDetail msgs uiMsgs todo _ =
         "completed"   -> I18n.completed statusMsgs
         _             -> "Unknown"
       statusAttr = attrName <| case status of
-        "completed" -> "completed"
-        "cancelled" -> "cancelled"
-        _           -> "normal"
+        "registered"  -> "registered"
+        "in_progress" -> "in_progress"
+        "cancelled"   -> "cancelled"
+        "completed"   -> "completed"
+        _             -> "normal"
 
       showDetailField _ Nothing = str ""
       showDetailField lbl (Just val) =
@@ -258,9 +262,11 @@ drawTodoDetailWithEditors s msgs _uiMsgs todo title =
         "completed"   -> I18n.completed statusMsgs
         _             -> "Unknown"
       statusAttr = attrName <| case status of
-        "completed" -> "completed"
-        "cancelled" -> "cancelled"
-        _           -> "normal"
+        "registered"  -> "registered"
+        "in_progress" -> "in_progress"
+        "cancelled"   -> "cancelled"
+        "completed"   -> "completed"
+        _             -> "normal"
 
       statusChangedInfo = case todo ^. todoStatusChangedAt of
         Just changeTime ->

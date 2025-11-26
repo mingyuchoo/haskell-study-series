@@ -26,8 +26,10 @@ theMap =
     [ (attrName "header", V.white `on` V.blue `V.withStyle` V.bold),
       (attrName "selected", V.black `on` V.cyan),
       (attrName "normal", V.defAttr),
-      (attrName "completed", fg V.green `V.withStyle` V.dim),
-      (attrName "cancelled", fg V.red `V.withStyle` V.dim),
+      (attrName "registered", fg V.white),  -- 흰색
+      (attrName "in_progress", fg V.yellow),      -- 주황색 (터미널에서 yellow가 주황색에 가까움)
+      (attrName "cancelled", fg V.black `V.withStyle` V.dim),  -- 어두운 회색
+      (attrName "completed", fg V.green),         -- 녹색
       (attrName "timestamp", fg V.yellow),
       (attrName "inputHelp", fg V.cyan `V.withStyle` V.dim),
       (attrName "focusedField", fg V.cyan `V.withStyle` V.bold),
