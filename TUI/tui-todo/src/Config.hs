@@ -98,26 +98,25 @@ loadKeyBindings :: FilePath -> IO KeyBindings
 loadKeyBindings path = loadKeyBindingsWithMessages path I18n.defaultMessages
 
 -- | Load key bindings with custom messages(Effectful)
+-- If the config file doesn't exist, silently use default key bindings
 loadKeyBindingsWithMessages :: FilePath -> I18n.I18nMessages -> IO KeyBindings
 loadKeyBindingsWithMessages path msgs = do
   let sysMsgs = I18n.messages msgs
   exists <- doesFileExist path
   if exists
     then loadFromFile sysMsgs
-    else useDefault sysMsgs <| I18n.config_not_found sysMsgs <> ": " <> path
+    else pure defaultKeyBindings  -- Silently use defaults if no config file
   where
     loadFromFile sysMsgs = do
       content <- BS.readFile path
       case Yaml.decodeEither' content of
-        Left err -> useDefault sysMsgs <| I18n.config_load_failed sysMsgs <> ": " <> show err
+        Left err -> do
+          putStrLn <| I18n.config_load_failed sysMsgs <> ": " <> show err
+          putStrLn <| I18n.using_default sysMsgs
+          pure defaultKeyBindings
         Right kb -> do
           putStrLn <| I18n.config_loaded sysMsgs
           pure kb
-
-    useDefault sysMsgs msg = do
-      putStrLn msg
-      putStrLn <| I18n.using_default sysMsgs
-      pure defaultKeyBindings
 
 -- | Convert Vty key to string representation (Pure)
 keyToString :: V.Key -> String

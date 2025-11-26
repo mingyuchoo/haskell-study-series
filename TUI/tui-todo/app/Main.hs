@@ -30,13 +30,29 @@ import           System.FilePath        ((</>))
 import           System.IO              (BufferMode (NoBuffering),
                                          hSetBuffering, stdout)
 
+-- | Project name for config directory
+projectName :: String
+projectName = "tui-todo"
+
+-- | Get the config directory path in $HOME/.config/tui-todo/
+getConfigDir :: IO FilePath
+getConfigDir = do
+  homeDir <- getHomeDirectory
+  let configDir = homeDir </> ".config" </> projectName
+  createDirectoryIfMissing True configDir
+  return configDir
+
 -- | Get the database file path in $HOME/.config/tui-todo/
 getDBPath :: IO FilePath
 getDBPath = do
-  homeDir <- getHomeDirectory
-  let configDir = homeDir </> ".config" </> "tui-todo"
-  createDirectoryIfMissing True configDir
+  configDir <- getConfigDir
   return <| configDir </> "todos.db"
+
+-- | Get the keybindings config file path in $HOME/.config/tui-todo/
+getKeyBindingsPath :: IO FilePath
+getKeyBindingsPath = do
+  configDir <- getConfigDir
+  return <| configDir </> "keybindings.yaml"
 
 -- |
 main :: IO ()
@@ -48,7 +64,8 @@ main = do
 appWithLanguage :: I18n.Language -> IO ()
 appWithLanguage lang = do
   msgs <- I18n.loadMessages lang
-  kb <- Config.loadKeyBindingsWithMessages "config/keybindings.yaml" msgs
+  kbPath <- getKeyBindingsPath
+  kb <- Config.loadKeyBindingsWithMessages kbPath msgs
 
   dbPath <- getDBPath
   conn <- open dbPath
