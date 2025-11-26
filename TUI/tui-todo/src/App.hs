@@ -62,24 +62,13 @@ createTodo text = do
     liftIO <| DB.createTodo conn text
 
 -- | Create a new todo with all fields
-createTodoWithFields :: MonadApp m
-                     => String
-                     -> Maybe String
-                     -> Maybe String
-                     -> Maybe String
-                     -> m DB.TodoId
+createTodoWithFields :: MonadApp m => String -> Maybe String -> Maybe String -> Maybe String -> m DB.TodoId
 createTodoWithFields action subj indObj dirObj = do
     conn <- getConnection
     liftIO <| DB.createTodoWithFields conn action subj indObj dirObj
 
 -- | Update an existing todo
-updateTodo :: MonadApp m
-           => DB.TodoId
-           -> String
-           -> Maybe String
-           -> Maybe String
-           -> Maybe String
-           -> m ()
+updateTodo :: MonadApp m => DB.TodoId -> String -> Maybe String -> Maybe String -> Maybe String -> m ()
 updateTodo tid action subj indObj dirObj = do
     conn <- getConnection
     liftIO <| DB.updateTodoWithFields conn tid action subj indObj dirObj

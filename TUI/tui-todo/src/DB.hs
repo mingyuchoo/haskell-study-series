@@ -105,12 +105,7 @@ createTodo conn text = do
     fromIntegral <$> lastInsertRowId conn
 
 -- | Create a new todo with all fields
-createTodoWithFields :: Connection
-                     -> String
-                     -> Maybe String
-                     -> Maybe String
-                     -> Maybe String
-                     -> IO TodoId
+createTodoWithFields :: Connection -> String -> Maybe String -> Maybe String -> Maybe String -> IO TodoId
 createTodoWithFields conn text subj indObj dirObj = do
     timeStr <- formatCurrentTime
     execute conn
@@ -128,16 +123,7 @@ getAllTodos conn = query_ conn
     \FROM todos ORDER BY id DESC"
 
 -- | Update all fields of a todo
-updateTodo :: Connection
-           -> TodoId
-           -> String
-           -> Bool
-           -> Maybe String
-           -> Maybe String
-           -> Maybe String
-           -> Maybe String
-           -> Maybe String
-           -> IO ()
+updateTodo :: Connection -> TodoId -> String -> Bool -> Maybe String -> Maybe String -> Maybe String -> Maybe String -> Maybe String -> IO ()
 updateTodo conn tid text completed subj obj indObj dirObj compAt =
     execute conn
         "UPDATE todos SET text = ?, completed = ?, subject = ?, object = ?, \
@@ -145,13 +131,7 @@ updateTodo conn tid text completed subj obj indObj dirObj compAt =
         (text, completed, subj, obj, indObj, dirObj, compAt, tid)
 
 -- | Update specific fields of a todo
-updateTodoWithFields :: Connection
-                     -> TodoId
-                     -> String
-                     -> Maybe String
-                     -> Maybe String
-                     -> Maybe String
-                     -> IO ()
+updateTodoWithFields :: Connection -> TodoId -> String -> Maybe String -> Maybe String -> Maybe String -> IO ()
 updateTodoWithFields conn tid text subj indObj dirObj =
     execute conn
         "UPDATE todos SET text = ?, subject = ?, indirect_object = ?, \
