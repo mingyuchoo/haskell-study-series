@@ -24,9 +24,9 @@ module UI.Draw
     ( drawUI
     ) where
 
-import           Brick                (Padding (..), Widget, attrName, hBox,
-                                       padAll, padLeft, padTopBottom, str, vBox,
-                                       vLimit, withAttr, (<+>))
+import           Brick                (Widget, attrName, hBox, padAll,
+                                       padTopBottom, str, vBox, vLimit,
+                                       withAttr)
 import qualified Brick
 import           Brick.Widgets.Border (borderWithLabel, hBorder)
 import           Brick.Widgets.Center (center, hCenter)
@@ -119,34 +119,61 @@ drawTodo msgs selected todo = withAttr selectAttr todoWidget
     statusChangedText = maybe "" (\t -> "Status: " <> t <> I18n.field_separator listMsgs) (todo ^. todoStatusChangedAt)
 
     timestampText = statusChangedText <> I18n.created_prefix listMsgs <> todo ^. todoCreatedAt
-    timestampWidth = length timestampText + 2  -- 여백 포함
+    timestampWidth = stringWidth timestampText + 2  -- 여백 포함
 
-    timestamp =
-      padLeft Max $
-        withAttr (attrName "timestamp") $
-          str timestampText
+    -- 할일 내용과 타임스탬프를 동적으로 배치
+    todoWidget = Brick.Widget Brick.Greedy Brick.Fixed $ do
+      ctx <- Brick.getContext
+      let totalWidth = Brick.availWidth ctx
+          statusIconWidth = 4  -- "[R] " 등의 너비
+          availableForMain = totalWidth - statusIconWidth - timestampWidth
+          truncatedMain = truncateWithEllipsis availableForMain mainInfo
+          -- 할일 내용 뒤에 공백을 채워서 타임스탬프가 오른쪽 끝에 오도록 함
+          paddingWidth = max 0 (availableForMain - stringWidth truncatedMain)
+          padding = replicate paddingWidth ' '
+      Brick.render $ hBox
+        [ statusIcon
+        , str truncatedMain
+        , str padding
+        , withAttr (attrName "timestamp") $ str timestampText
+        ]
 
-    -- 할일 내용을 타임스탬프 너비만큼 제한하여 줄임표 처리
-    todoWidget = hBox [statusIcon, mainInfoWidget <+> timestamp]
+-- | 문자열의 터미널 표시 너비 계산 (한글은 2칸, ASCII는 1칸)
+stringWidth :: String -> Int
+stringWidth = sum . map charWidth
+  where
+    charWidth c
+      | c >= '\x1100' && c <= '\x11FF'   = 2  -- 한글 자모
+      | c >= '\x3000' && c <= '\x303F'   = 2  -- CJK 구두점
+      | c >= '\x3130' && c <= '\x318F'   = 2  -- 한글 호환 자모
+      | c >= '\xAC00' && c <= '\xD7AF'   = 2  -- 한글 음절
+      | c >= '\xFF00' && c <= '\xFFEF'   = 2  -- 전각 문자
+      | c >= '\x4E00' && c <= '\x9FFF'   = 2  -- CJK 통합 한자
+      | otherwise                        = 1
 
-    mainInfoWidget = strWithEllipsis mainInfo timestampWidth
-
--- | 문자열을 지정된 예약 너비를 고려하여 줄임표로 표시 (Pure)
--- reservedWidth: 타임스탬프 등 오른쪽에 예약된 공간
-strWithEllipsis :: String -> Int -> Widget Name
-strWithEllipsis text reservedWidth =
-  Brick.Widget Brick.Greedy Brick.Fixed $ do
-    ctx <- Brick.getContext
-    let availableWidth = Brick.availWidth ctx - reservedWidth - 4  -- 상태 아이콘 너비 제외
-        truncated = truncateWithEllipsis availableWidth text
-    Brick.render (str truncated)
-
--- | 문자열을 지정된 너비로 자르고 줄임표 추가 (Pure)
+-- | 문자열을 지정된 터미널 너비로 자르고 줄임표 추가 (Pure)
 truncateWithEllipsis :: Int -> String -> String
 truncateWithEllipsis maxWidth text
-  | length text <= maxWidth = text
-  | maxWidth <= 3           = take maxWidth "..."
-  | otherwise               = take (maxWidth - 3) text <> "..."
+  | stringWidth text <= maxWidth = text
+  | maxWidth <= 3                = "..."
+  | otherwise                    = truncateToWidth (maxWidth - 3) text <> "..."
+
+-- | 문자열을 지정된 터미널 너비까지 자르기
+truncateToWidth :: Int -> String -> String
+truncateToWidth maxWidth = go 0
+  where
+    go _ [] = []
+    go currentWidth (c:cs)
+      | currentWidth + charWidth c > maxWidth = []
+      | otherwise = c : go (currentWidth + charWidth c) cs
+    charWidth c
+      | c >= '\x1100' && c <= '\x11FF'   = 2
+      | c >= '\x3000' && c <= '\x303F'   = 2
+      | c >= '\x3130' && c <= '\x318F'   = 2
+      | c >= '\xAC00' && c <= '\xD7AF'   = 2
+      | c >= '\xFF00' && c <= '\xFFEF'   = 2
+      | c >= '\x4E00' && c <= '\x9FFF'   = 2
+      | otherwise                        = 1
 
 -- | 상세 뷰 그리기 (Pure)
 drawDetailView :: AppState -> Widget Name
