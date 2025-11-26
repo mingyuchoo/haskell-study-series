@@ -36,6 +36,8 @@ import qualified Config
 
 import qualified Data.Vector          as Vec
 
+import           Flow                 ((<|))
+
 import qualified I18n
 
 import           Lens.Micro           ((^.))
@@ -71,16 +73,16 @@ drawTodoList :: AppState -> Widget Name
 drawTodoList s =
   let msgs = s ^. i18nMessages
       uiMsgs = I18n.ui msgs
-   in borderWithLabel (str $ I18n.todos_title uiMsgs) $
+   in borderWithLabel (str <| I18n.todos_title uiMsgs) $
         padAll 1 $
           vLimit 20 $
             if null (s ^. todoList . listElementsL)
-              then center $ str $ I18n.no_todos uiMsgs
+              then center <| str <| I18n.no_todos uiMsgs
               else renderList (drawTodo msgs) True (s ^. todoList)
 
 -- | 개별 Todo 항목 그리기 (Pure)
 drawTodo :: I18n.I18nMessages -> Bool -> Todo -> Widget Name
-drawTodo msgs selected todo = withAttr selectAttr $ hBox [checkbox, str mainInfo, timestamp]
+drawTodo msgs selected todo = withAttr selectAttr <| hBox [checkbox, str mainInfo, timestamp]
   where
     listMsgs = I18n.list msgs
 
@@ -90,7 +92,7 @@ drawTodo msgs selected todo = withAttr selectAttr $ hBox [checkbox, str mainInfo
           then I18n.checkbox_done listMsgs
           else I18n.checkbox_todo listMsgs
 
-    todoAttr = attrName $ if todo ^. todoCompleted then "completed" else "normal"
+    todoAttr = attrName <| if todo ^. todoCompleted then "completed" else "normal"
     selectAttr = if selected then attrName "selected" else todoAttr
 
     showField _ Nothing    = ""
@@ -148,25 +150,25 @@ drawInputModeDetail :: AppState -> I18n.I18nMessages -> I18n.UIMessages -> Widge
 drawInputModeDetail s msgs uiMsgs =
   let fieldMsgs = I18n.fields msgs
       statusMsgs = I18n.status msgs
-   in borderWithLabel (str $ I18n.detail_add_title uiMsgs) $
+   in borderWithLabel (str <| I18n.detail_add_title uiMsgs) $
         padAll 1 $
           vLimit 8 $
             vBox
               [ hBox
-                  [ withAttr (attrName "detailLabel") $ str (I18n.id_label fieldMsgs <> ": "),
-                    withAttr (attrName "timestamp") $ str $ I18n.auto_generated_label fieldMsgs
+                  [ withAttr (attrName "detailLabel") <| str (I18n.id_label fieldMsgs <> ": "),
+                    withAttr (attrName "timestamp") <| str <| I18n.auto_generated_label fieldMsgs
                   ],
                 hBox
-                  [ withAttr (attrName "detailLabel") $ str (I18n.status_label fieldMsgs <> ": "),
-                    str $ I18n.in_progress statusMsgs
+                  [ withAttr (attrName "detailLabel") <| str (I18n.status_label fieldMsgs <> ": "),
+                    str <| I18n.in_progress statusMsgs
                   ],
                 renderEditField s fieldMsgs (I18n.action_required_label fieldMsgs) (s ^. actionEditor) FocusAction,
                 renderEditField s fieldMsgs (I18n.subject_label fieldMsgs) (s ^. subjectEditor) FocusSubject,
                 renderEditField s fieldMsgs (I18n.indirect_object_label fieldMsgs) (s ^. indirectObjectEditor) FocusIndirectObject,
                 renderEditField s fieldMsgs (I18n.direct_object_label fieldMsgs) (s ^. directObjectEditor) FocusDirectObject,
                 hBox
-                  [ withAttr (attrName "detailLabel") $ str (I18n.created_at_label fieldMsgs <> ": "),
-                    withAttr (attrName "timestamp") $ str $ I18n.auto_generated_label fieldMsgs
+                  [ withAttr (attrName "detailLabel") <| str (I18n.created_at_label fieldMsgs <> ": "),
+                    withAttr (attrName "timestamp") <| str <| I18n.auto_generated_label fieldMsgs
                   ],
                 str ""
               ]
@@ -174,7 +176,7 @@ drawInputModeDetail s msgs uiMsgs =
 -- | 빈 상세 뷰 (Pure)
 emptyDetailView :: I18n.UIMessages -> String -> Widget Name
 emptyDetailView uiMsgs msg =
-  borderWithLabel (str $ I18n.detail_title uiMsgs) $
+  borderWithLabel (str <| I18n.detail_title uiMsgs) $
     padAll 1 $
       center $
         str msg
@@ -190,39 +192,39 @@ drawTodoDetail msgs uiMsgs todo _ =
       showDetailField _ Nothing = str ""
       showDetailField lbl (Just val) =
         hBox
-          [ withAttr (attrName "detailLabel") $ str (lbl <> ": "),
+          [ withAttr (attrName "detailLabel") <| str (lbl <> ": "),
             str val
           ]
 
       completedInfo = case todo ^. todoCompletedAt of
         Just compTime ->
           hBox
-            [ withAttr (attrName "detailLabel") $ str (I18n.completed_at_label fieldMsgs <> ": "),
-              withAttr (attrName "timestamp") $ str compTime
+            [ withAttr (attrName "detailLabel") <| str (I18n.completed_at_label fieldMsgs <> ": "),
+              withAttr (attrName "timestamp") <| str compTime
             ]
         Nothing -> str ""
-   in borderWithLabel (str $ I18n.detail_title uiMsgs) $
+   in borderWithLabel (str <| I18n.detail_title uiMsgs) $
         padAll 1 $
           vLimit 8 $
             vBox
               [ hBox
-                  [ withAttr (attrName "detailLabel") $ str (I18n.id_label fieldMsgs <> ": "),
+                  [ withAttr (attrName "detailLabel") <| str (I18n.id_label fieldMsgs <> ": "),
                     str (show (todo ^. todoId))
                   ],
                 hBox
-                  [ withAttr (attrName "detailLabel") $ str (I18n.status_label fieldMsgs <> ": "),
-                    withAttr statusAttr $ str statusText
+                  [ withAttr (attrName "detailLabel") <| str (I18n.status_label fieldMsgs <> ": "),
+                    withAttr statusAttr <| str statusText
                   ],
                 hBox
-                  [ withAttr (attrName "detailLabel") $ str (I18n.action_label fieldMsgs <> ": "),
+                  [ withAttr (attrName "detailLabel") <| str (I18n.action_label fieldMsgs <> ": "),
                     str (todo ^. todoAction)
                   ],
                 showDetailField (I18n.subject_label fieldMsgs) (todo ^. todoSubject),
                 showDetailField (I18n.indirect_object_label fieldMsgs) (todo ^. todoIndirectObject),
                 showDetailField (I18n.direct_object_label fieldMsgs) (todo ^. todoDirectObject),
                 hBox
-                  [ withAttr (attrName "detailLabel") $ str (I18n.created_at_label fieldMsgs <> ": "),
-                    withAttr (attrName "timestamp") $ str (todo ^. todoCreatedAt)
+                  [ withAttr (attrName "detailLabel") <| str (I18n.created_at_label fieldMsgs <> ": "),
+                    withAttr (attrName "timestamp") <| str (todo ^. todoCreatedAt)
                   ],
                 completedInfo
               ]
@@ -238,8 +240,8 @@ drawTodoDetailWithEditors s msgs _uiMsgs todo title =
       completedInfo = case todo ^. todoCompletedAt of
         Just compTime ->
           hBox
-            [ withAttr (attrName "detailLabel") $ str (I18n.completed_at_label fieldMsgs <> ": "),
-              withAttr (attrName "timestamp") $ str compTime
+            [ withAttr (attrName "detailLabel") <| str (I18n.completed_at_label fieldMsgs <> ": "),
+              withAttr (attrName "timestamp") <| str compTime
             ]
         Nothing -> str ""
    in borderWithLabel (str title) $
@@ -247,20 +249,20 @@ drawTodoDetailWithEditors s msgs _uiMsgs todo title =
           vLimit 8 $
             vBox
               [ hBox
-                  [ withAttr (attrName "detailLabel") $ str (I18n.id_label fieldMsgs <> ": "),
+                  [ withAttr (attrName "detailLabel") <| str (I18n.id_label fieldMsgs <> ": "),
                     str (show (todo ^. todoId))
                   ],
                 hBox
-                  [ withAttr (attrName "detailLabel") $ str (I18n.status_label fieldMsgs <> ": "),
-                    withAttr statusAttr $ str statusText
+                  [ withAttr (attrName "detailLabel") <| str (I18n.status_label fieldMsgs <> ": "),
+                    withAttr statusAttr <| str statusText
                   ],
                 renderEditField s fieldMsgs (I18n.action_required_label fieldMsgs) (s ^. actionEditor) FocusAction,
                 renderEditField s fieldMsgs (I18n.subject_label fieldMsgs) (s ^. subjectEditor) FocusSubject,
                 renderEditField s fieldMsgs (I18n.indirect_object_label fieldMsgs) (s ^. indirectObjectEditor) FocusIndirectObject,
                 renderEditField s fieldMsgs (I18n.direct_object_label fieldMsgs) (s ^. directObjectEditor) FocusDirectObject,
                 hBox
-                  [ withAttr (attrName "detailLabel") $ str (I18n.created_at_label fieldMsgs <> ": "),
-                    withAttr (attrName "timestamp") $ str (todo ^. todoCreatedAt)
+                  [ withAttr (attrName "detailLabel") <| str (I18n.created_at_label fieldMsgs <> ": "),
+                    withAttr (attrName "timestamp") <| str (todo ^. todoCreatedAt)
                   ],
                 completedInfo
               ]
@@ -270,7 +272,7 @@ renderEditField :: AppState -> I18n.FieldLabels -> String -> E.Editor String Nam
 renderEditField s _ fieldLabel editor fieldType =
   let isFocused = s ^. focusedField == fieldType
       fieldAttr = if isFocused then attrName "focusedField" else attrName "detailLabel"
-      labelWidget = withAttr fieldAttr $ str (fieldLabel <> ": ")
+      labelWidget = withAttr fieldAttr <| str (fieldLabel <> ": ")
       editorWidget = E.renderEditor (str . unlines) isFocused editor
    in hBox [labelWidget, editorWidget]
 
@@ -281,8 +283,8 @@ drawHelp s =
       helpMsgs = I18n.help msgs
    in padAll 1 $
         case s ^. mode of
-          InputMode  -> str $ I18n.input_mode helpMsgs
-          EditMode _ -> str $ I18n.edit_mode helpMsgs
+          InputMode  -> str <| I18n.input_mode helpMsgs
+          EditMode _ -> str <| I18n.edit_mode helpMsgs
           ViewMode   -> drawViewModeHelp s helpMsgs
 
 -- | ViewMode 도움말 (Pure)

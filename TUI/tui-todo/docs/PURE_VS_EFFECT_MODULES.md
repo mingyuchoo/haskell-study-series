@@ -302,7 +302,7 @@ testDrawTodo = do
 testCreateTodo :: Test
 testCreateTodo = do
   conn <- openTestDB
-  result <- runAppM (AppEnv conn msgs) $ createTodo "Test"
+  result <- runAppM (AppEnv conn msgs) <| createTodo "Test"
   -- 결과 검증
   closeTestDB conn
 ```

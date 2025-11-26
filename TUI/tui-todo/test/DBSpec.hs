@@ -7,78 +7,78 @@ module DBSpec
 import           DB
 
 import           Database.SQLite.Simple (open)
-
+import           Flow             ((<|))
 import qualified I18n
 
 import           Test.Hspec
 
 spec :: Spec
 spec = do
-  describe "TodoRow" $ do
-    it "TodoRow는 Eq 인스턴스를 가져야 함" $ do
+  describe "TodoRow" <| do
+    it "TodoRow는 Eq 인스턴스를 가져야 함" <| do
       let row1 = TodoRow 1 "Test" False "2024-01-01" Nothing Nothing Nothing Nothing Nothing
           row2 = TodoRow 1 "Test" False "2024-01-01" Nothing Nothing Nothing Nothing Nothing
       row1 `shouldBe` row2
 
-    it "다른 TodoRow는 같지 않아야 함" $ do
+    it "다른 TodoRow는 같지 않아야 함" <| do
       let row1 = TodoRow 1 "Test1" False "2024-01-01" Nothing Nothing Nothing Nothing Nothing
           row2 = TodoRow 2 "Test2" False "2024-01-01" Nothing Nothing Nothing Nothing Nothing
       row1 `shouldNotBe` row2
 
-  describe "initDB" $ do
-    it "데이터베이스를 초기화하고 샘플 데이터를 생성해야 함" $ do
+  describe "initDB" <| do
+    it "데이터베이스를 초기화하고 샘플 데이터를 생성해야 함" <| do
       conn <- open ":memory:"
       initDB conn
       todos <- getAllTodos conn
       length todos `shouldSatisfy` (>= 3)
 
-  describe "initDBWithMessages" $ do
-    it "커스텀 메시지로 데이터베이스를 초기화해야 함" $ do
+  describe "initDBWithMessages" <| do
+    it "커스텀 메시지로 데이터베이스를 초기화해야 함" <| do
       conn <- open ":memory:"
       initDBWithMessages conn I18n.defaultMessages
       todos <- getAllTodos conn
       length todos `shouldSatisfy` (>= 3)
 
-  describe "createTodo" $ do
-    it "새로운 todo를 생성하고 ID를 반환해야 함" $ do
+  describe "createTodo" <| do
+    it "새로운 todo를 생성하고 ID를 반환해야 함" <| do
       conn <- open ":memory:"
       initDB conn
       todoId <- createTodo conn "New todo"
       todoId `shouldSatisfy` (> 0)
 
-    it "생성된 todo가 데이터베이스에 존재해야 함" $ do
+    it "생성된 todo가 데이터베이스에 존재해야 함" <| do
       conn <- open ":memory:"
       initDB conn
       newTodoId <- createTodo conn "Test todo"
       todos <- getAllTodos conn
-      let createdTodo = head $ filter (\t -> DB.todoId t == newTodoId) todos
+      let createdTodo = head <| filter (\t -> DB.todoId t == newTodoId) todos
       todoAction createdTodo `shouldBe` "Test todo"
       todoCompleted createdTodo `shouldBe` False
 
-  describe "createTodoWithFields" $ do
-    it "모든 필드를 포함한 todo를 생성해야 함" $ do
+  describe "createTodoWithFields" <| do
+    it "모든 필드를 포함한 todo를 생성해야 함" <| do
       conn <- open ":memory:"
       initDB conn
       newTodoId <- createTodoWithFields conn "Action" (Just "Subject") (Just "Indirect") (Just "Direct")
       todos <- getAllTodos conn
-      let createdTodo = head $ filter (\t -> DB.todoId t == newTodoId) todos
+      let createdTodo = head <| filter (\t -> DB.todoId t == newTodoId) todos
       todoAction createdTodo `shouldBe` "Action"
       todoSubject createdTodo `shouldBe` Just "Subject"
       todoIndirectObject createdTodo `shouldBe` Just "Indirect"
       todoDirectObject createdTodo `shouldBe` Just "Direct"
 
-    it "Nothing 필드로 todo를 생성할 수 있어야 함" $ do
+    it "Nothing 필드로 todo를 생성할 수 있어야 함" <| do
       conn <- open ":memory:"
       initDB conn
       newTodoId <- createTodoWithFields conn "Simple" Nothing Nothing Nothing
       todos <- getAllTodos conn
-      let createdTodo = head $ filter (\t -> DB.todoId t == newTodoId) todos
+      let createdTodo = head <| filter (\t -> DB.todoId t == newTodoId) todos
       todoSubject createdTodo `shouldBe` Nothing
       todoIndirectObject createdTodo `shouldBe` Nothing
       todoDirectObject createdTodo `shouldBe` Nothing
 
-  describe "getAllTodos" $ do
-    it "모든 todos를 ID 역순으로 반환해야 함" $ do
+  describe "getAllTodos" <| do
+    it "모든 todos를 ID 역순으로 반환해야 함" <| do
       conn <- open ":memory:"
       initDB conn
       id1 <- createTodo conn "First"
@@ -87,31 +87,31 @@ spec = do
       let ids = map todoId todos
       head ids `shouldSatisfy` (>= id2)
 
-  describe "updateTodo" $ do
-    it "todo의 모든 필드를 업데이트해야 함" $ do
+  describe "updateTodo" <| do
+    it "todo의 모든 필드를 업데이트해야 함" <| do
       conn <- open ":memory:"
       initDB conn
       newTodoId <- createTodo conn "Original"
       updateTodo conn newTodoId "Updated" True (Just "Sub") (Just "Obj") (Just "Ind") (Just "Dir") Nothing
       todos <- getAllTodos conn
-      let updated = head $ filter (\t -> DB.todoId t == newTodoId) todos
+      let updated = head <| filter (\t -> DB.todoId t == newTodoId) todos
       todoAction updated `shouldBe` "Updated"
       todoCompleted updated `shouldBe` True
       todoSubject updated `shouldBe` Just "Sub"
 
-  describe "updateTodoWithFields" $ do
-    it "특정 필드만 업데이트해야 함" $ do
+  describe "updateTodoWithFields" <| do
+    it "특정 필드만 업데이트해야 함" <| do
       conn <- open ":memory:"
       initDB conn
       newTodoId <- createTodo conn "Original"
       updateTodoWithFields conn newTodoId "Modified" (Just "NewSub") Nothing Nothing
       todos <- getAllTodos conn
-      let updated = head $ filter (\t -> DB.todoId t == newTodoId) todos
+      let updated = head <| filter (\t -> DB.todoId t == newTodoId) todos
       todoAction updated `shouldBe` "Modified"
       todoSubject updated `shouldBe` Just "NewSub"
 
-  describe "deleteTodo" $ do
-    it "todo를 삭제해야 함" $ do
+  describe "deleteTodo" <| do
+    it "todo를 삭제해야 함" <| do
       conn <- open ":memory:"
       initDB conn
       todoId <- createTodo conn "To delete"
@@ -120,7 +120,7 @@ spec = do
       afterCount <- length <$> getAllTodos conn
       afterCount `shouldBe` (beforeCount - 1)
 
-    it "삭제된 todo는 조회되지 않아야 함" $ do
+    it "삭제된 todo는 조회되지 않아야 함" <| do
       conn <- open ":memory:"
       initDB conn
       newTodoId <- createTodo conn "To delete"
@@ -129,24 +129,24 @@ spec = do
       let found = filter (\t -> DB.todoId t == newTodoId) todos
       found `shouldBe` []
 
-  describe "toggleTodoComplete" $ do
-    it "완료 상태를 False에서 True로 토글해야 함" $ do
+  describe "toggleTodoComplete" <| do
+    it "완료 상태를 False에서 True로 토글해야 함" <| do
       conn <- open ":memory:"
       initDB conn
       newTodoId <- createTodo conn "Toggle test"
       toggleTodoComplete conn newTodoId
       todos <- getAllTodos conn
-      let toggled = head $ filter (\t -> DB.todoId t == newTodoId) todos
+      let toggled = head <| filter (\t -> DB.todoId t == newTodoId) todos
       todoCompleted toggled `shouldBe` True
       todoCompletedAt toggled `shouldSatisfy` (/= Nothing)
 
-    it "완료 상태를 True에서 False로 토글해야 함" $ do
+    it "완료 상태를 True에서 False로 토글해야 함" <| do
       conn <- open ":memory:"
       initDB conn
       newTodoId <- createTodo conn "Toggle test"
       toggleTodoComplete conn newTodoId
       toggleTodoComplete conn newTodoId
       todos <- getAllTodos conn
-      let toggled = head $ filter (\t -> DB.todoId t == newTodoId) todos
+      let toggled = head <| filter (\t -> DB.todoId t == newTodoId) todos
       todoCompleted toggled `shouldBe` False
       todoCompletedAt toggled `shouldBe` Nothing
