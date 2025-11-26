@@ -54,7 +54,7 @@ import           Control.Monad.IO.Class (liftIO)
 import qualified DB
 
 import           Data.List              (find)
-import           Data.Maybe             (fromMaybe)
+import           Data.Maybe             (fromMaybe, listToMaybe)
 import qualified Data.Vector            as Vec
 
 import           Database.SQLite.Simple (Connection, open)
@@ -325,12 +325,12 @@ drawHelp s =
       EditMode _ -> str "Tab: 다음 필드 | Enter: 저장 | Esc: 취소"
       ViewMode ->
         let kb = s ^. keyBindings
-            quitKeys = head (Config.quit kb)
-            addKeys = head (Config.add_todo kb)
-            toggleKeys = head (Config.toggle_complete kb)
-            deleteKeys = head (Config.delete_todo kb)
-            upKeys = head (Config.navigate_up kb)
-            downKeys = head (Config.navigate_down kb)
+            quitKeys = fromMaybe "q" (listToMaybe (Config.quit kb))
+            addKeys = fromMaybe "a" (listToMaybe (Config.add_todo kb))
+            toggleKeys = fromMaybe "t" (listToMaybe (Config.toggle_complete kb))
+            deleteKeys = fromMaybe "d" (listToMaybe (Config.delete_todo kb))
+            upKeys = fromMaybe "k" (listToMaybe (Config.navigate_up kb))
+            downKeys = fromMaybe "j" (listToMaybe (Config.navigate_down kb))
         in vBox
           [ str <| addKeys ++ ": Add | e: Edit | " ++ toggleKeys ++ ": Toggle | "
                   ++ deleteKeys ++ ": Delete | " ++ upKeys ++ "/" ++ downKeys
@@ -425,7 +425,7 @@ handleInputMode (VtyEvent (V.EvKey key [])) = do
           indirectObj = trim <| unlines <| E.getEditContents (s' ^. indirectObjectEditor)
           directObj   = trim <| unlines <| E.getEditContents (s' ^. directObjectEditor)
 
-          toMaybe s = if null s then Nothing else Just s
+          toMaybe str = if null str then Nothing else Just str
 
       if not (null action)
         then do
@@ -485,7 +485,7 @@ handleEditMode (VtyEvent (V.EvKey key [])) = do
           indirectObj = trim <| unlines <| E.getEditContents (s' ^. indirectObjectEditor)
           directObj   = trim <| unlines <| E.getEditContents (s' ^. directObjectEditor)
 
-          toMaybe s = if null s then Nothing else Just s
+          toMaybe str = if null str then Nothing else Just str
 
       case s' ^. mode of
         EditMode tid -> do

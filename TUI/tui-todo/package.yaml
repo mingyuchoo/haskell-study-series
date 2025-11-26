@@ -63,6 +63,7 @@ executables:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
+    - -Wno-inconsistent-flags
     dependencies:
     - tui-todo
 
@@ -75,6 +76,7 @@ tests:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
+    - -Wno-inconsistent-flags
     dependencies:
     - tui-todo
     - hspec
