@@ -118,8 +118,6 @@ drawUI s = [ui]
           hBorder,
           drawDetailView s,
           hBorder,
-          drawInput s,
-          hBorder,
           drawHelp s
         ]
 
@@ -134,7 +132,7 @@ drawTodoList :: AppState -> Widget Name
 drawTodoList s =
   borderWithLabel (str " Todos ") <|
     padAll 1 <|
-      vLimit 15 <|
+      vLimit 20 <|
         if null (s ^. todoList . listElementsL)
           then center <| str "No todos yet. Press 'a' to add one!"
           else renderList drawTodo True (s ^. todoList)
@@ -285,15 +283,6 @@ drawDetailView s =
                                  withAttr (attrName "timestamp") <| str (todo ^. todoCreatedAt)]
                          , completedInfo
                          ]
-    _ -> 
-      borderWithLabel (str " 상세 정보 ") <|
-        padAll 1 <|
-          vLimit 8 <|
-            center <| str ""
-
-drawInput :: AppState -> Widget Name
-drawInput s =
-  case s ^. mode of
     InputMode ->
       let -- 각 필드의 포커스 상태
           actionFocused = s ^. focusedField == FocusAction
@@ -301,30 +290,31 @@ drawInput s =
           indirectObjFocused = s ^. focusedField == FocusIndirectObject
           directObjFocused = s ^. focusedField == FocusDirectObject
           
-          -- 필드 렌더링 헬퍼
-          renderField fieldLabel editor isFocused =
+          -- 편집 가능한 필드 렌더링
+          renderEditField fieldLabel editor isFocused =
             let fieldAttr = if isFocused 
                               then attrName "focusedField"
-                              else attrName "normalField"
+                              else attrName "detailLabel"
                 labelWidget = withAttr fieldAttr <| str (fieldLabel ++ ": ")
                 editorWidget = E.renderEditor (str . unlines) isFocused editor
             in hBox [labelWidget, editorWidget]
           
-       in borderWithLabel (str " Add New Todo (Tab: 다음 필드, Enter: 저장, Esc: 취소) ") <|
+       in borderWithLabel (str " 새 할일 추가 (Tab: 다음 필드, Enter: 저장, Esc: 취소) ") <|
             padAll 1 <|
-              vBox
-                [ renderField "할일 (필수)" (s ^. actionEditor) actionFocused
-                , str " "
-                , renderField "주체자" (s ^. subjectEditor) subjectFocused
-                , str " "
-                , renderField "대상자" (s ^. indirectObjectEditor) indirectObjFocused
-                , str " "
-                , renderField "작업대상" (s ^. directObjectEditor) directObjFocused
-                ]
-    _ -> 
-      borderWithLabel (str " Input ") <|
-        padAll 1 <|
-          str "(press 'a' to add new todo)"
+              vLimit 8 <|
+                vBox
+                  [ hBox [withAttr (attrName "detailLabel") <| str "ID: ", 
+                          withAttr (attrName "timestamp") <| str "(자동 생성)"]
+                  , hBox [withAttr (attrName "detailLabel") <| str "상태: ", 
+                          str "○ 진행중"]
+                  , renderEditField "할일 (필수)" (s ^. actionEditor) actionFocused
+                  , renderEditField "주체자" (s ^. subjectEditor) subjectFocused
+                  , renderEditField "대상자" (s ^. indirectObjectEditor) indirectObjFocused
+                  , renderEditField "작업대상" (s ^. directObjectEditor) directObjFocused
+                  , hBox [withAttr (attrName "detailLabel") <| str "생성 시각: ", 
+                          withAttr (attrName "timestamp") <| str "(자동 생성)"]
+                  , str ""
+                  ]
 
 drawHelp :: AppState -> Widget Name
 drawHelp s =
