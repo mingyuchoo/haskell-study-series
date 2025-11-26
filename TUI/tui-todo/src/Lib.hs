@@ -166,7 +166,7 @@ drawTodo :: I18n.I18nMessages -> Bool -> Todo -> Widget Name
 drawTodo msgs selected todo = withAttr selectAttr <| hBox [checkbox, str mainInfo, timestamp]
   where
     listMsgs = I18n.list msgs
-    
+
     checkbox = str <| if todo ^. todoCompleted
                         then I18n.checkbox_done listMsgs
                         else I18n.checkbox_todo listMsgs
@@ -352,7 +352,7 @@ drawHelp s =
                deleteKeys = fromMaybe "d" (listToMaybe (Config.delete_todo kb))
                upKeys = fromMaybe "k" (listToMaybe (Config.navigate_up kb))
                downKeys = fromMaybe "j" (listToMaybe (Config.navigate_down kb))
-               
+
                addLabel = I18n.add helpMsgs
                editLabel = I18n.edit helpMsgs
                toggleLabel = I18n.toggle helpMsgs
@@ -360,10 +360,10 @@ drawHelp s =
                navigateLabel = I18n.navigate helpMsgs
                quitLabel = I18n.quit helpMsgs
            in vBox
-             [ str <| addKeys ++ ": " ++ addLabel ++ " | e: " ++ editLabel ++ " | " 
+             [ str <| addKeys ++ ": " ++ addLabel ++ " | e: " ++ editLabel ++ " | "
                      ++ toggleKeys ++ ": " ++ toggleLabel ++ " | "
-                     ++ deleteKeys ++ ": " ++ deleteLabel ++ " | " 
-                     ++ upKeys ++ "/" ++ downKeys ++ ": " ++ navigateLabel ++ " | " 
+                     ++ deleteKeys ++ ": " ++ deleteLabel ++ " | "
+                     ++ upKeys ++ "/" ++ downKeys ++ ": " ++ navigateLabel ++ " | "
                      ++ quitKeys ++ ": " ++ quitLabel
              ]
 

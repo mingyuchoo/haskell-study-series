@@ -19,17 +19,17 @@ import           Control.Monad.IO.Class (MonadIO, liftIO)
 import           Control.Monad.Reader   (MonadReader, ReaderT, asks, runReaderT)
 
 import qualified DB
-import qualified I18n
 
 import           Database.SQLite.Simple (Connection)
 
 import           Flow                   ((<|))
 
+import qualified I18n
+
 -- Application environment containing dependencies
-data AppEnv = AppEnv
-    { envConnection :: !Connection
-    , envMessages   :: !I18n.I18nMessages
-    }
+data AppEnv = AppEnv { envConnection :: !Connection
+                     , envMessages   :: !I18n.I18nMessages
+                     }
 
 -- MTL-based monad stack
 newtype AppM a = AppM { unAppM :: ReaderT AppEnv IO a }
