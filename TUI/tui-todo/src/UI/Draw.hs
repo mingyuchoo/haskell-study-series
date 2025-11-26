@@ -26,7 +26,8 @@ module UI.Draw
 
 import           Brick                (Padding (..), Widget, attrName, hBox,
                                        padAll, padLeft, padTopBottom, str, vBox,
-                                       vLimit, withAttr)
+                                       vLimit, withAttr, (<+>))
+import qualified Brick
 import           Brick.Widgets.Border (borderWithLabel, hBorder)
 import           Brick.Widgets.Center (center, hCenter)
 import qualified Brick.Widgets.Edit   as E
@@ -82,7 +83,7 @@ drawTodoList s =
 
 -- | 개별 Todo 항목 그리기 (Pure)
 drawTodo :: I18n.I18nMessages -> Bool -> Todo -> Widget Name
-drawTodo msgs selected todo = withAttr selectAttr <| hBox [statusIcon, str mainInfo, timestamp]
+drawTodo msgs selected todo = withAttr selectAttr todoWidget
   where
     listMsgs = I18n.list msgs
     status = todo ^. todoStatus
@@ -117,10 +118,35 @@ drawTodo msgs selected todo = withAttr selectAttr <| hBox [statusIcon, str mainI
 
     statusChangedText = maybe "" (\t -> "Status: " <> t <> I18n.field_separator listMsgs) (todo ^. todoStatusChangedAt)
 
+    timestampText = statusChangedText <> I18n.created_prefix listMsgs <> todo ^. todoCreatedAt
+    timestampWidth = length timestampText + 2  -- 여백 포함
+
     timestamp =
       padLeft Max $
         withAttr (attrName "timestamp") $
-          str (statusChangedText <> I18n.created_prefix listMsgs <> todo ^. todoCreatedAt)
+          str timestampText
+
+    -- 할일 내용을 타임스탬프 너비만큼 제한하여 줄임표 처리
+    todoWidget = hBox [statusIcon, mainInfoWidget <+> timestamp]
+
+    mainInfoWidget = strWithEllipsis mainInfo timestampWidth
+
+-- | 문자열을 지정된 예약 너비를 고려하여 줄임표로 표시 (Pure)
+-- reservedWidth: 타임스탬프 등 오른쪽에 예약된 공간
+strWithEllipsis :: String -> Int -> Widget Name
+strWithEllipsis text reservedWidth =
+  Brick.Widget Brick.Greedy Brick.Fixed $ do
+    ctx <- Brick.getContext
+    let availableWidth = Brick.availWidth ctx - reservedWidth - 4  -- 상태 아이콘 너비 제외
+        truncated = truncateWithEllipsis availableWidth text
+    Brick.render (str truncated)
+
+-- | 문자열을 지정된 너비로 자르고 줄임표 추가 (Pure)
+truncateWithEllipsis :: Int -> String -> String
+truncateWithEllipsis maxWidth text
+  | length text <= maxWidth = text
+  | maxWidth <= 3           = take maxWidth "..."
+  | otherwise               = take (maxWidth - 3) text <> "..."
 
 -- | 상세 뷰 그리기 (Pure)
 drawDetailView :: AppState -> Widget Name
