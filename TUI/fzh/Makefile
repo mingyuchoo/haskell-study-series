@@ -49,7 +49,7 @@ run: setup
 	time stack exec $(PROJECT_NAME)-exe
 
 release: setup
-	stack build -j4 --ghc-options "-j16 +RTS -A256m -RTS" --docker
+	stack build -j4 --ghc-options "-j16 +RTS -A256m -RTS"
 
 docker-build: release
 	docker build --build-arg PROJECT_NAME=$(PROJECT_NAME) -t $(PROJECT_NAME):latest -f docker/Dockerfile .
