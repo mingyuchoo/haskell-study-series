@@ -25,7 +25,7 @@ module Lib
 
 import           Brick                  (App (..), AttrMap,
                                          BrickEvent (VtyEvent), EventM,
-                                         Padding (Max), Widget, attrMap,
+                                         Padding (..), Widget, attrMap,
                                          attrName, defaultMain, fg, get, hBox,
                                          halt, modify, on, padAll, padLeft,
                                          padTopBottom, showCursorNamed, str,
@@ -113,7 +113,7 @@ drawTodoList :: AppState -> Widget Name
 drawTodoList s =
   borderWithLabel (str " Todos ") <|
     padAll 1 <|
-      vLimit 15 <|
+      vLimit 20 <|
         if null (s ^. todoList . listElementsL)
           then center <| str "No todos yet. Press 'a' to add one!"
           else renderList drawTodo True (s ^. todoList)
@@ -132,13 +132,26 @@ drawTodo selected todo =
         if selected
           then attrName "selected"
           else todoAttr
+      
+      -- 필드 표시 헬퍼
+      showField _ Nothing = ""
+      showField lbl (Just val) = " | " ++ lbl ++ ": " ++ val
+      
+      -- 각 필드 구성
+      actionText = "행위: " ++ todo ^. todoAction
+      subjectText = showField "주체자" (todo ^. todoSubject)
+      indirectObjText = showField "대상" (todo ^. todoIndirectObject)
+      directObjText = showField "실행개체" (todo ^. todoDirectObject)
+      
+      -- 메인 정보 라인
+      mainInfo = actionText ++ subjectText ++ indirectObjText ++ directObjText
+      
       timestamp =
         padLeft Max <|
           withAttr (attrName "timestamp") <|
-            str <|
-              todo ^. todoCreatedAt
+            str ("생성: " ++ todo ^. todoCreatedAt)
    in withAttr selectAttr <|
-        hBox [checkbox, str (todo ^. todoAction), timestamp]
+        hBox [checkbox, str mainInfo, timestamp]
 
 drawInput :: AppState -> Widget Name
 drawInput s =
@@ -146,9 +159,17 @@ drawInput s =
         if s ^. mode == InputMode
           then " Add New Todo (Enter to save, Esc to cancel) "
           else " Input (press 'a' to add) "
-   in borderWithLabel (str label) <|
-        padAll 1 <|
-          E.renderEditor (str . unlines) (s ^. mode == InputMode) (s ^. inputEditor)
+      helpText = 
+        if s ^. mode == InputMode
+          then padLeft (Pad 2) <| withAttr (attrName "inputHelp") <| 
+                 str "형식: 행위 | 주체자: 값 | 대상: 값 | 실행개체: 값"
+          else str ""
+   in vBox
+        [ borderWithLabel (str label) <|
+            padAll 1 <|
+              E.renderEditor (str . unlines) (s ^. mode == InputMode) (s ^. inputEditor)
+        , helpText
+        ]
 
 drawHelp :: AppState -> Widget Name
 drawHelp s =
@@ -230,20 +251,25 @@ handleInputMode (VtyEvent (V.EvKey key [])) = do
       if not (null trimmedText)
         then do
           let conn = s' ^. dbConn
-          (newId, timestamp) <- liftIO $ App.runAppM (App.AppEnv conn) $ do
-            tid <- App.saveTodoToDB trimmedText
-            todos <- App.loadTodosFromDB
-            let maybeTodo = Vec.find (\(id', _, _, _, _, _, _, _, _) -> id' == tid) todos
-            case maybeTodo of
-              Just (_, _, _, ts, _, _, _, _, _) -> return (tid, ts)
-              Nothing -> return (tid, "")
+              (action, subject, indirectObj, directObj) = parseTodoInput trimmedText
           
-          let newTodo = Todo newId trimmedText False timestamp Nothing Nothing Nothing Nothing Nothing
-              currentList = s' ^. todoList
-              newList = listInsert 0 newTodo currentList
-          modify <| todoList .~ newList
-          modify <| mode .~ ViewMode
-          modify <| inputEditor .~ E.editor InputField (Just 1) ""
+          if null action
+            then modify <| mode .~ ViewMode
+            else do
+              (newId, timestamp) <- liftIO $ App.runAppM (App.AppEnv conn) $ do
+                tid <- App.saveTodoWithFieldsToDB action subject indirectObj directObj
+                todos <- App.loadTodosFromDB
+                let maybeTodo = Vec.find (\(id', _, _, _, _, _, _, _, _) -> id' == tid) todos
+                case maybeTodo of
+                  Just (_, _, _, ts, _, _, _, _, _) -> return (tid, ts)
+                  Nothing -> return (tid, "")
+              
+              let newTodo = Todo newId action False timestamp subject Nothing indirectObj directObj Nothing
+                  currentList = s' ^. todoList
+                  newList = listInsert 0 newTodo currentList
+              modify <| todoList .~ newList
+              modify <| mode .~ ViewMode
+              modify <| inputEditor .~ E.editor InputField (Just 1) ""
         else
           modify <| mode .~ ViewMode
     _ -> zoom inputEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key []))
@@ -253,6 +279,37 @@ handleInputMode _ = return ()
 -- 유틸리티 함수
 trim :: String -> String
 trim = unwords . words
+
+-- Todo 입력 파싱 함수
+-- 형식: "행위 | 주체자: 값 | 대상: 값 | 실행개체: 값"
+parseTodoInput :: String -> (String, Maybe String, Maybe String, Maybe String)
+parseTodoInput input =
+  let parts = map trim $ splitOn '|' input
+      (action, fields) = case parts of
+        [] -> ("", [])
+        (a:fs) -> (a, fs)
+      
+      findField prefix = 
+        case filter (startsWith prefix) fields of
+          [] -> Nothing
+          (f:_) -> Just $ trim $ drop (length prefix) f
+      
+      subject = findField "주체자:"
+      indirectObj = findField "대상:"
+      directObj = findField "실행개체:"
+  in (action, subject, indirectObj, directObj)
+
+splitOn :: Char -> String -> [String]
+splitOn _ "" = [""]
+splitOn delim (c:cs)
+  | c == delim = "" : rest
+  | otherwise = case rest of
+      [] -> [[c]]
+      (r:rs) -> (c : r) : rs
+  where rest = splitOn delim cs
+
+startsWith :: String -> String -> Bool
+startsWith prefix s = take (length prefix) s == prefix
 
 -- 속성 맵
 theMap :: AttrMap
@@ -264,6 +321,7 @@ theMap =
       (attrName "normal", V.defAttr),
       (attrName "completed", fg V.green `V.withStyle` V.dim),
       (attrName "timestamp", fg V.yellow),
+      (attrName "inputHelp", fg V.cyan `V.withStyle` V.dim),
       (listSelectedAttr, V.black `on` V.cyan)
     ]
 

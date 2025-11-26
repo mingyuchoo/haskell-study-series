@@ -8,6 +8,7 @@ module App
     , getConnection
     , loadTodosFromDB
     , saveTodoToDB
+    , saveTodoWithFieldsToDB
     , deleteTodoFromDB
     , toggleTodoInDB
     ) where
@@ -51,6 +52,12 @@ saveTodoToDB :: String -> AppM DB.TodoId
 saveTodoToDB text = do
     conn <- getConnection
     liftIO $ DB.createTodo conn text
+
+-- 데이터베이스에 Todo 저장 (모든 필드 포함)
+saveTodoWithFieldsToDB :: String -> Maybe String -> Maybe String -> Maybe String -> AppM DB.TodoId
+saveTodoWithFieldsToDB text subj indObj dirObj = do
+    conn <- getConnection
+    liftIO $ DB.createTodoWithFields conn text subj indObj dirObj
 
 -- 데이터베이스에서 Todo 삭제
 deleteTodoFromDB :: DB.TodoId -> AppM ()

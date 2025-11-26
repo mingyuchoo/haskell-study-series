@@ -5,6 +5,7 @@ module DB
     , TodoRow (..)
     , initDB
     , createTodo
+    , createTodoWithFields
     , getAllTodos
     , updateTodo
     , deleteTodo
@@ -80,7 +81,7 @@ initDB conn = do
                  Nothing :: Maybe String, Nothing :: Maybe String, Just timeStr)
         _ -> return ()
 
--- Todo 생성
+-- Todo 생성 (기본)
 createTodo :: Connection -> String -> IO TodoId
 createTodo conn text = do
     timestamp <- getCurrentTime
@@ -89,6 +90,16 @@ createTodo conn text = do
                  \VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
         (text, False, timeStr, Nothing :: Maybe String, Nothing :: Maybe String, 
          Nothing :: Maybe String, Nothing :: Maybe String, Nothing :: Maybe String)
+    fromIntegral <$> lastInsertRowId conn
+
+-- Todo 생성 (모든 필드 포함)
+createTodoWithFields :: Connection -> String -> Maybe String -> Maybe String -> Maybe String -> IO TodoId
+createTodoWithFields conn text subj indObj dirObj = do
+    timestamp <- getCurrentTime
+    let timeStr = formatTime defaultTimeLocale "%Y-%m-%d %H:%M" timestamp
+    execute conn "INSERT INTO todos (text, completed, created_at, subject, object, indirect_object, direct_object, completed_at) \
+                 \VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+        (text, False, timeStr, subj, Nothing :: Maybe String, indObj, dirObj, Nothing :: Maybe String)
     fromIntegral <$> lastInsertRowId conn
 
 -- 모든 Todo 조회
