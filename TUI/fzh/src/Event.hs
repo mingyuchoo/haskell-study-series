@@ -1,0 +1,100 @@
+{-# LANGUAGE LambdaCase        #-}
+{-# LANGUAGE OverloadedStrings #-}
+
+module Event
+    ( handleEvent
+    ) where
+
+import           Brick
+import           Brick.Widgets.List
+
+import           Config             (KeyBindingStyle (..))
+
+import qualified Data.Text          as T
+
+import           Fuzzy              (filterItems)
+
+import qualified Graphics.Vty       as V
+
+import           Types
+
+-- | 메인 이벤트 핸들러 (Effect)
+-- 키바인딩 스타일에 따라 Emacs 또는 Vim 핸들러로 분기
+handleEvent :: BrickEvent Name e -> EventM Name AppState ()
+handleEvent (VtyEvent e) = do
+  st <- get
+  case configKeyBinding (stConfig st) of
+    Emacs -> handleEmacsEvent e
+    Vim   -> handleVimEvent e
+handleEvent _ = pure ()
+
+-- | Emacs 스타일 키 이벤트 핸들러 (Effect)
+-- C-p/C-n으로 이동, C-g로 종료, C-u로 검색어 삭제
+handleEmacsEvent :: V.Event -> EventM Name AppState ()
+handleEmacsEvent = \case
+  V.EvKey V.KEsc []               -> halt
+  V.EvKey V.KEnter []             -> halt
+  V.EvKey V.KUp []                -> modify moveUp
+  V.EvKey V.KDown []              -> modify moveDown
+  V.EvKey (V.KChar 'p') [V.MCtrl] -> modify moveUp
+  V.EvKey (V.KChar 'n') [V.MCtrl] -> modify moveDown
+  V.EvKey (V.KChar 'g') [V.MCtrl] -> halt
+  V.EvKey (V.KChar 'u') [V.MCtrl] -> modify clearQuery
+  V.EvKey (V.KChar 'h') [V.MCtrl] -> modify deleteChar
+  V.EvKey (V.KChar c) []          -> modify (appendChar c)
+  V.EvKey V.KBS []                -> modify deleteChar
+  _                               -> pure ()
+
+-- | Vim 스타일 키 이벤트 핸들러 (Effect)
+-- C-k/C-j로 이동, C-c로 종료, C-w로 문자 삭제
+handleVimEvent :: V.Event -> EventM Name AppState ()
+handleVimEvent = \case
+  V.EvKey V.KEsc []               -> halt
+  V.EvKey V.KEnter []             -> halt
+  V.EvKey V.KUp []                -> modify moveUp
+  V.EvKey V.KDown []              -> modify moveDown
+  V.EvKey (V.KChar 'k') [V.MCtrl] -> modify moveUp
+  V.EvKey (V.KChar 'j') [V.MCtrl] -> modify moveDown
+  V.EvKey (V.KChar 'c') [V.MCtrl] -> halt
+  V.EvKey (V.KChar 'u') [V.MCtrl] -> modify clearQuery
+  V.EvKey (V.KChar 'w') [V.MCtrl] -> modify deleteChar
+  V.EvKey (V.KChar c) []          -> modify (appendChar c)
+  V.EvKey V.KBS []                -> modify deleteChar
+  _                               -> pure ()
+
+-- 상태 변경 함수들
+
+-- | 검색어 업데이트 및 필터링 결과 갱신 (Pure)
+-- 새 검색어로 아이템을 필터링하고 상태 업데이트
+updateSearchQuery :: T.Text -> AppState -> AppState
+updateSearchQuery newQuery st =
+  let filtered = filterItems newQuery (stItems st)
+      newList  = list ItemList filtered 1
+  in st { stSearchQuery = newQuery, stFilteredList = newList }
+
+-- | 검색어 끝에 문자 추가 (Pure)
+-- 입력된 문자를 검색어에 추가하고 필터링 갱신
+appendChar :: Char -> AppState -> AppState
+appendChar c st = updateSearchQuery (stSearchQuery st `T.snoc` c) st
+
+-- | 검색어 마지막 문자 삭제 (Pure)
+-- 검색어가 비어있으면 변경 없음
+deleteChar :: AppState -> AppState
+deleteChar st
+  | T.null (stSearchQuery st) = st
+  | otherwise = updateSearchQuery (T.init $ stSearchQuery st) st
+
+-- | 검색어 전체 삭제 (Pure)
+-- 검색어를 빈 문자열로 초기화
+clearQuery :: AppState -> AppState
+clearQuery = updateSearchQuery ""
+
+-- | 리스트에서 위로 이동 (Pure)
+-- 선택 항목을 한 칸 위로 이동
+moveUp :: AppState -> AppState
+moveUp st = st { stFilteredList = listMoveUp (stFilteredList st) }
+
+-- | 리스트에서 아래로 이동 (Pure)
+-- 선택 항목을 한 칸 아래로 이동
+moveDown :: AppState -> AppState
+moveDown st = st { stFilteredList = listMoveDown (stFilteredList st) }

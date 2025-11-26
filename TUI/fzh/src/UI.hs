@@ -1,0 +1,67 @@
+{-# LANGUAGE OverloadedStrings #-}
+
+module UI
+    ( drawUI
+    ) where
+
+import           Brick
+import           Brick.Widgets.Border
+import           Brick.Widgets.Center
+import           Brick.Widgets.List
+
+import           Config               (KeyBindingStyle (..))
+
+import qualified Data.Text            as T
+import qualified Data.Vector          as Vec
+
+import           Types
+
+-- | 메인 UI 렌더링 함수 (Pure)
+-- 앱 상태를 받아 Brick 위젯 리스트 반환
+drawUI :: AppState -> [Widget Name]
+drawUI st = [ui]
+  where
+    cfg = stConfig st
+    ui  = vCenter $ vBox
+      [ renderSearchBox cfg st
+      , renderResultList cfg st
+      , renderInfo cfg st
+      , padTop (Pad 1) $ hCenter $ renderKeyBindingHelp cfg
+      ]
+
+-- | 검색 입력 박스 렌더링 (Pure)
+-- 현재 검색어와 커서(_) 표시
+renderSearchBox :: AppConfig -> AppState -> Widget Name
+renderSearchBox cfg st =
+  hLimit (configMaxWidth cfg) $
+  borderWithLabel (txt "Search") $
+  padLeftRight 1 $
+  txt (stSearchQuery st <> "_")
+
+-- | 검색 결과 리스트 렌더링 (Pure)
+-- 필터링된 아이템 목록을 스크롤 가능한 리스트로 표시
+renderResultList :: AppConfig -> AppState -> Widget Name
+renderResultList cfg st =
+  hLimit (configMaxWidth cfg) $
+  borderWithLabel (txt "Results") $
+  renderList drawItem True (stFilteredList st)
+  where
+    -- | 개별 아이템 렌더링 (Pure)
+    drawItem _ item = txt ("  " <> item)
+
+-- | 정보 표시줄 렌더링 (Pure)
+-- 현재 표시된 아이템 개수 표시
+renderInfo :: AppConfig -> AppState -> Widget Name
+renderInfo cfg st =
+  hLimit (configMaxWidth cfg) $
+  border $
+  padLeftRight 1 $
+  txt $ "Items: " <> T.pack (show $ Vec.length $ listElements $ stFilteredList st)
+
+-- | 키바인딩 도움말 렌더링 (Pure)
+-- 현재 키바인딩 스타일에 맞는 단축키 안내 표시
+renderKeyBindingHelp :: AppConfig -> Widget Name
+renderKeyBindingHelp cfg =
+  case configKeyBinding cfg of
+    Emacs -> txt "ESC/C-g: Quit | Enter: Select | ↑↓/C-p/C-n: Navigate | C-u: Clear"
+    Vim   -> txt "ESC/C-c: Quit | Enter: Select | ↑↓/C-k/C-j: Navigate | C-u: Clear"
