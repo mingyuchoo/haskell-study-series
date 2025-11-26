@@ -38,11 +38,13 @@ getConnection :: AppM Connection
 getConnection = asks envConnection
 
 -- 데이터베이스에서 Todo 로드
-loadTodosFromDB :: AppM (Vec.Vector (DB.TodoId, String, Bool, String))
+loadTodosFromDB :: AppM (Vec.Vector (DB.TodoId, String, Bool, String, Maybe String, Maybe String, Maybe String, Maybe String, Maybe String))
 loadTodosFromDB = do
     conn <- getConnection
     todos <- liftIO $ DB.getAllTodos conn
-    return $ Vec.fromList $ map (\t -> (DB.todoId t, DB.todoAction t, DB.todoCompleted t, DB.todoCreatedAt t)) todos
+    return $ Vec.fromList $ map (\t -> (DB.todoId t, DB.todoAction t, DB.todoCompleted t, DB.todoCreatedAt t,
+                                        DB.todoSubject t, DB.todoObject t, DB.todoIndirectObject t, 
+                                        DB.todoDirectObject t, DB.todoCompletedAt t)) todos
 
 -- 데이터베이스에 Todo 저장
 saveTodoToDB :: String -> AppM DB.TodoId

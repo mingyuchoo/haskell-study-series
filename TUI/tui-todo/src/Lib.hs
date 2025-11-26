@@ -14,6 +14,11 @@ module Lib
     , todoList
     , todoAction
     , todoId
+    , todoSubject
+    , todoObject
+    , todoIndirectObject
+    , todoDirectObject
+    , todoCompletedAt
     , trim
     , tuiMain
     ) where
@@ -58,10 +63,15 @@ data Name = TodoList | InputField
      deriving (Eq, Ord, Show)
 
 -- Todo 항목 데이터 타입 (DB ID 포함)
-data Todo = Todo { _todoId        :: DB.TodoId
-                 , _todoAction      :: String
-                 , _todoCompleted :: Bool
-                 , _todoCreatedAt :: String
+data Todo = Todo { _todoId             :: DB.TodoId
+                 , _todoAction         :: String
+                 , _todoCompleted      :: Bool
+                 , _todoCreatedAt      :: String
+                 , _todoSubject        :: Maybe String
+                 , _todoObject         :: Maybe String
+                 , _todoIndirectObject :: Maybe String
+                 , _todoDirectObject   :: Maybe String
+                 , _todoCompletedAt    :: Maybe String
                  }
      deriving (Show)
 
@@ -223,12 +233,12 @@ handleInputMode (VtyEvent (V.EvKey key [])) = do
           (newId, timestamp) <- liftIO $ App.runAppM (App.AppEnv conn) $ do
             tid <- App.saveTodoToDB trimmedText
             todos <- App.loadTodosFromDB
-            let maybeTodo = Vec.find (\(id', _, _, _) -> id' == tid) todos
+            let maybeTodo = Vec.find (\(id', _, _, _, _, _, _, _, _) -> id' == tid) todos
             case maybeTodo of
-              Just (_, _, _, ts) -> return (tid, ts)
+              Just (_, _, _, ts, _, _, _, _, _) -> return (tid, ts)
               Nothing -> return (tid, "")
           
-          let newTodo = Todo newId trimmedText False timestamp
+          let newTodo = Todo newId trimmedText False timestamp Nothing Nothing Nothing Nothing Nothing
               currentList = s' ^. todoList
               newList = listInsert 0 newTodo currentList
           modify <| todoList .~ newList
@@ -282,8 +292,8 @@ tuiMain = do
   -- 데이터베이스에서 Todo 로드
   todos <- App.runAppM (App.AppEnv conn) App.loadTodosFromDB
   
-  let initialTodos = Vec.map (\(tid, text, completed, createdAt) -> 
-                        Todo tid text completed createdAt) todos
+  let initialTodos = Vec.map (\(tid, text, completed, createdAt, subj, obj, indObj, dirObj, compAt) -> 
+                        Todo tid text completed createdAt subj obj indObj dirObj compAt) todos
       initialState =
         AppState
           { _todoList = list TodoList initialTodos 1,
