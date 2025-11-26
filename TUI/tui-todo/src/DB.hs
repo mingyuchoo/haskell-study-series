@@ -3,135 +3,166 @@
 module DB
     ( TodoId
     , TodoRow (..)
-    , initDB
     , createTodo
     , createTodoWithFields
+    , deleteTodo
     , getAllTodos
+    , initDB
+    , toggleTodoComplete
     , updateTodo
     , updateTodoWithFields
-    , deleteTodo
-    , toggleTodoComplete
     ) where
 
 import           Data.Time.Clock        (getCurrentTime)
 import           Data.Time.Format       (defaultTimeLocale, formatTime)
-import Database.SQLite.Simple
-    ( execute,
-      execute_,
-      lastInsertRowId,
-      query_,
-      field,
-      Only(Only),
-      FromRow(..),
-      Connection,
-      ToRow(..) )
+
+import           Database.SQLite.Simple (Connection, FromRow (..), Only (..),
+                                         ToRow (..), execute, execute_, field,
+                                         lastInsertRowId, query_)
 
 type TodoId = Int
 
-data TodoRow = TodoRow
-    { todoId             :: TodoId
-    , todoAction         :: String
-    , todoCompleted      :: Bool
-    , todoCreatedAt      :: String
-    , todoSubject        :: Maybe String
-    , todoObject         :: Maybe String
-    , todoIndirectObject :: Maybe String
-    , todoDirectObject   :: Maybe String
-    , todoCompletedAt    :: Maybe String
-    } deriving (Show)
+-- Domain model for a Todo item
+data TodoRow = TodoRow { todoId             :: !TodoId
+                       , todoAction         :: !String
+                       , todoCompleted      :: !Bool
+                       , todoCreatedAt      :: !String
+                       , todoSubject        :: !(Maybe String)
+                       , todoObject         :: !(Maybe String)
+                       , todoIndirectObject :: !(Maybe String)
+                       , todoDirectObject   :: !(Maybe String)
+                       , todoCompletedAt    :: !(Maybe String)
+                       }
+     deriving (Eq, Show)
 
 instance FromRow TodoRow where
-    fromRow = TodoRow <$> field <*> field <*> field <*> field 
-                      <*> field <*> field <*> field <*> field <*> field
+    fromRow = TodoRow
+        <$> field <*> field <*> field <*> field
+        <*> field <*> field <*> field <*> field <*> field
 
 instance ToRow TodoRow where
-    toRow (TodoRow tid txt comp created subj obj indObj dirObj compAt) = 
+    toRow (TodoRow tid txt comp created subj obj indObj dirObj compAt) =
         toRow (tid, txt, comp, created, subj, obj, indObj, dirObj, compAt)
 
--- 데이터베이스 초기화
+-- Initialize database schema and seed data
 initDB :: Connection -> IO ()
 initDB conn = do
-    execute_ conn "CREATE TABLE IF NOT EXISTS todos \
-                  \(id INTEGER PRIMARY KEY AUTOINCREMENT, \
-                  \ text TEXT NOT NULL, \
-                  \ completed INTEGER NOT NULL DEFAULT 0, \
-                  \ created_at TEXT NOT NULL, \
-                  \ subject TEXT, \
-                  \ object TEXT, \
-                  \ indirect_object TEXT, \
-                  \ direct_object TEXT, \
-                  \ completed_at TEXT)"
-    
-    -- 샘플 데이터 추가 (테이블이 비어있을 때만)
-    count <- query_ conn "SELECT COUNT(*) FROM todos" :: IO [Only Int]
-    case count of
-        [Only 0] -> do
-            timestamp <- getCurrentTime
-            let timeStr = formatTime defaultTimeLocale "%Y-%m-%d %H:%M" timestamp
-            execute conn "INSERT INTO todos (text, completed, created_at, subject, object, indirect_object, direct_object, completed_at) \
-                         \VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-                ("Welcome to Todo Manager!" :: String, False, timeStr, Nothing :: Maybe String, Nothing :: Maybe String, 
-                 Nothing :: Maybe String, Nothing :: Maybe String, Nothing :: Maybe String)
-            execute conn "INSERT INTO todos (text, completed, created_at, subject, object, indirect_object, direct_object, completed_at) \
-                         \VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-                ("Press 'a' to add a new todo" :: String, False, timeStr, Nothing :: Maybe String, Nothing :: Maybe String,
-                 Nothing :: Maybe String, Nothing :: Maybe String, Nothing :: Maybe String)
-            execute conn "INSERT INTO todos (text, completed, created_at, subject, object, indirect_object, direct_object, completed_at) \
-                         \VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-                ("Press Space to toggle completion" :: String, True, timeStr, Nothing :: Maybe String, Nothing :: Maybe String,
-                 Nothing :: Maybe String, Nothing :: Maybe String, Just timeStr)
-        _ -> return ()
+    createTodosTable
+    seedInitialData
+  where
+    createTodosTable = execute_ conn
+        "CREATE TABLE IF NOT EXISTS todos \
+        \(id INTEGER PRIMARY KEY AUTOINCREMENT, \
+        \ text TEXT NOT NULL, \
+        \ completed INTEGER NOT NULL DEFAULT 0, \
+        \ created_at TEXT NOT NULL, \
+        \ subject TEXT, \
+        \ object TEXT, \
+        \ indirect_object TEXT, \
+        \ direct_object TEXT, \
+        \ completed_at TEXT)"
 
--- Todo 생성 (기본)
+    seedInitialData = do
+        count <- query_ conn "SELECT COUNT(*) FROM todos" :: IO [Only Int]
+        case count of
+            [Only 0] -> insertSampleTodos
+            _        -> pure ()
+
+    insertSampleTodos = do
+        timestamp <- getCurrentTime
+        let timeStr = formatTime defaultTimeLocale "%Y-%m-%d %H:%M" timestamp
+            insertTodo txt completed = execute conn
+                "INSERT INTO todos (text, completed, created_at, subject, object, \
+                \indirect_object, direct_object, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+                (txt :: String, completed, timeStr,
+                 Nothing :: Maybe String, Nothing :: Maybe String,
+                 Nothing :: Maybe String, Nothing :: Maybe String,
+                 if completed then Just timeStr else Nothing :: Maybe String)
+
+        insertTodo "Welcome to Todo Manager!" False
+        insertTodo "Press 'a' to add a new todo" False
+        insertTodo "Press Space to toggle completion" True
+
+-- Create a new todo with action text only
 createTodo :: Connection -> String -> IO TodoId
 createTodo conn text = do
-    timestamp <- getCurrentTime
-    let timeStr = formatTime defaultTimeLocale "%Y-%m-%d %H:%M" timestamp
-    execute conn "INSERT INTO todos (text, completed, created_at, subject, object, indirect_object, direct_object, completed_at) \
-                 \VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-        (text, False, timeStr, Nothing :: Maybe String, Nothing :: Maybe String, 
-         Nothing :: Maybe String, Nothing :: Maybe String, Nothing :: Maybe String)
+    timeStr <- formatCurrentTime
+    execute conn
+        "INSERT INTO todos (text, completed, created_at, subject, object, \
+        \indirect_object, direct_object, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+        (text, False, timeStr,
+         Nothing :: Maybe String, Nothing :: Maybe String,
+         Nothing :: Maybe String, Nothing :: Maybe String,
+         Nothing :: Maybe String)
     fromIntegral <$> lastInsertRowId conn
 
--- Todo 생성 (모든 필드 포함)
-createTodoWithFields :: Connection -> String -> Maybe String -> Maybe String -> Maybe String -> IO TodoId
+-- Create a new todo with all fields
+createTodoWithFields :: Connection
+                     -> String
+                     -> Maybe String
+                     -> Maybe String
+                     -> Maybe String
+                     -> IO TodoId
 createTodoWithFields conn text subj indObj dirObj = do
-    timestamp <- getCurrentTime
-    let timeStr = formatTime defaultTimeLocale "%Y-%m-%d %H:%M" timestamp
-    execute conn "INSERT INTO todos (text, completed, created_at, subject, object, indirect_object, direct_object, completed_at) \
-                 \VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-        (text, False, timeStr, subj, Nothing :: Maybe String, indObj, dirObj, Nothing :: Maybe String)
+    timeStr <- formatCurrentTime
+    execute conn
+        "INSERT INTO todos (text, completed, created_at, subject, object, \
+        \indirect_object, direct_object, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+        (text, False, timeStr, subj, Nothing :: Maybe String, indObj, dirObj,
+         Nothing :: Maybe String)
     fromIntegral <$> lastInsertRowId conn
 
--- 모든 Todo 조회
+-- Retrieve all todos ordered by ID descending
 getAllTodos :: Connection -> IO [TodoRow]
-getAllTodos conn = 
-    query_ conn "SELECT id, text, completed, created_at, subject, object, indirect_object, direct_object, completed_at \
-                \FROM todos ORDER BY id DESC"
+getAllTodos conn = query_ conn
+    "SELECT id, text, completed, created_at, subject, object, \
+    \indirect_object, direct_object, completed_at \
+    \FROM todos ORDER BY id DESC"
 
--- Todo 업데이트 (전체)
-updateTodo :: Connection -> TodoId -> String -> Bool -> Maybe String -> Maybe String -> Maybe String -> Maybe String -> Maybe String -> IO ()
+-- Update all fields of a todo
+updateTodo :: Connection
+           -> TodoId
+           -> String
+           -> Bool
+           -> Maybe String
+           -> Maybe String
+           -> Maybe String
+           -> Maybe String
+           -> Maybe String
+           -> IO ()
 updateTodo conn tid text completed subj obj indObj dirObj compAt =
-    execute conn "UPDATE todos SET text = ?, completed = ?, subject = ?, object = ?, \
-                 \indirect_object = ?, direct_object = ?, completed_at = ? WHERE id = ?"
+    execute conn
+        "UPDATE todos SET text = ?, completed = ?, subject = ?, object = ?, \
+        \indirect_object = ?, direct_object = ?, completed_at = ? WHERE id = ?"
         (text, completed, subj, obj, indObj, dirObj, compAt, tid)
 
--- Todo 업데이트 (필드만)
-updateTodoWithFields :: Connection -> TodoId -> String -> Maybe String -> Maybe String -> Maybe String -> IO ()
+-- Update specific fields of a todo
+updateTodoWithFields :: Connection
+                     -> TodoId
+                     -> String
+                     -> Maybe String
+                     -> Maybe String
+                     -> Maybe String
+                     -> IO ()
 updateTodoWithFields conn tid text subj indObj dirObj =
-    execute conn "UPDATE todos SET text = ?, subject = ?, indirect_object = ?, direct_object = ? WHERE id = ?"
+    execute conn
+        "UPDATE todos SET text = ?, subject = ?, indirect_object = ?, \
+        \direct_object = ? WHERE id = ?"
         (text, subj, indObj, dirObj, tid)
 
--- Todo 삭제
+-- Delete a todo by ID
 deleteTodo :: Connection -> TodoId -> IO ()
-deleteTodo conn tid =
-    execute conn "DELETE FROM todos WHERE id = ?" (Only tid)
+deleteTodo conn tid = execute conn "DELETE FROM todos WHERE id = ?" (Only tid)
 
--- Todo 완료 상태 토글
+-- Toggle completion status of a todo
 toggleTodoComplete :: Connection -> TodoId -> IO ()
 toggleTodoComplete conn tid = do
-    timestamp <- getCurrentTime
-    let timeStr = formatTime defaultTimeLocale "%Y-%m-%d %H:%M" timestamp
-    execute conn "UPDATE todos SET completed = NOT completed, \
-                 \completed_at = CASE WHEN completed = 0 THEN ? ELSE NULL END WHERE id = ?"
+    timeStr <- formatCurrentTime
+    execute conn
+        "UPDATE todos SET completed = NOT completed, \
+        \completed_at = CASE WHEN completed = 0 THEN ? ELSE NULL END WHERE id = ?"
         (timeStr, tid)
+
+-- Helper function to format current time
+formatCurrentTime :: IO String
+formatCurrentTime = formatTime defaultTimeLocale "%Y-%m-%d %H:%M" <$> getCurrentTime

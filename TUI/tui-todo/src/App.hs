@@ -1,79 +1,88 @@
+{-# LANGUAGE FlexibleContexts           #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE OverloadedStrings          #-}
 
 module App
     ( AppEnv (..)
     , AppM
+    , MonadApp (..)
+    , createTodo
+    , createTodoWithFields
+    , deleteTodo
+    , loadTodos
     , runAppM
-    , getConnection
-    , loadTodosFromDB
-    , saveTodoToDB
-    , saveTodoWithFieldsToDB
-    , updateTodoInDB
-    , deleteTodoFromDB
-    , toggleTodoInDB
+    , toggleTodo
+    , updateTodo
     ) where
 
 import           Control.Monad.IO.Class (MonadIO, liftIO)
 import           Control.Monad.Reader   (MonadReader, ReaderT, asks, runReaderT)
-import           Database.SQLite.Simple (Connection)
 
-import qualified Data.Vector            as Vec
 import qualified DB
 
--- 애플리케이션 환경 (의존성)
-data AppEnv = AppEnv
-    { envConnection :: Connection
-    }
+import           Database.SQLite.Simple (Connection)
 
--- MTL 기반 모나드 스택
-newtype AppM a = AppM
-    { unAppM :: ReaderT AppEnv IO a
-    } deriving (Functor, Applicative, Monad, MonadIO, MonadReader AppEnv)
+-- Application environment containing dependencies
+newtype AppEnv = AppEnv { envConnection :: Connection }
 
--- AppM 실행
+-- MTL-based monad stack
+newtype AppM a = AppM { unAppM :: ReaderT AppEnv IO a }
+     deriving (Applicative, Functor, Monad, MonadIO, MonadReader AppEnv)
+
+-- Type class for application capabilities
+class (MonadIO m, MonadReader AppEnv m) => MonadApp m where
+    getConnection :: m Connection
+    getConnection = asks envConnection
+
+instance MonadApp AppM
+
+-- Run the application monad
 runAppM :: AppEnv -> AppM a -> IO a
-runAppM env app = runReaderT (unAppM app) env
+runAppM env = flip runReaderT env . unAppM
 
--- 데이터베이스 연결 가져오기
-getConnection :: AppM Connection
-getConnection = asks envConnection
-
--- 데이터베이스에서 Todo 로드
-loadTodosFromDB :: AppM (Vec.Vector (DB.TodoId, String, Bool, String, Maybe String, Maybe String, Maybe String, Maybe String, Maybe String))
-loadTodosFromDB = do
+-- Load all todos from database
+loadTodos :: MonadApp m => m [DB.TodoRow]
+loadTodos = do
     conn <- getConnection
-    todos <- liftIO $ DB.getAllTodos conn
-    return $ Vec.fromList $ map (\t -> (DB.todoId t, DB.todoAction t, DB.todoCompleted t, DB.todoCreatedAt t,
-                                        DB.todoSubject t, DB.todoObject t, DB.todoIndirectObject t, 
-                                        DB.todoDirectObject t, DB.todoCompletedAt t)) todos
+    liftIO $ DB.getAllTodos conn
 
--- 데이터베이스에 Todo 저장
-saveTodoToDB :: String -> AppM DB.TodoId
-saveTodoToDB text = do
+-- Create a new todo with action text only
+createTodo :: MonadApp m => String -> m DB.TodoId
+createTodo text = do
     conn <- getConnection
     liftIO $ DB.createTodo conn text
 
--- 데이터베이스에 Todo 저장 (모든 필드 포함)
-saveTodoWithFieldsToDB :: String -> Maybe String -> Maybe String -> Maybe String -> AppM DB.TodoId
-saveTodoWithFieldsToDB text subj indObj dirObj = do
+-- Create a new todo with all fields
+createTodoWithFields :: MonadApp m
+                     => String
+                     -> Maybe String
+                     -> Maybe String
+                     -> Maybe String
+                     -> m DB.TodoId
+createTodoWithFields action subj indObj dirObj = do
     conn <- getConnection
-    liftIO $ DB.createTodoWithFields conn text subj indObj dirObj
+    liftIO $ DB.createTodoWithFields conn action subj indObj dirObj
 
--- 데이터베이스에서 Todo 삭제
-deleteTodoFromDB :: DB.TodoId -> AppM ()
-deleteTodoFromDB tid = do
+-- Update an existing todo
+updateTodo :: MonadApp m
+           => DB.TodoId
+           -> String
+           -> Maybe String
+           -> Maybe String
+           -> Maybe String
+           -> m ()
+updateTodo tid action subj indObj dirObj = do
+    conn <- getConnection
+    liftIO $ DB.updateTodoWithFields conn tid action subj indObj dirObj
+
+-- Delete a todo
+deleteTodo :: MonadApp m => DB.TodoId -> m ()
+deleteTodo tid = do
     conn <- getConnection
     liftIO $ DB.deleteTodo conn tid
 
--- 데이터베이스에서 Todo 업데이트
-updateTodoInDB :: DB.TodoId -> String -> Maybe String -> Maybe String -> Maybe String -> AppM ()
-updateTodoInDB tid text subj indObj dirObj = do
-    conn <- getConnection
-    liftIO $ DB.updateTodoWithFields conn tid text subj indObj dirObj
-
--- 데이터베이스에서 Todo 완료 상태 토글
-toggleTodoInDB :: DB.TodoId -> AppM ()
-toggleTodoInDB tid = do
+-- Toggle todo completion status
+toggleTodo :: MonadApp m => DB.TodoId -> m ()
+toggleTodo tid = do
     conn <- getConnection
     liftIO $ DB.toggleTodoComplete conn tid
