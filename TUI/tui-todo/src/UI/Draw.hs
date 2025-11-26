@@ -18,7 +18,7 @@ import qualified Data.Vector          as Vec
 import qualified I18n
 import           Lens.Micro           ((^.))
 
-import           Types
+import           UI.Types
 
 -- | UI 그리기
 drawUI :: AppState -> [Widget Name]

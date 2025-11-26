@@ -1,6 +1,6 @@
 {-# LANGUAGE TemplateHaskell #-}
 
-module Types
+module UI.Types
     ( AppState (..)
     , FocusedField (..)
     , Mode (..)

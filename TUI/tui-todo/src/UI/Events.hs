@@ -23,7 +23,7 @@ import qualified Data.Vector            as Vec
 import qualified Graphics.Vty           as V
 import           Lens.Micro             ((%~), (.~), (^.))
 
-import           Types
+import           UI.Types
 
 -- | 이벤트 처리
 handleEvent :: BrickEvent Name e -> EventM Name AppState ()

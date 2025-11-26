@@ -34,10 +34,10 @@ import           Brick (App (..), showCursorNamed)
 
 import           Lens.Micro ((^.))
 
-import           Types
 import           UI.Attributes (theMap)
 import           UI.Draw       (drawUI)
 import           UI.Events     (handleEvent, trim)
+import           UI.Types
 
 -- | 애플리케이션 정의
 app :: App AppState e Name
