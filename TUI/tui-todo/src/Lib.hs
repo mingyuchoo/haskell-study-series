@@ -19,6 +19,7 @@ module Lib
     , todoIndirectObject
     , todoDirectObject
     , todoCompletedAt
+    , editingIndex
     , trim
     , tuiMain
     ) where
@@ -54,8 +55,8 @@ import qualified App
 import qualified Config
 import qualified DB
 
--- 모드: 목록 보기 vs 입력 모드
-data Mode = ViewMode | InputMode
+-- 모드: 목록 보기 vs 입력 모드 vs 수정 모드
+data Mode = ViewMode | InputMode | EditMode DB.TodoId
      deriving (Eq, Show)
 
 -- 리소스 이름
@@ -83,6 +84,7 @@ data AppState = AppState { _todoList     :: List Name Todo
                          , _mode         :: Mode
                          , _dbConn       :: Connection
                          , _keyBindings  :: Config.KeyBindings
+                         , _editingIndex :: Maybe Int
                          }
 
 makeLenses ''AppState
@@ -155,28 +157,29 @@ drawTodo selected todo =
 
 drawInput :: AppState -> Widget Name
 drawInput s =
-  let label =
-        if s ^. mode == InputMode
-          then " Add New Todo (Enter to save, Esc to cancel) "
-          else " Input (press 'a' to add) "
+  let (label, isEditing) = case s ^. mode of
+        InputMode -> (" Add New Todo (Enter to save, Esc to cancel) ", True)
+        EditMode _ -> (" Edit Todo (Enter to save, Esc to cancel) ", True)
+        ViewMode -> (" Input (press 'a' to add, 'e' to edit) ", False)
       helpText = 
-        if s ^. mode == InputMode
+        if isEditing
           then padLeft (Pad 2) <| withAttr (attrName "inputHelp") <| 
                  str "형식: 행위 | 주체자: 값 | 대상: 값 | 실행개체: 값"
           else str ""
    in vBox
         [ borderWithLabel (str label) <|
             padAll 1 <|
-              E.renderEditor (str . unlines) (s ^. mode == InputMode) (s ^. inputEditor)
+              E.renderEditor (str . unlines) isEditing (s ^. inputEditor)
         , helpText
         ]
 
 drawHelp :: AppState -> Widget Name
 drawHelp s =
   padAll 1 <|
-    if s ^. mode == InputMode
-      then str "Enter: Save | Esc: Cancel"
-      else
+    case s ^. mode of
+      InputMode -> str "Enter: Save | Esc: Cancel"
+      EditMode _ -> str "Enter: Save | Esc: Cancel"
+      ViewMode ->
         let kb = s ^. keyBindings
             quitKeys = head (Config.quit kb)
             addKeys = head (Config.add_todo kb)
@@ -185,7 +188,7 @@ drawHelp s =
             upKeys = head (Config.navigate_up kb)
             downKeys = head (Config.navigate_down kb)
         in vBox
-          [ str $ addKeys ++ ": Add todo | " ++ toggleKeys ++ ": Toggle complete | " 
+          [ str $ addKeys ++ ": Add | e: Edit | " ++ toggleKeys ++ ": Toggle | " 
                   ++ deleteKeys ++ ": Delete | " ++ upKeys ++ "/" ++ downKeys 
                   ++ ": Navigate | " ++ quitKeys ++ ": Quit"
           ]
@@ -195,8 +198,9 @@ handleEvent :: BrickEvent Name e -> EventM Name AppState ()
 handleEvent ev = do
   s <- get
   case s ^. mode of
-    ViewMode  -> handleViewMode ev
-    InputMode -> handleInputMode ev
+    ViewMode    -> handleViewMode ev
+    InputMode   -> handleInputMode ev
+    EditMode _  -> handleEditMode ev
 
 handleViewMode :: BrickEvent Name e -> EventM Name AppState ()
 handleViewMode (VtyEvent (V.EvKey key [])) = do
@@ -233,7 +237,22 @@ handleViewMode (VtyEvent (V.EvKey key [])) = do
               modify <| todoList %~ listRemove idx
     Just Config.NavigateUp -> zoom todoList <| handleListEvent (V.EvKey V.KUp [])
     Just Config.NavigateDown -> zoom todoList <| handleListEvent (V.EvKey V.KDown [])
-    _ -> return ()
+    _ -> case key of
+      V.KChar 'e' -> do
+        s' <- get
+        case listSelected (s' ^. todoList) of
+          Nothing -> return ()
+          Just idx -> do
+            let todos = s' ^. todoList . listElementsL
+            case todos Vec.!? idx of
+              Nothing -> return ()
+              Just todo -> do
+                let tid = todo ^. todoId
+                    editText = formatTodoForEdit todo
+                modify <| mode .~ EditMode tid
+                modify <| editingIndex .~ Just idx
+                modify <| inputEditor .~ E.editor InputField (Just 1) editText
+      _ -> return ()
 handleViewMode _ = return ()
 
 handleInputMode :: BrickEvent Name e -> EventM Name AppState ()
@@ -276,6 +295,62 @@ handleInputMode (VtyEvent (V.EvKey key [])) = do
 handleInputMode ev@(VtyEvent _) = zoom inputEditor <| E.handleEditorEvent ev
 handleInputMode _ = return ()
 
+handleEditMode :: BrickEvent Name e -> EventM Name AppState ()
+handleEditMode (VtyEvent (V.EvKey key [])) = do
+  s <- get
+  let kb = s ^. keyBindings
+  case Config.matchesKey kb key of
+    Just Config.CancelInput -> do
+      modify <| mode .~ ViewMode
+      modify <| editingIndex .~ Nothing
+      modify <| inputEditor .~ E.editor InputField (Just 1) ""
+    Just Config.SaveInput -> do
+      s' <- get
+      let text = unlines <| E.getEditContents (s' ^. inputEditor)
+          trimmedText = trim text
+      case s' ^. mode of
+        EditMode tid -> do
+          if not (null trimmedText)
+            then do
+              let conn = s' ^. dbConn
+                  (action, subject, indirectObj, directObj) = parseTodoInput trimmedText
+              
+              if null action
+                then do
+                  modify <| mode .~ ViewMode
+                  modify <| editingIndex .~ Nothing
+                else do
+                  -- DB 업데이트
+                  case s' ^. editingIndex of
+                    Nothing -> return ()
+                    Just idx -> do
+                      let todos = s' ^. todoList . listElementsL
+                      case todos Vec.!? idx of
+                        Nothing -> return ()
+                        Just oldTodo -> do
+                          liftIO $ App.runAppM (App.AppEnv conn) $ 
+                            App.updateTodoInDB tid action subject indirectObj directObj
+                          
+                          -- 리스트 업데이트
+                          let updatedTodo = oldTodo 
+                                { _todoAction = action
+                                , _todoSubject = subject
+                                , _todoIndirectObject = indirectObj
+                                , _todoDirectObject = directObj
+                                }
+                          modify <| todoList %~ listModify (const updatedTodo)
+                  
+                  modify <| mode .~ ViewMode
+                  modify <| editingIndex .~ Nothing
+                  modify <| inputEditor .~ E.editor InputField (Just 1) ""
+            else do
+              modify <| mode .~ ViewMode
+              modify <| editingIndex .~ Nothing
+        _ -> return ()
+    _ -> zoom inputEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key []))
+handleEditMode ev@(VtyEvent _) = zoom inputEditor <| E.handleEditorEvent ev
+handleEditMode _ = return ()
+
 -- 유틸리티 함수
 trim :: String -> String
 trim = unwords . words
@@ -311,6 +386,21 @@ splitOn delim (c:cs)
 startsWith :: String -> String -> Bool
 startsWith prefix s = take (length prefix) s == prefix
 
+-- Todo를 편집 가능한 형식으로 변환
+formatTodoForEdit :: Todo -> String
+formatTodoForEdit todo =
+  let action = todo ^. todoAction
+      subjectPart = case todo ^. todoSubject of
+        Nothing -> ""
+        Just s -> " | 주체자: " ++ s
+      indirectObjPart = case todo ^. todoIndirectObject of
+        Nothing -> ""
+        Just io -> " | 대상: " ++ io
+      directObjPart = case todo ^. todoDirectObject of
+        Nothing -> ""
+        Just d -> " | 실행개체: " ++ d
+  in action ++ subjectPart ++ indirectObjPart ++ directObjPart
+
 -- 속성 맵
 theMap :: AttrMap
 theMap =
@@ -332,6 +422,7 @@ app =
     { appDraw = drawUI,
       appChooseCursor = \s locs -> case s ^. mode of
         InputMode -> showCursorNamed InputField locs
+        EditMode _ -> showCursorNamed InputField locs
         ViewMode  -> Nothing,
       appHandleEvent = handleEvent,
       appStartEvent = return (),
@@ -358,7 +449,8 @@ tuiMain = do
             _inputEditor = E.editor InputField (Just 1) "",
             _mode = ViewMode,
             _dbConn = conn,
-            _keyBindings = kb
+            _keyBindings = kb,
+            _editingIndex = Nothing
           }
 
   _ <- defaultMain app initialState

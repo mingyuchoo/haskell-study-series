@@ -8,6 +8,7 @@ module DB
     , createTodoWithFields
     , getAllTodos
     , updateTodo
+    , updateTodoWithFields
     , deleteTodo
     , toggleTodoComplete
     ) where
@@ -108,12 +109,18 @@ getAllTodos conn =
     query_ conn "SELECT id, text, completed, created_at, subject, object, indirect_object, direct_object, completed_at \
                 \FROM todos ORDER BY id DESC"
 
--- Todo 업데이트
+-- Todo 업데이트 (전체)
 updateTodo :: Connection -> TodoId -> String -> Bool -> Maybe String -> Maybe String -> Maybe String -> Maybe String -> Maybe String -> IO ()
 updateTodo conn tid text completed subj obj indObj dirObj compAt =
     execute conn "UPDATE todos SET text = ?, completed = ?, subject = ?, object = ?, \
                  \indirect_object = ?, direct_object = ?, completed_at = ? WHERE id = ?"
         (text, completed, subj, obj, indObj, dirObj, compAt, tid)
+
+-- Todo 업데이트 (필드만)
+updateTodoWithFields :: Connection -> TodoId -> String -> Maybe String -> Maybe String -> Maybe String -> IO ()
+updateTodoWithFields conn tid text subj indObj dirObj =
+    execute conn "UPDATE todos SET text = ?, subject = ?, indirect_object = ?, direct_object = ? WHERE id = ?"
+        (text, subj, indObj, dirObj, tid)
 
 -- Todo 삭제
 deleteTodo :: Connection -> TodoId -> IO ()
