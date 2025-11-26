@@ -12,11 +12,11 @@
 기본 언어는 한국어입니다. 언어를 변경하려면 `src/Lib.hs`의 `tuiMain` 함수를 수정하세요:
 
 ```haskell
--- 한국어 사용 (기본값)
+-- | 한국어 사용 (기본값)
 tuiMain :: IO ()
 tuiMain = tuiMainWithLanguage I18n.Korean
 
--- 영어 사용
+-- | 영어 사용
 tuiMain :: IO ()
 tuiMain = tuiMainWithLanguage I18n.English
 ```

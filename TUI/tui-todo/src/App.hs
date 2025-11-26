@@ -26,16 +26,16 @@ import           Flow                   ((<|))
 
 import qualified I18n
 
--- Application environment containing dependencies
+-- | Application environment containing dependencies
 data AppEnv = AppEnv { envConnection :: !Connection
                      , envMessages   :: !I18n.I18nMessages
                      }
 
--- MTL-based monad stack
+-- | MTL-based monad stack
 newtype AppM a = AppM { unAppM :: ReaderT AppEnv IO a }
      deriving (Applicative, Functor, Monad, MonadIO, MonadReader AppEnv)
 
--- Type class for application capabilities
+-- | Type class for application capabilities
 class (MonadIO m, MonadReader AppEnv m) => MonadApp m where
     getConnection :: m Connection
     getConnection = asks envConnection
@@ -45,23 +45,23 @@ class (MonadIO m, MonadReader AppEnv m) => MonadApp m where
 
 instance MonadApp AppM
 
--- Run the application monad
+-- | Run the application monad
 runAppM :: AppEnv -> AppM a -> IO a
 runAppM env = flip runReaderT env . unAppM
 
--- Load all todos from database
+-- | Load all todos from database
 loadTodos :: MonadApp m => m [DB.TodoRow]
 loadTodos = do
     conn <- getConnection
     liftIO <| DB.getAllTodos conn
 
--- Create a new todo with action text only
+-- | Create a new todo with action text only
 createTodo :: MonadApp m => String -> m DB.TodoId
 createTodo text = do
     conn <- getConnection
     liftIO <| DB.createTodo conn text
 
--- Create a new todo with all fields
+-- | Create a new todo with all fields
 createTodoWithFields :: MonadApp m
                      => String
                      -> Maybe String
@@ -72,7 +72,7 @@ createTodoWithFields action subj indObj dirObj = do
     conn <- getConnection
     liftIO <| DB.createTodoWithFields conn action subj indObj dirObj
 
--- Update an existing todo
+-- | Update an existing todo
 updateTodo :: MonadApp m
            => DB.TodoId
            -> String
@@ -84,13 +84,13 @@ updateTodo tid action subj indObj dirObj = do
     conn <- getConnection
     liftIO <| DB.updateTodoWithFields conn tid action subj indObj dirObj
 
--- Delete a todo
+-- | Delete a todo
 deleteTodo :: MonadApp m => DB.TodoId -> m ()
 deleteTodo tid = do
     conn <- getConnection
     liftIO <| DB.deleteTodo conn tid
 
--- Toggle todo completion status
+-- | Toggle todo completion status
 toggleTodo :: MonadApp m => DB.TodoId -> m ()
 toggleTodo tid = do
     conn <- getConnection

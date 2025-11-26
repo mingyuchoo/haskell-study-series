@@ -70,21 +70,21 @@ import qualified I18n
 import           Lens.Micro             ((%~), (.~), (^.))
 import           Lens.Micro.TH          (makeLenses)
 
--- Application modes
+-- | Application modes
 data Mode = ViewMode
           | InputMode
           | EditMode DB.TodoId
      deriving (Eq, Show)
 
--- Widget resource names
+-- | Widget resource names
 data Name = TodoList | ActionField | SubjectField | IndirectObjectField | DirectObjectField
      deriving (Eq, Ord, Show)
 
--- Field focus tracking
+-- | Field focus tracking
 data FocusedField = FocusAction | FocusSubject | FocusIndirectObject | FocusDirectObject
      deriving (Eq, Show)
 
--- UI representation of a Todo item
+-- | UI representation of a Todo item
 data Todo = Todo { _todoId             :: !DB.TodoId
                  , _todoAction         :: !String
                  , _todoCompleted      :: !Bool
@@ -99,7 +99,7 @@ data Todo = Todo { _todoId             :: !DB.TodoId
 
 makeLenses ''Todo
 
--- Application state
+-- | Application state
 data AppState = AppState { _todoList             :: !(List Name Todo)
                          , _actionEditor         :: !(E.Editor String Name)
                          , _subjectEditor        :: !(E.Editor String Name)
@@ -115,7 +115,7 @@ data AppState = AppState { _todoList             :: !(List Name Todo)
 
 makeLenses ''AppState
 
--- Convert DB TodoRow to UI Todo
+-- | Convert DB TodoRow to UI Todo
 fromTodoRow :: DB.TodoRow -> Todo
 fromTodoRow row = Todo
     { _todoId             = DB.todoId row
@@ -129,7 +129,7 @@ fromTodoRow row = Todo
     , _todoCompletedAt    = DB.todoCompletedAt row
     }
 
--- UI 그리기
+-- | UI 그리기
 drawUI :: AppState -> [Widget Name]
 drawUI s = [ui]
   where
@@ -367,7 +367,7 @@ drawHelp s =
                      ++ quitKeys ++ ": " ++ quitLabel
              ]
 
--- 이벤트 처리
+-- | 이벤트 처리
 handleEvent :: BrickEvent Name e -> EventM Name AppState ()
 handleEvent ev = do
   s <- get
@@ -572,7 +572,7 @@ handleEditMode ev@(VtyEvent _) = do
     FocusDirectObject   -> zoom directObjectEditor <| E.handleEditorEvent ev
 handleEditMode _ = return ()
 
--- Utility functions
+-- | Utility functions
 trim :: String -> String
 trim = unwords . words
 
@@ -588,7 +588,7 @@ clearEditorsAndReturnToView = do
     modify <| mode .~ ViewMode
     clearEditors
 
--- 속성 맵
+-- | 속성 맵
 theMap :: AttrMap
 theMap =
   attrMap
@@ -605,7 +605,7 @@ theMap =
       (listSelectedAttr, V.black `on` V.cyan)
     ]
 
--- 애플리케이션 정의
+-- | 애플리케이션 정의
 app :: App AppState e Name
 app =
   App

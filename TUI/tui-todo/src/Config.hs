@@ -26,11 +26,11 @@ import qualified I18n
 
 import           System.Directory (doesFileExist)
 
--- Key action types
+-- | Key action types
 data KeyAction = QuitApp | AddTodo | ToggleComplete | DeleteTodo | NavigateUp | NavigateDown | SaveInput | CancelInput
      deriving (Eq, Generic, Show)
 
--- Key bindings configuration
+-- | Key bindings configuration
 data KeyBindings = KeyBindings { quit            :: ![String]
                                , add_todo        :: ![String]
                                , toggle_complete :: ![String]
@@ -55,7 +55,7 @@ instance FromJSON KeyBindings where
             <*> kb .: "save_input"
             <*> kb .: "cancel_input"
 
--- Default key bindings
+-- | Default key bindings
 defaultKeyBindings :: KeyBindings
 defaultKeyBindings = KeyBindings
     { quit            = ["q", "Esc"]
@@ -68,11 +68,11 @@ defaultKeyBindings = KeyBindings
     , cancel_input    = ["Esc"]
     }
 
--- Load key bindings from configuration file
+-- | Load key bindings from configuration file
 loadKeyBindings :: FilePath -> IO KeyBindings
 loadKeyBindings path = loadKeyBindingsWithMessages path I18n.defaultMessages
 
--- Load key bindings with custom messages
+-- | Load key bindings with custom messages
 loadKeyBindingsWithMessages :: FilePath -> I18n.I18nMessages -> IO KeyBindings
 loadKeyBindingsWithMessages path msgs = do
     let sysMsgs = I18n.messages msgs
@@ -94,7 +94,7 @@ loadKeyBindingsWithMessages path msgs = do
         putStrLn <| I18n.using_default sysMsgs
         pure defaultKeyBindings
 
--- Convert Vty key to string representation
+-- | Convert Vty key to string representation
 keyToString :: V.Key -> String
 keyToString = \case
     V.KChar ' '  -> "Space"
@@ -109,7 +109,7 @@ keyToString = \case
     V.KFun n     -> "F" ++ show n
     _            -> ""
 
--- Match a key to its corresponding action
+-- | Match a key to its corresponding action
 matchesKey :: KeyBindings -> V.Key -> Maybe KeyAction
 matchesKey kb key = snd <$> find (keyMatches keyStr . fst) actions
   where

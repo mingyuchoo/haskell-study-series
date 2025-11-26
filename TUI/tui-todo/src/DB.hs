@@ -25,7 +25,7 @@ import qualified I18n
 
 type TodoId = Int
 
--- Domain model for a Todo item
+-- | Domain model for a Todo item
 data TodoRow = TodoRow { todoId             :: !TodoId
                        , todoAction         :: !String
                        , todoCompleted      :: !Bool
@@ -47,11 +47,11 @@ instance ToRow TodoRow where
     toRow (TodoRow tid txt comp created subj obj indObj dirObj compAt) =
         toRow (tid, txt, comp, created, subj, obj, indObj, dirObj, compAt)
 
--- Initialize database schema and seed data
+-- | Initialize database schema and seed data
 initDB :: Connection -> IO ()
 initDB conn = initDBWithMessages conn I18n.defaultMessages
 
--- Initialize database with custom messages
+-- | Initialize database with custom messages
 initDBWithMessages :: Connection -> I18n.I18nMessages -> IO ()
 initDBWithMessages conn msgs = do
     createTodosTable
@@ -91,7 +91,7 @@ initDBWithMessages conn msgs = do
         insertTodo (I18n.add_hint samples) False
         insertTodo (I18n.toggle_hint samples) True
 
--- Create a new todo with action text only
+-- | Create a new todo with action text only
 createTodo :: Connection -> String -> IO TodoId
 createTodo conn text = do
     timeStr <- formatCurrentTime
@@ -104,7 +104,7 @@ createTodo conn text = do
          Nothing :: Maybe String)
     fromIntegral <$> lastInsertRowId conn
 
--- Create a new todo with all fields
+-- | Create a new todo with all fields
 createTodoWithFields :: Connection
                      -> String
                      -> Maybe String
@@ -120,14 +120,14 @@ createTodoWithFields conn text subj indObj dirObj = do
          Nothing :: Maybe String)
     fromIntegral <$> lastInsertRowId conn
 
--- Retrieve all todos ordered by ID descending
+-- | Retrieve all todos ordered by ID descending
 getAllTodos :: Connection -> IO [TodoRow]
 getAllTodos conn = query_ conn
     "SELECT id, text, completed, created_at, subject, object, \
     \indirect_object, direct_object, completed_at \
     \FROM todos ORDER BY id DESC"
 
--- Update all fields of a todo
+-- | Update all fields of a todo
 updateTodo :: Connection
            -> TodoId
            -> String
@@ -144,7 +144,7 @@ updateTodo conn tid text completed subj obj indObj dirObj compAt =
         \indirect_object = ?, direct_object = ?, completed_at = ? WHERE id = ?"
         (text, completed, subj, obj, indObj, dirObj, compAt, tid)
 
--- Update specific fields of a todo
+-- | Update specific fields of a todo
 updateTodoWithFields :: Connection
                      -> TodoId
                      -> String
@@ -158,11 +158,11 @@ updateTodoWithFields conn tid text subj indObj dirObj =
         \direct_object = ? WHERE id = ?"
         (text, subj, indObj, dirObj, tid)
 
--- Delete a todo by ID
+-- | Delete a todo by ID
 deleteTodo :: Connection -> TodoId -> IO ()
 deleteTodo conn tid = execute conn "DELETE FROM todos WHERE id = ?" (Only tid)
 
--- Toggle completion status of a todo
+-- | Toggle completion status of a todo
 toggleTodoComplete :: Connection -> TodoId -> IO ()
 toggleTodoComplete conn tid = do
     timeStr <- formatCurrentTime
@@ -171,6 +171,6 @@ toggleTodoComplete conn tid = do
         \completed_at = CASE WHEN completed = 0 THEN ? ELSE NULL END WHERE id = ?"
         (timeStr, tid)
 
--- Helper function to format current time
+-- | Helper function to format current time
 formatCurrentTime :: IO String
 formatCurrentTime = formatTime defaultTimeLocale "%Y-%m-%d %H:%M" <$> getCurrentTime
