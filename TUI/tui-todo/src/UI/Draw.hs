@@ -324,6 +324,7 @@ drawViewModeHelp s helpMsgs =
   let kb = s ^. keyBindings
       quitKeys = Config.getFirstKey (Config.quit kb) "q"
       addKeys = Config.getFirstKey (Config.add_todo kb) "a"
+      editKeys = Config.getFirstKey (Config.edit_todo kb) "e"
       toggleKeys = Config.getFirstKey (Config.toggle_complete kb) "t"
       deleteKeys = Config.getFirstKey (Config.delete_todo kb) "d"
       upKeys = Config.getFirstKey (Config.navigate_up kb) "k"
@@ -333,7 +334,9 @@ drawViewModeHelp s helpMsgs =
             addKeys
               <> ": "
               <> I18n.add helpMsgs
-              <> " | e: "
+              <> " | "
+              <> editKeys
+              <> ": "
               <> I18n.edit helpMsgs
               <> " | "
               <> toggleKeys

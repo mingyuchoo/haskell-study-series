@@ -10,3 +10,4 @@ keybindings:
   navigate_down: ['j', 'Down']
   save_input: ['Enter']
   cancel_input: ['Esc']
+  edit_todo: ['e']

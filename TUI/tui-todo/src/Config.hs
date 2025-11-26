@@ -47,7 +47,7 @@ import qualified I18n
 import           System.Directory (doesFileExist)
 
 -- | Key action types (Pure)
-data KeyAction = QuitApp | AddTodo | ToggleComplete | DeleteTodo | NavigateUp | NavigateDown | SaveInput | CancelInput
+data KeyAction = QuitApp | AddTodo | ToggleComplete | DeleteTodo | NavigateUp | NavigateDown | SaveInput | CancelInput | EditTodo
      deriving (Eq, Generic, Show)
 
 -- | Key bindings configuration (Pure)
@@ -59,6 +59,7 @@ data KeyBindings = KeyBindings { quit            :: ![String]
                                , navigate_down   :: ![String]
                                , save_input      :: ![String]
                                , cancel_input    :: ![String]
+                               , edit_todo       :: ![String]
                                }
      deriving (Generic, Show)
 
@@ -75,6 +76,7 @@ instance FromJSON KeyBindings where
         <*> kb .: "navigate_down"
         <*> kb .: "save_input"
         <*> kb .: "cancel_input"
+        <*> kb .: "edit_todo"
 
 -- | Default key bindings (Pure)
 defaultKeyBindings :: KeyBindings
@@ -87,7 +89,8 @@ defaultKeyBindings =
       navigate_up = ["Up", "k"],
       navigate_down = ["Down", "j"],
       save_input = ["Enter"],
-      cancel_input = ["Esc"]
+      cancel_input = ["Esc"],
+      edit_todo = ["e"]
     }
 
 -- | Load key bindings from configuration file(Effectful)
@@ -157,7 +160,8 @@ matchesKeyWithMods kb key mods = snd <$> find (keyMatches keyStr . fst) actions
         (navigate_up kb, NavigateUp),
         (navigate_down kb, NavigateDown),
         (save_input kb, SaveInput),
-        (cancel_input kb, CancelInput)
+        (cancel_input kb, CancelInput),
+        (edit_todo kb, EditTodo)
       ]
 
 -- | Get the first key from a list of keys, or return a default (Pure)

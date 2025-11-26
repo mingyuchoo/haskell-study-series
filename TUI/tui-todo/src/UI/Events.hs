@@ -74,7 +74,8 @@ handleViewMode (VtyEvent (V.EvKey key mods)) = do
     Just Config.DeleteTodo     -> deleteTodo
     Just Config.NavigateUp     -> zoom todoList <| handleListEvent (V.EvKey V.KUp [])
     Just Config.NavigateDown   -> zoom todoList <| handleListEvent (V.EvKey V.KDown [])
-    _                          -> handleEditKey key mods
+    Just Config.EditTodo       -> enterEditModeFromList
+    _                          -> pure ()
 handleViewMode _ = pure ()
 
 -- | InputMode로 전환 (Effectful)
@@ -145,9 +146,9 @@ deleteTodoFromDB s tid idx = do
   liftIO <| App.runAppM (App.AppEnv conn msgs) (App.deleteTodo tid)
   modify <| todoList %~ listRemove idx
 
--- | 편집 키 처리 (Effectful)
-handleEditKey :: V.Key -> [V.Modifier] -> EventM Name AppState ()
-handleEditKey (V.KChar 'e') [] = do
+-- | 리스트에서 선택된 항목 편집 모드로 전환 (Effectful)
+enterEditModeFromList :: EventM Name AppState ()
+enterEditModeFromList = do
   s <- get
   case listSelected (s ^. todoList) of
     Nothing -> pure ()
@@ -156,7 +157,6 @@ handleEditKey (V.KChar 'e') [] = do
       case todos Vec.!? idx of
         Nothing   -> pure ()
         Just todo -> enterEditMode todo idx
-handleEditKey _ _ = pure ()
 
 -- | EditMode로 전환 (Effectful)
 enterEditMode :: Todo -> Int -> EventM Name AppState ()

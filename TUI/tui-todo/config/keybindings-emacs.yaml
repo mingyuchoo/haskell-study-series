@@ -24,3 +24,6 @@ keybindings:
   
   # 입력 모드에서 취소 (Ctrl-G)
   cancel_input: ['C-g', 'Esc']
+  
+  # Todo 편집 (Ctrl-e for Edit)
+  edit_todo: ['C-e', 'e']
