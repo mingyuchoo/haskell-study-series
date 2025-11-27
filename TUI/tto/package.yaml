@@ -1,13 +1,13 @@
-name:                tui-todo
+name:                tto
 version:             0.1.0.0
-github:              mingyuchoo/tui-todo
+github:              mingyuchoo/tto
 license:             BSD-3-Clause
 author:              Mingyu Choo
 maintainer:          mingyuchoo@gmail.com
 copyright:           Mingyu Choo 2025
 synopsis:            Short description of your package
 category:            Web
-description:         Please see the README on GitHub at <https://github.com/mingyuchoo/tui-todo#readme>
+description:         Please see the README on GitHub at <https://github.com/mingyuchoo/tto#readme>
 
 extra-source-files:
 - README.md
@@ -56,7 +56,7 @@ library:
   source-dirs: src
 
 executables:
-  tui-todo-exe:
+  tto:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
@@ -66,10 +66,10 @@ executables:
     - -with-rtsopts=-N
     - -Wno-inconsistent-flags
     dependencies:
-    - tui-todo
+    - tto
 
 tests:
-  tui-todo-test:
+  tto-test:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
@@ -79,7 +79,7 @@ tests:
     - -with-rtsopts=-N
     - -Wno-inconsistent-flags
     dependencies:
-    - tui-todo
+    - tto
     - hspec
     - doctest
     - doctest-discover

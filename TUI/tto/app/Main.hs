@@ -33,7 +33,7 @@ import           System.IO              (BufferMode (NoBuffering),
 import qualified TodoService
 
 projectName :: String
-projectName = "tui-todo"
+projectName = "tto"
 
 getConfigDir :: IO FilePath
 getConfigDir = do

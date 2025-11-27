@@ -1,4 +1,4 @@
-# tui-todo
+# tto
 
 ## How to create a project
 

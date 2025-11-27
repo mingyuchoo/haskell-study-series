@@ -64,7 +64,7 @@ TUI Todo 애플리케이션의 아키텍처, 모듈 구조, 다국어 지원에 
 ### 애플리케이션 실행
 ```bash
 stack build
-stack exec tui-todo-exe
+stack exec tto
 ```
 
 ### 언어 변경
@@ -80,7 +80,7 @@ app = appWithLanguage I18n.Korean  -- 또는 I18n.English
 ## 프로젝트 구조
 
 ```
-tui-todo/
+tto/
 ├── app/
 │   └── Main.hs                    # 진입점
 ├── src/

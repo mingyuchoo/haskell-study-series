@@ -4,13 +4,13 @@ cabal-version: 2.2
 --
 -- see: https://github.com/sol/hpack
 
-name:           tui-todo
+name:           tto
 version:        0.1.0.0
 synopsis:       Short description of your package
-description:    Please see the README on GitHub at <https://github.com/mingyuchoo/tui-todo#readme>
+description:    Please see the README on GitHub at <https://github.com/mingyuchoo/tto#readme>
 category:       Web
-homepage:       https://github.com/mingyuchoo/tui-todo#readme
-bug-reports:    https://github.com/mingyuchoo/tui-todo/issues
+homepage:       https://github.com/mingyuchoo/tto#readme
+bug-reports:    https://github.com/mingyuchoo/tto/issues
 author:         Mingyu Choo
 maintainer:     mingyuchoo@gmail.com
 copyright:      Mingyu Choo 2025
@@ -23,7 +23,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/mingyuchoo/tui-todo
+  location: https://github.com/mingyuchoo/tto
 
 library
   exposed-modules:
@@ -40,9 +40,9 @@ library
       UI.Events
       UI.Types
   other-modules:
-      Paths_tui_todo
+      Paths_tto
   autogen-modules:
-      Paths_tui_todo
+      Paths_tto
   hs-source-dirs:
       src
   default-extensions:
@@ -78,12 +78,12 @@ library
     , yaml
   default-language: GHC2021
 
-executable tui-todo-exe
+executable tto
   main-is: Main.hs
   other-modules:
-      Paths_tui_todo
+      Paths_tto
   autogen-modules:
-      Paths_tui_todo
+      Paths_tto
   hs-source-dirs:
       app
   default-extensions:
@@ -114,13 +114,13 @@ executable tui-todo-exe
     , text
     , time
     , transformers
-    , tui-todo
+    , tto
     , vector
     , vty
     , yaml
   default-language: GHC2021
 
-test-suite tui-todo-test
+test-suite tto-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
@@ -131,9 +131,9 @@ test-suite tui-todo-test
       UI.AttributesSpec
       UI.EventsSpec
       UI.TypesSpec
-      Paths_tui_todo
+      Paths_tto
   autogen-modules:
-      Paths_tui_todo
+      Paths_tto
   hs-source-dirs:
       test
   default-extensions:
@@ -167,7 +167,7 @@ test-suite tui-todo-test
     , text
     , time
     , transformers
-    , tui-todo
+    , tto
     , vector
     , vty
     , yaml
