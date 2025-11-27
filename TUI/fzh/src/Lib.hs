@@ -16,7 +16,6 @@ import           Config             (KeyBindingConfig (..),
 
 import           Event              (handleEvent, loadSelectedFile)
 
-
 import           Types
 
 import           UI                 (drawUI)

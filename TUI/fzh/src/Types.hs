@@ -17,7 +17,6 @@ import           Config             (KeyBindingConfig (..),
 import qualified Data.Text          as T
 import qualified Data.Vector        as Vec
 
-
 import qualified Graphics.Vty       as V
 
 -- | 위젯 식별을 위한 이름 타입
