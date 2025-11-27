@@ -36,7 +36,7 @@ drawTodoList :: AppState -> Widget Name
 drawTodoList s =
     let msgs = s ^. i18nMessages
         uiMsgs = I18n.ui msgs
-    in borderWithLabel (str <| I18n.todos_title uiMsgs)<| padAll 1<| vLimit 20 $
+    in borderWithLabel (str <| I18n.todos_title uiMsgs)<| padAll 1<| vLimit 20 <|
         if null (s ^. todoList . listElementsL)
             then center <| str <| I18n.no_todos uiMsgs
             else renderList (drawTodo msgs) True (s ^. todoList)

@@ -91,7 +91,7 @@ transitionStatus env tid currentStatus = do
     updatedRows <- liftIO <| App.runAppM env TodoService.loadAllTodos
     case TodoService.findTodoById tid updatedRows of
         Just row ->
-            modify $
+            modify <|
                 todoList %~ listModify
                     (\t -> t
                         { _todoStatus = DB.todoStatus row
@@ -132,7 +132,7 @@ enterEditModeFromList = do
 -- | EditMode로 전환
 enterEditMode :: Todo -> Int -> EventM Name AppState ()
 enterEditMode todo idx = do
-    modify $
+    modify <|
         (mode .~ EditMode (todo ^. todoId))
         . (editingIndex .~ Just idx)
         . (focusedField .~ FocusAction)
@@ -178,7 +178,7 @@ createAndInsertTodo env action subject indirectObj directObj = do
     case newTodoRow of
         Just row -> do
             let newTodo = fromTodoRow row
-            modify $
+            modify <|
                 (todoList %~ listInsert 0 newTodo)
                 . (mode .~ ViewMode)
             clearEditors
@@ -225,7 +225,7 @@ saveEditedTodo = do
 
     case s ^. mode of
         EditMode tid -> do
-            when (not <| null action) $
+            when (not <| null action) <|
                 updateTodoInDB (s ^. appEnv) tid action (toMaybe subject) (toMaybe indirectObj) (toMaybe directObj)
             modify <| (mode .~ ViewMode) . (editingIndex .~ Nothing)
             clearEditors
@@ -242,7 +242,7 @@ updateTodoInDB env tid action subject indirectObj directObj = do
             case todos Vec.!? idx of
                 Nothing      -> pure ()
                 Just oldTodo -> do
-                    liftIO <| App.runAppM env $
+                    liftIO <| App.runAppM env <|
                         TodoService.updateTodoById tid action subject indirectObj directObj
 
                     let updatedTodo = oldTodo
@@ -292,7 +292,7 @@ trim = unwords . words
 -- | 에디터 초기화
 clearEditors :: EventM Name AppState ()
 clearEditors =
-    modify $
+    modify <|
         (actionEditor .~ E.editor ActionField (Just 1) "")
         . (subjectEditor .~ E.editor SubjectField (Just 1) "")
         . (indirectObjectEditor .~ E.editor IndirectObjectField (Just 1) "")
