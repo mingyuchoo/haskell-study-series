@@ -68,6 +68,7 @@ data FieldLabels = FieldLabels { id_label              :: !String
                                , direct_object_label   :: !String
                                , created_at_label      :: !String
                                , completed_at_label    :: !String
+                               , status_changed_label  :: !String
                                , auto_generated_label  :: !String
                                }
      deriving (Generic, Show)
@@ -176,6 +177,7 @@ defaultMessages =
             direct_object_label = "Direct Object",
             created_at_label = "Created At",
             completed_at_label = "Completed At",
+            status_changed_label = "Status Changed",
             auto_generated_label = "(auto-generated)"
           },
       status =

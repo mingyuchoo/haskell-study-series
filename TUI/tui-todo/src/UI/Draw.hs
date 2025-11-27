@@ -116,7 +116,8 @@ drawTodo msgs selected todo = withAttr selectAttr todoWidget
           showField (I18n.field_direct listMsgs) (todo ^. todoDirectObject)
         ]
 
-    statusChangedText = maybe "" (\t -> "Status: " <> t <> I18n.field_separator listMsgs) (todo ^. todoStatusChangedAt)
+    fieldMsgs = I18n.fields msgs
+    statusChangedText = maybe "" (\t -> I18n.status_changed_label fieldMsgs <> ": " <> t <> I18n.field_separator listMsgs) (todo ^. todoStatusChangedAt)
 
     timestampText = statusChangedText <> I18n.created_prefix listMsgs <> todo ^. todoCreatedAt
     timestampWidth = stringWidth timestampText + 2  -- 여백 포함
@@ -272,7 +273,7 @@ drawTodoDetail msgs uiMsgs todo _ =
       statusChangedInfo = case todo ^. todoStatusChangedAt of
         Just changeTime ->
           hBox
-            [ withAttr (attrName "detailLabel") <| str ("Status Changed: "),
+            [ withAttr (attrName "detailLabel") <| str (I18n.status_changed_label fieldMsgs <> ": "),
               withAttr (attrName "timestamp") <| str changeTime
             ]
         Nothing -> str ""
@@ -324,7 +325,7 @@ drawTodoDetailWithEditors s msgs _uiMsgs todo title =
       statusChangedInfo = case todo ^. todoStatusChangedAt of
         Just changeTime ->
           hBox
-            [ withAttr (attrName "detailLabel") <| str ("Status Changed: "),
+            [ withAttr (attrName "detailLabel") <| str (I18n.status_changed_label fieldMsgs <> ": "),
               withAttr (attrName "timestamp") <| str changeTime
             ]
         Nothing -> str ""

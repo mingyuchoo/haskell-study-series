@@ -21,6 +21,7 @@ fields:
   direct_object_label: "Direct Object"
   created_at_label: "Created At"
   completed_at_label: "Completed At"
+  status_changed_label: "Status Changed"
   auto_generated_label: "(auto-generated)"
 
 status:

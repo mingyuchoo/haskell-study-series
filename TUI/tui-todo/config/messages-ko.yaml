@@ -21,6 +21,7 @@ fields:
   direct_object_label: "작업대상"
   created_at_label: "생성 시각"
   completed_at_label: "완료 시각"
+  status_changed_label: "상태 변경"
   auto_generated_label: "(자동 생성)"
 
 status:
