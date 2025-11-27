@@ -1,7 +1,6 @@
 module Main
     ( main
     ) where
-
 import           Brick              (customMain)
 import           Brick.Widgets.List (listSelectedElement)
 
@@ -10,6 +9,8 @@ import           Config             (loadKeyBindingConfig)
 import           Control.Monad      (forM)
 
 import qualified Data.Text          as T
+
+import           Flow               ((<|))
 
 import           Lib                (AppState (..), app, buildVtyFromTty,
                                      configWithKeyBinding, initialState)
@@ -22,13 +23,13 @@ import           System.IO          (hIsTerminalDevice, stdin)
 listFilesRecursive :: FilePath -> IO [FilePath]
 listFilesRecursive dir = do
   entries <- listDirectory dir
-  paths <- forM entries $ \entry -> do
+  paths <- forM entries <| \entry -> do
     let path = dir </> entry
     isDir <- doesDirectoryExist path
     if isDir
       then listFilesRecursive path
       else return [path]
-  return $ concat paths
+  return <| concat paths
 
 -- 입력 소스 결정: stdin이 파이프면 stdin, 아니면 현재 디렉터리부터 재귀적으로 파일 목록
 getInputItems :: IO [T.Text]
@@ -38,11 +39,11 @@ getInputItems = do
     then do
       -- stdin이 터미널이면 현재 디렉터리부터 재귀적으로 파일 검색
       files <- listFilesRecursive "."
-      return $ map T.pack files
+      return <| map T.pack files
     else do
       -- stdin이 파이프면 stdin에서 읽기
       input <- getContents
-      return $ map T.pack $ lines input
+      return <| map T.pack <| lines input
 
 main :: IO ()
 main = do
@@ -62,5 +63,5 @@ main = do
       -- 선택된 아이템 출력
       let selected = listSelectedElement (stFilteredList finalState)
       case selected of
-        Just (_, item) -> putStrLn $ T.unpack item
+        Just (_, item) -> putStrLn <| T.unpack item
         Nothing        -> return ()

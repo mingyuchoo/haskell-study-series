@@ -18,7 +18,7 @@
 :set -XStandaloneKindSignatures
 
 -- HLINT
-:def hlint const . return $ ":! hlint \"src\""
+:def hlint const . return <| ":! hlint \"src\""
 
 -- HOOGLE
-:def hoogle \x -> return $ ":! hoogle --count=20 \"" ++ x ++ "\""
+:def hoogle \x -> return <| ":! hoogle --count=20 \"" ++ x ++ "\""

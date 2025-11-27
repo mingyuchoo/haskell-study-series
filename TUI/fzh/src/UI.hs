@@ -3,7 +3,6 @@
 module UI
     ( drawUI
     ) where
-
 import           Brick
 import           Brick.Widgets.Border
 import           Brick.Widgets.Center
@@ -13,6 +12,8 @@ import           Config               (KeyBindingStyle (..))
 
 import qualified Data.Text            as T
 import qualified Data.Vector          as Vec
+
+import           Flow                 ((<|))
 
 import           Types
 
@@ -25,11 +26,11 @@ drawUI st = [ui]
     ui  = vBox
       [ renderSearchBox cfg st
       , hBox
-          [ vLimit 20 $ hLimit (configMaxWidth cfg `div` 2) $ renderResultList cfg st
-          , vLimit 20 $ renderFilePreview cfg st
+          [ vLimit 20 <| hLimit (configMaxWidth cfg `div` 2) <| renderResultList cfg st
+          , vLimit 20 <| renderFilePreview cfg st
           ]
       , renderInfo cfg st
-      , padTop (Pad 1) $ hCenter $ renderKeyBindingHelp cfg
+      , padTop (Pad 1) <| hCenter <| renderKeyBindingHelp cfg
       ]
 
 -- | 검색 입력 박스 렌더링 (Pure)
@@ -59,7 +60,7 @@ renderInfo cfg st =
   hLimit (configMaxWidth cfg) $
   border $
   padLeftRight 1 $
-  txt $ "Items: " <> T.pack (show $ Vec.length $ listElements $ stFilteredList st)
+  txt <| "Items: " <> T.pack (show <| Vec.length <| listElements <| stFilteredList st)
 
 -- | 파일 미리보기 렌더링 (Pure)
 -- 선택된 파일의 내용을 오른쪽에 표시

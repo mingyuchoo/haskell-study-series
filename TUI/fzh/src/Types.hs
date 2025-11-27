@@ -8,7 +8,6 @@ module Types
     , defaultConfig
     , initialState
     ) where
-
 import           Brick              (on)
 import           Brick.Widgets.List (List, list)
 
@@ -17,6 +16,7 @@ import           Config             (KeyBindingConfig (..),
 
 import qualified Data.Text          as T
 import qualified Data.Vector        as Vec
+
 
 import qualified Graphics.Vty       as V
 

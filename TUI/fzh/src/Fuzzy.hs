@@ -2,10 +2,11 @@ module Fuzzy
     ( filterItems
     , fuzzyMatchScore
     ) where
-
 import           Data.List   (sortOn)
 import qualified Data.Text   as T
 import qualified Data.Vector as Vec
+
+import           Flow        ((<|))
 
 -- | 퍼지 매칭 점수 계산 함수 (Pure)
 -- 쿼리와 텍스트를 비교하여 매칭 점수 반환
@@ -30,7 +31,7 @@ pathDepth t = T.count "/" t + T.count "\\" t
 filterItems :: T.Text -> Vec.Vector T.Text -> Vec.Vector T.Text
 filterItems query items
   | T.null query = items
-  | otherwise    = Vec.fromList . map fst3 . sortOn snd3 $ scored
+  | otherwise    = Vec.fromList . map fst3 . sortOn snd3 <| scored
   where
     scored = [ (item, (score, pathDepth item), ())
              | item <- Vec.toList items

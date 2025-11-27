@@ -5,7 +5,6 @@ module Event
     ( handleEvent
     , loadSelectedFile
     ) where
-
 import           Brick
 import           Brick.Widgets.List
 
@@ -16,6 +15,8 @@ import           Control.Monad.IO.Class (liftIO)
 
 import qualified Data.Text              as T
 import qualified Data.Text.IO           as TIO
+
+import           Flow                   ((<|))
 
 import           Fuzzy                  (filterItems)
 
@@ -87,7 +88,7 @@ appendChar c st = updateSearchQuery (stSearchQuery st `T.snoc` c) st
 deleteChar :: AppState -> AppState
 deleteChar st
   | T.null (stSearchQuery st) = st
-  | otherwise = updateSearchQuery (T.init $ stSearchQuery st) st
+  | otherwise = updateSearchQuery (T.init <| stSearchQuery st) st
 
 -- | 검색어 전체 삭제 (Pure)
 -- 검색어를 빈 문자열로 초기화
@@ -110,10 +111,10 @@ loadSelectedFile :: EventM Name AppState ()
 loadSelectedFile = do
   st <- get
   case listSelectedElement (stFilteredList st) of
-    Nothing -> modify $ \s -> s { stFileContent = Nothing }
+    Nothing -> modify <| \s -> s { stFileContent = Nothing }
     Just (_, filePath) -> do
-      content <- liftIO $ loadFileContent (T.unpack filePath)
-      modify $ \s -> s { stFileContent = Just content }
+      content <- liftIO <| loadFileContent (T.unpack filePath)
+      modify <| \s -> s { stFileContent = Just content }
 
 -- | 파일 내용을 읽어오는 헬퍼 함수 (Effect)
 -- 파일 읽기 실패 시 에러 메시지 반환
@@ -122,4 +123,4 @@ loadFileContent path =
   (TIO.readFile path `catch` handleError)
   where
     handleError :: SomeException -> IO T.Text
-    handleError e = return $ T.pack $ "Error reading file: " ++ show e
+    handleError e = return <| T.pack <| "Error reading file: " <> show e

@@ -6,7 +6,6 @@ module Lib
     , app
     , buildVtyFromTty
     ) where
-
 import           Brick
 import           Brick.Widgets.List (listSelectedAttr)
 
@@ -16,6 +15,7 @@ import           Config             (KeyBindingConfig (..),
                                      loadKeyBindingConfig)
 
 import           Event              (handleEvent, loadSelectedFile)
+
 
 import           Types
 

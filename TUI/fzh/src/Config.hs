@@ -14,6 +14,8 @@ import qualified Data.Text        as T
 import           Data.Yaml        (FromJSON (..), decodeFileEither, withObject,
                                    (.!=), (.:?))
 
+import           Flow             ((<|))
+
 import           GHC.Generics     (Generic)
 
 import           System.Directory (XdgDirectory (..), doesFileExist,
@@ -28,7 +30,7 @@ data KeyBindingStyle = Emacs | Vim
 -- | KeyBindingStyle의 JSON 파싱을 위한 타입클래스 인스턴스
 -- 기본값으로 Emacs를 반환함
 instance FromJSON KeyBindingStyle where
-  parseJSON = withObject "KeyBindingStyle" $ \_ -> pure Emacs
+  parseJSON = withObject "KeyBindingStyle" <| \_ -> pure Emacs
 
 -- | 텍스트를 KeyBindingStyle로 변환하는 함수 (Pure)
 -- "vim" 또는 "vi"는 Vim으로, 그 외는 Emacs로 변환
@@ -53,7 +55,7 @@ data RawConfig = RawConfig { rawBindingStyle :: Text
 -- | RawConfig의 JSON 파싱을 위한 타입클래스 인스턴스
 -- "binding_style" 키가 없으면 기본값 "emacs" 사용
 instance FromJSON RawConfig where
-  parseJSON = withObject "RawConfig" $ \v ->
+  parseJSON = withObject "RawConfig" <| \v ->
     RawConfig <$> v .:? "binding_style" .!= "emacs"
 
 -- | 기본 키바인딩 설정값 (Pure)
@@ -68,7 +70,7 @@ defaultKeyBindingConfig = KeyBindingConfig
 getConfigPath :: IO FilePath
 getConfigPath = do
   xdgConfig <- getXdgDirectory XdgConfig "fzh"
-  return $ xdgConfig </> "keybindings.yaml"
+  return <| xdgConfig </> "keybindings.yaml"
 
 -- | 설정 파일을 로드하여 KeyBindingConfig를 반환 (Effect)
 -- 파일이 없거나 파싱 실패 시 기본 설정 반환
@@ -80,7 +82,7 @@ loadKeyBindingConfig = do
     then do
       result <- decodeFileEither configPath
       case result of
-        Right raw -> return $ KeyBindingConfig
+        Right raw -> return <| KeyBindingConfig
           { bindingStyle = parseBindingStyle (rawBindingStyle raw)
           }
         Left _ -> return defaultKeyBindingConfig
