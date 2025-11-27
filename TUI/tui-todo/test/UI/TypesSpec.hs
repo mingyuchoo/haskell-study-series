@@ -1,20 +1,11 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module UI.TypesSpec
-    ( spec
-    ) where
+module UI.TypesSpec ( spec ) where
 
-import qualified Brick.Widgets.Edit as E
-import           Brick.Widgets.List (list)
-import           Flow             ((<|))
 import qualified DB
-
-import qualified Data.Vector        as Vec
-
-import           Lens.Micro         ((%~), (&), (.~), (^.))
-
+import           Flow        ((<|))
+import           Lens.Micro  ((%~), (&), (.~), (^.))
 import           Test.Hspec
-
 import           UI.Types
 
 spec :: Spec
@@ -58,7 +49,7 @@ spec = do
       FocusIndirectObject `shouldNotBe` FocusDirectObject
 
   describe "Todo" <| do
-    let sampleTodo = Todo 1 "Test action" False "2024-01-01 10:00"
+    let sampleTodo = Todo 1 "Test action" "registered" "2024-01-01 10:00"
                           (Just "Subject") (Just "Object")
                           (Just "Indirect") (Just "Direct") Nothing
 
@@ -71,8 +62,8 @@ spec = do
     it "todoAction 렌즈가 올바르게 동작해야 함" <| do
       sampleTodo ^. todoAction `shouldBe` "Test action"
 
-    it "todoCompleted 렌즈가 올바르게 동작해야 함" <| do
-      sampleTodo ^. todoCompleted `shouldBe` False
+    it "todoStatus 렌즈가 올바르게 동작해야 함" <| do
+      sampleTodo ^. todoStatus `shouldBe` "registered"
 
     it "todoCreatedAt 렌즈가 올바르게 동작해야 함" <| do
       sampleTodo ^. todoCreatedAt `shouldBe` "2024-01-01 10:00"
@@ -89,37 +80,37 @@ spec = do
     it "todoDirectObject 렌즈가 올바르게 동작해야 함" <| do
       sampleTodo ^. todoDirectObject `shouldBe` Just "Direct"
 
-    it "todoCompletedAt 렌즈가 올바르게 동작해야 함" <| do
-      sampleTodo ^. todoCompletedAt `shouldBe` Nothing
+    it "todoStatusChangedAt 렌즈가 올바르게 동작해야 함" <| do
+      sampleTodo ^. todoStatusChangedAt `shouldBe` Nothing
 
     it "렌즈로 필드를 수정할 수 있어야 함" <| do
       let modified = sampleTodo & todoAction .~ "Modified"
       modified ^. todoAction `shouldBe` "Modified"
 
-    it "todoCompleted를 토글할 수 있어야 함" <| do
-      let toggled = sampleTodo & todoCompleted %~ not
-      toggled ^. todoCompleted `shouldBe` True
+    it "todoStatus를 변경할 수 있어야 함" <| do
+      let changed = sampleTodo & todoStatus .~ "completed"
+      changed ^. todoStatus `shouldBe` "completed"
 
   describe "fromTodoRow" <| do
     it "DB.TodoRow를 UI.Todo로 변환해야 함" <| do
-      let dbRow = DB.TodoRow 1 "Action" False "2024-01-01"
+      let dbRow = DB.TodoRow 1 "Action" "registered" "2024-01-01"
                              (Just "Sub") (Just "Obj")
                              (Just "Ind") (Just "Dir") Nothing
           uiTodo = fromTodoRow dbRow
       uiTodo ^. todoId `shouldBe` 1
       uiTodo ^. todoAction `shouldBe` "Action"
-      uiTodo ^. todoCompleted `shouldBe` False
+      uiTodo ^. todoStatus `shouldBe` "registered"
       uiTodo ^. todoCreatedAt `shouldBe` "2024-01-01"
       uiTodo ^. todoSubject `shouldBe` Just "Sub"
       uiTodo ^. todoObject `shouldBe` Just "Obj"
       uiTodo ^. todoIndirectObject `shouldBe` Just "Ind"
       uiTodo ^. todoDirectObject `shouldBe` Just "Dir"
-      uiTodo ^. todoCompletedAt `shouldBe` Nothing
+      uiTodo ^. todoStatusChangedAt `shouldBe` Nothing
 
     it "완료된 TodoRow를 변환해야 함" <| do
-      let dbRow = DB.TodoRow 2 "Done" True "2024-01-01"
+      let dbRow = DB.TodoRow 2 "Done" "completed" "2024-01-01"
                              Nothing Nothing Nothing Nothing
                              (Just "2024-01-02")
           uiTodo = fromTodoRow dbRow
-      uiTodo ^. todoCompleted `shouldBe` True
-      uiTodo ^. todoCompletedAt `shouldBe` Just "2024-01-02"
+      uiTodo ^. todoStatus `shouldBe` "completed"
+      uiTodo ^. todoStatusChangedAt `shouldBe` Just "2024-01-02"

@@ -1,18 +1,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 
--- | Application entry point and integration (MIXED: Pure + Effectful)
+-- | Application entry point and integration
 --
 -- This module integrates all components and defines the Brick application.
---
--- Pure components:
---   - app: Brick application definition (structure)
---   - Re-exports from UI.Types
---
--- Effectful components:
---   - appHandleEvent: References UI.Events.handleEvent (effectful)
---
--- Note: While the app definition itself is pure data, it references
--- effectful event handlers, making the overall application effectful.
 module Lib
     ( AppState (..)
     , FocusedField (..)
@@ -54,22 +44,21 @@ import           UI.Types
 
 -- | 애플리케이션 정의 (Pure)
 app :: App AppState e Name
-app =
-  App
-    { appDraw = drawUI,
-      appChooseCursor = \s locs -> case s ^. mode of
+app = App
+    { appDraw = drawUI
+    , appChooseCursor = \s locs -> case s ^. mode of
         InputMode -> case s ^. focusedField of
-          FocusAction         -> showCursorNamed ActionField locs
-          FocusSubject        -> showCursorNamed SubjectField locs
-          FocusIndirectObject -> showCursorNamed IndirectObjectField locs
-          FocusDirectObject   -> showCursorNamed DirectObjectField locs
+            FocusAction         -> showCursorNamed ActionField locs
+            FocusSubject        -> showCursorNamed SubjectField locs
+            FocusIndirectObject -> showCursorNamed IndirectObjectField locs
+            FocusDirectObject   -> showCursorNamed DirectObjectField locs
         EditMode _ -> case s ^. focusedField of
-          FocusAction         -> showCursorNamed ActionField locs
-          FocusSubject        -> showCursorNamed SubjectField locs
-          FocusIndirectObject -> showCursorNamed IndirectObjectField locs
-          FocusDirectObject   -> showCursorNamed DirectObjectField locs
-        ViewMode -> Nothing,
-      appHandleEvent = handleEvent,
-      appStartEvent = return (),
-      appAttrMap = const theMap
+            FocusAction         -> showCursorNamed ActionField locs
+            FocusSubject        -> showCursorNamed SubjectField locs
+            FocusIndirectObject -> showCursorNamed IndirectObjectField locs
+            FocusDirectObject   -> showCursorNamed DirectObjectField locs
+        ViewMode -> Nothing
+    , appHandleEvent = handleEvent
+    , appStartEvent = return ()
+    , appAttrMap = const theMap
     }

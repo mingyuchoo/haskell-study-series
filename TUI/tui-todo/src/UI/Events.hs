@@ -1,25 +1,9 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE FlexibleContexts #-}
 
--- | Event handling logic (MIXED: Pure + Effectful)
+-- | Event handling logic (Effectful via Tagless Final)
 --
 -- This module handles user input events and updates application state.
---
--- Pure functions:
---   - trim: String trimming utility
---
--- Effectful functions:
---   - handleEvent: Main event handler (EventM monad)
---   - handleViewMode: View mode event handling
---   - handleInputMode: Input mode event handling
---   - handleEditMode: Edit mode event handling
---   - All database operation wrappers
---
--- Effects:
---   - State modifications (EventM monad)
---   - Database operations (via liftIO and App module)
---   - UI state updates
---
--- Purity: MINIMAL - Only utility functions are pure
+-- Database operations are performed through the Tagless Final effect system.
 module UI.Events
     ( handleEvent
     , trim
@@ -41,7 +25,6 @@ import           Control.Monad.IO.Class (liftIO)
 
 import qualified DB
 
-import           Data.List              (find)
 import           Data.Maybe             (fromMaybe)
 import qualified Data.Vector            as Vec
 
@@ -51,292 +34,272 @@ import qualified Graphics.Vty           as V
 
 import           Lens.Micro             ((%~), (.~), (^.))
 
+import qualified TodoService
+
 import           UI.Types
 
 -- | 이벤트 처리 (Effectful)
 handleEvent :: BrickEvent Name e -> EventM Name AppState ()
 handleEvent ev = do
-  s <- get
-  case s ^. mode of
-    ViewMode   -> handleViewMode ev
-    InputMode  -> handleInputMode ev
-    EditMode _ -> handleEditMode ev
+    s <- get
+    case s ^. mode of
+        ViewMode   -> handleViewMode ev
+        InputMode  -> handleInputMode ev
+        EditMode _ -> handleEditMode ev
 
 -- | ViewMode 이벤트 처리 (Effectful)
 handleViewMode :: BrickEvent Name e -> EventM Name AppState ()
 handleViewMode (VtyEvent (V.EvKey key mods)) = do
-  s <- get
-  let kb = s ^. keyBindings
-  case Config.matchesKeyWithMods kb key mods of
-    Just Config.QuitApp        -> halt
-    Just Config.AddTodo        -> enterInputMode
-    Just Config.ToggleComplete -> cycleStatusForward
-    Just Config.DeleteTodo     -> deleteTodo
-    Just Config.NavigateUp     -> zoom todoList <| handleListEvent (V.EvKey V.KUp [])
-    Just Config.NavigateDown   -> zoom todoList <| handleListEvent (V.EvKey V.KDown [])
-    Just Config.EditTodo       -> enterEditModeFromList
-    _                          -> pure ()
+    s <- get
+    let kb = keyBindings s
+    case Config.matchesKeyWithMods kb key mods of
+        Just Config.QuitApp        -> halt
+        Just Config.AddTodo        -> enterInputMode
+        Just Config.ToggleComplete -> cycleStatusForward
+        Just Config.DeleteTodo     -> deleteSelectedTodo
+        Just Config.NavigateUp     -> zoom todoList <| handleListEvent (V.EvKey V.KUp [])
+        Just Config.NavigateDown   -> zoom todoList <| handleListEvent (V.EvKey V.KDown [])
+        Just Config.EditTodo       -> enterEditModeFromList
+        _                          -> pure ()
 handleViewMode _ = pure ()
 
 -- | InputMode로 전환 (Effectful)
 enterInputMode :: EventM Name AppState ()
 enterInputMode = do
-  modify <| mode .~ InputMode
-  modify <| focusedField .~ FocusAction
+    modify <| mode .~ InputMode
+    modify <| focusedField .~ FocusAction
 
--- | 상태를 순환 전환 (Registered -> InProgress -> Cancelled -> Completed -> Registered) (Effectful)
+-- | 상태를 순환 전환 (Tagless Final 사용)
 cycleStatusForward :: EventM Name AppState ()
 cycleStatusForward = do
-  s <- get
-  case listSelected (s ^. todoList) of
-    Nothing -> pure ()
-    Just idx -> do
-      let todos = s ^. todoList . listElementsL
-      case todos Vec.!? idx of
-        Nothing   -> pure ()
-        Just todo -> transitionStatus s (todo ^. todoId) (todo ^. todoStatus) idx
+    s <- get
+    case listSelected (s ^. todoList) of
+        Nothing -> pure ()
+        Just idx -> do
+            let todos = s ^. todoList . listElementsL
+            case todos Vec.!? idx of
+                Nothing   -> pure ()
+                Just todo -> transitionStatus (s ^. appEnv) (todo ^. todoId) (todo ^. todoStatus)
 
--- | 상태 전환 처리 (Effectful)
-transitionStatus :: AppState -> DB.TodoId -> String -> Int -> EventM Name AppState ()
-transitionStatus s tid currentStatus _idx = do
-  let conn = s ^. dbConn
-      msgs = s ^. i18nMessages
-      env = App.AppEnv conn msgs
+-- | 상태 전환 처리 (Tagless Final 사용)
+transitionStatus :: App.AppEnv -> DB.TodoId -> String -> EventM Name AppState ()
+transitionStatus env tid currentStatus = do
+    -- Tagless Final을 통한 상태 전환
+    liftIO <| App.runAppM env (TodoService.cycleStatusForward tid currentStatus)
 
-  -- 현재 상태에 따라 다음 상태로 전환: 등록 -> 진행 -> 취소 -> 완료 -> 등록
-  case currentStatus of
-    "registered"  -> liftIO <| App.runAppM env (App.transitionToInProgress tid)
-    "in_progress" -> liftIO <| App.runAppM env (App.transitionToCancelled tid)
-    "cancelled"   -> liftIO <| App.runAppM env (App.transitionToCompleted tid)
-    "completed"   -> liftIO <| App.runAppM env (App.transitionToRegistered tid)
-    _             -> pure ()
+    -- DB에서 업데이트된 데이터 가져오기
+    updatedRows <- liftIO <| App.runAppM env TodoService.loadAllTodos
+    case TodoService.findTodoById tid updatedRows of
+        Just row ->
+            modify $
+                todoList %~ listModify
+                    (\t -> t
+                        { _todoStatus = DB.todoStatus row
+                        , _todoStatusChangedAt = DB.todoStatusChangedAt row
+                        })
+        Nothing -> pure ()
 
-  -- DB에서 업데이트된 데이터 가져오기
-  updatedRows <- liftIO <| App.runAppM env App.loadTodos
-  case find (\row -> DB.todoId row == tid) updatedRows of
-    Just row ->
-      modify $
-        todoList
-          %~ listModify
-            ( \t ->
-                t
-                  { _todoStatus = DB.todoStatus row,
-                    _todoStatusChangedAt = DB.todoStatusChangedAt row
-                  }
-            )
-    Nothing -> pure ()
+-- | Todo 삭제 (Tagless Final 사용)
+deleteSelectedTodo :: EventM Name AppState ()
+deleteSelectedTodo = do
+    s <- get
+    case listSelected (s ^. todoList) of
+        Nothing -> pure ()
+        Just idx -> do
+            let todos = s ^. todoList . listElementsL
+            case todos Vec.!? idx of
+                Nothing   -> pure ()
+                Just todo -> deleteTodoFromDB (s ^. appEnv) (todo ^. todoId) idx
 
--- | Todo 삭제 (Effectful)
-deleteTodo :: EventM Name AppState ()
-deleteTodo = do
-  s <- get
-  case listSelected (s ^. todoList) of
-    Nothing -> pure ()
-    Just idx -> do
-      let todos = s ^. todoList . listElementsL
-      case todos Vec.!? idx of
-        Nothing   -> pure ()
-        Just todo -> deleteTodoFromDB s (todo ^. todoId) idx
+-- | DB에서 Todo 삭제 (Tagless Final 사용)
+deleteTodoFromDB :: App.AppEnv -> DB.TodoId -> Int -> EventM Name AppState ()
+deleteTodoFromDB env tid idx = do
+    liftIO <| App.runAppM env (TodoService.deleteTodoById tid)
+    modify <| todoList %~ listRemove idx
 
--- | DB에서 Todo 삭제 (Effectful)
-deleteTodoFromDB :: AppState -> DB.TodoId -> Int -> EventM Name AppState ()
-deleteTodoFromDB s tid idx = do
-  let conn = s ^. dbConn
-      msgs = s ^. i18nMessages
-  liftIO <| App.runAppM (App.AppEnv conn msgs) (App.deleteTodo tid)
-  modify <| todoList %~ listRemove idx
-
--- | 리스트에서 선택된 항목 편집 모드로 전환 (Effectful)
+-- | 리스트에서 선택된 항목 편집 모드로 전환
 enterEditModeFromList :: EventM Name AppState ()
 enterEditModeFromList = do
-  s <- get
-  case listSelected (s ^. todoList) of
-    Nothing -> pure ()
-    Just idx -> do
-      let todos = s ^. todoList . listElementsL
-      case todos Vec.!? idx of
-        Nothing   -> pure ()
-        Just todo -> enterEditMode todo idx
+    s <- get
+    case listSelected (s ^. todoList) of
+        Nothing -> pure ()
+        Just idx -> do
+            let todos = s ^. todoList . listElementsL
+            case todos Vec.!? idx of
+                Nothing   -> pure ()
+                Just todo -> enterEditMode todo idx
 
--- | EditMode로 전환 (Effectful)
+-- | EditMode로 전환
 enterEditMode :: Todo -> Int -> EventM Name AppState ()
 enterEditMode todo idx = do
-  modify $
-    (mode .~ EditMode (todo ^. todoId))
-      . (editingIndex .~ Just idx)
-      . (focusedField .~ FocusAction)
-      . (actionEditor .~ E.editor ActionField (Just 1) (todo ^. todoAction))
-      . (subjectEditor .~ E.editor SubjectField (Just 1) (fromMaybe "" <| todo ^. todoSubject))
-      . (indirectObjectEditor .~ E.editor IndirectObjectField (Just 1) (fromMaybe "" <| todo ^. todoIndirectObject))
-      . (directObjectEditor .~ E.editor DirectObjectField (Just 1) (fromMaybe "" <| todo ^. todoDirectObject))
+    modify $
+        (mode .~ EditMode (todo ^. todoId))
+        . (editingIndex .~ Just idx)
+        . (focusedField .~ FocusAction)
+        . (actionEditor .~ E.editor ActionField (Just 1) (todo ^. todoAction))
+        . (subjectEditor .~ E.editor SubjectField (Just 1) (fromMaybe "" <| todo ^. todoSubject))
+        . (indirectObjectEditor .~ E.editor IndirectObjectField (Just 1) (fromMaybe "" <| todo ^. todoIndirectObject))
+        . (directObjectEditor .~ E.editor DirectObjectField (Just 1) (fromMaybe "" <| todo ^. todoDirectObject))
 
--- | InputMode 이벤트 처리 (Effectful)
+-- | InputMode 이벤트 처리
 handleInputMode :: BrickEvent Name e -> EventM Name AppState ()
 handleInputMode (VtyEvent (V.EvKey key mods)) = do
-  s <- get
-  let kb = s ^. keyBindings
-  case Config.matchesKeyWithMods kb key mods of
-    Just Config.CancelInput -> clearEditorsAndReturnToView
-    Just Config.SaveInput   -> saveNewTodo
-    _                       -> handleInputModeKey key mods
+    s <- get
+    let kb = keyBindings s
+    case Config.matchesKeyWithMods kb key mods of
+        Just Config.CancelInput -> clearEditorsAndReturnToView
+        Just Config.SaveInput   -> saveNewTodo
+        _                       -> handleInputModeKey key mods
 handleInputMode ev@(VtyEvent _) = handleEditorEvent ev
 handleInputMode _ = return ()
 
--- | 새 Todo 저장 (Effectful)
+-- | 새 Todo 저장 (Tagless Final 사용)
 saveNewTodo :: EventM Name AppState ()
 saveNewTodo = do
-  s <- get
-  let action = trim <| unlines <| E.getEditContents (s ^. actionEditor)
-      subject = trim <| unlines <| E.getEditContents (s ^. subjectEditor)
-      indirectObj = trim <| unlines <| E.getEditContents (s ^. indirectObjectEditor)
-      directObj = trim <| unlines <| E.getEditContents (s ^. directObjectEditor)
-      toMaybe txt = if null txt then Nothing else Just txt
+    s <- get
+    let action = trim <| unlines <| E.getEditContents (s ^. actionEditor)
+        subject = trim <| unlines <| E.getEditContents (s ^. subjectEditor)
+        indirectObj = trim <| unlines <| E.getEditContents (s ^. indirectObjectEditor)
+        directObj = trim <| unlines <| E.getEditContents (s ^. directObjectEditor)
+        toMaybe txt = if null txt then Nothing else Just txt
 
-  if not (null action)
-    then createAndInsertTodo s action (toMaybe subject) (toMaybe indirectObj) (toMaybe directObj)
-    else modify <| mode .~ ViewMode
+    if not (null action)
+        then createAndInsertTodo (s ^. appEnv) action (toMaybe subject) (toMaybe indirectObj) (toMaybe directObj)
+        else modify <| mode .~ ViewMode
 
--- | Todo 생성 및 삽입 (Effectful)
-createAndInsertTodo :: AppState -> String -> Maybe String -> Maybe String -> Maybe String -> EventM Name AppState ()
-createAndInsertTodo s action subject indirectObj directObj = do
-  let conn = s ^. dbConn
-      msgs = s ^. i18nMessages
-      env = App.AppEnv conn msgs
-  newTodoRow <-
-    liftIO <| App.runAppM env <| do
-      tid <- App.createTodoWithFields action subject indirectObj directObj
-      rows <- App.loadTodos
-      pure <| find (\row -> DB.todoId row == tid) rows
+-- | Todo 생성 및 삽입 (Tagless Final 사용)
+createAndInsertTodo :: App.AppEnv -> String -> Maybe String -> Maybe String -> Maybe String -> EventM Name AppState ()
+createAndInsertTodo env action subject indirectObj directObj = do
+    newTodoRow <- liftIO <| App.runAppM env <| do
+        tid <- TodoService.createNewTodo action subject indirectObj directObj
+        rows <- TodoService.loadAllTodos
+        pure <| TodoService.findTodoById tid rows
 
-  case newTodoRow of
-    Just row -> do
-      let newTodo = fromTodoRow row
-      modify $
-        (todoList %~ listInsert 0 newTodo)
-          . (mode .~ ViewMode)
-      clearEditors
-    Nothing -> modify <| mode .~ ViewMode
+    case newTodoRow of
+        Just row -> do
+            let newTodo = fromTodoRow row
+            modify $
+                (todoList %~ listInsert 0 newTodo)
+                . (mode .~ ViewMode)
+            clearEditors
+        Nothing -> modify <| mode .~ ViewMode
 
--- | InputMode 키 처리 (Effectful)
+-- | InputMode 키 처리
 handleInputModeKey :: V.Key -> [V.Modifier] -> EventM Name AppState ()
 handleInputModeKey (V.KChar '\t') [] = cycleFieldFocus
 handleInputModeKey key mods = do
-  s <- get
-  case s ^. focusedField of
-    FocusAction         -> zoom actionEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
-    FocusSubject        -> zoom subjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
-    FocusIndirectObject -> zoom indirectObjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
-    FocusDirectObject   -> zoom directObjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
+    s <- get
+    case s ^. focusedField of
+        FocusAction         -> zoom actionEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
+        FocusSubject        -> zoom subjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
+        FocusIndirectObject -> zoom indirectObjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
+        FocusDirectObject   -> zoom directObjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
 
--- | EditMode 이벤트 처리 (Effectful)
+-- | EditMode 이벤트 처리
 handleEditMode :: BrickEvent Name e -> EventM Name AppState ()
 handleEditMode (VtyEvent (V.EvKey key mods)) = do
-  s <- get
-  let kb = s ^. keyBindings
-  case Config.matchesKeyWithMods kb key mods of
-    Just Config.CancelInput -> cancelEdit
-    Just Config.SaveInput   -> saveEditedTodo
-    _                       -> handleEditModeKey key mods
+    s <- get
+    let kb = keyBindings s
+    case Config.matchesKeyWithMods kb key mods of
+        Just Config.CancelInput -> cancelEdit
+        Just Config.SaveInput   -> saveEditedTodo
+        _                       -> handleEditModeKey key mods
 handleEditMode ev@(VtyEvent _) = handleEditorEvent ev
 handleEditMode _ = return ()
 
--- | 편집 취소 (Effectful)
+-- | 편집 취소
 cancelEdit :: EventM Name AppState ()
 cancelEdit = do
-  modify <| (mode .~ ViewMode) . (editingIndex .~ Nothing)
-  clearEditors
+    modify <| (mode .~ ViewMode) . (editingIndex .~ Nothing)
+    clearEditors
 
--- | 편집된 Todo 저장 (Effectful)
+-- | 편집된 Todo 저장 (Tagless Final 사용)
 saveEditedTodo :: EventM Name AppState ()
 saveEditedTodo = do
-  s <- get
-  let action = trim <| unlines <| E.getEditContents (s ^. actionEditor)
-      subject = trim <| unlines <| E.getEditContents (s ^. subjectEditor)
-      indirectObj = trim <| unlines <| E.getEditContents (s ^. indirectObjectEditor)
-      directObj = trim <| unlines <| E.getEditContents (s ^. directObjectEditor)
-      toMaybe txt = if null txt then Nothing else Just txt
+    s <- get
+    let action = trim <| unlines <| E.getEditContents (s ^. actionEditor)
+        subject = trim <| unlines <| E.getEditContents (s ^. subjectEditor)
+        indirectObj = trim <| unlines <| E.getEditContents (s ^. indirectObjectEditor)
+        directObj = trim <| unlines <| E.getEditContents (s ^. directObjectEditor)
+        toMaybe txt = if null txt then Nothing else Just txt
 
-  case s ^. mode of
-    EditMode tid -> do
-      when (not <| null action) $
-        updateTodoInDB s tid action (toMaybe subject) (toMaybe indirectObj) (toMaybe directObj)
-      modify <| (mode .~ ViewMode) . (editingIndex .~ Nothing)
-      clearEditors
-    _ -> pure ()
+    case s ^. mode of
+        EditMode tid -> do
+            when (not <| null action) $
+                updateTodoInDB (s ^. appEnv) tid action (toMaybe subject) (toMaybe indirectObj) (toMaybe directObj)
+            modify <| (mode .~ ViewMode) . (editingIndex .~ Nothing)
+            clearEditors
+        _ -> pure ()
 
--- | DB에서 Todo 업데이트 (Effectful)
-updateTodoInDB :: AppState -> DB.TodoId -> String -> Maybe String -> Maybe String -> Maybe String -> EventM Name AppState ()
-updateTodoInDB s tid action subject indirectObj directObj = do
-  let conn = s ^. dbConn
-      msgs = s ^. i18nMessages
-      env = App.AppEnv conn msgs
-  case s ^. editingIndex of
-    Nothing -> pure ()
-    Just idx -> do
-      let todos = s ^. todoList . listElementsL
-      case todos Vec.!? idx of
-        Nothing      -> pure ()
-        Just oldTodo -> do
-          liftIO $
-            App.runAppM env $
-              App.updateTodo tid action subject indirectObj directObj
+-- | DB에서 Todo 업데이트 (Tagless Final 사용)
+updateTodoInDB :: App.AppEnv -> DB.TodoId -> String -> Maybe String -> Maybe String -> Maybe String -> EventM Name AppState ()
+updateTodoInDB env tid action subject indirectObj directObj = do
+    s <- get
+    case s ^. editingIndex of
+        Nothing -> pure ()
+        Just idx -> do
+            let todos = s ^. todoList . listElementsL
+            case todos Vec.!? idx of
+                Nothing      -> pure ()
+                Just oldTodo -> do
+                    liftIO <| App.runAppM env $
+                        TodoService.updateTodoById tid action subject indirectObj directObj
 
-          let updatedTodo =
-                oldTodo
-                  { _todoAction = action,
-                    _todoSubject = subject,
-                    _todoIndirectObject = indirectObj,
-                    _todoDirectObject = directObj
-                  }
-          modify <| todoList %~ listModify (const updatedTodo)
+                    let updatedTodo = oldTodo
+                            { _todoAction = action
+                            , _todoSubject = subject
+                            , _todoIndirectObject = indirectObj
+                            , _todoDirectObject = directObj
+                            }
+                    modify <| todoList %~ listModify (const updatedTodo)
 
--- | EditMode 키 처리 (Effectful)
+-- | EditMode 키 처리
 handleEditModeKey :: V.Key -> [V.Modifier] -> EventM Name AppState ()
 handleEditModeKey (V.KChar '\t') [] = cycleFieldFocus
 handleEditModeKey key mods = do
-  s <- get
-  case s ^. focusedField of
-    FocusAction         -> zoom actionEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
-    FocusSubject        -> zoom subjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
-    FocusIndirectObject -> zoom indirectObjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
-    FocusDirectObject   -> zoom directObjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
+    s <- get
+    case s ^. focusedField of
+        FocusAction         -> zoom actionEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
+        FocusSubject        -> zoom subjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
+        FocusIndirectObject -> zoom indirectObjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
+        FocusDirectObject   -> zoom directObjectEditor <| E.handleEditorEvent (VtyEvent (V.EvKey key mods))
 
--- | 필드 포커스 순환 (Effectful)
+-- | 필드 포커스 순환
 cycleFieldFocus :: EventM Name AppState ()
 cycleFieldFocus = do
-  s <- get
-  let nextField = case s ^. focusedField of
-        FocusAction         -> FocusSubject
-        FocusSubject        -> FocusIndirectObject
-        FocusIndirectObject -> FocusDirectObject
-        FocusDirectObject   -> FocusAction
-  modify <| focusedField .~ nextField
+    s <- get
+    let nextField = case s ^. focusedField of
+            FocusAction         -> FocusSubject
+            FocusSubject        -> FocusIndirectObject
+            FocusIndirectObject -> FocusDirectObject
+            FocusDirectObject   -> FocusAction
+    modify <| focusedField .~ nextField
 
--- | 에디터 이벤트 처리 (Effectful)
+-- | 에디터 이벤트 처리
 handleEditorEvent :: BrickEvent Name e -> EventM Name AppState ()
 handleEditorEvent ev = do
-  s <- get
-  case s ^. focusedField of
-    FocusAction         -> zoom actionEditor <| E.handleEditorEvent ev
-    FocusSubject        -> zoom subjectEditor <| E.handleEditorEvent ev
-    FocusIndirectObject -> zoom indirectObjectEditor <| E.handleEditorEvent ev
-    FocusDirectObject   -> zoom directObjectEditor <| E.handleEditorEvent ev
+    s <- get
+    case s ^. focusedField of
+        FocusAction         -> zoom actionEditor <| E.handleEditorEvent ev
+        FocusSubject        -> zoom subjectEditor <| E.handleEditorEvent ev
+        FocusIndirectObject -> zoom indirectObjectEditor <| E.handleEditorEvent ev
+        FocusDirectObject   -> zoom directObjectEditor <| E.handleEditorEvent ev
 
 -- | Utility: 문자열 trim (Pure)
 trim :: String -> String
 trim = unwords . words
 
--- | 에디터 초기화 (Effectful)
+-- | 에디터 초기화
 clearEditors :: EventM Name AppState ()
 clearEditors =
-  modify $
-    (actionEditor .~ E.editor ActionField (Just 1) "")
-      . (subjectEditor .~ E.editor SubjectField (Just 1) "")
-      . (indirectObjectEditor .~ E.editor IndirectObjectField (Just 1) "")
-      . (directObjectEditor .~ E.editor DirectObjectField (Just 1) "")
+    modify $
+        (actionEditor .~ E.editor ActionField (Just 1) "")
+        . (subjectEditor .~ E.editor SubjectField (Just 1) "")
+        . (indirectObjectEditor .~ E.editor IndirectObjectField (Just 1) "")
+        . (directObjectEditor .~ E.editor DirectObjectField (Just 1) "")
 
--- | 에디터 초기화 및 ViewMode로 복귀 (Effectful)
+-- | 에디터 초기화 및 ViewMode로 복귀
 clearEditorsAndReturnToView :: EventM Name AppState ()
 clearEditorsAndReturnToView = do
-  modify <| mode .~ ViewMode
-  clearEditors
+    modify <| mode .~ ViewMode
+    clearEditors

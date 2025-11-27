@@ -30,64 +30,65 @@ import           System.FilePath        ((</>))
 import           System.IO              (BufferMode (NoBuffering),
                                          hSetBuffering, stdout)
 
--- | Project name for config directory
+import qualified TodoService
+
 projectName :: String
 projectName = "tui-todo"
 
--- | Get the config directory path in $HOME/.config/tui-todo/
 getConfigDir :: IO FilePath
 getConfigDir = do
-  homeDir <- getHomeDirectory
-  let configDir = homeDir </> ".config" </> projectName
-  createDirectoryIfMissing True configDir
-  return configDir
+    homeDir <- getHomeDirectory
+    let configDir = homeDir </> ".config" </> projectName
+    createDirectoryIfMissing True configDir
+    return configDir
 
--- | Get the database file path in $HOME/.config/tui-todo/
 getDBPath :: IO FilePath
 getDBPath = do
-  configDir <- getConfigDir
-  return <| configDir </> "todos.db"
+    configDir <- getConfigDir
+    return <| configDir </> "todos.db"
 
--- | Get the keybindings config file path in $HOME/.config/tui-todo/
 getKeyBindingsPath :: IO FilePath
 getKeyBindingsPath = do
-  configDir <- getConfigDir
-  return <| configDir </> "keybindings.yaml"
+    configDir <- getConfigDir
+    return <| configDir </> "keybindings.yaml"
 
--- |
 main :: IO ()
 main = do
-  hSetBuffering stdout NoBuffering
-  appWithLanguage I18n.Korean
+    hSetBuffering stdout NoBuffering
+    appWithLanguage I18n.Korean
 
--- |
 appWithLanguage :: I18n.Language -> IO ()
 appWithLanguage lang = do
-  msgs <- I18n.loadMessages lang
-  kbPath <- getKeyBindingsPath
-  kb <- Config.loadKeyBindingsWithMessages kbPath msgs
+    msgs <- I18n.loadMessages lang
+    kbPath <- getKeyBindingsPath
+    kb <- Config.loadKeyBindingsWithMessages kbPath msgs
 
-  dbPath <- getDBPath
-  conn <- open dbPath
-  DB.initDBWithMessages conn msgs
+    dbPath <- getDBPath
+    conn <- open dbPath
+    DB.initDBWithMessages conn msgs
 
-  let env = App.AppEnv conn msgs
-  todoRows <- App.runAppM env App.loadTodos
+    -- Create AppEnv with all dependencies
+    let env = App.AppEnv
+            { App.envConnection = conn
+            , App.envMessages = msgs
+            , App.envKeyBindings = kb
+            }
 
-  let initialTodos = Vec.fromList <| map fromTodoRow todoRows
-      initialState =
-        AppState
-          { _todoList = list TodoList initialTodos 1,
-            _actionEditor = E.editor ActionField (Just 1) "",
-            _subjectEditor = E.editor SubjectField (Just 1) "",
-            _indirectObjectEditor = E.editor IndirectObjectField (Just 1) "",
-            _directObjectEditor = E.editor DirectObjectField (Just 1) "",
-            _focusedField = FocusAction,
-            _mode = ViewMode,
-            _dbConn = conn,
-            _keyBindings = kb,
-            _editingIndex = Nothing,
-            _i18nMessages = msgs
-          }
+    -- Load todos using Tagless Final
+    todoRows <- App.runAppM env TodoService.loadAllTodos
 
-  void <| defaultMain app initialState
+    let initialTodos = Vec.fromList <| map fromTodoRow todoRows
+        initialState = AppState
+            { _todoList = list TodoList initialTodos 1
+            , _actionEditor = E.editor ActionField (Just 1) ""
+            , _subjectEditor = E.editor SubjectField (Just 1) ""
+            , _indirectObjectEditor = E.editor IndirectObjectField (Just 1) ""
+            , _directObjectEditor = E.editor DirectObjectField (Just 1) ""
+            , _focusedField = FocusAction
+            , _mode = ViewMode
+            , _appEnv = env
+            , _editingIndex = Nothing
+            , _i18nMessages = msgs
+            }
+
+    void <| defaultMain app initialState

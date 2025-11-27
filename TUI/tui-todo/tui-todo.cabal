@@ -30,8 +30,10 @@ library
       App
       Config
       DB
+      Effects
       I18n
       Lib
+      TodoService
       TodoStatus
       UI.Attributes
       UI.Draw
