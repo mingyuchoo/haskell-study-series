@@ -96,7 +96,7 @@ executable tto-exe
       OverloadedStrings
       TemplateHaskell
       TypeApplications
-  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N -Wno-inconsistent-flags
+  ghc-options: -Wall -O2 -haddock -static -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
     , base >=4.18 && <5
@@ -146,7 +146,7 @@ test-suite tto-test
       OverloadedStrings
       TemplateHaskell
       TypeApplications
-  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N -Wno-inconsistent-flags
+  ghc-options: -Wall -O2 -haddock -static -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
     , base >=4.18 && <5

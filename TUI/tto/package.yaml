@@ -60,11 +60,10 @@ executables:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
-    - -dynamic
+    - -static
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
-    - -Wno-inconsistent-flags
     dependencies:
     - tto
 
@@ -73,11 +72,10 @@ tests:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
-    - -dynamic
+    - -static
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
-    - -Wno-inconsistent-flags
     dependencies:
     - tto
     - hspec
