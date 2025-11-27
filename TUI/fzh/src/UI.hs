@@ -37,17 +37,17 @@ drawUI st = [ui]
 -- 현재 검색어와 커서(_) 표시
 renderSearchBox :: AppConfig -> AppState -> Widget Name
 renderSearchBox cfg st =
-  hLimit (configMaxWidth cfg) $
-  borderWithLabel (txt "Search") $
-  padLeftRight 1 $
+  hLimit (configMaxWidth cfg) <|
+  borderWithLabel (txt "Search") <|
+  padLeftRight 1 <|
   txt (stSearchQuery st <> "_")
 
 -- | 검색 결과 리스트 렌더링 (Pure)
 -- 필터링된 아이템 목록을 스크롤 가능한 리스트로 표시
 renderResultList :: AppConfig -> AppState -> Widget Name
 renderResultList cfg st =
-  hLimit (configMaxWidth cfg) $
-  borderWithLabel (txt "Results") $
+  hLimit (configMaxWidth cfg) <|
+  borderWithLabel (txt "Results") <|
   renderList drawItem True (stFilteredList st)
   where
     -- | 개별 아이템 렌더링 (Pure)
@@ -57,17 +57,17 @@ renderResultList cfg st =
 -- 현재 표시된 아이템 개수 표시
 renderInfo :: AppConfig -> AppState -> Widget Name
 renderInfo cfg st =
-  hLimit (configMaxWidth cfg) $
-  border $
-  padLeftRight 1 $
+  hLimit (configMaxWidth cfg) <|
+  border <|
+  padLeftRight 1 <|
   txt <| "Items: " <> T.pack (show <| Vec.length <| listElements <| stFilteredList st)
 
 -- | 파일 미리보기 렌더링 (Pure)
 -- 선택된 파일의 내용을 오른쪽에 표시
 renderFilePreview :: AppConfig -> AppState -> Widget Name
 renderFilePreview _cfg st =
-  borderWithLabel (txt "Preview") $
-  padLeftRight 1 $
+  borderWithLabel (txt "Preview") <|
+  padLeftRight 1 <|
   case stFileContent st of
     Nothing      -> txt "No file selected"
     Just content -> txtWrap content
