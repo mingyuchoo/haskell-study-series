@@ -78,7 +78,7 @@ library
     , yaml
   default-language: GHC2021
 
-executable tto
+executable tto-exe
   main-is: Main.hs
   other-modules:
       Paths_tto
