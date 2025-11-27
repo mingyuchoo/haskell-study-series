@@ -9,6 +9,10 @@ extra-deps: []
 flags: {}
 
 notify-if-nix-on-path: false
+
+docker:
+  enable: false
+
 #nix:
 #  enable: true
 #  pure: true
