@@ -3,18 +3,23 @@
 
 module Event
     ( handleEvent
+    , loadSelectedFile
     ) where
 
 import           Brick
 import           Brick.Widgets.List
 
-import           Config             (KeyBindingStyle (..))
+import           Config                 (KeyBindingStyle (..))
 
-import qualified Data.Text          as T
+import           Control.Exception      (SomeException, catch)
+import           Control.Monad.IO.Class (liftIO)
 
-import           Fuzzy              (filterItems)
+import qualified Data.Text              as T
+import qualified Data.Text.IO           as TIO
 
-import qualified Graphics.Vty       as V
+import           Fuzzy                  (filterItems)
+
+import qualified Graphics.Vty           as V
 
 import           Types
 
@@ -34,15 +39,15 @@ handleEmacsEvent :: V.Event -> EventM Name AppState ()
 handleEmacsEvent = \case
   V.EvKey V.KEsc []               -> halt
   V.EvKey V.KEnter []             -> halt
-  V.EvKey V.KUp []                -> modify moveUp
-  V.EvKey V.KDown []              -> modify moveDown
-  V.EvKey (V.KChar 'p') [V.MCtrl] -> modify moveUp
-  V.EvKey (V.KChar 'n') [V.MCtrl] -> modify moveDown
+  V.EvKey V.KUp []                -> modify moveUp >> loadSelectedFile
+  V.EvKey V.KDown []              -> modify moveDown >> loadSelectedFile
+  V.EvKey (V.KChar 'p') [V.MCtrl] -> modify moveUp >> loadSelectedFile
+  V.EvKey (V.KChar 'n') [V.MCtrl] -> modify moveDown >> loadSelectedFile
   V.EvKey (V.KChar 'g') [V.MCtrl] -> halt
-  V.EvKey (V.KChar 'u') [V.MCtrl] -> modify clearQuery
-  V.EvKey (V.KChar 'h') [V.MCtrl] -> modify deleteChar
-  V.EvKey (V.KChar c) []          -> modify (appendChar c)
-  V.EvKey V.KBS []                -> modify deleteChar
+  V.EvKey (V.KChar 'u') [V.MCtrl] -> modify clearQuery >> loadSelectedFile
+  V.EvKey (V.KChar 'h') [V.MCtrl] -> modify deleteChar >> loadSelectedFile
+  V.EvKey (V.KChar c) []          -> modify (appendChar c) >> loadSelectedFile
+  V.EvKey V.KBS []                -> modify deleteChar >> loadSelectedFile
   _                               -> pure ()
 
 -- | Vim 스타일 키 이벤트 핸들러 (Effect)
@@ -51,15 +56,15 @@ handleVimEvent :: V.Event -> EventM Name AppState ()
 handleVimEvent = \case
   V.EvKey V.KEsc []               -> halt
   V.EvKey V.KEnter []             -> halt
-  V.EvKey V.KUp []                -> modify moveUp
-  V.EvKey V.KDown []              -> modify moveDown
-  V.EvKey (V.KChar 'k') [V.MCtrl] -> modify moveUp
-  V.EvKey (V.KChar 'j') [V.MCtrl] -> modify moveDown
+  V.EvKey V.KUp []                -> modify moveUp >> loadSelectedFile
+  V.EvKey V.KDown []              -> modify moveDown >> loadSelectedFile
+  V.EvKey (V.KChar 'k') [V.MCtrl] -> modify moveUp >> loadSelectedFile
+  V.EvKey (V.KChar 'j') [V.MCtrl] -> modify moveDown >> loadSelectedFile
   V.EvKey (V.KChar 'c') [V.MCtrl] -> halt
-  V.EvKey (V.KChar 'u') [V.MCtrl] -> modify clearQuery
-  V.EvKey (V.KChar 'w') [V.MCtrl] -> modify deleteChar
-  V.EvKey (V.KChar c) []          -> modify (appendChar c)
-  V.EvKey V.KBS []                -> modify deleteChar
+  V.EvKey (V.KChar 'u') [V.MCtrl] -> modify clearQuery >> loadSelectedFile
+  V.EvKey (V.KChar 'w') [V.MCtrl] -> modify deleteChar >> loadSelectedFile
+  V.EvKey (V.KChar c) []          -> modify (appendChar c) >> loadSelectedFile
+  V.EvKey V.KBS []                -> modify deleteChar >> loadSelectedFile
   _                               -> pure ()
 
 -- 상태 변경 함수들
@@ -98,3 +103,23 @@ moveUp st = st { stFilteredList = listMoveUp (stFilteredList st) }
 -- 선택 항목을 한 칸 아래로 이동
 moveDown :: AppState -> AppState
 moveDown st = st { stFilteredList = listMoveDown (stFilteredList st) }
+
+-- | 선택된 파일의 내용을 로드 (Effect)
+-- 파일을 읽어서 상태에 저장, 에러 발생 시 에러 메시지 표시
+loadSelectedFile :: EventM Name AppState ()
+loadSelectedFile = do
+  st <- get
+  case listSelectedElement (stFilteredList st) of
+    Nothing -> modify $ \s -> s { stFileContent = Nothing }
+    Just (_, filePath) -> do
+      content <- liftIO $ loadFileContent (T.unpack filePath)
+      modify $ \s -> s { stFileContent = Just content }
+
+-- | 파일 내용을 읽어오는 헬퍼 함수 (Effect)
+-- 파일 읽기 실패 시 에러 메시지 반환
+loadFileContent :: FilePath -> IO T.Text
+loadFileContent path =
+  (TIO.readFile path `catch` handleError)
+  where
+    handleError :: SomeException -> IO T.Text
+    handleError e = return $ T.pack $ "Error reading file: " ++ show e

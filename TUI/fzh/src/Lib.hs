@@ -15,7 +15,7 @@ import           Config             (KeyBindingConfig (..),
                                      defaultKeyBindingConfig,
                                      loadKeyBindingConfig)
 
-import           Event              (handleEvent)
+import           Event              (handleEvent, loadSelectedFile)
 
 import           Types
 
@@ -30,7 +30,7 @@ app = App
   { appDraw         = drawUI
   , appChooseCursor = neverShowCursor
   , appHandleEvent  = handleEvent
-  , appStartEvent   = pure ()
+  , appStartEvent   = loadSelectedFile
   , appAttrMap      = mkAttrMap
   }
 

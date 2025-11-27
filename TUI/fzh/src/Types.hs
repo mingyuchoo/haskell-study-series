@@ -47,6 +47,8 @@ data AppState = AppState { stItems        :: !(Vec.Vector T.Text)
                            -- ^ 현재 검색어
                          , stConfig       :: !AppConfig
                            -- ^ 앱 설정
+                         , stFileContent  :: !(Maybe T.Text)
+                           -- ^ 선택된 파일의 내용
                          }
 
 -- | 기본 앱 설정값 (Pure)
@@ -76,4 +78,5 @@ initialState items cfg =
        , stFilteredList = list ItemList itemVec 1
        , stSearchQuery  = ""
        , stConfig       = cfg
+       , stFileContent  = Nothing
        }

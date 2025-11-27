@@ -22,9 +22,12 @@ drawUI :: AppState -> [Widget Name]
 drawUI st = [ui]
   where
     cfg = stConfig st
-    ui  = vCenter $ vBox
+    ui  = vBox
       [ renderSearchBox cfg st
-      , renderResultList cfg st
+      , hBox
+          [ vLimit 20 $ hLimit (configMaxWidth cfg `div` 2) $ renderResultList cfg st
+          , vLimit 20 $ renderFilePreview cfg st
+          ]
       , renderInfo cfg st
       , padTop (Pad 1) $ hCenter $ renderKeyBindingHelp cfg
       ]
@@ -57,6 +60,16 @@ renderInfo cfg st =
   border $
   padLeftRight 1 $
   txt $ "Items: " <> T.pack (show $ Vec.length $ listElements $ stFilteredList st)
+
+-- | 파일 미리보기 렌더링 (Pure)
+-- 선택된 파일의 내용을 오른쪽에 표시
+renderFilePreview :: AppConfig -> AppState -> Widget Name
+renderFilePreview _cfg st =
+  borderWithLabel (txt "Preview") $
+  padLeftRight 1 $
+  case stFileContent st of
+    Nothing      -> txt "No file selected"
+    Just content -> txtWrap content
 
 -- | 키바인딩 도움말 렌더링 (Pure)
 -- 현재 키바인딩 스타일에 맞는 단축키 안내 표시
