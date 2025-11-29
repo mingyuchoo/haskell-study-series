@@ -6,21 +6,29 @@ module Main
     where
 
 import           Control.Lens
+import           Control.Monad          (when)
+import           Control.Monad.IO.Class
 
 import           Data.Default
-import           Data.Text    (Text)
+import           Data.Text              (Text)
 
 import           Monomer
-import qualified Monomer.Lens as L
+import qualified Monomer.Lens           as L
 
-import           System.IO    (BufferMode (NoBuffering), hSetBuffering, stdout)
+import           System.IO              (BufferMode (NoBuffering),
+                                         hSetBuffering, stdout)
 
 import           TextShow
+
+import           TodoLogic
+
+import           TodoRepo
+
+import           TodoRepoSqlite
 
 import           TodoTypes
 
 type TodoWenv = WidgetEnv TodoModel TodoEvt
-
 type TodoNode = WidgetNode TodoModel TodoEvt
 
 -- UI 빌드 (화면 구성)
@@ -70,57 +78,92 @@ buildUI wenv model = widgetTree
 
 -- 이벤트 핸들러 (로직 처리)
 handleEvent ::
+  SqliteEnv ->
   TodoWenv ->
   TodoNode ->
   TodoModel ->
   TodoEvt ->
   [EventResponse TodoModel TodoEvt TodoModel TodoEvt]
-handleEvent wenv node model evt =
+handleEvent env wenv node model evt =
   case evt of
-    TodoInit -> [SetFocusOnKey "todoNew"]
+    TodoInit -> [Producer (loadTodosProducer env), SetFocusOnKey "todoNew"]
     TodoNew -> [Event TodoShowEdit, Model $ model & action .~ TodoAdding & activeTodo .~ def, SetFocusOnKey "todoDesc"]
     TodoEdit idx td -> [Event TodoShowEdit, Model $ model & action .~ TodoEditing idx & activeTodo .~ td, SetFocusOnKey "todoDesc"]
-    TodoAdd -> [Event TodoHideEdit, Model $ addNewTodo wenv model, SetFocusOnKey "todoNew"]
-    TodoSave idx -> [Event TodoHideEdit, Model $ model & todos . ix idx .~ (model ^. activeTodo), SetFocusOnKey "todoNew"]
+    TodoAdd -> [Producer (addTodoProducer env wenv model), Event TodoHideEdit, SetFocusOnKey "todoNew"]
+    TodoSave idx -> [Producer (updateTodoProducer env idx model), Event TodoHideEdit, SetFocusOnKey "todoNew"]
     TodoCancel -> [Event TodoHideEdit, Model $ model & activeTodo .~ def, SetFocusOnKey "todoNew"]
     TodoDeleteBegin idx todo -> [Model (model & action .~ TodoConfirmingDelete idx todo)]
     TodoConfirmDelete idx todo -> [Model (model & action .~ TodoNone), Message (WidgetKey (todoRowKey todo)) AnimationStart]
     TodoCancelDelete -> [Model (model & action .~ TodoNone)]
-    TodoDelete idx todo -> [Model $ model & todos .~ remove idx (model ^. todos), SetFocusOnKey "todoNew"]
+    TodoDelete idx todo -> [Producer (deleteTodoProducer env todo), SetFocusOnKey "todoNew"]
+    TodosLoaded loadedTodos -> [Model $ model & todos .~ loadedTodos]
     TodoHideEditDone -> [Model $ model & action .~ TodoNone]
     TodoShowEdit -> [Message "animEditIn" AnimationStart, Message "animEditOut" AnimationStop]
     TodoHideEdit -> [Message "animEditIn" AnimationStop, Message "animEditOut" AnimationStart]
 
-addNewTodo :: WidgetEnv s e -> TodoModel -> TodoModel
-addNewTodo wenv model = newModel
-  where
-    newTodo = model ^. activeTodo & todoId .~ currentTimeMs wenv
-    newModel = model & todos .~ (newTodo : model ^. todos)
+-- Producer 함수들 (비동기 IO 작업)
+loadTodosProducer :: SqliteEnv -> (TodoEvt -> IO ()) -> IO ()
+loadTodosProducer env sendMsg = do
+  todos <- runAppM env loadAllTodos
+  sendMsg (TodosLoaded todos)
 
+addTodoProducer :: SqliteEnv -> WidgetEnv s e -> TodoModel -> (TodoEvt -> IO ()) -> IO ()
+addTodoProducer env wenv model sendMsg = do
+  let newTodo = model ^. activeTodo & todoId .~ currentTimeMs wenv
+  _ <- runAppM env (saveTodo newTodo)
+  todos <- runAppM env loadAllTodos
+  sendMsg (TodosLoaded todos)
+
+updateTodoProducer :: SqliteEnv -> Int -> TodoModel -> (TodoEvt -> IO ()) -> IO ()
+updateTodoProducer env idx model sendMsg = do
+  let updatedTodo = model ^. activeTodo
+  runAppM env (updateExistingTodo (fromIntegral $ updatedTodo ^. todoId) updatedTodo)
+  todos <- runAppM env loadAllTodos
+  sendMsg (TodosLoaded todos)
+
+deleteTodoProducer :: SqliteEnv -> Todo -> (TodoEvt -> IO ()) -> IO ()
+deleteTodoProducer env todo sendMsg = do
+  runAppM env (removeExistingTodo (fromIntegral $ todo ^. todoId))
+  todos <- runAppM env loadAllTodos
+  sendMsg (TodosLoaded todos)
+
+-- 초기 데이터 (데이터베이스가 비어있을 때만 사용)
 initialTodos :: [Todo]
 initialTodos = todos
   where
     items =
-      mconcat $
-        replicate
-          1
-          [ Todo 0 Home Done "Tidy up the room",
-            Todo 0 Home Pending "Buy groceries",
-            Todo 0 Home Pending "Pay the bills",
-            Todo 0 Home Pending "Repair kitchen sink",
-            Todo 0 Work Done "Check the status of project A",
-            Todo 0 Work Pending "Finish project B",
-            Todo 0 Work Pending "Send email to clients",
-            Todo 0 Work Pending "Contact cloud services provider"
-          ]
-    todos = zipWith (\t idx -> t & todoId .~ idx) items [0 ..]
+      [ Todo 1 Home Done "Tidy up the room",
+        Todo 2 Home Pending "Buy groceries",
+        Todo 3 Home Pending "Pay the bills",
+        Todo 4 Home Pending "Repair kitchen sink",
+        Todo 5 Work Done "Check the status of project A",
+        Todo 6 Work Pending "Finish project B",
+        Todo 7 Work Pending "Send email to clients",
+        Todo 8 Work Pending "Contact cloud services provider"
+      ]
+    todos = items
 
 -- 메인 함수
-
 main :: IO ()
 main = do
   hSetBuffering stdout NoBuffering
-  startApp (TodoModel initialTodos def TodoNone) handleEvent buildUI config
+
+  -- SQLite 환경 설정
+  withSqliteEnv "todos.db" $ \env -> do
+    -- 데이터베이스 초기화
+    runAppM env initializeDb
+
+    -- 초기 데이터 로드 (없으면 샘플 데이터 추가)
+    existingTodos <- runAppM env loadAllTodos
+    when (null existingTodos) $ do
+      mapM_ (\todo -> runAppM env (saveTodo todo)) initialTodos
+
+    -- 앱 시작
+    startApp
+      (TodoModel [] def TodoNone)
+      (handleEvent env)
+      buildUI
+      config
   where
     config =
       [ appWindowTitle "Todo list",
@@ -133,18 +176,13 @@ main = do
         appInitEvent TodoInit
       ]
 
+-- 스타일 상수
 doneBg = rgbHex "#CFF6E2"
-
 doneFg = rgbHex "#459562"
-
 pendingBg = rgbHex "#F5F0CC"
-
 pendingFg = rgbHex "#827330"
-
 grayLight = rgbHex "#9E9E9E"
-
 grayDark = rgbHex "#393939"
-
 grayDarker = rgbHex "#2E2E2E"
 
 customLightTheme :: Theme

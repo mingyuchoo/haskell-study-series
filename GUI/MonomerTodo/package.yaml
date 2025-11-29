@@ -21,6 +21,10 @@ dependencies:
   - monomer
   - text
   - text-show
+  - mtl
+  - transformers
+  - sqlite-simple
+  - time
 
 executables:
   app:

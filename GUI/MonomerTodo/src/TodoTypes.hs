@@ -69,6 +69,7 @@ data TodoEvt = TodoInit
              | TodoHideEdit
              | TodoHideEditDone
              | TodoCancel
+             | TodosLoaded [Todo]
      deriving (Eq, Show)
 
 makeLenses 'TodoModel

@@ -12,3 +12,8 @@ dist-docs.*/
 *.dylib
 cabal.project.local*
 
+# SQLite database
+todos.db
+todos.db-shm
+todos.db-wal
+

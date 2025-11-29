@@ -19,6 +19,10 @@ extra-source-files:
 executable app
   main-is: Main.hs
   other-modules:
+      TodoLogic
+      TodoRepo
+      TodoRepoMock
+      TodoRepoSqlite
       TodoTypes
       Paths_MonomerTodo
   autogen-modules:
@@ -33,6 +37,10 @@ executable app
     , data-default
     , lens
     , monomer
+    , mtl
+    , sqlite-simple
     , text
     , text-show
-  default-language: GHC2024
+    , time
+    , transformers
+  default-language: Haskell2010
