@@ -209,7 +209,7 @@ customDarkTheme = darkTheme & L.userColorMap . at "rowButton" ?~ gray
 
 -- | 리스트에서 특정 인덱스의 요소 제거
 remove :: Int -> [a] -> [a]
-remove idx ls = take idx ls ++ drop (idx + 1) ls
+remove idx ls = take idx ls <> drop (idx + 1) ls
 
 -- | Todo 항목의 고유 키 생성
 todoRowKey :: Todo -> Text
