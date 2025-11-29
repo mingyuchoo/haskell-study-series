@@ -28,7 +28,9 @@ import           TodoRepoSqlite
 
 import           TodoTypes
 
+-- | Todo 위젯 환경 타입
 type TodoWenv = WidgetEnv TodoModel TodoEvt
+-- | Todo 위젯 노드 타입
 type TodoNode = WidgetNode TodoModel TodoEvt
 
 -- UI 빌드 (화면 구성)
@@ -102,11 +104,13 @@ handleEvent env wenv node model evt =
     TodoHideEdit -> [Message "animEditIn" AnimationStop, Message "animEditOut" AnimationStart]
 
 -- Producer 함수들 (비동기 IO 작업)
+-- | 모든 할일을 로드하는 Producer
 loadTodosProducer :: SqliteEnv -> (TodoEvt -> IO ()) -> IO ()
 loadTodosProducer env sendMsg = do
   todos <- runAppM env loadAllTodos
   sendMsg (TodosLoaded todos)
 
+-- | 새 할일을 추가하는 Producer
 addTodoProducer :: SqliteEnv -> WidgetEnv s e -> TodoModel -> (TodoEvt -> IO ()) -> IO ()
 addTodoProducer env wenv model sendMsg = do
   let newTodo = model ^. activeTodo & todoId .~ currentTimeMs wenv
@@ -114,6 +118,7 @@ addTodoProducer env wenv model sendMsg = do
   todos <- runAppM env loadAllTodos
   sendMsg (TodosLoaded todos)
 
+-- | 할일을 수정하는 Producer
 updateTodoProducer :: SqliteEnv -> Int -> TodoModel -> (TodoEvt -> IO ()) -> IO ()
 updateTodoProducer env idx model sendMsg = do
   let updatedTodo = model ^. activeTodo
@@ -121,6 +126,7 @@ updateTodoProducer env idx model sendMsg = do
   todos <- runAppM env loadAllTodos
   sendMsg (TodosLoaded todos)
 
+-- | 할일을 삭제하는 Producer
 deleteTodoProducer :: SqliteEnv -> Todo -> (TodoEvt -> IO ()) -> IO ()
 deleteTodoProducer env todo sendMsg = do
   runAppM env (removeExistingTodo (fromIntegral $ todo ^. todoId))
@@ -128,6 +134,7 @@ deleteTodoProducer env todo sendMsg = do
   sendMsg (TodosLoaded todos)
 
 -- 초기 데이터 (데이터베이스가 비어있을 때만 사용)
+-- | 초기 샘플 할일 목록
 initialTodos :: [Todo]
 initialTodos = todos
   where
@@ -177,26 +184,38 @@ main = do
       ]
 
 -- 스타일 상수
+-- | 완료된 할일 배경색
 doneBg = rgbHex "#CFF6E2"
+-- | 완료된 할일 글자색
 doneFg = rgbHex "#459562"
+-- | 대기중인 할일 배경색
 pendingBg = rgbHex "#F5F0CC"
+-- | 대기중인 할일 글자색
 pendingFg = rgbHex "#827330"
+-- | 밝은 회색
 grayLight = rgbHex "#9E9E9E"
+-- | 어두운 회색
 grayDark = rgbHex "#393939"
+-- | 더 어두운 회색
 grayDarker = rgbHex "#2E2E2E"
 
+-- | 커스텀 라이트 테마
 customLightTheme :: Theme
 customLightTheme = lightTheme & L.userColorMap . at "rowButton" ?~ grayLight
 
+-- | 커스텀 다크 테마
 customDarkTheme :: Theme
 customDarkTheme = darkTheme & L.userColorMap . at "rowButton" ?~ gray
 
+-- | 리스트에서 특정 인덱스의 요소 제거
 remove :: Int -> [a] -> [a]
 remove idx ls = take idx ls ++ drop (idx + 1) ls
 
+-- | Todo 항목의 고유 키 생성
 todoRowKey :: Todo -> Text
 todoRowKey todo = "todoRow" <> showt (todo ^. todoId)
 
+-- | 할일 항목 하나를 표시하는 위젯
 todoRow :: TodoWenv -> TodoModel -> Int -> Todo -> TodoNode
 todoRow wenv model idx t = animRow `nodeKey` todoKey
   where
@@ -240,6 +259,7 @@ todoRow wenv model idx t = animRow `nodeKey` todoKey
 
     animRow = animFadeOut_ [onFinished (TodoDelete idx t)] todoInfo
 
+-- | 할일 편집 화면 위젯
 todoEdit :: TodoWenv -> TodoModel -> TodoNode
 todoEdit wenv model = editNode
   where
