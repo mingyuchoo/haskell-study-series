@@ -8,8 +8,24 @@ module Chapter03.TypesAndTypeclasses
 -- >>> removeNonUppercase ""
 -- ""
 --
-removeNonUppercase :: [Char] -> [Char]
-removeNonUppercase s = [c | c <- s, c `elem` ['A'..'Z']]
+removeNonUppercase1 :: [Char] -> [Char]
+removeNonUppercase1 s = [c | c <- s, c `elem` ['A'..'Z']]
+
+removeNonUppercase2 :: [Char] -> [Char]
+removeNonUppercase2 [] = []
+removeNonUppercase2 (c:cs)
+    | elem c ['A'..'Z'] = c : removeNonUppercase2 cs
+    | otherwise         = removeNonUppercase2 cs
+
+
+removeNonUppercase3 :: [Char] -> [Char]
+removeNonUppercase3 s = filter (\c -> elem c ['A'..'Z']) s
+
+removeNonUppercase4 :: [Char] -> [Char]
+removeNonUppercase4 s = foldr (\c acc -> 
+                                    if elem c ['A'..'Z']
+                                    then c:acc
+                                    else acc) [] s
 
 
 -- | addThree
