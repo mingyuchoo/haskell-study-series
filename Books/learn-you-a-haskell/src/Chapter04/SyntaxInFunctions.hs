@@ -8,10 +8,18 @@ module Chapter04.SyntaxInFunctions
 -- >>> lucky 1
 -- "Sorry, you're out of luck, pal!"
 --
-lucky :: (Integral a) => a -> String
-lucky 7 = "LUCKY NUMBER SEVEN!"
-lucky _ = "Sorry, you're out of luck, pal!"
+lucky1 :: (Integral a) => a -> String
+lucky1 7 = "LUCKY NUMBER SEVEN!"
+lucky1 _ = "Sorry, you're out of luck, pal!"
 
+lucky2 :: (Integral a) => a -> String
+lucky2 i | i == 7 = "NUMBER SEVEN! YOU ARE LUCKY!"
+         | otherwise = "Sorry, you're out of luck, pal!"
+
+lucky3 :: (Integral a) => a -> String
+lucky3 i = if i == 7
+           then "NUMBER SEVEN! YOU ARE LUCKY!"
+           else "Sorry, you're out of luck, pal!"
 
 -- | sayMe
 -- >>> sayMe 1
@@ -50,28 +58,55 @@ sayMe _ = "Not between 1 and 5"
 -- >>> factorial 50
 -- 30414093201713378043612608166064768844377641568960512000000000000
 --
-factorial :: (Integral a) => a -> a
-factorial 0 = 1
-factorial n = n * factorial (n - 1)
+factorial1 :: (Integral a) => a -> a
+factorial1 0 = 1
+factorial1 n = n * factorial (n - 1)
+
+factorial2 :: (Integral a) => a -> a
+factorial2 n 
+  | n <= 0    = error "Factorial is undefined for negative numbers"
+  | n == 0    = 1
+  | otherwise = n * factorial (n - 1)
 
 
--- | charName
--- >>> charName 'a'
+-- | phoneticCode
+-- >>> phoneticCode 'a'
 -- "Alpha"
--- >>> charName 'b'
+-- >>> phoneticCode 'b'
 -- "Bravo"
--- >>> charName 'c'
+-- >>> phoneticCode 'c'
 -- "Charlie"
--- >>> charName 'd'
+-- >>> phoneticCode 'd'
 -- "Delta"
 --
-charName :: Char -> String
-charName 'a' = "Alpha"
-charName 'b' = "Bravo"
-charName 'c' = "Charlie"
-charName 'd' = "Delta"
-charName _   = "Others"
-
+phoneticCode :: Char -> String
+phoneticCode 'a' = "Alfa"
+phoneticCode 'b' = "Bravo"
+phoneticCode 'c' = "Charlie"
+phoneticCode 'd' = "Delta"
+phoneticCode 'e' = "Echo"
+phoneticCode 'f' = "Foxtrot"
+phoneticCode 'g' = "Golf"
+phoneticCode 'h' = "Hotel"
+phoneticCode 'i' = "India"
+phoneticCode 'j' = "Juliett"
+phoneticCode 'k' = "Kilo"
+phoneticCode 'l' = "Lima"
+phoneticCode 'm' = "Mike"
+phoneticCode 'n' = "November"
+phoneticCode 'o' = "Oscar"
+phoneticCode 'p' = "Papa"
+phoneticCode 'q' = "Quebec"
+phoneticCode 'r' = "Romeo"
+phoneticCode 's' = "Sierra"
+phoneticCode 't' = "Tango"
+phoneticCode 'u' = "Uniform"
+phoneticCode 'v' = "Victor"
+phoneticCode 'w' = "Whiskey"
+phoneticCode 'x' = "X-ray"
+phoneticCode 'y' = "Yankee"
+phoneticCode 'z' = "Zulu"
+phoneticCode _   = "Others"
 
 -- | addVectors
 -- >>> addVectors (1,2) (2,3)
