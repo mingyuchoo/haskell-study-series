@@ -60,13 +60,13 @@ sayMe _ = "Not between 1 and 5"
 --
 factorial1 :: (Integral a) => a -> a
 factorial1 0 = 1
-factorial1 n = n * factorial (n - 1)
+factorial1 n = n * factorial1 (n - 1)
 
 factorial2 :: (Integral a) => a -> a
 factorial2 n 
   | n <= 0    = error "Factorial is undefined for negative numbers"
   | n == 0    = 1
-  | otherwise = n * factorial (n - 1)
+  | otherwise = n * factorial2 (n - 1)
 
 
 -- | phoneticCode
@@ -111,7 +111,7 @@ phoneticCode _   = "Others"
 -- | addVectors
 -- >>> addVectors (1,2) (2,3)
 -- (3,5)
-addVectors :: (Num a) => (a, a) -> (a, a) -> (a, a)
+addVectors :: forall {a}. (Num a) => (a, a) -> (a, a) -> (a, a)
 addVectors (x1, y1) (x2, y2) = (x1 + x2, y1 + y2)
 
 
