@@ -2,7 +2,17 @@
 
 
 import System.Directory
-import System.FilePath
+    ( copyFile,
+      createDirectoryIfMissing,
+      doesDirectoryExist,
+      doesFileExist,
+      getCurrentDirectory,
+      getFileSize,
+      listDirectory,
+      removeDirectoryRecursive,
+      removeFile,
+      renameFile )
+import System.FilePath ( (</>), takeExtension, takeFileName )
 import Control.Monad (filterM, when)
 import qualified Data.ByteString as BS
 import Data.List (isPrefixOf)
