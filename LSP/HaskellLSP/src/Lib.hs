@@ -2,8 +2,9 @@ module Lib
     ( cliMain
     ) where
 
-import LSP.Server (runLspServer)
-import System.Exit (exitWith, ExitCode(..))
+import           LSP.Server  (runLspServer)
+
+import           System.Exit (ExitCode (..), exitWith)
 
 cliMain :: IO ()
 cliMain = do

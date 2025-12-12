@@ -1,41 +1,47 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 -- | Error handling and recovery for LSP server
-module LSP.Error 
-  ( -- * Error Classification
-    classifyError
-  , ErrorSeverity(..)
-  , ErrorRecovery(..)
-  , defaultErrorRecovery
-    -- * Error Handling
-  , handleLspError
-  , recoverFromError
-  , withErrorRecovery
-    -- * Logging
-  , LogContext(..)
-  , defaultLogContext
-  , logError
-  , logWarning
-  , logInfo
-  , logDebug
-  , withLogging
-  ) where
+module LSP.Error
+    ( -- * Error Classification
+      ErrorRecovery (..)
+    , ErrorSeverity (..)
+    , classifyError
+    , defaultErrorRecovery
+      -- * Error Handling
+    , handleLspError
+    , recoverFromError
+    , withErrorRecovery
+      -- * Logging
+    , LogContext (..)
+    , defaultLogContext
+    , logDebug
+    , logError
+    , logInfo
+    , logWarning
+    , withLogging
+    ) where
 
-import Control.Exception (SomeException, catch, try)
-import Control.Monad.IO.Class (MonadIO, liftIO)
-import Control.Concurrent (threadDelay)
-import Data.Text (Text)
-import qualified Data.Text as T
-import System.IO (Handle, stderr, hPutStrLn, hFlush)
-import Data.Time (getCurrentTime, formatTime, defaultTimeLocale)
-import LSP.Types (ErrorSeverity(..), ErrorRecovery(..), LogLevel(..), ResponseError, mkInternalError)
+import           Control.Concurrent     (threadDelay)
+import           Control.Exception      (SomeException, catch, try)
+import           Control.Monad.IO.Class (MonadIO, liftIO)
+
+import           Data.Text              (Text)
+import qualified Data.Text              as T
+import           Data.Time              (defaultTimeLocale, formatTime,
+                                         getCurrentTime)
+
+import           LSP.Types              (ErrorRecovery (..), ErrorSeverity (..),
+                                         LogLevel (..), ResponseError,
+                                         mkInternalError)
+
+import           System.IO              (Handle, hFlush, hPutStrLn, stderr)
 
 -- | Context for structured logging
-data LogContext = LogContext
-  { logHandle :: Handle
-  , logLevel  :: LogLevel
-  , logPrefix :: Text
-  } deriving (Show)
+data LogContext = LogContext { logHandle :: Handle
+                             , logLevel  :: LogLevel
+                             , logPrefix :: Text
+                             }
+     deriving (Show)
 
 -- | Default logging context using stderr
 defaultLogContext :: LogContext
@@ -114,11 +120,11 @@ logWithLevel ctx level msg = liftIO $ do
     timestamp <- getCurrentTime
     let timeStr = formatTime defaultTimeLocale "%Y-%m-%d %H:%M:%S" timestamp
         levelStr = case level of
-          Debug -> "DEBUG"
-          Info -> "INFO"
+          Debug   -> "DEBUG"
+          Info    -> "INFO"
           Warning -> "WARN"
-          Error -> "ERROR"
-        fullMsg = T.unpack $ T.unwords 
+          Error   -> "ERROR"
+        fullMsg = T.unpack $ T.unwords
           [ T.pack timeStr
           , logPrefix ctx
           , T.pack levelStr
@@ -128,7 +134,7 @@ logWithLevel ctx level msg = liftIO $ do
     hFlush (logHandle ctx)
   where
     when True action = action
-    when False _ = pure ()
+    when False _     = pure ()
 
 -- | Execute an action with logging context
 withLogging :: LogContext -> IO a -> IO a

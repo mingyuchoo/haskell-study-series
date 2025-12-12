@@ -1,13 +1,19 @@
 {-# LANGUAGE LambdaCase #-}
 
-module HoverSpec (spec) where
+module HoverSpec
+    ( spec
+    ) where
 
-import Test.Hspec
-import Handlers.Hover
-import Analysis.Parser
-import Language.LSP.Protocol.Types
-import Data.Text (Text)
-import qualified Data.Text as T
+import           Analysis.Parser
+
+import           Data.Text                   (Text)
+import qualified Data.Text                   as T
+
+import           Handlers.Hover
+
+import           Language.LSP.Protocol.Types
+
+import           Test.Hspec
 
 spec :: Spec
 spec = describe "Hover Handler" $ do
@@ -22,12 +28,12 @@ spec = describe "Hover Handler" $ do
             }
       let result = formatHoverContent symbolInfo
       result `shouldSatisfy` \case
-        Just content -> 
+        Just content ->
           "```haskell" `T.isInfixOf` content &&
           "add :: Int -> Int -> Int" `T.isInfixOf` content &&
           "Adds two integers" `T.isInfixOf` content
         Nothing -> False
-        
+
     it "should format type hover" $ do
       let symbolInfo = SymbolInfo
             { symName = "Person"
@@ -38,11 +44,11 @@ spec = describe "Hover Handler" $ do
             }
       let result = formatHoverContent symbolInfo
       result `shouldSatisfy` \case
-        Just content -> 
+        Just content ->
           "```haskell" `T.isInfixOf` content &&
           "data Person" `T.isInfixOf` content
         Nothing -> False
-        
+
     it "should format operator hover with type and fixity" $ do
       let symbolInfo = SymbolInfo
             { symName = "+"
@@ -53,13 +59,13 @@ spec = describe "Hover Handler" $ do
             }
       let result = formatHoverContent symbolInfo
       result `shouldSatisfy` \case
-        Just content -> 
+        Just content ->
           "```haskell" `T.isInfixOf` content &&
           "(+) :: Num a => a -> a -> a" `T.isInfixOf` content &&
           "Fixity information not available" `T.isInfixOf` content &&
           "Addition operator" `T.isInfixOf` content
         Nothing -> False
-        
+
     it "should return something for unsupported symbol kinds" $ do
       let symbolInfo = SymbolInfo
             { symName = "unknown"

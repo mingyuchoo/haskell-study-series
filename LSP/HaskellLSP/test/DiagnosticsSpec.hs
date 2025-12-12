@@ -1,11 +1,18 @@
-module DiagnosticsSpec (spec) where
+module DiagnosticsSpec
+    ( spec
+    ) where
 
-import Test.Hspec
-import LSP.Diagnostics
-import Analysis.Parser
-import Language.LSP.Protocol.Types (DiagnosticSeverity(..), Range(..), Position(..))
-import Data.Text (Text)
-import qualified Data.Text as T
+import           Analysis.Parser
+
+import           Data.Text                   (Text)
+import qualified Data.Text                   as T
+
+import           LSP.Diagnostics
+
+import           Language.LSP.Protocol.Types (DiagnosticSeverity (..),
+                                              Position (..), Range (..))
+
+import           Test.Hspec
 
 spec :: Spec
 spec = describe "Diagnostics Engine" $ do
@@ -14,17 +21,17 @@ spec = describe "Diagnostics Engine" $ do
       let sourceCode = "function test(\n  return 42"
       let diagnostics = detectSyntaxErrors sourceCode
       length diagnostics `shouldSatisfy` (> 0)
-      
+
     it "should detect invalid control characters" $ do
       let sourceCode = "function test\0invalid"
       let diagnostics = detectSyntaxErrors sourceCode
       length diagnostics `shouldSatisfy` (> 0)
-      
+
     it "should detect incomplete strings" $ do
       let sourceCode = "let x = \"incomplete string"
       let diagnostics = detectSyntaxErrors sourceCode
       length diagnostics `shouldSatisfy` (> 0)
-      
+
     it "should return empty diagnostics for valid code" $ do
       let sourceCode = "module Test where\n\ntest :: Int\ntest = 42"
       let diagnostics = detectSyntaxErrors sourceCode
@@ -53,15 +60,15 @@ spec = describe "Diagnostics Engine" $ do
           let diagInfo = parseErrorToDiagnostic parseError
           diagSeverity diagInfo `shouldBe` DiagnosticSeverity_Error
           T.length (diagMessage diagInfo) `shouldSatisfy` (> 0)
-        Right _ -> 
+        Right _ ->
           -- If parsing succeeds, that's also fine for this test
           True `shouldBe` True
 
 -- Helper function to create a diagnostic from parse error (exposed for testing)
 parseErrorToDiagnostic :: ParseError -> DiagnosticInfo
-parseErrorToDiagnostic parseError = 
+parseErrorToDiagnostic parseError =
   let range = case parseErrorRange parseError of
-        Just r -> r
+        Just r  -> r
         Nothing -> Range (Position 0 0) (Position 0 1)
       severity = DiagnosticSeverity_Error
       message = parseErrorMessage parseError

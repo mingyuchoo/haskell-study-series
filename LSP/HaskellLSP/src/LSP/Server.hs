@@ -1,15 +1,19 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 -- | Main LSP server module
-module LSP.Server 
-  ( runLspServer
-  ) where
+module LSP.Server
+    ( runLspServer
+    ) where
 
-import Control.Monad.IO.Class (liftIO)
-import Language.LSP.Server
-import Language.LSP.Protocol.Types
-import System.IO (stdin, stdout, hSetBuffering, BufferMode(..))
-import LSP.Types (defaultServerConfig)
+import           Control.Monad.IO.Class      (liftIO)
+
+import           LSP.Types                   (defaultServerConfig)
+
+import           Language.LSP.Protocol.Types
+import           Language.LSP.Server
+
+import           System.IO                   (BufferMode (..), hSetBuffering,
+                                              stdin, stdout)
 
 -- | Main LSP server entry point
 -- Implements stdio communication setup and configures server options and handlers
@@ -18,9 +22,9 @@ runLspServer = do
   -- Set up stdio for LSP communication
   hSetBuffering stdin NoBuffering
   hSetBuffering stdout NoBuffering
-  
+
   liftIO $ putStrLn "Starting Haskell LSP Server..."
-  
+
   -- Run the LSP server with configured handlers
   runServer $ ServerDefinition
     { parseConfig = const $ const $ Right defaultServerConfig

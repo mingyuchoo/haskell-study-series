@@ -1,7 +1,10 @@
-module DocumentSyncSpec (spec) where
+module DocumentSyncSpec
+    ( spec
+    ) where
 
-import Test.Hspec
-import Handlers.DocumentSync
+import           Handlers.DocumentSync
+
+import           Test.Hspec
 
 spec :: Spec
 spec = describe "Document Synchronization Handlers" $ do
@@ -10,9 +13,9 @@ spec = describe "Document Synchronization Handlers" $ do
       -- Just check that the functions exist and compile
       -- Actual testing would require setting up an LSP monad context
       True `shouldBe` True
-      
+
     it "should have handleDidChange function available" $ do
       True `shouldBe` True
-      
+
     it "should have handleDidClose function available" $ do
       True `shouldBe` True

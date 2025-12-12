@@ -1,98 +1,100 @@
-{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE DeriveGeneric  #-}
 
 -- | Core data types for the LSP server
-module LSP.Types 
-  ( -- * Core Types
-    RequestId
-  , Method
-  , LspMessage(..)
-  , ResponseError(..)
-    -- * Error Handling
-  , LspErrorCode(..)
-  , ErrorSeverity(..)
-  , ErrorRecovery(..)
-  , lspErrorCodeToInt
-  , intToLspErrorCode
-    -- * Error Builders
-  , mkParseError
-  , mkInvalidRequest
-  , mkMethodNotFound
-  , mkInvalidParams
-  , mkInternalError
-  , mkServerNotInitialized
-  , mkRequestCancelled
-    -- * Configuration
-  , LogLevel(..)
-  , ServerConfig(..)
-  , defaultServerConfig
-    -- * Document State
-  , DocumentState(..)
-  , ParsedModule(..)
-  , Declaration(..)
-  , Import(..)
-  , Export(..)
-  , SymbolKind(..)
-  , Position(..)
-  , Range(..)
-  , ServerState(..)
-  , initialServerState
-    -- * Protocol Helpers
-  , encodeLspMessage
-  , decodeLspMessage
-  , parseContentLength
-  , extractJsonContent
-  , parseJsonRpcMessage
-  ) where
+module LSP.Types
+    ( -- * Core Types
+      LspMessage (..)
+    , Method
+    , RequestId
+    , ResponseError (..)
+      -- * Error Handling
+    , ErrorRecovery (..)
+    , ErrorSeverity (..)
+    , LspErrorCode (..)
+    , intToLspErrorCode
+    , lspErrorCodeToInt
+      -- * Error Builders
+    , mkInternalError
+    , mkInvalidParams
+    , mkInvalidRequest
+    , mkMethodNotFound
+    , mkParseError
+    , mkRequestCancelled
+    , mkServerNotInitialized
+      -- * Configuration
+    , LogLevel (..)
+    , ServerConfig (..)
+    , defaultServerConfig
+      -- * Document State
+    , Declaration (..)
+    , DocumentState (..)
+    , Export (..)
+    , Import (..)
+    , ParsedModule (..)
+    , Position (..)
+    , Range (..)
+    , ServerState (..)
+    , SymbolKind (..)
+    , initialServerState
+      -- * Protocol Helpers
+    , decodeLspMessage
+    , encodeLspMessage
+    , extractJsonContent
+    , parseContentLength
+    , parseJsonRpcMessage
+    ) where
 
-import Data.Aeson (ToJSON, FromJSON, Value, encode, decode)
-import Data.ByteString.Lazy (ByteString)
-import qualified Data.ByteString.Lazy as LBS
-import qualified Data.ByteString.Lazy.Char8 as L8
-import Data.Int (Int32)
-import Data.List (isPrefixOf)
-import Data.Map (Map)
-import Data.Text (Text)
-import GHC.Generics (Generic)
-import Language.LSP.Protocol.Types (Uri, Diagnostic)
+import           Data.Aeson                  (FromJSON, ToJSON, Value, decode,
+                                              encode)
+import           Data.ByteString.Lazy        (ByteString)
+import qualified Data.ByteString.Lazy        as LBS
+import qualified Data.ByteString.Lazy.Char8  as L8
+import           Data.Int                    (Int32)
+import           Data.List                   (isPrefixOf)
+import           Data.Map                    (Map)
+import           Data.Text                   (Text)
+
+import           GHC.Generics                (Generic)
+
+import           Language.LSP.Protocol.Types (Diagnostic, Uri)
 
 -- | Request ID for JSON-RPC messages
 type RequestId = Value
 
--- | Method name for JSON-RPC messages  
+-- | Method name for JSON-RPC messages
 type Method = Text
 
 -- | JSON-RPC error response
-data ResponseError = ResponseError
-  { errorCode    :: Int
-  , errorMessage :: Text
-  , errorData    :: Maybe Value
-  } deriving (Show, Eq, Generic, ToJSON, FromJSON)
+data ResponseError = ResponseError { errorCode    :: Int
+                                   , errorMessage :: Text
+                                   , errorData    :: Maybe Value
+                                   }
+     deriving (Eq, FromJSON, Generic, Show, ToJSON)
 
 -- | Standard JSON-RPC error codes
-data LspErrorCode
-  = ParseError          -- ^ -32700: Invalid JSON was received by the server
-  | InvalidRequest      -- ^ -32600: The JSON sent is not a valid Request object
-  | MethodNotFound      -- ^ -32601: The method does not exist / is not available
-  | InvalidParams       -- ^ -32602: Invalid method parameter(s)
-  | InternalError       -- ^ -32603: Internal JSON-RPC error
-  | ServerNotInitialized -- ^ -32002: Server has not been initialized
-  | UnknownErrorCode    -- ^ -32001: Unknown error code
-  | RequestCancelled    -- ^ -32800: Request was cancelled
-  | ContentModified     -- ^ -32801: Content was modified
-  deriving (Show, Eq, Generic)
+data LspErrorCode = ParseError -- ^ -32700: Invalid JSON was received by the server
+                  | InvalidRequest -- ^ -32600: The JSON sent is not a valid Request object
+                  | MethodNotFound -- ^ -32601: The method does not exist / is not available
+                  | InvalidParams -- ^ -32602: Invalid method parameter(s)
+                  | InternalError -- ^ -32603: Internal JSON-RPC error
+                  | ServerNotInitialized -- ^ -32002: Server has not been initialized
+                  | UnknownErrorCode -- ^ -32001: Unknown error code
+                  | RequestCancelled -- ^ -32800: Request was cancelled
+                  | ContentModified -- ^ -32801: Content was modified
+     deriving (Eq, Generic, Show)
 
 -- | Convert LspErrorCode to integer
 lspErrorCodeToInt :: LspErrorCode -> Int
-lspErrorCodeToInt ParseError = -32700
-lspErrorCodeToInt InvalidRequest = -32600
-lspErrorCodeToInt MethodNotFound = -32601
-lspErrorCodeToInt InvalidParams = -32602
-lspErrorCodeToInt InternalError = -32603
+lspErrorCodeToInt ParseError           = -32700
+lspErrorCodeToInt InvalidRequest       = -32600
+lspErrorCodeToInt MethodNotFound       = -32601
+lspErrorCodeToInt InvalidParams        = -32602
+lspErrorCodeToInt InternalError        = -32603
 lspErrorCodeToInt ServerNotInitialized = -32002
-lspErrorCodeToInt UnknownErrorCode = -32001
-lspErrorCodeToInt RequestCancelled = -32800
-lspErrorCodeToInt ContentModified = -32801
+lspErrorCodeToInt UnknownErrorCode     = -32001
+lspErrorCodeToInt RequestCancelled     = -32800
+lspErrorCodeToInt ContentModified      = -32801
 
 -- | Convert integer to LspErrorCode
 intToLspErrorCode :: Int -> LspErrorCode
@@ -105,7 +107,7 @@ intToLspErrorCode (-32002) = ServerNotInitialized
 intToLspErrorCode (-32001) = UnknownErrorCode
 intToLspErrorCode (-32800) = RequestCancelled
 intToLspErrorCode (-32801) = ContentModified
-intToLspErrorCode _ = UnknownErrorCode
+intToLspErrorCode _        = UnknownErrorCode
 
 -- | Error response builders
 mkParseError :: Text -> ResponseError
@@ -158,22 +160,21 @@ mkRequestCancelled _ = ResponseError
   }
 
 -- | LSP message wrapper for JSON-RPC communication
-data LspMessage
-  = RequestMessage RequestId Method Value
-  | ResponseMessage RequestId (Either ResponseError Value)
-  | NotificationMessage Method Value
-  deriving (Show, Eq, Generic, ToJSON, FromJSON)
+data LspMessage = RequestMessage RequestId Method Value
+                | ResponseMessage RequestId (Either ResponseError Value)
+                | NotificationMessage Method Value
+     deriving (Eq, FromJSON, Generic, Show, ToJSON)
 
 -- | Log levels for server configuration
 data LogLevel = Debug | Info | Warning | Error
-  deriving (Show, Eq, Ord, Generic, ToJSON, FromJSON)
+     deriving (Eq, FromJSON, Generic, Ord, Show, ToJSON)
 
 -- | Server configuration settings
-data ServerConfig = ServerConfig
-  { configLogLevel    :: LogLevel
-  , configLogFile     :: Maybe FilePath
-  , configMaxWorkers  :: Int
-  } deriving (Show, Eq, Generic, ToJSON, FromJSON)
+data ServerConfig = ServerConfig { configLogLevel   :: LogLevel
+                                 , configLogFile    :: Maybe FilePath
+                                 , configMaxWorkers :: Int
+                                 }
+     deriving (Eq, FromJSON, Generic, Show, ToJSON)
 
 -- | Default server configuration
 defaultServerConfig :: ServerConfig
@@ -184,83 +185,77 @@ defaultServerConfig = ServerConfig
   }
 
 -- | State of a single document
-data DocumentState = DocumentState
-  { docContent    :: Text
-  , docVersion    :: Int32
-  , docParsed     :: Maybe ParsedModule
-  } deriving (Show, Eq, Generic)
+data DocumentState = DocumentState { docContent :: Text
+                                   , docVersion :: Int32
+                                   , docParsed  :: Maybe ParsedModule
+                                   }
+     deriving (Eq, Generic, Show)
 
 -- | Placeholder for parsed module representation
-data ParsedModule = ParsedModule
-  { pmSource      :: Text
-  , pmDeclarations :: [Declaration]
-  , pmImports     :: [Import]
-  , pmExports     :: Maybe [Export]
-  } deriving (Show, Eq, Generic)
+data ParsedModule = ParsedModule { pmSource       :: Text
+                                 , pmDeclarations :: [Declaration]
+                                 , pmImports      :: [Import]
+                                 , pmExports      :: Maybe [Export]
+                                 }
+     deriving (Eq, Generic, Show)
 
 -- | Placeholder for declaration representation
-data Declaration = Declaration
-  { declName      :: Text
-  , declType      :: Maybe Text
-  , declKind      :: SymbolKind
-  , declRange     :: Range
-  , declChildren  :: [Declaration]
-  } deriving (Show, Eq, Generic)
+data Declaration = Declaration { declName     :: Text
+                               , declType     :: Maybe Text
+                               , declKind     :: SymbolKind
+                               , declRange    :: Range
+                               , declChildren :: [Declaration]
+                               }
+     deriving (Eq, Generic, Show)
 
 -- | Placeholder for import representation
-data Import = Import
-  { importModule :: Text
-  , importQualified :: Bool
-  , importAs :: Maybe Text
-  } deriving (Show, Eq, Generic)
+data Import = Import { importModule    :: Text
+                     , importQualified :: Bool
+                     , importAs        :: Maybe Text
+                     }
+     deriving (Eq, Generic, Show)
 
--- | Placeholder for export representation  
-data Export = Export
-  { exportName :: Text
-  , exportType :: Maybe Text
-  } deriving (Show, Eq, Generic)
+-- | Placeholder for export representation
+data Export = Export { exportName :: Text
+                     , exportType :: Maybe Text
+                     }
+     deriving (Eq, Generic, Show)
 
 -- | Symbol kinds for declarations
-data SymbolKind = 
-    SkFunction
-  | SkType
-  | SkClass
-  | SkInstance
-  | SkVariable
-  deriving (Show, Eq, Generic)
+data SymbolKind = SkFunction | SkType | SkClass | SkInstance | SkVariable
+     deriving (Eq, Generic, Show)
 
 -- | Position in a document
-data Position = Position
-  { posLine      :: Int32
-  , posCharacter :: Int32
-  } deriving (Show, Eq, Ord, Generic)
+data Position = Position { posLine      :: Int32
+                         , posCharacter :: Int32
+                         }
+     deriving (Eq, Generic, Ord, Show)
 
 -- | Range in a document
-data Range = Range
-  { rangeStart :: Position
-  , rangeEnd   :: Position
-  } deriving (Show, Eq, Generic)
+data Range = Range { rangeStart :: Position
+                   , rangeEnd   :: Position
+                   }
+     deriving (Eq, Generic, Show)
 
 -- | Error classification for recovery strategies
-data ErrorSeverity
-  = Recoverable    -- ^ Error that can be handled and processing can continue
-  | Fatal          -- ^ Error that requires server shutdown
-  | Transient      -- ^ Temporary error that may succeed on retry
-  deriving (Show, Eq, Generic)
+data ErrorSeverity = Recoverable -- ^ Error that can be handled and processing can continue
+                   | Fatal -- ^ Error that requires server shutdown
+                   | Transient -- ^ Temporary error that may succeed on retry
+     deriving (Eq, Generic, Show)
 
 -- | Error recovery configuration
-data ErrorRecovery = ErrorRecovery
-  { maxRetries      :: Int
-  , retryDelay      :: Int  -- ^ milliseconds
-  , fallbackAction  :: IO ()
-  }
+data ErrorRecovery = ErrorRecovery { maxRetries     :: Int
+                                   , retryDelay     :: Int
+                                     -- ^ milliseconds
+                                   , fallbackAction :: IO ()
+                                   }
 
 -- | Overall server state
-data ServerState = ServerState
-  { stateDocuments    :: Map Uri DocumentState
-  , stateConfig       :: ServerConfig
-  , stateDiagnostics  :: Map Uri [Diagnostic]
-  } deriving (Show, Generic)
+data ServerState = ServerState { stateDocuments   :: Map Uri DocumentState
+                               , stateConfig      :: ServerConfig
+                               , stateDiagnostics :: Map Uri [Diagnostic]
+                               }
+     deriving (Generic, Show)
 
 -- | Initial server state
 initialServerState :: ServerConfig -> ServerState
@@ -274,7 +269,7 @@ initialServerState config = ServerState
 
 -- | Encode an LSP message to JSON-RPC format with Content-Length header
 encodeLspMessage :: LspMessage -> ByteString
-encodeLspMessage msg = 
+encodeLspMessage msg =
   let jsonBytes = encode msg
       contentLength = LBS.length jsonBytes
       header = L8.pack $ "Content-Length: " ++ show contentLength ++ "\r\n\r\n"
@@ -286,10 +281,10 @@ decodeLspMessage = decode
 
 -- | Parse Content-Length header from incoming data
 parseContentLength :: ByteString -> Maybe Int
-parseContentLength input = 
+parseContentLength input =
   case L8.lines input of
     [] -> Nothing
-    (firstLine:_) -> 
+    (firstLine:_) ->
       let headerStr = L8.unpack firstLine
           prefix = "Content-Length: "
       in if prefix `isPrefixOf` headerStr
@@ -305,18 +300,18 @@ extractJsonContent input =
       separator = "\r\n\r\n"
   in case splitOn separator inputStr of
        (_:rest:_) -> Just (L8.pack rest)
-       _ -> Nothing
+       _          -> Nothing
   where
     splitOn :: String -> String -> [String]
     splitOn _ [] = [""]
-    splitOn delim str = 
+    splitOn delim str =
       let (before, remainder) = breakOn delim str
       in before : case remainder of
                     [] -> []
                     x -> if delim `isPrefixOf` x
                          then splitOn delim (drop (length delim) x)
                          else [x]
-    
+
     breakOn :: String -> String -> (String, String)
     breakOn _ [] = ([], [])
     breakOn delim str@(c:cs)

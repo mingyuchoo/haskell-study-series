@@ -1,4 +1,4 @@
-.PHONY: test coverage install update-stack-yaml build-all package-extension install-extension
+.PHONY: test coverage install update-stack-yaml
 
 # Extract project name from directory path
 PROJECT_NAME := $(shell basename $(CURDIR))
@@ -48,7 +48,7 @@ run: setup
 release: setup
 	stack build -j4 --ghc-options "-j16 +RTS -A256m -RTS" --docker
 
-docker-build: release
+docker-build: releasefile)
 	docker build --build-arg PROJECT_NAME=$(PROJECT_NAME) -t $(PROJECT_NAME):latest -f docker/Dockerfile .
 
 docker-build-multi: 
@@ -58,8 +58,12 @@ docker-run: docker-build
 	mkdir -p ./data
 	docker run -it --rm \
 	  --name $(PROJECT_NAME)-app \
+	  -p 8000:8000 \
 	  -v $(PWD)/data:/app/data \
 	  $(PROJECT_NAME):latest
+
+docker-run-multi: docker-build-multi
+	docker run -it --rm -p 8000:8000 $(PROJECT_NAME):latest
 
 docker-compose-up:
 	docker compose -f docker/docker-compose.yaml up --build -d
@@ -73,18 +77,4 @@ docker-compose-logs:
 install: release
 	mkdir -p $(HOME)/.local/bin
 	cp $(shell stack path --local-install-root)/bin/$(PROJECT_NAME)-exe $(HOME)/.local/bin/
-
-# Extension build targets
-build-all:
-	./build-all.sh
-
-package-extension:
-	cd vscode-extension && npm install && npm run package
-
-install-extension: package-extension
-	code --install-extension vscode-extension/*.vsix
-
-clean-extension:
-	cd vscode-extension && npm run clean
-	rm -rf dist/
 
