@@ -28,8 +28,9 @@ source-repository head
 library
   exposed-modules:
       Analysis.Parser
-      Handlers.Initialize
+      Handlers.DocumentSync
       Lib
+      LSP.Error
       LSP.Server
       LSP.Types
   other-modules:
@@ -41,6 +42,7 @@ library
   default-extensions:
       DataKinds
       DeriveGeneric
+      DisambiguateRecordFields
       ExplicitForAll
       GADTs
       KindSignatures
@@ -54,13 +56,17 @@ library
     , bytestring
     , co-log-core
     , containers
+    , data-default
     , flow
+    , lens
     , lsp
     , lsp-types
     , mtl
     , parallel
     , prettyprinter
+    , stm
     , text
+    , time
   default-language: GHC2021
 
 executable HaskellLSP-exe
@@ -74,6 +80,7 @@ executable HaskellLSP-exe
   default-extensions:
       DataKinds
       DeriveGeneric
+      DisambiguateRecordFields
       ExplicitForAll
       GADTs
       KindSignatures
@@ -88,19 +95,24 @@ executable HaskellLSP-exe
     , bytestring
     , co-log-core
     , containers
+    , data-default
     , flow
+    , lens
     , lsp
     , lsp-types
     , mtl
     , parallel
     , prettyprinter
+    , stm
     , text
+    , time
   default-language: GHC2021
 
 test-suite HaskellLSP-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      DocumentSyncSpec
       Paths_HaskellLSP
   autogen-modules:
       Paths_HaskellLSP
@@ -109,6 +121,7 @@ test-suite HaskellLSP-test
   default-extensions:
       DataKinds
       DeriveGeneric
+      DisambiguateRecordFields
       ExplicitForAll
       GADTs
       KindSignatures
@@ -124,15 +137,19 @@ test-suite HaskellLSP-test
     , bytestring
     , co-log-core
     , containers
+    , data-default
     , doctest
     , doctest-discover
     , flow
     , hspec
+    , lens
     , lsp
     , lsp-types
     , mtl
     , parallel
     , prettyprinter
     , quickcheck-instances
+    , stm
     , text
+    , time
   default-language: GHC2021

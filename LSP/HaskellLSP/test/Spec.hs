@@ -4,15 +4,19 @@
 import Test.Hspec
 import Lib
 import LSP.Types
+import LSP.Error
 import Data.Aeson (encode, decode, Value(..))
 import Data.List (isInfixOf)
 import qualified Data.ByteString.Lazy.Char8 as L8
+import Control.Exception (toException, ErrorCall(..))
+import qualified DocumentSyncSpec
 
 main :: IO ()
 main = hspec spec
 
 spec :: Spec
 spec = do
+    describe "Document Synchronization" DocumentSyncSpec.spec
     describe "Given Prelude" $ do
         context "when use `read` function" $ do
             it "should parse integers" $ do
@@ -39,3 +43,23 @@ spec = do
             it "should parse Content-Length from header" $ do
                 let input = L8.pack "Content-Length: 42\r\n\r\n{}"
                 parseContentLength input `shouldBe` Just 42
+    describe "Given LSP.Error" $ do
+        context "when classifying errors" $ do
+            it "should classify parse errors as recoverable" $ do
+                let parseErr = toException (ErrorCall "parse error occurred")
+                classifyError parseErr `shouldBe` Recoverable
+            it "should classify memory errors as fatal" $ do
+                let memErr = toException (ErrorCall "memory exhausted")
+                classifyError memErr `shouldBe` Fatal
+            it "should classify timeout errors as transient" $ do
+                let timeoutErr = toException (ErrorCall "timeout occurred")
+                classifyError timeoutErr `shouldBe` Transient
+        context "when building error responses" $ do
+            it "should create parse error with correct code" $ do
+                let err = mkParseError "Invalid JSON"
+                errorCode err `shouldBe` (-32700)
+                errorMessage err `shouldBe` "Invalid JSON"
+            it "should create method not found error" $ do
+                let err = mkMethodNotFound "unknownMethod"
+                errorCode err `shouldBe` (-32601)
+                errorMessage err `shouldBe` "Method not found: unknownMethod"

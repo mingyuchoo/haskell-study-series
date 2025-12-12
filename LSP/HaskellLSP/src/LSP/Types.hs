@@ -2,7 +2,48 @@
 {-# LANGUAGE DeriveAnyClass #-}
 
 -- | Core data types for the LSP server
-module LSP.Types where
+module LSP.Types 
+  ( -- * Core Types
+    RequestId
+  , Method
+  , LspMessage(..)
+  , ResponseError(..)
+    -- * Error Handling
+  , LspErrorCode(..)
+  , ErrorSeverity(..)
+  , ErrorRecovery(..)
+  , lspErrorCodeToInt
+  , intToLspErrorCode
+    -- * Error Builders
+  , mkParseError
+  , mkInvalidRequest
+  , mkMethodNotFound
+  , mkInvalidParams
+  , mkInternalError
+  , mkServerNotInitialized
+  , mkRequestCancelled
+    -- * Configuration
+  , LogLevel(..)
+  , ServerConfig(..)
+  , defaultServerConfig
+    -- * Document State
+  , DocumentState(..)
+  , ParsedModule(..)
+  , Declaration(..)
+  , Import(..)
+  , Export(..)
+  , SymbolKind(..)
+  , Position(..)
+  , Range(..)
+  , ServerState(..)
+  , initialServerState
+    -- * Protocol Helpers
+  , encodeLspMessage
+  , decodeLspMessage
+  , parseContentLength
+  , extractJsonContent
+  , parseJsonRpcMessage
+  ) where
 
 import Data.Aeson (ToJSON, FromJSON, Value, encode, decode)
 import Data.ByteString.Lazy (ByteString)
@@ -27,6 +68,94 @@ data ResponseError = ResponseError
   , errorMessage :: Text
   , errorData    :: Maybe Value
   } deriving (Show, Eq, Generic, ToJSON, FromJSON)
+
+-- | Standard JSON-RPC error codes
+data LspErrorCode
+  = ParseError          -- ^ -32700: Invalid JSON was received by the server
+  | InvalidRequest      -- ^ -32600: The JSON sent is not a valid Request object
+  | MethodNotFound      -- ^ -32601: The method does not exist / is not available
+  | InvalidParams       -- ^ -32602: Invalid method parameter(s)
+  | InternalError       -- ^ -32603: Internal JSON-RPC error
+  | ServerNotInitialized -- ^ -32002: Server has not been initialized
+  | UnknownErrorCode    -- ^ -32001: Unknown error code
+  | RequestCancelled    -- ^ -32800: Request was cancelled
+  | ContentModified     -- ^ -32801: Content was modified
+  deriving (Show, Eq, Generic)
+
+-- | Convert LspErrorCode to integer
+lspErrorCodeToInt :: LspErrorCode -> Int
+lspErrorCodeToInt ParseError = -32700
+lspErrorCodeToInt InvalidRequest = -32600
+lspErrorCodeToInt MethodNotFound = -32601
+lspErrorCodeToInt InvalidParams = -32602
+lspErrorCodeToInt InternalError = -32603
+lspErrorCodeToInt ServerNotInitialized = -32002
+lspErrorCodeToInt UnknownErrorCode = -32001
+lspErrorCodeToInt RequestCancelled = -32800
+lspErrorCodeToInt ContentModified = -32801
+
+-- | Convert integer to LspErrorCode
+intToLspErrorCode :: Int -> LspErrorCode
+intToLspErrorCode (-32700) = ParseError
+intToLspErrorCode (-32600) = InvalidRequest
+intToLspErrorCode (-32601) = MethodNotFound
+intToLspErrorCode (-32602) = InvalidParams
+intToLspErrorCode (-32603) = InternalError
+intToLspErrorCode (-32002) = ServerNotInitialized
+intToLspErrorCode (-32001) = UnknownErrorCode
+intToLspErrorCode (-32800) = RequestCancelled
+intToLspErrorCode (-32801) = ContentModified
+intToLspErrorCode _ = UnknownErrorCode
+
+-- | Error response builders
+mkParseError :: Text -> ResponseError
+mkParseError msg = ResponseError
+  { errorCode = lspErrorCodeToInt ParseError
+  , errorMessage = msg
+  , errorData = Nothing
+  }
+
+mkInvalidRequest :: Text -> ResponseError
+mkInvalidRequest msg = ResponseError
+  { errorCode = lspErrorCodeToInt InvalidRequest
+  , errorMessage = msg
+  , errorData = Nothing
+  }
+
+mkMethodNotFound :: Text -> ResponseError
+mkMethodNotFound method = ResponseError
+  { errorCode = lspErrorCodeToInt MethodNotFound
+  , errorMessage = "Method not found: " <> method
+  , errorData = Nothing
+  }
+
+mkInvalidParams :: Text -> ResponseError
+mkInvalidParams msg = ResponseError
+  { errorCode = lspErrorCodeToInt InvalidParams
+  , errorMessage = msg
+  , errorData = Nothing
+  }
+
+mkInternalError :: Text -> ResponseError
+mkInternalError msg = ResponseError
+  { errorCode = lspErrorCodeToInt InternalError
+  , errorMessage = msg
+  , errorData = Nothing
+  }
+
+mkServerNotInitialized :: ResponseError
+mkServerNotInitialized = ResponseError
+  { errorCode = lspErrorCodeToInt ServerNotInitialized
+  , errorMessage = "Server not initialized"
+  , errorData = Nothing
+  }
+
+mkRequestCancelled :: RequestId -> ResponseError
+mkRequestCancelled _ = ResponseError
+  { errorCode = lspErrorCodeToInt RequestCancelled
+  , errorMessage = "Request was cancelled"
+  , errorData = Nothing
+  }
 
 -- | LSP message wrapper for JSON-RPC communication
 data LspMessage
@@ -111,6 +240,20 @@ data Range = Range
   { rangeStart :: Position
   , rangeEnd   :: Position
   } deriving (Show, Eq, Generic)
+
+-- | Error classification for recovery strategies
+data ErrorSeverity
+  = Recoverable    -- ^ Error that can be handled and processing can continue
+  | Fatal          -- ^ Error that requires server shutdown
+  | Transient      -- ^ Temporary error that may succeed on retry
+  deriving (Show, Eq, Generic)
+
+-- | Error recovery configuration
+data ErrorRecovery = ErrorRecovery
+  { maxRetries      :: Int
+  , retryDelay      :: Int  -- ^ milliseconds
+  , fallbackAction  :: IO ()
+  }
 
 -- | Overall server state
 data ServerState = ServerState

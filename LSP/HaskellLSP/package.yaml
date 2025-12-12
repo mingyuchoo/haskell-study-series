@@ -19,17 +19,22 @@ dependencies:
 - bytestring
 - co-log-core
 - containers
+- data-default
 - flow
+- lens
 - lsp
 - lsp-types
 - mtl
 - parallel
 - prettyprinter
+- stm
 - text
+- time
 
 default-extensions:
 - DataKinds
 - DeriveGeneric
+- DisambiguateRecordFields
 - ExplicitForAll
 - GADTs
 - KindSignatures
