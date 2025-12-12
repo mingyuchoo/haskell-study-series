@@ -118,7 +118,7 @@ validateBasicSyntax linesOfCode =
 -- | Check basic syntax issues on a single line
 checkBasicLineSyntax :: (Int, Text) -> [ParseError]
 checkBasicLineSyntax (lineNum, line) =
-  checkSeverelyMalformed lineNum line ++ checkInvalidModuleDecl lineNum line
+  checkSeverelyMalformed lineNum line <> checkInvalidModuleDecl lineNum line
 
 -- | Check for severely malformed syntax
 checkSeverelyMalformed :: Int -> Text -> [ParseError]
@@ -204,7 +204,7 @@ parseDeclarations linesOfCode =
       dataDecls = concatMap parseDataDecl numberedLines
       typeDecls = concatMap parseTypeDecl numberedLines
       classDecls = concatMap parseClassDecl numberedLines
-  in functionDecls ++ dataDecls ++ typeDecls ++ classDecls
+  in functionDecls <> dataDecls <> typeDecls <> classDecls
 
 -- | Parse function declarations
 parseFunctionDecl :: (Int, Text) -> [Declaration]
@@ -298,7 +298,7 @@ symbolsInScope parsedModule _position =
       imports = pmImports parsedModule
       declSymbols = map (\decl -> declarationToSymbolInfo decl (createDummyUri "file:///dummy.hs")) declarations
       importSymbols = concatMap importToSymbolInfos imports
-  in declSymbols ++ importSymbols
+  in declSymbols <> importSymbols
 
 -- | Check if position is within range
 positionInRange :: Position -> Range -> Bool
@@ -337,7 +337,7 @@ createDummyUri uriText =
   -- This is a simplified URI creation for testing
   -- In a real implementation, this would use proper URI parsing
   case T.unpack uriText of
-    str -> read ("\"" ++ str ++ "\"") -- Simple string to Uri conversion
+    str -> read ("\"" <> str <> "\"") -- Simple string to Uri conversion
 
 -- | Pretty print a parsed module (for round-trip testing)
 printModule :: ParsedModule -> Text

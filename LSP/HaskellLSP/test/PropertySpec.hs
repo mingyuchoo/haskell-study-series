@@ -36,9 +36,9 @@ prop_documentSymbolsCompleteness =
         let declarations = pmDeclarations parsedModule
             expectedDecls = countExpectedDeclarations moduleText
         in counterexample
-           ("Expected " ++ show expectedDecls ++ " declarations, got " ++ show (length declarations) ++
-            "\nModule text:\n" ++ T.unpack moduleText ++
-            "\nFound declarations: " ++ show (map declName declarations)) $
+           ("Expected " <> show expectedDecls <> " declarations, got " <> show (length declarations) <>
+            "\nModule text:\n" <> T.unpack moduleText <>
+            "\nFound declarations: " <> show (map declName declarations)) $
            length declarations >= expectedDecls
 
 -- Generator for valid Haskell module text

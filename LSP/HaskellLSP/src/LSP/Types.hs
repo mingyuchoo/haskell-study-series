@@ -272,7 +272,7 @@ encodeLspMessage :: LspMessage -> ByteString
 encodeLspMessage msg =
   let jsonBytes = encode msg
       contentLength = LBS.length jsonBytes
-      header = L8.pack $ "Content-Length: " ++ show contentLength ++ "\r\n\r\n"
+      header = L8.pack $ "Content-Length: " <> show contentLength <> "\r\n\r\n"
   in header <> jsonBytes
 
 -- | Decode a JSON-RPC message from ByteString

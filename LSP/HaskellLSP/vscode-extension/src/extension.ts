@@ -160,7 +160,7 @@ Current configured path: ${config.serverPath}`;
                 console.log('LSP server connection closed');
                 
                 if (restartCount < config.maxRestartCount) {
-                    restartCount++;
+                    restartCount<>;
                     console.log(`Attempting to restart LSP server (attempt ${restartCount}/${maxRestartCount})`);
                     
                     // Show status bar message during restart

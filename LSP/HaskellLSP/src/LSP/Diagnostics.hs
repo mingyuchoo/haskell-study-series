@@ -80,8 +80,8 @@ parseErrorToDiagnostic parseError =
 checkLineSyntax :: (Int, Text) -> [DiagnosticInfo]
 checkLineSyntax (lineNum, line) =
   checkUnmatchedParens lineNum line
-  ++ checkInvalidChars lineNum line
-  ++ checkIncompleteStrings lineNum line
+  <> checkInvalidChars lineNum line
+  <> checkIncompleteStrings lineNum line
 
 -- | Check for unmatched parentheses
 checkUnmatchedParens :: Int -> Text -> [DiagnosticInfo]
@@ -110,7 +110,7 @@ checkUnmatchedParens lineNum line =
                    else if closeBraces > openBraces
                    then [createDiagnostic lineNum line "Unmatched closing brace" "unmatched-brace"]
                    else []
-  in parenIssues ++ bracketIssues ++ braceIssues
+  in parenIssues <> bracketIssues <> braceIssues
 
 -- | Check for invalid characters
 checkInvalidChars :: Int -> Text -> [DiagnosticInfo]
