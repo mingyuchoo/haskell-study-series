@@ -1,4 +1,4 @@
-.PHONY: test coverage install update-stack-yaml
+.PHONY: test coverage install update-stack-yaml build-all package-extension install-extension
 
 # Extract project name from directory path
 PROJECT_NAME := $(shell basename $(CURDIR))
@@ -73,4 +73,18 @@ docker-compose-logs:
 install: release
 	mkdir -p $(HOME)/.local/bin
 	cp $(shell stack path --local-install-root)/bin/$(PROJECT_NAME)-exe $(HOME)/.local/bin/
+
+# Extension build targets
+build-all:
+	./build-all.sh
+
+package-extension:
+	cd vscode-extension && npm install && npm run package
+
+install-extension: package-extension
+	code --install-extension vscode-extension/*.vsix
+
+clean-extension:
+	cd vscode-extension && npm run clean
+	rm -rf dist/
 

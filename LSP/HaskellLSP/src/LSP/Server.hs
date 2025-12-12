@@ -7,8 +7,9 @@ module LSP.Server
 
 import Control.Monad.IO.Class (liftIO)
 import Language.LSP.Server
+import Language.LSP.Protocol.Types
 import System.IO (stdin, stdout, hSetBuffering, BufferMode(..))
-
+import Data.Default (def)
 
 import LSP.Types (defaultServerConfig)
 
@@ -20,12 +21,12 @@ runLspServer = do
   hSetBuffering stdin NoBuffering
   hSetBuffering stdout NoBuffering
   
+  liftIO $ putStrLn "Starting Haskell LSP Server..."
+  
   -- Run the LSP server with configured handlers
   runServer $ ServerDefinition
     { parseConfig = const $ const $ Right defaultServerConfig
     , onConfigChange = \_ -> pure ()
-        -- TODO: Integrate configuration change handler from Handlers.Configuration
-        -- The handler is implemented but needs LSP library compatibility fixes
     , defaultConfig = defaultServerConfig
     , configSection = "haskellLSP"
     , doInitialize = \env _req -> do
@@ -33,7 +34,60 @@ runLspServer = do
         liftIO $ putStrLn "Initialize request received"
         liftIO $ putStrLn "Server capabilities configured"
         pure $ Right env
-    , staticHandlers = \_caps -> mempty
-    , interpretHandler = \env -> Iso (runLspT env) liftIO
+    , staticHandlers = \_caps -> mempty  -- Start with empty handlers for now
+    , interpretHandler = \env -> Iso (\f -> runLspT env f) liftIO
     , options = defaultOptions
     }
+
+-- | Server capabilities configuration
+-- Declares what features this LSP server supports
+serverCapabilities :: ServerCapabilities
+serverCapabilities = ServerCapabilities
+  { _positionEncoding = Nothing
+  , _textDocumentSync = Just $ InL $ TextDocumentSyncOptions
+      { _openClose = Just True
+      , _change = Just TextDocumentSyncKind_Incremental
+      , _willSave = Nothing
+      , _willSaveWaitUntil = Nothing
+      , _save = Just $ InR $ SaveOptions { _includeText = Just False }
+      }
+  , _notebookDocumentSync = Nothing
+  , _completionProvider = Just $ CompletionOptions
+      { _triggerCharacters = Just ["."]
+      , _allCommitCharacters = Nothing
+      , _resolveProvider = Just False
+      , _completionItem = Nothing
+      , _workDoneProgress = Nothing
+      }
+  , _hoverProvider = Just $ InL True
+  , _signatureHelpProvider = Nothing
+  , _declarationProvider = Nothing
+  , _definitionProvider = Just $ InL True
+  , _typeDefinitionProvider = Nothing
+  , _implementationProvider = Nothing
+  , _referencesProvider = Nothing
+  , _documentHighlightProvider = Nothing
+  , _documentSymbolProvider = Just $ InL True
+  , _codeActionProvider = Nothing
+  , _codeLensProvider = Nothing
+  , _documentLinkProvider = Nothing
+  , _colorProvider = Nothing
+  , _documentFormattingProvider = Nothing
+  , _documentRangeFormattingProvider = Nothing
+  , _documentOnTypeFormattingProvider = Nothing
+  , _renameProvider = Nothing
+  , _foldingRangeProvider = Nothing
+  , _executeCommandProvider = Nothing
+  , _selectionRangeProvider = Nothing
+  , _linkedEditingRangeProvider = Nothing
+  , _callHierarchyProvider = Nothing
+  , _semanticTokensProvider = Nothing
+  , _monikerProvider = Nothing
+  , _typeHierarchyProvider = Nothing
+  , _inlineValueProvider = Nothing
+  , _inlayHintProvider = Nothing
+  , _diagnosticProvider = Nothing
+  , _workspaceSymbolProvider = Nothing
+  , _workspace = Nothing
+  , _experimental = Nothing
+  }
