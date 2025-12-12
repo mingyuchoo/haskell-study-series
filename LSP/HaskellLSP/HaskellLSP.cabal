@@ -30,6 +30,7 @@ library
       Analysis.Parser
       Handlers.DocumentSync
       Lib
+      LSP.Diagnostics
       LSP.Error
       LSP.Server
       LSP.Types
@@ -58,6 +59,7 @@ library
     , containers
     , data-default
     , flow
+    , ghc-lib-parser
     , lens
     , lsp
     , lsp-types
@@ -97,6 +99,7 @@ executable HaskellLSP-exe
     , containers
     , data-default
     , flow
+    , ghc-lib-parser
     , lens
     , lsp
     , lsp-types
@@ -112,7 +115,9 @@ test-suite HaskellLSP-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      DiagnosticsSpec
       DocumentSyncSpec
+      PropertySpec
       Paths_HaskellLSP
   autogen-modules:
       Paths_HaskellLSP
@@ -141,6 +146,7 @@ test-suite HaskellLSP-test
     , doctest
     , doctest-discover
     , flow
+    , ghc-lib-parser
     , hspec
     , lens
     , lsp

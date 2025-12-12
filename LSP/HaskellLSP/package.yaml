@@ -21,6 +21,7 @@ dependencies:
 - containers
 - data-default
 - flow
+- ghc-lib-parser
 - lens
 - lsp
 - lsp-types
