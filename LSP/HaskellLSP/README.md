@@ -297,10 +297,6 @@ Contributions are welcome! Please:
 - Update documentation as needed
 - Test both server and extension components
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## Acknowledgments
 
 - Built using the [lsp](https://hackage.haskell.org/package/lsp) Haskell library
