@@ -1,4 +1,4 @@
-ARG PROJECT_NAME=change-project-name-here
+ARG PROJECT_NAME=HaskellLSP
 FROM fpco/stack-build:lts-24.21
 WORKDIR /app
 

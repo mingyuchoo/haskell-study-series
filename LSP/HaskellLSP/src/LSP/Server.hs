@@ -9,8 +9,6 @@ import Control.Monad.IO.Class (liftIO)
 import Language.LSP.Server
 import Language.LSP.Protocol.Types
 import System.IO (stdin, stdout, hSetBuffering, BufferMode(..))
-import Data.Default (def)
-
 import LSP.Types (defaultServerConfig)
 
 -- | Main LSP server entry point
@@ -41,8 +39,9 @@ runLspServer = do
 
 -- | Server capabilities configuration
 -- Declares what features this LSP server supports
-serverCapabilities :: ServerCapabilities
-serverCapabilities = ServerCapabilities
+-- Currently unused but kept for future use
+_serverCapabilities :: ServerCapabilities
+_serverCapabilities = ServerCapabilities
   { _positionEncoding = Nothing
   , _textDocumentSync = Just $ InL $ TextDocumentSyncOptions
       { _openClose = Just True

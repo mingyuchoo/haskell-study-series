@@ -23,7 +23,7 @@ import qualified Analysis.Parser
 -- | Handle textDocument/didOpen notification
 -- Stores document content in server state and triggers initial diagnostics
 handleDidOpen :: DidOpenTextDocumentParams -> LspM ServerState ()
-handleDidOpen (DidOpenTextDocumentParams (TextDocumentItem uri _ version content)) = do
+handleDidOpen (DidOpenTextDocumentParams (TextDocumentItem uri _ _version content)) = do
   liftIO $ putStrLn $ "Document opened: " ++ show uri
   
   -- TODO: Store document content in server state

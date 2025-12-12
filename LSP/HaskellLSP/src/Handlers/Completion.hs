@@ -18,6 +18,7 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import Language.LSP.Protocol.Types hiding (CompletionContext)
 import qualified Language.LSP.Protocol.Types as LSP
+import Language.LSP.Protocol.Types (CompletionItem(..))
 import Language.LSP.Server
 import Control.Lens ((^.))
 import qualified Language.LSP.Protocol.Lens as L
