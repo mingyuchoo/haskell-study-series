@@ -23,20 +23,20 @@ handleConfigurationChange :: ServerConfig -> Value -> ()
 handleConfigurationChange currentConfig settings =
   -- Use unsafePerformIO for side effects in pure context
   -- This is acceptable here since we're just logging configuration changes
-  let _ = unsafePerformIO $ do
+  let _ = unsafePerformIO <| do
         putStrLn "Configuration change notification received"
-        putStrLn $ "Current config: " <> show currentConfig
-        putStrLn $ "New settings: " <> show settings
+        putStrLn <| "Current config: " <> show currentConfig
+        putStrLn <| "New settings: " <> show settings
 
         -- Parse and apply configuration changes
         case parseConfigurationSettings settings of
           Just newConfig -> do
-            putStrLn $ "Parsed new config: " <> show newConfig
+            putStrLn <| "Parsed new config: " <> show newConfig
 
             -- Apply configuration changes
             let updatedConfig = applyConfigurationChanges currentConfig newConfig
 
-            putStrLn $ "Configuration updated successfully: " <> show updatedConfig
+            putStrLn <| "Configuration updated successfully: " <> show updatedConfig
             putStrLn "Server configuration hot-reloaded without restart"
 
             -- Note: In the LSP library, the actual config update is handled internally
@@ -63,7 +63,7 @@ parseConfigurationSettings settings =
     extractNestedConfig _ =
       -- For now, return a default config with some sample changes
       -- In a real implementation, this would parse the nested JSON structure
-      Just $ ServerConfig
+      Just <| ServerConfig
         { configLogLevel = Info
         , configLogFile = Just "/tmp/haskell-lsp.log"
         , configMaxWorkers = 6

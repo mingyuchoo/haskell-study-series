@@ -100,7 +100,7 @@ runSimpleParser sourceText = do
       let exports = parseExports linesOfCode
       let declarations = parseDeclarations linesOfCode
 
-      Right $ ParsedModule
+      Right <| ParsedModule
         { pmSource = sourceText
         , pmDeclarations = declarations
         , pmImports = imports
@@ -130,8 +130,8 @@ checkSeverelyMalformed lineNum line =
         T.any (\c -> c `elem` ("\0\1\2\3\4\5\6\7\8" :: String)) line
      then [ParseError
            "Invalid control characters in source code"
-           (Just $ Range (Position (fromIntegral lineNum) 0)
-                        (Position (fromIntegral lineNum) (fromIntegral $ T.length line)))]
+           (Just <| Range (Position (fromIntegral lineNum) 0)
+                        (Position (fromIntegral lineNum) (fromIntegral <| T.length line)))]
      else []
 
 -- | Check for invalid module declarations
@@ -142,14 +142,14 @@ checkInvalidModuleDecl lineNum line =
      then case T.words trimmed of
        ["module"] -> [ParseError
                      "Incomplete module declaration"
-                     (Just $ Range (Position (fromIntegral lineNum) 0)
-                                  (Position (fromIntegral lineNum) (fromIntegral $ T.length line)))]
+                     (Just <| Range (Position (fromIntegral lineNum) 0)
+                                  (Position (fromIntegral lineNum) (fromIntegral <| T.length line)))]
        ("module":name:_) ->
          if not (isValidModuleName name)
          then [ParseError
                ("Invalid module name: " <> name)
-               (Just $ Range (Position (fromIntegral lineNum) 7)
-                            (Position (fromIntegral lineNum) (fromIntegral $ 7 + T.length name)))]
+               (Just <| Range (Position (fromIntegral lineNum) 7)
+                            (Position (fromIntegral lineNum) (fromIntegral <| 7 + T.length name)))]
          else []
        _ -> []
      else []
@@ -215,7 +215,7 @@ parseFunctionDecl (lineNum, line) =
      then case T.words trimmed of
        (name:_) ->
          let range = Range (Position (fromIntegral lineNum) 0)
-                          (Position (fromIntegral lineNum) (fromIntegral $ T.length line))
+                          (Position (fromIntegral lineNum) (fromIntegral <| T.length line))
          in [Declaration name Nothing SymbolKind_Function range []]
        _ -> []
      else []
@@ -245,7 +245,7 @@ parseDataDecl (lineNum, line) =
      then case T.words trimmed of
        ("data":name:_) ->
          let range = Range (Position (fromIntegral lineNum) 0)
-                          (Position (fromIntegral lineNum) (fromIntegral $ T.length line))
+                          (Position (fromIntegral lineNum) (fromIntegral <| T.length line))
          in [Declaration name Nothing SymbolKind_Struct range []]
        _ -> []
      else []
@@ -258,7 +258,7 @@ parseTypeDecl (lineNum, line) =
      then case T.words trimmed of
        ("type":name:_) ->
          let range = Range (Position (fromIntegral lineNum) 0)
-                          (Position (fromIntegral lineNum) (fromIntegral $ T.length line))
+                          (Position (fromIntegral lineNum) (fromIntegral <| T.length line))
          in [Declaration name Nothing SymbolKind_Class range []]
        _ -> []
      else []
@@ -271,7 +271,7 @@ parseClassDecl (lineNum, line) =
      then case T.words trimmed of
        ("class":name:_) ->
          let range = Range (Position (fromIntegral lineNum) 0)
-                          (Position (fromIntegral lineNum) (fromIntegral $ T.length line))
+                          (Position (fromIntegral lineNum) (fromIntegral <| T.length line))
          in [Declaration name Nothing SymbolKind_Class range []]
        _ -> []
      else []
@@ -290,7 +290,7 @@ resolveSymbol parsedModule position =
       matchingDecls = filter (positionInRange position . declRange) declarations
   in case matchingDecls of
     [] -> Nothing
-    (decl:_) -> Just $ declarationToSymbolInfo decl (createDummyUri "file:///dummy.hs")
+    (decl:_) -> Just <| declarationToSymbolInfo decl (createDummyUri "file:///dummy.hs")
 
 -- | Get all symbols in scope at position
 symbolsInScope :: ParsedModule -> Position -> [SymbolInfo]
@@ -322,7 +322,7 @@ declarationToSymbolInfo decl uri = SymbolInfo
 -- | Convert Import to SymbolInfos (simplified)
 importToSymbolInfos :: Import -> [SymbolInfo]
 importToSymbolInfos imp =
-  let dummyRange = Range (Position 0 0) (Position 0 (fromIntegral $ T.length $ importModule imp))
+  let dummyRange = Range (Position 0 0) (Position 0 (fromIntegral <| T.length <| importModule imp))
       dummyUri = createDummyUri "file:///dummy.hs"
   in [SymbolInfo
       { symName = importModule imp
@@ -347,9 +347,9 @@ printModule parsedModule =
         Nothing -> ""
         Just exports -> "(" <> T.intercalate ", " (map exportName exports) <> ")"
 
-      importsText = T.unlines $ map printImport (pmImports parsedModule)
+      importsText = T.unlines <| map printImport (pmImports parsedModule)
 
-      declsText = T.unlines $ map printDeclaration (pmDeclarations parsedModule)
+      declsText = T.unlines <| map printDeclaration (pmDeclarations parsedModule)
 
   in "module Module" <> exportsText <> " where\n\n" <> importsText <> "\n" <> declsText
 

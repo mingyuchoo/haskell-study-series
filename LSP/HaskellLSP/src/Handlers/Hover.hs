@@ -26,7 +26,7 @@ import           Language.LSP.Server
 -- Resolves symbol at hover position and formats hover content with type information
 handleHover :: HoverParams -> LspM ServerState (Maybe Hover)
 handleHover (HoverParams (TextDocumentIdentifier uri) position _workDoneToken) = do
-  liftIO $ putStrLn $ "Hover request at position: " <> show position <> " in " <> show uri
+  liftIO <| putStrLn <| "Hover request at position: " <> show position <> " in " <> show uri
 
   -- TODO: Get document content from server state
   -- For now, we'll simulate getting document content
@@ -35,24 +35,24 @@ handleHover (HoverParams (TextDocumentIdentifier uri) position _workDoneToken) =
 
   case maybeContent of
     Nothing -> do
-      liftIO $ putStrLn "Document not found in server state"
+      liftIO <| putStrLn "Document not found in server state"
       return Nothing
     Just content -> do
-      liftIO $ putStrLn $ "Processing hover for document with " <> show (T.length content) <> " characters"
+      liftIO <| putStrLn <| "Processing hover for document with " <> show (T.length content) <> " characters"
 
       -- Parse the document
       case parseModule content of
         Left _parseError -> do
-          liftIO $ putStrLn "Failed to parse document for hover"
+          liftIO <| putStrLn "Failed to parse document for hover"
           return Nothing
         Right parsedModule -> do
           -- Resolve symbol at position
           case resolveSymbol parsedModule position of
             Nothing -> do
-              liftIO $ putStrLn "No symbol found at hover position"
+              liftIO <| putStrLn "No symbol found at hover position"
               return Nothing
             Just symbolInfo -> do
-              liftIO $ putStrLn $ "Found symbol: " <> T.unpack (symName symbolInfo)
+              liftIO <| putStrLn <| "Found symbol: " <> T.unpack (symName symbolInfo)
 
               -- Format hover content based on symbol kind
               let hoverContent = formatHoverContent symbolInfo

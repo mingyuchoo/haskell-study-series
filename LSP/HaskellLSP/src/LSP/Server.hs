@@ -24,19 +24,19 @@ runLspServer = do
   hSetBuffering stdin NoBuffering
   hSetBuffering stdout NoBuffering
 
-  liftIO $ putStrLn "Starting Haskell LSP Server..."
+  liftIO <| putStrLn "Starting Haskell LSP Server..."
 
   -- Run the LSP server with configured handlers
-  runServer $ ServerDefinition
-    { parseConfig = const $ const $ Right defaultServerConfig
+  runServer <| ServerDefinition
+    { parseConfig = const <| const <| Right defaultServerConfig
     , onConfigChange = \_ -> pure ()
     , defaultConfig = defaultServerConfig
     , configSection = "haskellLSP"
     , doInitialize = \env _req -> do
-        liftIO $ putStrLn "Server initializing..."
-        liftIO $ putStrLn "Initialize request received"
-        liftIO $ putStrLn "Server capabilities configured"
-        pure $ Right env
+        liftIO <| putStrLn "Server initializing..."
+        liftIO <| putStrLn "Initialize request received"
+        liftIO <| putStrLn "Server capabilities configured"
+        pure <| Right env
     , staticHandlers = \_caps -> mempty  -- Start with empty handlers for now
     , interpretHandler = \env -> Iso (\f -> runLspT env f) liftIO
     , options = defaultOptions
@@ -48,30 +48,30 @@ runLspServer = do
 _serverCapabilities :: ServerCapabilities
 _serverCapabilities = ServerCapabilities
   { _positionEncoding = Nothing
-  , _textDocumentSync = Just $ InL $ TextDocumentSyncOptions
+  , _textDocumentSync = Just <| InL <| TextDocumentSyncOptions
       { _openClose = Just True
       , _change = Just TextDocumentSyncKind_Incremental
       , _willSave = Nothing
       , _willSaveWaitUntil = Nothing
-      , _save = Just $ InR $ SaveOptions { _includeText = Just False }
+      , _save = Just <| InR <| SaveOptions { _includeText = Just False }
       }
   , _notebookDocumentSync = Nothing
-  , _completionProvider = Just $ CompletionOptions
+  , _completionProvider = Just <| CompletionOptions
       { _triggerCharacters = Just ["."]
       , _allCommitCharacters = Nothing
       , _resolveProvider = Just False
       , _completionItem = Nothing
       , _workDoneProgress = Nothing
       }
-  , _hoverProvider = Just $ InL True
+  , _hoverProvider = Just <| InL True
   , _signatureHelpProvider = Nothing
   , _declarationProvider = Nothing
-  , _definitionProvider = Just $ InL True
+  , _definitionProvider = Just <| InL True
   , _typeDefinitionProvider = Nothing
   , _implementationProvider = Nothing
   , _referencesProvider = Nothing
   , _documentHighlightProvider = Nothing
-  , _documentSymbolProvider = Just $ InL True
+  , _documentSymbolProvider = Just <| InL True
   , _codeActionProvider = Nothing
   , _codeLensProvider = Nothing
   , _documentLinkProvider = Nothing

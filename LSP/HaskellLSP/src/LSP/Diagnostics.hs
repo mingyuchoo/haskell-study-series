@@ -135,7 +135,7 @@ createDiagnostic :: Int -> Text -> Text -> Text -> DiagnosticInfo
 createDiagnostic lineNum line message code =
   let range = Range
         (Position (fromIntegral lineNum) 0)
-        (Position (fromIntegral lineNum) (fromIntegral $ T.length line))
+        (Position (fromIntegral lineNum) (fromIntegral <| T.length line))
       severity = DiagnosticSeverity_Error
       source = "haskell-lsp"
   in DiagnosticInfo range severity message (Just code) source

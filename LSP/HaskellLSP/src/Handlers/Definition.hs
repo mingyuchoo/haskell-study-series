@@ -35,41 +35,41 @@ import           Language.LSP.Server
 handleDefinition :: DefinitionParams -> LspM ServerState (Maybe Location)
 handleDefinition (DefinitionParams textDoc position _workDoneToken _partialResultToken) = do
   let uri = textDoc ^. L.uri
-  liftIO $ putStrLn $ "Definition request at position: " <> show position <> " in " <> show uri
+  liftIO <| putStrLn <| "Definition request at position: " <> show position <> " in " <> show uri
 
   -- Get document content from server state
   maybeContent <- getDocumentContent uri
 
   case maybeContent of
     Nothing -> do
-      liftIO $ putStrLn "Document not found in server state"
+      liftIO <| putStrLn "Document not found in server state"
       return Nothing
     Just content -> do
-      liftIO $ putStrLn $ "Processing definition for document with " <> show (T.length content) <> " characters"
+      liftIO <| putStrLn <| "Processing definition for document with " <> show (T.length content) <> " characters"
 
       -- Parse the document
       case parseModule content of
         Left _parseError -> do
-          liftIO $ putStrLn "Failed to parse document for definition"
+          liftIO <| putStrLn "Failed to parse document for definition"
           return Nothing
         Right parsedModule -> do
           -- Resolve symbol at position
           case resolveSymbol parsedModule position of
             Nothing -> do
-              liftIO $ putStrLn "No symbol found at definition position"
+              liftIO <| putStrLn "No symbol found at definition position"
               return Nothing
             Just symbolInfo -> do
-              liftIO $ putStrLn $ "Found symbol: " <> T.unpack (symName symbolInfo)
+              liftIO <| putStrLn <| "Found symbol: " <> T.unpack (symName symbolInfo)
 
               -- Resolve definition location
               maybeLocation <- resolveDefinitionLocation parsedModule symbolInfo uri
 
               case maybeLocation of
                 Nothing -> do
-                  liftIO $ putStrLn "No definition location found"
+                  liftIO <| putStrLn "No definition location found"
                   return Nothing
                 Just location -> do
-                  liftIO $ putStrLn $ "Found definition at: " <> show location
+                  liftIO <| putStrLn <| "Found definition at: " <> show location
                   return (Just location)
 
 -- | Handle textDocument/documentSymbol request
@@ -77,27 +77,27 @@ handleDefinition (DefinitionParams textDoc position _workDoneToken _partialResul
 handleDocumentSymbol :: DocumentSymbolParams -> LspM ServerState [DocumentSymbol]
 handleDocumentSymbol (DocumentSymbolParams _workDoneToken _partialResultToken textDoc) = do
   let uri = textDoc ^. L.uri
-  liftIO $ putStrLn $ "Document symbol request for: " <> show uri
+  liftIO <| putStrLn <| "Document symbol request for: " <> show uri
 
   -- Get document content from server state
   maybeContent <- getDocumentContent uri
 
   case maybeContent of
     Nothing -> do
-      liftIO $ putStrLn "Document not found in server state"
+      liftIO <| putStrLn "Document not found in server state"
       return []
     Just content -> do
-      liftIO $ putStrLn $ "Processing document symbols for document with " <> show (T.length content) <> " characters"
+      liftIO <| putStrLn <| "Processing document symbols for document with " <> show (T.length content) <> " characters"
 
       -- Parse the document
       case parseModule content of
         Left _parseError -> do
-          liftIO $ putStrLn "Failed to parse document for document symbols"
+          liftIO <| putStrLn "Failed to parse document for document symbols"
           return []
         Right parsedModule -> do
           -- Create document symbols from declarations
           let documentSymbols = createDocumentSymbols (pmDeclarations parsedModule)
-          liftIO $ putStrLn $ "Found " <> show (length documentSymbols) <> " document symbols"
+          liftIO <| putStrLn <| "Found " <> show (length documentSymbols) <> " document symbols"
 
           return documentSymbols
 
@@ -152,16 +152,16 @@ getDocumentContent _uri = do
 resolveDefinitionLocation :: ParsedModule -> SymbolInfo -> Uri -> LspM ServerState (Maybe Location)
 resolveDefinitionLocation parsedModule symbolInfo currentUri = do
   let symbolName = symName symbolInfo
-  liftIO $ putStrLn $ "Resolving definition for symbol: " <> T.unpack symbolName
+  liftIO <| putStrLn <| "Resolving definition for symbol: " <> T.unpack symbolName
 
   -- First, try to find local binding
   case findLocalBinding parsedModule symbolName of
     Just location -> do
-      liftIO $ putStrLn "Found local binding"
+      liftIO <| putStrLn "Found local binding"
       return (Just location)
     Nothing -> do
       -- Try to find imported symbol
-      liftIO $ putStrLn "Looking for imported symbol"
+      liftIO <| putStrLn "Looking for imported symbol"
       findImportedSymbol parsedModule symbolName currentUri
 
 -- | Find local binding definition location
@@ -184,16 +184,16 @@ findLocalBinding parsedModule symbolName =
 findImportedSymbol :: ParsedModule -> Text -> Uri -> LspM ServerState (Maybe Location)
 findImportedSymbol parsedModule symbolName _currentUri = do
   let imports = pmImports parsedModule
-  liftIO $ putStrLn $ "Searching through " <> show (length imports) <> " imports"
+  liftIO <| putStrLn <| "Searching through " <> show (length imports) <> " imports"
 
   -- Look for the symbol in imported modules
   -- For now, we'll simulate finding definitions in well-known modules
   case findSymbolInImports imports symbolName of
     Nothing -> do
-      liftIO $ putStrLn "Symbol not found in imports"
+      liftIO <| putStrLn "Symbol not found in imports"
       return Nothing
     Just (moduleName, symbolLocation) -> do
-      liftIO $ putStrLn $ "Found symbol in module: " <> T.unpack moduleName
+      liftIO <| putStrLn <| "Found symbol in module: " <> T.unpack moduleName
       return (Just symbolLocation)
 
 -- | Find symbol in imported modules

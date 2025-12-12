@@ -46,31 +46,31 @@ data CompletionContext = CompletionContext { ccPosition :: Position
 handleCompletion :: CompletionParams -> LspM ServerState [CompletionItem]
 handleCompletion (CompletionParams textDoc position _workDoneToken _partialResultToken context) = do
   let uri = textDoc ^. L.uri
-  liftIO $ putStrLn $ "Completion request at position: " <> show position <> " in " <> show uri
+  liftIO <| putStrLn <| "Completion request at position: " <> show position <> " in " <> show uri
 
   -- Get document content from server state
   maybeContent <- getDocumentContent uri
 
   case maybeContent of
     Nothing -> do
-      liftIO $ putStrLn "Document not found in server state"
+      liftIO <| putStrLn "Document not found in server state"
       return []
     Just content -> do
-      liftIO $ putStrLn $ "Processing completion for document with " <> show (T.length content) <> " characters"
+      liftIO <| putStrLn <| "Processing completion for document with " <> show (T.length content) <> " characters"
 
       -- Parse the document
       case parseModule content of
         Left _parseError -> do
-          liftIO $ putStrLn "Failed to parse document for completion"
+          liftIO <| putStrLn "Failed to parse document for completion"
           return []
         Right parsedModule -> do
           -- Determine completion context
           let completionContext = determineCompletionContext content position context
-          liftIO $ putStrLn $ "Completion context: " <> show completionContext
+          liftIO <| putStrLn <| "Completion context: " <> show completionContext
 
           -- Generate completion items
           completionItems <- getCompletions parsedModule completionContext
-          liftIO $ putStrLn $ "Generated " <> show (length completionItems) <> " completion items"
+          liftIO <| putStrLn <| "Generated " <> show (length completionItems) <> " completion items"
 
           return completionItems
 
@@ -181,32 +181,32 @@ extractModuleQualifier reversedText =
 -- | Generate completion items based on parsed module and completion context
 getCompletions :: ParsedModule -> CompletionContext -> LspM ServerState [CompletionItem]
 getCompletions parsedModule completionContext = do
-  liftIO $ putStrLn $ "Getting completions for context: " <> show completionContext
+  liftIO <| putStrLn <| "Getting completions for context: " <> show completionContext
 
   case ccModule completionContext of
     -- Module-qualified completion
     Just moduleName -> do
-      liftIO $ putStrLn $ "Getting module-qualified completions for: " <> T.unpack moduleName
+      liftIO <| putStrLn <| "Getting module-qualified completions for: " <> T.unpack moduleName
 
       -- Check if this module is imported and get the actual module name
       let actualModuleName = resolveQualifiedModuleName parsedModule moduleName
-      liftIO $ putStrLn $ "Resolved module name: " <> T.unpack actualModuleName
+      liftIO <| putStrLn <| "Resolved module name: " <> T.unpack actualModuleName
 
       moduleCompletions <- getModuleCompletions actualModuleName
-      return $ filterCompletionsByPrefix (ccPrefix completionContext) moduleCompletions
+      return <| filterCompletionsByPrefix (ccPrefix completionContext) moduleCompletions
 
     -- Regular completion (no module qualifier)
     Nothing -> do
-      liftIO $ putStrLn "Getting regular completions"
+      liftIO <| putStrLn "Getting regular completions"
       let symbolsInScopeList = symbolsInScope parsedModule (ccPosition completionContext)
       let completionItems = map symbolInfoToCompletionItem symbolsInScopeList
-      return $ filterCompletionsByPrefix (ccPrefix completionContext) completionItems
+      return <| filterCompletionsByPrefix (ccPrefix completionContext) completionItems
 
 -- | Get completions for module exports
 -- Filters completions by module exports and handles qualified imports
 getModuleCompletions :: Text -> LspM ServerState [CompletionItem]
 getModuleCompletions moduleName = do
-  liftIO $ putStrLn $ "Getting completions for module: " <> T.unpack moduleName
+  liftIO <| putStrLn <| "Getting completions for module: " <> T.unpack moduleName
 
   -- Check if this is a qualified module name (e.g., "Map" from "Data.Map as Map")
   -- For now, we'll handle some common qualified names and full module names
@@ -317,7 +317,7 @@ symbolInfoToCompletionItem symbolInfo =
 
       -- Add documentation as markdown if available
       docMarkup = case documentation of
-        Just doc -> Just $ InR $ MarkupContent MarkupKind_Markdown doc
+        Just doc -> Just <| InR <| MarkupContent MarkupKind_Markdown doc
         Nothing  -> Nothing
 
   in baseItem & L.documentation .~ docMarkup
@@ -338,7 +338,7 @@ createCompletionItemWithDoc :: Text -> Maybe Text -> CompletionItemKind -> Maybe
 createCompletionItemWithDoc name maybeTypeSignature kind maybeDoc =
   let baseItem = createCompletionItem name maybeTypeSignature kind
       docMarkup = case maybeDoc of
-        Just doc -> Just $ InR $ MarkupContent MarkupKind_Markdown doc
+        Just doc -> Just <| InR <| MarkupContent MarkupKind_Markdown doc
         Nothing  -> Nothing
   in baseItem & L.documentation .~ docMarkup
 
@@ -349,7 +349,7 @@ createCompletionItem name maybeTypeSignature kind =
   let -- Format the detail with type signature for functions
       detailText = case (kind, maybeTypeSignature) of
         (CompletionItemKind_Function, Just typeSignature) ->
-          Just $ name <> " :: " <> typeSignature
+          Just <| name <> " :: " <> typeSignature
         (_, Just typeSignature) -> Just typeSignature
         _ -> Nothing
 

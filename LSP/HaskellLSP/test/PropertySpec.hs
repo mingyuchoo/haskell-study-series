@@ -16,8 +16,8 @@ import           Test.QuickCheck.Instances.Text ()
 -- Note: Language.LSP.Protocol.Types imports removed as they're not needed for this test
 
 spec :: Spec
-spec = describe "Property-Based Tests" $ do
-  describe "Document Symbols Completeness" $ do
+spec = describe "Property-Based Tests" <| do
+  describe "Document Symbols Completeness" <| do
     it "Property 13: Document Symbols Completeness" $
       property prop_documentSymbolsCompleteness
 
@@ -27,7 +27,7 @@ spec = describe "Property-Based Tests" $ do
 -- **Validates: Requirements 5.4**
 prop_documentSymbolsCompleteness :: Property
 prop_documentSymbolsCompleteness =
-  forAll genValidHaskellModule $ \moduleText ->
+  forAll genValidHaskellModule <| \moduleText ->
     case parseModule moduleText of
       Left _parseError ->
         -- If parsing fails, we can't test symbol completeness
@@ -53,39 +53,39 @@ genValidHaskellModule = do
       importsSection = T.unlines imports
       declarationsSection = T.unlines declarations
 
-  return $ T.unlines $ filter (not . T.null)
+  return <| T.unlines <| filter (not . T.null)
     [moduleHeader, "", importsSection, "", declarationsSection]
 
 -- Generate a valid module name
 genModuleName :: Gen Text
 genModuleName = do
   parts <- listOf1 genCapitalizedIdentifier
-  return $ T.intercalate "." parts
+  return <| T.intercalate "." parts
 
 -- Generate a capitalized identifier (for module names, type names)
 genCapitalizedIdentifier :: Gen Text
 genCapitalizedIdentifier = do
   first <- choose ('A', 'Z')
-  rest <- listOf $ frequency
+  rest <- listOf <| frequency
     [ (10, choose ('a', 'z'))
     , (10, choose ('A', 'Z'))
     , (2, choose ('0', '9'))
     , (1, return '_')
     ]
-  return $ T.pack (first : rest)
+  return <| T.pack (first : rest)
 
 -- Generate a lowercase identifier (for function names, variable names)
 genLowercaseIdentifier :: Gen Text
 genLowercaseIdentifier = do
   first <- choose ('a', 'z')
-  rest <- listOf $ frequency
+  rest <- listOf <| frequency
     [ (10, choose ('a', 'z'))
     , (5, choose ('A', 'Z'))
     , (2, choose ('0', '9'))
     , (1, return '_')
     , (1, return '\'')
     ]
-  return $ T.pack (first : rest)
+  return <| T.pack (first : rest)
 
 -- Generate an import statement
 genImport :: Gen Text
@@ -99,7 +99,7 @@ genImport = do
         Nothing -> ""
         Just a  -> " as " <> a
 
-  return $ "import " <> qualifiedPart <> moduleName <> aliasPart
+  return <| "import " <> qualifiedPart <> moduleName <> aliasPart
 
 -- Generate a top-level declaration
 genTopLevelDeclaration :: Gen Text
@@ -115,28 +115,28 @@ genFunctionDeclaration :: Gen Text
 genFunctionDeclaration = do
   name <- genLowercaseIdentifier
   typeSignature <- genTypeSignature
-  return $ name <> " :: " <> typeSignature
+  return <| name <> " :: " <> typeSignature
 
 -- Generate a data declaration
 genDataDeclaration :: Gen Text
 genDataDeclaration = do
   name <- genCapitalizedIdentifier
   constructors <- listOf1 genCapitalizedIdentifier
-  return $ "data " <> name <> " = " <> T.intercalate " | " constructors
+  return <| "data " <> name <> " = " <> T.intercalate " | " constructors
 
 -- Generate a type declaration
 genTypeDeclaration :: Gen Text
 genTypeDeclaration = do
   name <- genCapitalizedIdentifier
   targetType <- genCapitalizedIdentifier
-  return $ "type " <> name <> " = " <> targetType
+  return <| "type " <> name <> " = " <> targetType
 
 -- Generate a class declaration
 genClassDeclaration :: Gen Text
 genClassDeclaration = do
   name <- genCapitalizedIdentifier
   typeVar <- genLowercaseIdentifier
-  return $ "class " <> name <> " " <> typeVar <> " where"
+  return <| "class " <> name <> " " <> typeVar <> " where"
 
 -- Generate a simple type signature
 genTypeSignature :: Gen Text
@@ -149,7 +149,7 @@ genTypeSignature = oneof
   , do
       from <- genSimpleType
       to <- genSimpleType
-      return $ from <> " -> " <> to
+      return <| from <> " -> " <> to
   ]
 
 -- Generate a simple type

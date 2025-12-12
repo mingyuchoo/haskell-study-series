@@ -66,20 +66,20 @@ classifyError e
 -- | Handle LSP-specific errors and convert to ResponseError
 handleLspError :: SomeException -> IO ResponseError
 handleLspError e = do
-  logError defaultLogContext $ "LSP Error: " <> T.pack (show e)
+  logError defaultLogContext <| "LSP Error: " <> T.pack (show e)
   case classifyError e of
     Fatal -> do
       logError defaultLogContext "Fatal error detected, server should shutdown"
-      pure $ mkInternalError "Fatal server error occurred"
-    _ -> pure $ mkInternalError $ "Server error: " <> T.pack (show e)
+      pure <| mkInternalError "Fatal server error occurred"
+    _ -> pure <| mkInternalError <| "Server error: " <> T.pack (show e)
 
 -- | Recover from an error using the specified strategy
 recoverFromError :: ErrorRecovery -> SomeException -> IO ()
 recoverFromError recovery e = do
-  logWarning defaultLogContext $ "Attempting error recovery: " <> T.pack (show e)
+  logWarning defaultLogContext <| "Attempting error recovery: " <> T.pack (show e)
   case classifyError e of
     Transient -> do
-      logInfo defaultLogContext $ "Retrying after " <> T.pack (show (retryDelay recovery)) <> "ms"
+      logInfo defaultLogContext <| "Retrying after " <> T.pack (show (retryDelay recovery)) <> "ms"
       threadDelay (retryDelay recovery * 1000) -- Convert to microseconds
     Recoverable -> do
       logInfo defaultLogContext "Executing fallback action"
@@ -116,8 +116,8 @@ logDebug ctx msg = logWithLevel ctx Debug msg
 
 -- | Log a message with the specified level
 logWithLevel :: MonadIO m => LogContext -> LogLevel -> Text -> m ()
-logWithLevel ctx level msg = liftIO $ do
-  when (level >= logLevel ctx) $ do
+logWithLevel ctx level msg = liftIO <| do
+  when (level >= logLevel ctx) <| do
     timestamp <- getCurrentTime
     let timeStr = formatTime defaultTimeLocale "%Y-%m-%d %H:%M:%S" timestamp
         levelStr = case level of
@@ -125,7 +125,7 @@ logWithLevel ctx level msg = liftIO $ do
           Info    -> "INFO"
           Warning -> "WARN"
           Error   -> "ERROR"
-        fullMsg = T.unpack $ T.unwords
+        fullMsg = T.unpack <| T.unwords
           [ T.pack timeStr
           , logPrefix ctx
           , T.pack levelStr
@@ -142,7 +142,7 @@ withLogging :: LogContext -> IO a -> IO a
 withLogging ctx action = do
   logInfo ctx "Starting operation"
   result <- action `catch` \e -> do
-    logError ctx $ "Operation failed: " <> T.pack (show e)
+    logError ctx <| "Operation failed: " <> T.pack (show e)
     handleLspError e >>= \_ -> error (show e)  -- Re-throw for now
   logInfo ctx "Operation completed"
   pure result

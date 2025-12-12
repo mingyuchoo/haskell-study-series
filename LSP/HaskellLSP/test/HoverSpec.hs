@@ -17,9 +17,9 @@ import           Language.LSP.Protocol.Types
 import           Test.Hspec
 
 spec :: Spec
-spec = describe "Hover Handler" $ do
-  describe "formatHoverContent" $ do
-    it "should format function hover with type signature" $ do
+spec = describe "Hover Handler" <| do
+  describe "formatHoverContent" <| do
+    it "should format function hover with type signature" <| do
       let symbolInfo = SymbolInfo
             { symName = "add"
             , symType = Just "Int -> Int -> Int"
@@ -35,7 +35,7 @@ spec = describe "Hover Handler" $ do
           "Adds two integers" `T.isInfixOf` content
         Nothing -> False
 
-    it "should format type hover" $ do
+    it "should format type hover" <| do
       let symbolInfo = SymbolInfo
             { symName = "Person"
             , symType = Nothing
@@ -50,7 +50,7 @@ spec = describe "Hover Handler" $ do
           "data Person" `T.isInfixOf` content
         Nothing -> False
 
-    it "should format operator hover with type and fixity" $ do
+    it "should format operator hover with type and fixity" <| do
       let symbolInfo = SymbolInfo
             { symName = "+"
             , symType = Just "Num a => a -> a -> a"
@@ -67,7 +67,7 @@ spec = describe "Hover Handler" $ do
           "Addition operator" `T.isInfixOf` content
         Nothing -> False
 
-    it "should return something for unsupported symbol kinds" $ do
+    it "should return something for unsupported symbol kinds" <| do
       let symbolInfo = SymbolInfo
             { symName = "unknown"
             , symType = Nothing
@@ -81,8 +81,8 @@ spec = describe "Hover Handler" $ do
         Just content -> "```haskell" `T.isInfixOf` content
         Nothing -> False
 
-  describe "hover integration" $ do
-    it "should handle sample Haskell code" $ do
+  describe "hover integration" <| do
+    it "should handle sample Haskell code" <| do
       let sampleCode = T.unlines
             [ "module Sample where"
             , ""

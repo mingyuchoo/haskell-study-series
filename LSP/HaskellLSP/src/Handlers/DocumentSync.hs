@@ -28,7 +28,7 @@ import           Language.LSP.Server
 -- Stores document content in server state and triggers initial diagnostics
 handleDidOpen :: DidOpenTextDocumentParams -> LspM ServerState ()
 handleDidOpen (DidOpenTextDocumentParams (TextDocumentItem uri _ _version content)) = do
-  liftIO $ putStrLn $ "Document opened: " <> show uri
+  liftIO <| putStrLn <| "Document opened: " <> show uri
 
   -- TODO: Store document content in server state
   -- For now, just trigger diagnostics analysis
@@ -40,12 +40,12 @@ handleDidOpen (DidOpenTextDocumentParams (TextDocumentItem uri _ _version conten
 -- Updates document content with incremental changes and triggers diagnostics update
 handleDidChange :: DidChangeTextDocumentParams -> LspM ServerState ()
 handleDidChange (DidChangeTextDocumentParams (VersionedTextDocumentIdentifier uri version) changes) = do
-  liftIO $ putStrLn $ "Document changed: " <> show uri <> " (version " <> show version <> ")"
+  liftIO <| putStrLn <| "Document changed: " <> show uri <> " (version " <> show version <> ")"
 
   -- For now, use a simplified approach without state management
   -- Apply changes to get new content (simplified)
   let newContent = applyChanges "" changes  -- Use empty string as base for now
-  liftIO $ putStrLn $ "New content length: " <> show (T.length newContent)
+  liftIO <| putStrLn <| "New content length: " <> show (T.length newContent)
 
   -- Trigger diagnostics update
   analyzeAndPublishDiagnostics uri newContent
@@ -54,7 +54,7 @@ handleDidChange (DidChangeTextDocumentParams (VersionedTextDocumentIdentifier ur
 -- Removes document from server state and clears diagnostics for closed document
 handleDidClose :: DidCloseTextDocumentParams -> LspM ServerState ()
 handleDidClose (DidCloseTextDocumentParams (TextDocumentIdentifier uri)) = do
-  liftIO $ putStrLn $ "Document closed: " <> show uri
+  liftIO <| putStrLn <| "Document closed: " <> show uri
 
   -- TODO: Remove document from server state
 
@@ -69,7 +69,7 @@ handleDidClose (DidCloseTextDocumentParams (TextDocumentIdentifier uri)) = do
 -- | Analyze document content and publish diagnostics to client
 analyzeAndPublishDiagnostics :: Uri -> Text -> LspM ServerState ()
 analyzeAndPublishDiagnostics uri content = do
-  liftIO $ putStrLn $ "Analyzing diagnostics for: " <> show uri
+  liftIO <| putStrLn <| "Analyzing diagnostics for: " <> show uri
 
   -- Parse the document and analyze for diagnostics
   case parseModule content of
@@ -95,7 +95,7 @@ analyzeAndPublishDiagnostics uri content = do
       -- Publish diagnostics to client
       Diag.publishDiagnostics uri diagnosticInfos
 
-      liftIO $ putStrLn $ "Published " <> show (length diagnosticInfos) <> " diagnostics"
+      liftIO <| putStrLn <| "Published " <> show (length diagnosticInfos) <> " diagnostics"
 
 -- | Apply text changes to document content
 -- For now, we only support full document sync (TextDocumentSyncKind.Full)
