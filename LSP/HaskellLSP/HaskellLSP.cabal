@@ -29,6 +29,7 @@ library
   exposed-modules:
       Analysis.Parser
       Handlers.DocumentSync
+      Handlers.Hover
       Lib
       LSP.Diagnostics
       LSP.Error
@@ -117,6 +118,7 @@ test-suite HaskellLSP-test
   other-modules:
       DiagnosticsSpec
       DocumentSyncSpec
+      HoverSpec
       PropertySpec
       Paths_HaskellLSP
   autogen-modules:

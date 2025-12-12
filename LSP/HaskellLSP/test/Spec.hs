@@ -12,6 +12,7 @@ import Control.Exception (toException, ErrorCall(..))
 import qualified DocumentSyncSpec
 import qualified DiagnosticsSpec
 import qualified PropertySpec
+import qualified HoverSpec
 
 main :: IO ()
 main = hspec spec
@@ -21,6 +22,7 @@ spec = do
     describe "Document Synchronization" DocumentSyncSpec.spec
     describe "Diagnostics Engine" DiagnosticsSpec.spec
     describe "Property-Based Tests" PropertySpec.spec
+    describe "Hover Handler" HoverSpec.spec
     describe "Given Prelude" $ do
         context "when use `read` function" $ do
             it "should parse integers" $ do

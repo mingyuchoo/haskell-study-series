@@ -34,3 +34,4 @@ runLspServer = do
     , interpretHandler = \env -> Iso (runLspT env) liftIO
     , options = defaultOptions
     }
+
