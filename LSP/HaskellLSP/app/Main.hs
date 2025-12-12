@@ -2,6 +2,7 @@ module Main
     ( main
     ) where
 
+import Flow ((<|), (|>))
 import           Lib
 
 import           System.IO (BufferMode (NoBuffering), hSetBuffering, stdout)

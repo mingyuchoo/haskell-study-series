@@ -8,6 +8,7 @@ module Handlers.Configuration
     , parseConfigurationSettings
     ) where
 
+import Flow ((<|), (|>))
 import           Data.Aeson       (Result (..), Value, fromJSON)
 import qualified Data.Aeson       as Aeson
 

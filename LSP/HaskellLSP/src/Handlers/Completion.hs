@@ -13,6 +13,7 @@ module Handlers.Completion
     , normalizeModuleName
     ) where
 
+import Flow ((<|), (|>))
 import           Analysis.Parser             (Import (..), ParsedModule (..),
                                               SymbolInfo (..), parseModule,
                                               symbolsInScope)

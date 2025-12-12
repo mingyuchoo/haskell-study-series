@@ -2,6 +2,7 @@ module Lib
     ( cliMain
     ) where
 
+import Flow ((<|), (|>))
 import           LSP.Server  (runLspServer)
 
 import           System.Exit (ExitCode (..), exitWith)

@@ -11,6 +11,7 @@ module Handlers.Definition
     , resolveDefinitionLocation
     ) where
 
+import Flow ((<|), (|>))
 import           Analysis.Parser             (Import (..), ParsedModule (..),
                                               SymbolInfo (..), parseModule,
                                               resolveSymbol)

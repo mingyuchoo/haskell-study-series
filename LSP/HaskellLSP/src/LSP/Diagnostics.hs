@@ -17,6 +17,7 @@ module LSP.Diagnostics
     , classifySyntaxError
     ) where
 
+import Flow ((<|), (|>))
 import           Analysis.Parser               (ParseError (..),
                                                 ParsedModule (..), parseModule)
 

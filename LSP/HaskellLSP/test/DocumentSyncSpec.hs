@@ -2,6 +2,7 @@ module DocumentSyncSpec
     ( spec
     ) where
 
+import Flow ((<|), (|>))
 import           Handlers.DocumentSync
 
 import           Test.Hspec

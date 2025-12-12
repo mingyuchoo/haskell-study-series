@@ -7,6 +7,7 @@ module Handlers.DocumentSync
     , handleDidOpen
     ) where
 
+import Flow ((<|), (|>))
 import           Analysis.Parser               (parseModule)
 import qualified Analysis.Parser
 

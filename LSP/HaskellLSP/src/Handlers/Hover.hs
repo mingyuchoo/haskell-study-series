@@ -7,6 +7,7 @@ module Handlers.Hover
     , handleHover
     ) where
 
+import Flow ((<|), (|>))
 import           Analysis.Parser             (SymbolInfo (..), parseModule,
                                               resolveSymbol)
 

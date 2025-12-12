@@ -2,6 +2,7 @@ module DiagnosticsSpec
     ( spec
     ) where
 
+import Flow ((<|), (|>))
 import           Analysis.Parser
 
 import           Data.Text                   (Text)

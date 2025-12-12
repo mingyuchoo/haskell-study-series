@@ -45,6 +45,7 @@ module LSP.Types
     , parseJsonRpcMessage
     ) where
 
+import Flow ((<|), (|>))
 import           Data.Aeson                  (FromJSON, ToJSON, Value, decode,
                                               encode)
 import           Data.ByteString.Lazy        (ByteString)

@@ -5,6 +5,7 @@ module LSP.Server
     ( runLspServer
     ) where
 
+import Flow ((<|), (|>))
 import           Control.Monad.IO.Class      (liftIO)
 
 import           LSP.Types                   (defaultServerConfig)
