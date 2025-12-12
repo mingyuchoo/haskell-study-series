@@ -28,6 +28,9 @@ source-repository head
 library
   exposed-modules:
       Analysis.Parser
+      Handlers.Completion
+      Handlers.Configuration
+      Handlers.Definition
       Handlers.DocumentSync
       Handlers.Hover
       Lib
@@ -116,6 +119,8 @@ test-suite HaskellLSP-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      CompletionSpec
+      DefinitionSpec
       DiagnosticsSpec
       DocumentSyncSpec
       HoverSpec

@@ -9,6 +9,7 @@ import Control.Monad.IO.Class (liftIO)
 import Language.LSP.Server
 import System.IO (stdin, stdout, hSetBuffering, BufferMode(..))
 
+
 import LSP.Types (defaultServerConfig)
 
 -- | Main LSP server entry point
@@ -23,6 +24,8 @@ runLspServer = do
   runServer $ ServerDefinition
     { parseConfig = const $ const $ Right defaultServerConfig
     , onConfigChange = \_ -> pure ()
+        -- TODO: Integrate configuration change handler from Handlers.Configuration
+        -- The handler is implemented but needs LSP library compatibility fixes
     , defaultConfig = defaultServerConfig
     , configSection = "haskellLSP"
     , doInitialize = \env _req -> do
@@ -34,4 +37,3 @@ runLspServer = do
     , interpretHandler = \env -> Iso (runLspT env) liftIO
     , options = defaultOptions
     }
-
