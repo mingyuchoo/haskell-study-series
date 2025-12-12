@@ -1,0 +1,77 @@
+name:                HaskellLSP
+version:             0.1.0.0
+github:              mingyuchoo/HaskellLSP
+license:             BSD-3-Clause
+author:              Mingyu Choo
+maintainer:          mingyuchoo@gmail.com
+copyright:           2026 Mingyu Choo
+synopsis:            Short description of your package
+category:            Web
+description:         Please see the README on GitHub at <https://github.com/mingyuchoo/HaskellLSP#readme>
+
+extra-source-files:
+- README.md
+- CHANGELOG.md
+
+dependencies:
+- base >= 4.18 && < 5
+- aeson
+- bytestring
+- co-log-core
+- containers
+- flow
+- lsp
+- lsp-types
+- mtl
+- parallel
+- prettyprinter
+- text
+
+default-extensions:
+- DataKinds
+- DeriveGeneric
+- ExplicitForAll
+- GADTs
+- KindSignatures
+- StandaloneKindSignatures
+- OverloadedStrings
+- TypeApplications
+
+ghc-options:
+- -Wall
+- -O2
+- -haddock
+
+language: GHC2021
+
+library:
+  source-dirs: src
+
+executables:
+  HaskellLSP-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - HaskellLSP
+
+tests:
+  HaskellLSP-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -dynamic
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - HaskellLSP
+    - hspec
+    - doctest
+    - doctest-discover
+    - QuickCheck
+    - quickcheck-instances

@@ -1,0 +1,138 @@
+cabal-version: 2.2
+
+-- This file has been generated from package.yaml by hpack version 0.38.1.
+--
+-- see: https://github.com/sol/hpack
+
+name:           HaskellLSP
+version:        0.1.0.0
+synopsis:       Short description of your package
+description:    Please see the README on GitHub at <https://github.com/mingyuchoo/HaskellLSP#readme>
+category:       Web
+homepage:       https://github.com/mingyuchoo/HaskellLSP#readme
+bug-reports:    https://github.com/mingyuchoo/HaskellLSP/issues
+author:         Mingyu Choo
+maintainer:     mingyuchoo@gmail.com
+copyright:      2026 Mingyu Choo
+license:        BSD-3-Clause
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/mingyuchoo/HaskellLSP
+
+library
+  exposed-modules:
+      Analysis.Parser
+      Handlers.Initialize
+      Lib
+      LSP.Server
+      LSP.Types
+  other-modules:
+      Paths_HaskellLSP
+  autogen-modules:
+      Paths_HaskellLSP
+  hs-source-dirs:
+      src
+  default-extensions:
+      DataKinds
+      DeriveGeneric
+      ExplicitForAll
+      GADTs
+      KindSignatures
+      StandaloneKindSignatures
+      OverloadedStrings
+      TypeApplications
+  ghc-options: -Wall -O2 -haddock
+  build-depends:
+      aeson
+    , base >=4.18 && <5
+    , bytestring
+    , co-log-core
+    , containers
+    , flow
+    , lsp
+    , lsp-types
+    , mtl
+    , parallel
+    , prettyprinter
+    , text
+  default-language: GHC2021
+
+executable HaskellLSP-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_HaskellLSP
+  autogen-modules:
+      Paths_HaskellLSP
+  hs-source-dirs:
+      app
+  default-extensions:
+      DataKinds
+      DeriveGeneric
+      ExplicitForAll
+      GADTs
+      KindSignatures
+      StandaloneKindSignatures
+      OverloadedStrings
+      TypeApplications
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      HaskellLSP
+    , aeson
+    , base >=4.18 && <5
+    , bytestring
+    , co-log-core
+    , containers
+    , flow
+    , lsp
+    , lsp-types
+    , mtl
+    , parallel
+    , prettyprinter
+    , text
+  default-language: GHC2021
+
+test-suite HaskellLSP-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_HaskellLSP
+  autogen-modules:
+      Paths_HaskellLSP
+  hs-source-dirs:
+      test
+  default-extensions:
+      DataKinds
+      DeriveGeneric
+      ExplicitForAll
+      GADTs
+      KindSignatures
+      StandaloneKindSignatures
+      OverloadedStrings
+      TypeApplications
+  ghc-options: -Wall -O2 -haddock -dynamic -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      HaskellLSP
+    , QuickCheck
+    , aeson
+    , base >=4.18 && <5
+    , bytestring
+    , co-log-core
+    , containers
+    , doctest
+    , doctest-discover
+    , flow
+    , hspec
+    , lsp
+    , lsp-types
+    , mtl
+    , parallel
+    , prettyprinter
+    , quickcheck-instances
+    , text
+  default-language: GHC2021
