@@ -1,0 +1,16 @@
+# Unit Tests
+
+외부 시스템 없이 빠르게 실행되는 도메인 규칙과 순수 로직 테스트입니다.
+
+실행 위치: `../../services/todo-core/tests`, `../../services/todo-cli/tests`, `../../services/todo-web/tests`
+
+## 다루는 것
+
+- 상태 기계의 허용된 전이와 거부 사유
+- 값 객체의 정규화와 검증 규칙
+- 조회 조건 평가와 정렬 순서
+- 유스케이스의 멱등성과 부분 수정 동작
+
+## 다루지 않는 것
+
+SQLite, HTTP, 파일 시스템, 실제 시각. 유스케이스 테스트는 `State` 기반 가짜 저장소를 사용하고 시각은 고정값을 주입합니다. 이것이 가능한 이유는 `../../docs/decisions/ADR-0002-effect-boundary.md`에 있습니다.

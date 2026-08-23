@@ -1,0 +1,19 @@
+name: Architecture
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# 이 검사는 소스와 cabal 파일을 정적으로 읽으므로 Haskell 툴체인이 필요 없습니다.
+# 컴파일이 깨진 상태에서도 경계 위반을 알려줍니다.
+jobs:
+  architecture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check architecture boundaries
+        run: ./scripts/quality/architecture-check.sh

@@ -1,0 +1,54 @@
+name: Contracts
+
+on:
+  pull_request:
+    paths:
+      - 'docs/contracts/**'
+      - 'docs/generated/**'
+      - 'services/**'
+      - 'tests/contract/**'
+      - '.github/workflows/contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify contract structure
+        run: |
+          test -f docs/contracts/INDEX.md
+          test -f docs/contracts/api/TODO-API-v1.md
+          test -f docs/contracts/data/TODO-STORE-v1.md
+          test -d docs/contracts/events
+          test -d tests/contract
+
+      - name: Verify generated facts are current
+        run: |
+          ./scripts/context/generate-api-index.sh --check
+          ./scripts/context/generate-route-map.sh --check
+          ./scripts/context/generate-db-schema.sh --check
+          ./scripts/context/generate-dependency-map.sh --check
+
+      - name: Set up Haskell
+        uses: haskell-actions/setup@v2
+        id: setup
+        with:
+          ghc-version: '9.10'
+          cabal-version: '3.16'
+
+      - name: Resolve dependencies
+        run: cabal update && cabal build all --dry-run
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.setup.outputs.cabal-store }}
+          key: ${{ runner.os }}-ghc${{ steps.setup.outputs.ghc-version }}-${{ hashFiles('**/plan.json') }}
+          restore-keys: ${{ runner.os }}-ghc${{ steps.setup.outputs.ghc-version }}-
+
+      - name: Run contract tests
+        run: cabal test todo-api

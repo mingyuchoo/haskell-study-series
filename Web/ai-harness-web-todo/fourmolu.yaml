@@ -1,0 +1,21 @@
+# 이 저장소의 Haskell 형식 규칙입니다.
+# scripts/quality/lint.sh가 --mode check로 강제하므로 형식 논쟁이 코드 검토에 올라오지 않습니다.
+indentation: 2
+column-limit: none
+function-arrows: leading
+comma-style: leading
+import-export-style: diff-friendly
+indent-wheres: false
+record-brace-space: false
+newlines-between-decls: 1
+haddock-style: single-line
+haddock-style-module: null
+let-style: auto
+in-style: right-align
+single-constraint-parens: auto
+single-deriving-parens: auto
+sort-constraints: false
+sort-derived-clauses: false
+respectful: true
+fixities: []
+reexports: []

@@ -1,0 +1,26 @@
+.DS_Store
+.idea/
+.vscode/
+
+# Haskell 빌드 산출물
+dist-newstyle/
+.stack-work/
+cabal.project.local
+cabal.project.local~
+.ghc.environment.*
+*.hi
+*.o
+*.dyn_hi
+*.dyn_o
+*.p_hi
+*.p_o
+*.prof
+*.hp
+
+# 로컬 실행 시 만들어지는 데이터베이스
+todo.db
+todo.db-shm
+todo.db-wal
+
+tmp/
+*.log

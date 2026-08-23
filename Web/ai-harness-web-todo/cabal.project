@@ -1,0 +1,18 @@
+packages: services/*/
+
+tests: True
+
+package todo-core
+  ghc-options: -Wall
+
+package todo-store
+  ghc-options: -Wall
+
+package todo-cli
+  ghc-options: -Wall
+
+package todo-api
+  ghc-options: -Wall
+
+package todo-web
+  ghc-options: -Wall
