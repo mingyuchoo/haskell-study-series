@@ -20,7 +20,7 @@ run:
 	stack run my-org-exe
 
 demo:
-	env -u MY_ORG_TEST_DATABASE_URL MY_ORG_DEMO=1 stack run my-org-exe
+	env -u MY_ORG_SQLITE_FILE MY_ORG_DEMO=1 stack run my-org-exe
 
 install: build
 

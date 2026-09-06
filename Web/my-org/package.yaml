@@ -70,7 +70,8 @@ library:
   source-dirs: src
   dependencies:
   - http-types
-  - postgresql-simple
+  - sqlite-simple
+  - filepath
   - servant
   - servant-server
   - wai
@@ -106,6 +107,7 @@ tests:
     - network
     - process
     - scientific
+    - sqlite-simple
     - temporary
     - unix
     - warp

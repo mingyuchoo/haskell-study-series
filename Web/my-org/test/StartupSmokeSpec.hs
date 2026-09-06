@@ -14,7 +14,12 @@ import Network.HTTP.Client (HttpException)
 import Network.Socket (close)
 import Network.Wai.Handler.Warp (openFreePort)
 import SmokeSupport
-import System.Directory (createDirectoryLink, getCurrentDirectory, renameFile)
+import System.Directory
+  ( createDirectoryLink
+  , doesFileExist
+  , getCurrentDirectory
+  , renameFile
+  )
 import System.Environment (getEnvironment, getExecutablePath)
 import System.Exit (ExitCode (..))
 import System.FilePath ((</>))
@@ -26,7 +31,12 @@ import System.Timeout (timeout)
 import Test.Hspec
 
 spec :: Spec
-spec = describe "Process startup and persisted demo lifecycle" $
+spec = do
+  selectionSpec
+  demoLifecycleSpec
+
+demoLifecycleSpec :: Spec
+demoLifecycleSpec = describe "Process startup and persisted demo lifecycle" $
   it "seeds, preserves deletion/replacement, and refuses unrelated data without mutation" $
     withSystemTempDirectory "my-org-startup-" $ \directory -> do
       root <- getCurrentDirectory
@@ -38,7 +48,12 @@ spec = describe "Process startup and persisted demo lifecycle" $
             filter
               ( \(key, _) ->
                   key
-                    `notElem` ["MY_ORG_TEST_DATABASE_URL", "MY_ORG_DEMO", "MY_ORG_EVENT_FILE", "MY_ORG_PORT"]
+                    `notElem` [ "MY_ORG_TEST_DATABASE_URL"
+                              , "MY_ORG_SQLITE_FILE"
+                              , "MY_ORG_DEMO"
+                              , "MY_ORG_EVENT_FILE"
+                              , "MY_ORG_PORT"
+                              ]
               )
               inherited
           config demo port =
@@ -49,7 +64,11 @@ spec = describe "Process startup and persisted demo lifecycle" $
                   Just
                     ( ("MY_ORG_EVENT_FILE", eventFile)
                         : ("MY_ORG_PORT", show port)
-                        : [("MY_ORG_DEMO", "1") | demo] <> cleanEnv
+                        : ( if demo
+                              then [("MY_ORG_DEMO", "1"), ("MY_ORG_SQLITE_FILE", directory </> "ignored.sqlite")]
+                              else []
+                          )
+                          <> cleanEnv
                     )
               }
           bootstrap continuing = do
@@ -81,6 +100,7 @@ spec = describe "Process startup and persisted demo lifecycle" $
                     waitReady client process 100
                     action client
       bootstrap False
+      doesFileExist (directory </> "ignored.sqlite") `shouldReturn` False
       bytes <- BS.readFile eventFile
       seeded <- either fail pure (eitherDecodeWire (BL.fromStrict bytes))
       length (items seeded) `shouldSatisfy` (> 50)
@@ -140,6 +160,67 @@ spec = describe "Process startup and persisted demo lifecycle" $
       exitCode `shouldSatisfy` maybe False (/= ExitSuccess)
       output `shouldSatisfy` isInfixOf "refusing to change"
       BS.readFile eventFile `shouldReturn` unrelatedBytes
+
+selectionSpec :: Spec
+selectionSpec =
+  describe "Process storage selection" $
+    mapM_ checkBackend [False, True]
+  where
+    checkBackend sqlite = it
+      ( if sqlite
+          then "selects SQLite and restores it after restart"
+          else "defaults to the local JSON file"
+      ) $
+      withSystemTempDirectory "my-org-selection-" $ \directory -> do
+        root <- getCurrentDirectory
+        createDirectoryLink (root </> "static") (directory </> "static")
+        binary <- getExecutablePath
+        inherited <- getEnvironment
+        let database = directory </> "storage" </> "events.sqlite"
+            jsonFile = directory </> "runs" </> "local" </> "events.json"
+            cleanEnv =
+              filter
+                ( \(key, _) ->
+                    key
+                      `notElem` [ "MY_ORG_TEST_DATABASE_URL"
+                                , "MY_ORG_SQLITE_FILE"
+                                , "MY_ORG_DEMO"
+                                , "MY_ORG_EVENT_FILE"
+                                , "MY_ORG_PORT"
+                                ]
+                )
+                inherited
+            serve action = do
+              (port, socket) <- openFreePort
+              close socket
+              let config =
+                    (proc binary ["--startup-server", "+RTS", "-N2", "-RTS"])
+                      { cwd = Just directory
+                      , create_group = True
+                      , env =
+                          Just
+                            (("MY_ORG_PORT", show port) : [("MY_ORG_SQLITE_FILE", database) | sqlite] <> cleanEnv)
+                      }
+              withFile (directory </> "selection.log") WriteMode $ \handle ->
+                bracket
+                  (createProcess config {std_out = UseHandle handle, std_err = UseHandle handle})
+                  stop $ \(_, _, _, process) ->
+                  withClient port $ \client -> waitReady client process 100 >> action client
+        serve $ \client ->
+          void
+            ( post
+                client
+                "organizations"
+                (object ["id" .= String "persisted", "name" .= String "저장된 조직"])
+                201
+            )
+        doesFileExist (if sqlite then database else jsonFile) `shouldReturn` True
+        when sqlite $ do
+          doesFileExist jsonFile `shouldReturn` False
+          BS.take 16 <$> BS.readFile database `shouldReturn` "SQLite format 3\NUL"
+        serve $ \client -> do
+          state <- get client "dashboard"
+          field (field state "organization") "id" `shouldBe` String "persisted"
 
 runBootstrap :: FilePath -> CreateProcess -> IO (Maybe ExitCode, String)
 runBootstrap directory config = do

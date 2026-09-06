@@ -51,7 +51,7 @@ npm run format    # Elm 소스 표준 포맷 적용
 
 `make test`는 Elm 테스트·포맷·타입 검사 후 Haskell 테스트를 실행합니다. `npm test`로 Elm 회귀 테스트만, `stack test`로 `test/`의 Haskell 테스트만 실행할 수 있습니다. Hspec·QuickCheck 기반의 도메인 검증과 함께 API 생명주기, 동시 데모 초기화, 조직 삭제·재생성, 다중 조직 격리, 실제 서버 시작 로직의 재시작과 저장 상태 복원을 검증합니다.
 
-통합 테스트는 임시 파일 저장소를 사용하며 필요한 서버를 직접 시작하고 종료합니다. 별도로 서버를 실행하거나 외부 데이터베이스를 준비할 필요가 없습니다.
+통합 테스트는 임시 JSON 파일과 SQLite DB를 사용하며 필요한 서버를 직접 시작하고 종료합니다. SQLite 저장·재개방, 배치 저장의 원자성, 단일 서버 잠금, 손상된 데이터 거절 및 실제 시작 설정의 저장소 선택을 검증합니다. 별도로 서버를 실행하거나 외부 데이터베이스를 준비할 필요가 없습니다.
 
 서버 프로세스 관리에 POSIX 기능을 사용하므로 Linux/macOS 등 POSIX 환경이 필요합니다.
 
@@ -119,7 +119,21 @@ JSON 입력과 출력에 `/api` 접두사를 사용합니다. 쓰기는 `Content
 
 파일 저장은 프로세스 내 직렬화와 임시 파일 후 rename으로 처리하며 저장 성공 후에만 메모리 상태를 바꿉니다. 이벤트 파일이 손상되거나 순번이 어긋나면 시작을 거절합니다. 같은 파일을 여러 서버가 열지 못하도록 `.lock` 디렉터리를 사용합니다. 강제 종료로 잠금이 남으면 해당 서버가 종료되었는지 확인한 뒤 잠금 디렉터리를 수동 정리해야 합니다. 파일 교체는 원자적이지만 전원 장애에 대한 fsync 보장은 제공하지 않습니다. 이벤트 전체를 재생하는 작은 조직용 MVP이며 대규모 저장소용 snapshot/compaction은 아직 없습니다.
 
-선택 PostgreSQL 어댑터는 이미 선언된 `postgresql-simple`을 사용합니다. **운영 DB가 아닌 전용 로컬/테스트 DB**의 연결 문자열을 `MY_ORG_TEST_DATABASE_URL`에 명시한 경우에만 접속합니다. `my_org_events` 테이블을 생성하고 advisory lock으로 단일 서버를 보장합니다. PostgreSQL 서버가 있어야 하며 기본 실행에는 필요하지 않습니다. 파일·DB 연결 문자열을 로그로 출력하지 않습니다.
+선택 SQLite 어댑터는 `sqlite-simple`을 사용합니다. `MY_ORG_SQLITE_FILE`에 로컬 DB 파일 경로를 지정한 경우에만 SQLite를 선택하며, 별도 DB 서버는 필요하지 않습니다. 미설정 시 기존 JSON 파일 저장을 그대로 사용합니다. DB의 부모 디렉터리는 자동 생성하며 빈 경로와 `:memory:`는 허용하지 않습니다.
+
+```sh
+# 기본 JSON 저장
+make run
+
+# 선택 SQLite 저장
+MY_ORG_SQLITE_FILE=runs/local/events.sqlite3 make run
+```
+
+위 기본 실행 예시는 `MY_ORG_SQLITE_FILE`이 설정되지 않은 셸 기준입니다. 일반 모드에서 SQLite 설정은 `MY_ORG_EVENT_FILE`보다 우선하며, `MY_ORG_PORT`는 두 저장 방식 모두에 적용됩니다. 데모 모드는 SQLite 설정을 무시합니다.
+
+SQLite는 `my_org_events` 테이블에 이벤트 순번과 기존 JSON payload를 보관하며 새 이벤트 묶음을 트랜잭션으로 추가합니다. 저장 성공 후에만 메모리 상태를 바꾸고, 손상된 이벤트나 불연속 순번은 시작 시 거절합니다. `synchronous=FULL`로 저장을 동기화하고 `locking_mode=EXCLUSIVE`와 `journal_mode=DELETE`를 사용하여 연결이 열린 동안 DB를 독점합니다. 같은 DB를 사용하는 두 번째 서버나 다른 DB 연결은 잠금 때문에 접근이 제한됩니다. 연결을 닫거나 프로세스가 종료되면 잠금이 풀리고, 강제 종료로 남은 미완료 트랜잭션은 SQLite rollback journal로 복구합니다. JSON 저장소의 `.lock` 디렉터리와 달리 SQLite에는 별도 잠금 디렉터리가 없습니다. 기존 WAL DB는 DELETE journal로 전환하며 다른 연결이 사용 중이면 시작에 실패할 수 있습니다. 저장 경로를 로그로 출력하지 않습니다.
+
+기존 JSON 파일과 PostgreSQL 데이터는 SQLite로 자동 변환하지 않습니다. 새 SQLite 파일을 선택하면 별도 저장소로 시작하므로, 기존 JSON 데이터를 계속 사용하려면 `MY_ORG_SQLITE_FILE`을 설정하지 마세요. 이전 `MY_ORG_TEST_DATABASE_URL` 설정은 더 이상 사용하지 않습니다.
 
 계정 인증·TLS·실제 ERP/CRM 권한 동기화·LLM은 구현하지 않았습니다. 감사 actor는 입력한 기록 주체이며 인증된 신원 증명이 아닙니다. 인터넷에 직접 공개하지 마세요. 조직의 권한 모델은 앱 접근 제어와 다릅니다. 활성 목표 타입은 비공개 생성자와 일반 getter를 사용하고, 외부 쓰기는 검증된 Command 경계로만 이벤트를 생성합니다. 도메인 replay는 신뢰하는 서버 생성 이벤트용입니다.
 
@@ -129,7 +143,7 @@ JSON 입력과 출력에 `/api` 접두사를 사용합니다. 쓰기는 `Content
 make demo
 ```
 
-[데모 워크스페이스](http://127.0.0.1:8081)를 엽니다. 최초 실행은 **6명·7개 목표**와 결과, 평가, 회고, 학습, 전략 기록을 자동 생성합니다. 이 명령은 `MY_ORG_DEMO=1`을 지정하며 앱이 저장 위치를 `runs/demo/events.json`, 포트를 `8081`로 고정합니다. `MY_ORG_EVENT_FILE`·`MY_ORG_PORT`의 기존 값과 DB 연결 설정을 사용하지 않습니다. 일반 `make run`의 `runs/local/events.json`과 분리됩니다.
+[데모 워크스페이스](http://127.0.0.1:8081)를 엽니다. 최초 실행은 **6명·7개 목표**와 결과, 평가, 회고, 학습, 전략 기록을 자동 생성합니다. 이 명령은 `MY_ORG_DEMO=1`을 지정하며 앱이 저장 위치를 `runs/demo/events.json`, 포트를 `8081`로 고정합니다. `MY_ORG_EVENT_FILE`·`MY_ORG_PORT`·`MY_ORG_SQLITE_FILE`의 기존 값을 사용하지 않습니다. 일반 `make run`의 `runs/local/events.json`과 분리됩니다.
 
 재실행하면 기존 데모와 사용자가 바꾼 내용을 그대로 이어갑니다. 자동 초기화하거나 재시드하지 않습니다. 데모를 삭제한 뒤 다시 실행해도 자동으로 부활하지 않습니다. 삭제 후 새 일반 조직을 만든 경우에도 그대로 이어갑니다. 원래부터 데모 출처 없이 다른 조직이 들어 있던 데모 경로는 서버 시작을 거절하고 데이터를 보존합니다. `runs/`는 Git에서 제외됩니다.
 
@@ -147,7 +161,7 @@ make demo
 | `MyOrg.Demo` | 기준 시각을 받는 순수 시나리오, 기존 Command를 통한 검증된 이벤트 생성 |
 | `MyOrg.Registry`, `Application.Plan` | 순수한 조직별 projection·범위 검증·명령/데모 이벤트 계획 |
 | `Application.Runtime`, `Application.Persistence` | 저장 포트를 통해 잠금 안에서 계획·저장·메모리 반영을 원자적으로 조율 |
-| `Infrastructure.FileStore`, `Infrastructure.PostgresStore` | 파일/DB 자원 획득·해제와 영속 저장. `MyOrg.Store`는 조립 진입점 |
+| `Infrastructure.FileStore`, `Infrastructure.SQLiteStore` | 파일/DB 자원 획득·해제와 영속 저장. `MyOrg.Store`는 조립 진입점 |
 | `Application.Query`, `Application.ReadModel` | 명시적 조직 선택과 타입이 있는 조회 결과의 순수 계산 |
 | `MyOrg.Server`, `Http.Route`, `Http.Encode` | 요청/시각/저장소 IO 조율, HTTP 경로·요청 파싱과 JSON 응답 변환 |
 | `Serialization.JSON`, `Presentation.*` | 기존 JSON 계약의 명시적 변환, 오류·감사 기록의 표시 문구 |
@@ -197,7 +211,7 @@ CEO에게 전체 권한 점수의 약 57%가 모여 O031, 고객 확보 회고�
 
 **삭제 확인 열기…**를 누른 뒤 표시된 이름을 정확히 입력해야 **조직 삭제** 버튼이 활성화됩니다. **취소** 또는 Escape는 저장소를 변경하지 않습니다. 삭제 범위는 해당 조직의 구성원·목표·책임·권한·결과·평가·회고·전략이며 다른 조직은 유지됩니다. 삭제 후 목록으로 돌아가고 같은 ID로 새 조직 또는 데모를 만들 수 있습니다.
 
-이는 **논리 삭제**입니다. 해당 조직 범위의 `OrganizationDeleted` 이벤트를 추가하고 그 조직의 현재 상태만 초기화합니다. 파일이나 PostgreSQL의 원본 감사 이벤트를 물리적으로 지우지 않습니다. 화면과 `/api/organizations/:oid/events`는 해당 조직의 최신 생성 이후 기록만 반환하므로 같은 ID로 재생성해도 이전 결과·회고·감사가 섞이지 않습니다. 과거 조직 조회나 영구 삭제 기능은 제공하지 않습니다.
+이는 **논리 삭제**입니다. 해당 조직 범위의 `OrganizationDeleted` 이벤트를 추가하고 그 조직의 현재 상태만 초기화합니다. JSON 파일이나 SQLite의 원본 감사 이벤트를 물리적으로 지우지 않습니다. 화면과 `/api/organizations/:oid/events`는 해당 조직의 최신 생성 이후 기록만 반환하므로 같은 ID로 재생성해도 이전 결과·회고·감사가 섞이지 않습니다. 과거 조직 조회나 영구 삭제 기능은 제공하지 않습니다.
 
 이름 수정 초안에는 입력을 시작한 조직 버전을 보관하고, 삭제 확인에는 대상 ID·이름·version을 고정합니다. 동일 조직이 다른 탭에서 변경되면 **409**로 거절하고 최신 상태를 조회해 다시 확인하도록 합니다. 자동 재시도하지 않습니다. 조직을 전환하면 기존 확인 snapshot을 폐기합니다. 브라우저 요청도 시작한 조직을 고정하여 늦은 A 응답이 B 화면을 덮어쓰지 않게 처리합니다.
 

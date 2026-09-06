@@ -2,7 +2,7 @@
 module MyOrg.Store
   ( Store
   , openFileStore
-  , openPostgresStore
+  , openSQLiteStore
   , closeStore
   , readStore
   , readRegistry
@@ -13,13 +13,12 @@ module MyOrg.Store
   ) where
 
 import Control.Exception (mask_)
-import Data.ByteString.Char8 qualified as BS
 import MyOrg.Application.Runtime
 import MyOrg.Infrastructure.FileStore (openFilePersistence)
-import MyOrg.Infrastructure.PostgresStore (openPostgresPersistence)
+import MyOrg.Infrastructure.SQLiteStore (openSQLitePersistence)
 
 openFileStore :: FilePath -> IO Store
 openFileStore path = mask_ (openFilePersistence path >>= openStore)
 
-openPostgresStore :: BS.ByteString -> IO Store
-openPostgresStore connectionString = mask_ (openPostgresPersistence connectionString >>= openStore)
+openSQLiteStore :: FilePath -> IO Store
+openSQLiteStore path = mask_ (openSQLitePersistence path >>= openStore)

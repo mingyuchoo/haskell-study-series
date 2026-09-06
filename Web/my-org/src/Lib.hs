@@ -3,7 +3,6 @@ module Lib
   ) where
 
 import Control.Exception (bracket)
-import Data.ByteString.Char8 qualified as BS
 import Data.Map.Strict qualified as Map
 import MyOrg.Demo (isDemoStore)
 import MyOrg.Registry (registryEvents)
@@ -18,13 +17,13 @@ someFunc = do
   demo <- (== Just "1") <$> lookupEnv "MY_ORG_DEMO"
   file <- maybe "runs/local/events.json" id <$> lookupEnv "MY_ORG_EVENT_FILE"
   port <- maybe 8080 id . (>>= readMaybe) <$> lookupEnv "MY_ORG_PORT"
-  database <- lookupEnv "MY_ORG_TEST_DATABASE_URL"
+  database <- lookupEnv "MY_ORG_SQLITE_FILE"
   let chosenFile = if demo then "runs/demo/events.json" else file
       chosenPort = if demo then 8081 else port
       open =
         if demo
           then openFileStore chosenFile
-          else maybe (openFileStore chosenFile) (openPostgresStore . BS.pack) database
+          else maybe (openFileStore chosenFile) openSQLiteStore database
   putStrLn
     ("My Org: http://127.0.0.1:" <> show chosenPort <> " (local, unauthenticated MVP)")
   bracket open closeStore $ \store -> do

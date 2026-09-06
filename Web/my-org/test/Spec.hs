@@ -33,6 +33,7 @@ import OrganizationsSmokeSpec qualified
 import PlanSpec qualified
 import QuerySpec qualified
 import RegistrySpec (registrySpec)
+import SQLiteStoreSpec qualified
 import StartupSmokeSpec qualified
 import System.Directory
 import System.Environment (getArgs)
@@ -59,6 +60,7 @@ tests = do
   DeleteSmokeSpec.spec
   OrganizationsSmokeSpec.spec
   StartupSmokeSpec.spec
+  SQLiteStoreSpec.spec
   registrySpec
   describe "목표 활성화 불변식" $ do
     it "최종 책임자가 없으면 거부한다" $

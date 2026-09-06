@@ -76,3 +76,13 @@
 - 검토: 단계별 교차 검토 및 최종 reviewer APPROVE.
 - 제약: 실제 PostgreSQL 서버 통합은 미실행. Haskell 직접 Aeson 호출은 명시 codec으로 이전 필요. 진단 JSON은 기존 문자열 projection을 유지하며 내부 오류 타입은 역복원하지 않음.
 - 정리: 사용자 저장소 변경 없음. 격리 브라우저/검증 서버 종료. 구조와 실행 지침 README 반영.
+
+## T-0005
+- 요청: 기본 JSON 저장을 유지하고 선택 PostgreSQL 저장소를 SQLite로 교체하며 관련 문서 갱신
+- 상태: DONE
+- 담당: orchestrator (배정/통합), planner (계획/문서), coder (저장소/빌드 설정), tester (회귀 검증), reviewer (검토)
+- 결정: MY_ORG_SQLITE_FILE이 설정된 일반 모드만 SQLite 사용. 미설정은 기존 JSON, 데모는 항상 전용 JSON. 기존 데이터 자동 변환 없음.
+- 결과: sqlite-simple, 이벤트 append 트랜잭션, SQLite EXCLUSIVE 잠금과 DELETE journal. 과거 작업의 PostgreSQL 설명은 당시 구현 이력이며 현재 전환 대상임.
+- 문서: README 실행·저장·테스트·아키텍처 안내 및 CHANGELOG 갱신.
+- 검증: make test 통과 (Haskell 99개, Elm 31개), make lint 및 git diff --check 통과. 기존 JSON fixture 변경 없음. 경고 수정 후 SQLite 관련 8개 테스트를 -Werror로 실행하여 통과.
+- 검토: reviewer 최종 APPROVE, 추가 수정 요구 없음.

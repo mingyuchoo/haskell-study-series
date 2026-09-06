@@ -100,7 +100,7 @@ library
       MyOrg.Http.Encode
       MyOrg.Http.Route
       MyOrg.Infrastructure.FileStore
-      MyOrg.Infrastructure.PostgresStore
+      MyOrg.Infrastructure.SQLiteStore
       MyOrg.Presentation.Diagnostic
       MyOrg.Presentation.Error
       MyOrg.Presentation.Event
@@ -132,11 +132,12 @@ library
     , bytestring
     , containers
     , directory
+    , filepath
     , http-types
     , mtl
-    , postgresql-simple
     , servant
     , servant-server
+    , sqlite-simple
     , stm
     , text
     , time
@@ -189,6 +190,7 @@ test-suite my-org-test
       QuerySpec
       RegistrySpec
       SmokeSupport
+      SQLiteStoreSpec
       StartupSmokeSpec
       WireSpec
       Paths_my_org
@@ -224,6 +226,7 @@ test-suite my-org-test
     , network
     , process
     , scientific
+    , sqlite-simple
     , stm
     , temporary
     , text
