@@ -10,16 +10,20 @@ module MyOrg.Domain.Analysis
   , renderAnalysis
   ) where
 
-import Data.Aeson (FromJSON (..), ToJSON (..), genericParseJSON, genericToJSON)
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 import Data.Text (Text)
 import qualified Data.Text as T
 import GHC.Generics (Generic)
-import MyOrg.Domain.Event
+import MyOrg.Domain.State
+import MyOrg.Domain.Queries
 import MyOrg.Domain.Goal (authorityCoverage, missingPermissions)
 import MyOrg.Domain.Graph (resourceControllers)
-import MyOrg.Types
+import MyOrg.Domain.Identity
+import MyOrg.Domain.Goal.Types
+import MyOrg.Domain.Authority
+import MyOrg.Domain.Result
+import MyOrg.Domain.Error
 
 -- | 필요한 자원 하나와 그것을 실제로 쥔 사람들.
 data ResourceHolder = ResourceHolder
@@ -30,11 +34,7 @@ data ResourceHolder = ResourceHolder
   }
   deriving stock (Show, Eq, Generic)
 
-instance ToJSON ResourceHolder where
-  toJSON = genericToJSON (jsonOptions "holder")
 
-instance FromJSON ResourceHolder where
-  parseJSON = genericParseJSON (jsonOptions "holder")
 
 data Recommendation
   = IncreaseOwnerAuthority UserId [Text]
@@ -42,7 +42,6 @@ data Recommendation
   | AssignOwner
   | NoStructuralIssue
   deriving stock (Show, Eq, Generic)
-  deriving anyclass (ToJSON, FromJSON)
 
 data Analysis = Analysis
   { analysisGoal :: GoalId
@@ -55,11 +54,7 @@ data Analysis = Analysis
   }
   deriving stock (Show, Eq, Generic)
 
-instance ToJSON Analysis where
-  toJSON = genericToJSON (jsonOptions "analysis")
 
-instance FromJSON Analysis where
-  parseJSON = genericParseJSON (jsonOptions "analysis")
 
 analyzeGoal :: OrgState -> GoalId -> Either OrganizationError Analysis
 analyzeGoal st gid = do

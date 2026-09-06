@@ -27,9 +27,42 @@ extra-source-files:
     static/elm.json
     static/src/Domain.elm
     static/src/Main.elm
+    static/src/Page.elm
+    static/src/Remote.elm
+    static/src/Api/Command.elm
+    static/src/Api/Decode.elm
+    static/src/Api/Http.elm
+    static/src/Api/Path.elm
+    static/src/Domain/Permission.elm
+    static/src/Form/Action.elm
+    static/src/Form/Defaults.elm
+    static/src/Form/Goal.elm
+    static/src/Form/Review.elm
+    static/src/Form/Snapshot.elm
+    static/src/Page/Authorities.elm
+    static/src/Page/Goals.elm
+    static/src/Page/Learning.elm
+    static/src/Page/Organizations.elm
+    static/src/Page/Responsibility.elm
+    static/src/Page/Results.elm
+    static/src/Page/Settings.elm
+    static/src/Ui/Common.elm
+    static/src/Ui/Form.elm
+    static/src/Ui/Guide.elm
+    static/src/Ui/Label.elm
+    static/tests/DecoderTest.elm
+    static/tests/FormTest.elm
+    static/tests/PageTest.elm
+    static/tests/StateTest.elm
+    static/tests/run.cjs
+    test/fixtures/dashboard.json
+    test/fixtures/legacy-events.json
+    test/fixtures/scoped-events.json
+    test/fixtures/generate.sh
     package.json
     package-lock.json
     Makefile
+    scripts/check-boundaries.cjs
 
 source-repository head
   type: git
@@ -39,15 +72,40 @@ library
   exposed-modules:
       Lib
       MyOrg.Application
+      MyOrg.Application.Persistence
+      MyOrg.Application.Plan
+      MyOrg.Application.Query
+      MyOrg.Application.ReadModel
+      MyOrg.Application.Runtime
       MyOrg.Demo
       MyOrg.Domain.Analysis
+      MyOrg.Domain.Authority
       MyOrg.Domain.Compiler
+      MyOrg.Domain.Error
       MyOrg.Domain.Evaluation
       MyOrg.Domain.Event
+      MyOrg.Domain.Event.Types
       MyOrg.Domain.Goal
+      MyOrg.Domain.Goal.Types
       MyOrg.Domain.Graph
+      MyOrg.Domain.Identity
+      MyOrg.Domain.Organization
+      MyOrg.Domain.Queries
+      MyOrg.Domain.Reducer
+      MyOrg.Domain.Result
       MyOrg.Domain.Review
+      MyOrg.Domain.Review.Types
+      MyOrg.Domain.State
+      MyOrg.Domain.Validation
+      MyOrg.Http.Encode
+      MyOrg.Http.Route
+      MyOrg.Infrastructure.FileStore
+      MyOrg.Infrastructure.PostgresStore
+      MyOrg.Presentation.Diagnostic
+      MyOrg.Presentation.Error
+      MyOrg.Presentation.Event
       MyOrg.Registry
+      MyOrg.Serialization.JSON
       MyOrg.Server
       MyOrg.Store
       MyOrg.Types
@@ -123,12 +181,16 @@ test-suite my-org-test
   main-is: Spec.hs
   other-modules:
       ApiSmokeSpec
+      ContractSpec
       DeleteSmokeSpec
       DemoSmokeSpec
       OrganizationsSmokeSpec
+      PlanSpec
+      QuerySpec
       RegistrySpec
       SmokeSupport
       StartupSmokeSpec
+      WireSpec
       Paths_my_org
   autogen-modules:
       Paths_my_org

@@ -50,3 +50,29 @@
 - 담당: orchestrator (실행 확인), reviewer (검토)
 - 확인: frontend는 npm ci 및 npm run build, build는 frontend 이후 stack build를 실행한다.
 - 결과: Makefile은 이미 요청을 충족하여 추가 수정 없음. 실제 make build 종료 코드 0: npm ci → Elm 최적화 빌드 → stack build 통과. reviewer APPROVE.
+
+## T-2026-0906-006
+- 요청: 순수/부수효과 분리 및 높은 응집도·낮은 결합도를 위한 코드베이스 분석과 의견
+- 상태: DONE
+- 담당: orchestrator (백엔드 분석/통합), researcher (Elm 분석), reviewer (근거 검토)
+- 가정: 구현 변경 없이 현재 로컬 소스에 근거하여 점진적 리팩토링 방향을 제안한다.
+- 결과: Haskell executeCommand/replay/evaluate 및 Elm update의 순수성 확인. 개선 우선순위는 Main Elm의 API·폼·화면 응집도, Store의 planner/원자 실행/저장 어댑터 경계, Server의 typed query/read model/HTTP 경계. Types/이벤트 직렬화 분리는 후순위.
+- 검토: reviewer APPROVE. State/Validation/Reducer 의존 방향 및 JSON 순수성 설명 보정. 저장 원자성/로그 호환과 프런트 상태 불변식 보존 권고.
+- 제약: 소스 정적 분석이며 이번 작업에서 코드를 변경하거나 테스트를 재실행하지 않음.
+
+## T-2026-0906-007
+- 요청: 순수/부수효과 분리 리팩토링 1~5단계 순차 실행
+- 상태: DONE
+- 가정: 기존 HTTP API/이벤트 저장 형식/화면 동작 유지. 사용자 저장소 수정 없이 임시 저장소로 검증한다.
+- 담당: orchestrator (순서/통합/백엔드 검증), coder (단계별 구현), reviewer (각 단계 검토)
+- 1단계: DONE — Haskell73/QuickCheck100, Elm21 통과. 고정 legacy/scoped 이벤트·HTTP fixture 및 상태/decoder 회귀 추가, 교차 reviewer APPROVE.
+- 2단계: DONE — Elm API·typed Goal/Review 폼·화면 분리. Elm31/경계 검사/최적화 빌드, 브라우저 초안 보존 검증 및 reviewer APPROVE.
+- 3단계: DONE — Plan/Runtime/Persistence/FileStore/PostgresStore 분리. Haskell80/QuickCheck100 및 reviewer APPROVE. 실제 PostgreSQL 통합은 미실행.
+- 4단계: DONE — typed Query/ReadModel 및 Http.Route/Encode 분리. Haskell84/QuickCheck100, 고정 JSON 유지 및 reviewer APPROVE.
+- 5단계: DONE — 업무별 타입 및 Event.Types/State/Queries/Validation/Reducer 분리. Domain Aeson 제거, 명시 Wire codec 및 표현 경계, Haskell90/QuickCheck100 및 reviewer APPROVE.
+
+- 최종 통합: make build 및 make test 통과 (Elm31, Haskell90/0, QuickCheck100). 단계별 GHC -Werror, 의존 경계/포맷/타입 검사 및 git diff --check 통과.
+- 호환 검증: 기존 legacy/scoped 이벤트와 dashboard 고정 JSON 3개 SHA256 불변, 읽기/재개방/API 회귀 통과.
+- 검토: 단계별 교차 검토 및 최종 reviewer APPROVE.
+- 제약: 실제 PostgreSQL 서버 통합은 미실행. Haskell 직접 Aeson 호출은 명시 codec으로 이전 필요. 진단 JSON은 기존 문자열 projection을 유지하며 내부 오류 타입은 역복원하지 않음.
+- 정리: 사용자 저장소 변경 없음. 격리 브라우저/검증 서버 종료. 구조와 실행 지침 README 반영.

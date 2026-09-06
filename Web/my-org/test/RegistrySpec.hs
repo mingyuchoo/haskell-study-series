@@ -3,7 +3,7 @@ module RegistrySpec (registrySpec) where
 import Control.Concurrent (forkIO, newEmptyMVar, putMVar, takeMVar)
 import Control.Exception (bracket)
 import Control.Monad (forM, when)
-import Data.Aeson (encode)
+import MyOrg.Serialization.JSON (encodeWire)
 import qualified Data.ByteString.Lazy as BL
 import Data.Either (isLeft, isRight)
 import qualified Data.Map.Strict as Map
@@ -120,7 +120,7 @@ registrySpec = describe "여러 조직 레지스트리" $ do
     case demoEvents now of
       Left err -> expectationFailure (show err)
       Right marked -> forM_ [init marked, marked] $ \legacy -> temporary $ \path -> do
-        BL.writeFile path (encode legacy)
+        BL.writeFile path (encodeWire legacy)
         bytes <- BL.readFile path
         bracket (openFileStore path) closeStore $ \store -> do
           st <- stateOf store demoOrganizationId

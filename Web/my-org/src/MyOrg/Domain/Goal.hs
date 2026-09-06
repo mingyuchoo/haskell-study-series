@@ -19,7 +19,10 @@ module MyOrg.Domain.Goal
 import Data.Set (Set)
 import qualified Data.Set as Set
 import qualified Data.Text as T
-import MyOrg.Types
+import MyOrg.Domain.Identity
+import MyOrg.Domain.Goal.Types
+import MyOrg.Domain.Authority
+import MyOrg.Domain.Error
 
 -- | 아직 활성화되지 않은 목표.
 newtype DraftGoal = DraftGoal {unDraftGoal :: Goal}

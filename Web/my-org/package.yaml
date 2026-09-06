@@ -15,9 +15,16 @@ extra-source-files:
 - static/bootstrap.js
 - static/elm.json
 - static/src/*.elm
+- static/src/**/*.elm
+- static/tests/**/*.elm
+- static/tests/*.elm
+- static/tests/run.cjs
+- test/fixtures/*.json
+- test/fixtures/generate.sh
 - package.json
 - package-lock.json
 - Makefile
+- scripts/check-boundaries.cjs
 
 synopsis:            Organization operating system - goals, ownership, authority, results
 category:            Web

@@ -26,7 +26,7 @@ make run
 
 ```sh
 make frontend     # npm ci 후 Elm 최적화 빌드
-npm run check     # Elm 표준 포맷 및 타입 검사
+npm run check     # 모듈 의존 경계, Elm 표준 포맷 및 타입 검사
 npm run format    # Elm 소스 표준 포맷 적용
 ```
 
@@ -36,13 +36,28 @@ npm run format    # Elm 소스 표준 포맷 적용
 
 화면의 설계 기준은 [Elm Architecture](https://guide.elm-lang.org/architecture/)입니다. Model에 화면·입력·요청 상태를 보관하고, Msg를 update에서 처리하며, view가 현재 상태를 표현합니다. [공식 HTTP 예제](https://guide.elm-lang.org/effects/http.html)처럼 비동기 응답을 메시지로 받아 로딩과 실패를 구분합니다. JSON 디코더가 API 경계를 검증하고 기존 Haskell 도메인 검증이 저장 규칙을 최종 판단합니다.
 
+| Elm 모듈 | 책임 |
+| --- | --- |
+| `Main` | 조직 선택, 요청 세대, 저장 진행과 조직별 초안의 수명 관리 |
+| `Domain`, `Domain.Permission` | 화면에서 쓰는 데이터와 권한 종류 |
+| `Form.Goal`, `Form.Review` | 타입으로 구분한 입력 필드·초안과 순수 검증 |
+| `Api.Command`, `Api.Decode`, `Api.Path` | JSON 명령 생성, 응답 해석과 경로 구성 |
+| `Api.Http` | HTTP 요청을 `Cmd msg`로 표현하고 응답을 호출자 메시지로 전달 |
+| `Page.*`, `Ui.*` | 필요한 데이터와 콜백만 받아 화면 구성 |
+
+페이지는 전체 `Main.Model`에 의존하지 않습니다. Goal/Review의 입력 이벤트는 필드 타입으로 연결하며 조직·구성원 등 단순 폼은 공통 문자열 입력을 사용합니다. `npm run check`의 의존 경계 검사가 도메인·폼에서 화면/API를 참조하거나 페이지에서 HTTP를 직접 호출하는 변경을 막습니다.
+
 ## 테스트
 
-`stack test` 또는 `make test`로 `test/`의 Haskell 테스트 전체를 실행합니다. Hspec·QuickCheck 기반의 도메인 검증과 함께 API 생명주기, 동시 데모 초기화, 조직 삭제·재생성, 다중 조직 격리, 실제 서버 시작 로직의 재시작과 저장 상태 복원을 검증합니다.
+`make test`는 Elm 테스트·포맷·타입 검사 후 Haskell 테스트를 실행합니다. `npm test`로 Elm 회귀 테스트만, `stack test`로 `test/`의 Haskell 테스트만 실행할 수 있습니다. Hspec·QuickCheck 기반의 도메인 검증과 함께 API 생명주기, 동시 데모 초기화, 조직 삭제·재생성, 다중 조직 격리, 실제 서버 시작 로직의 재시작과 저장 상태 복원을 검증합니다.
 
 통합 테스트는 임시 파일 저장소를 사용하며 필요한 서버를 직접 시작하고 종료합니다. 별도로 서버를 실행하거나 외부 데이터베이스를 준비할 필요가 없습니다.
 
 서버 프로세스 관리에 POSIX 기능을 사용하므로 Linux/macOS 등 POSIX 환경이 필요합니다.
+
+Elm 테스트는 요청 경합, 중복 제출, 조직별 초안 보존, 수정·삭제 버전 확인과 JSON 응답 형식을 검증합니다. `static/tests/run.cjs`는 큰 개발/CI 머신에서 메모리를 과도하게 사용하지 않도록 테스트 worker를 최대 2개로 제한합니다.
+
+`test/fixtures/`에는 기존 이벤트 로그와 HTTP 대시보드의 고정 JSON 계약이 있습니다. 테스트는 fixture를 자동 갱신하지 않습니다. 의도적으로 계약을 바꾸는 경우에만 루트에서 `test/fixtures/generate.sh`를 실행하고 변경 내용을 검토하세요. 정상 리팩토링에서는 fixture가 그대로 유지되어야 합니다.
 
 ## 다섯 화면
 
@@ -125,13 +140,30 @@ make demo
 | 모듈 | 구현된 역할 |
 | --- | --- |
 | `MyOrg.Application` | 조직·목표·책임·권한·결과·회고 명령의 입력과 상태 검증 |
-| `MyOrg.Domain.Goal`, `Event` | 활성 목표 불변식, 권한 축소 시 초안 복귀, 이벤트 재생 |
+| `Domain.Identity`, `Organization`, `Goal.Types`, `Authority`, `Result`, `Review.Types`, `Error` | 식별자와 업무별 타입·권한 규칙·오류 값 |
+| `Domain.Goal`, `State`, `Queries`, `Validation`, `Reducer` | 활성 목표 불변식, 상태 조회·검증, 권한 축소 시 초안 복귀와 이벤트 재생 |
+| `Domain.Event.Types` | 도메인 이벤트와 저장 이벤트 봉투의 순수 타입 |
 | `Evaluation`, `Compiler`, `Graph`, `Analysis` | KPI 평가, 구조 진단, 책임 그래프와 통제율 |
 | `MyOrg.Demo` | 기준 시각을 받는 순수 시나리오, 기존 Command를 통한 검증된 이벤트 생성 |
-| `MyOrg.Registry`, `MyOrg.Store` | 조직별 projection·범위 검증·이벤트 잠금·원자 저장·중복 데모 거부 |
-| `MyOrg.Server`, `static/src/` | JSON API, 다섯 화면, 실제 저장 상태로 판정하는 체험 가이드 |
+| `MyOrg.Registry`, `Application.Plan` | 순수한 조직별 projection·범위 검증·명령/데모 이벤트 계획 |
+| `Application.Runtime`, `Application.Persistence` | 저장 포트를 통해 잠금 안에서 계획·저장·메모리 반영을 원자적으로 조율 |
+| `Infrastructure.FileStore`, `Infrastructure.PostgresStore` | 파일/DB 자원 획득·해제와 영속 저장. `MyOrg.Store`는 조립 진입점 |
+| `Application.Query`, `Application.ReadModel` | 명시적 조직 선택과 타입이 있는 조회 결과의 순수 계산 |
+| `MyOrg.Server`, `Http.Route`, `Http.Encode` | 요청/시각/저장소 IO 조율, HTTP 경로·요청 파싱과 JSON 응답 변환 |
+| `Serialization.JSON`, `Presentation.*` | 기존 JSON 계약의 명시적 변환, 오류·감사 기록의 표시 문구 |
+| `static/src/` | 다섯 화면, 실제 저장 상태로 판정하는 체험 가이드 |
 
 기존 브라우저 데모의 여러 POST 호출은 한 번의 서버 시드 API로 대체했습니다. 초기 화면의 샘플 수를 늘리는 것과 함께 기존 기능을 조작할 이유와 다음 행동을 안내합니다.
+
+명령의 저장 흐름은 `HTTP → Runtime → Plan → executeCommand`입니다. `Plan`은 주어진 시각과 기존 이벤트로 추가 이벤트를 계산합니다. `Runtime`은 같은 잠금 안에서 최신 이벤트를 읽고 계획한 뒤 저장 포트를 호출하며, 저장에 성공한 경우에만 메모리를 바꿉니다. 파일·DB 어댑터를 교체해도 명령 규칙은 바뀌지 않습니다. JSON 변환도 순수 계산이지만 외부 형식에 대한 책임이므로 도메인 규칙과는 별도 경계로 관리합니다.
+
+조회는 `Http.Route → Application.Query → ReadModel → Http.Encode`로 이어집니다. Query는 URL 문자열이나 JSON `Value`를 받지 않고 조회 타입, 조직 레지스트리와 시각을 받습니다. HTTP 없이도 조직 범위·평가 시각·감사 순서를 테스트할 수 있습니다.
+
+도메인 모듈은 Aeson 인스턴스를 갖지 않습니다. 외부 JSON을 다룰 때는 `Serialization.JSON`의 `toWire`/`parseWire` 또는 `encodeWire`/`eitherDecodeWire`를 사용합니다. 기존 `MyOrg.Types`와 `Domain.Event`는 타입·함수 접근을 위한 호환 진입점이며, 내부 코드는 필요한 세부 모듈을 직접 가져옵니다. 기존 Haskell 호출 코드에서 도메인 값을 직접 `encode`/`eitherDecode`하던 곳은 이 명시적 codec으로 바꿔야 합니다. HTTP 응답과 저장된 JSON 형식은 그대로 유지합니다.
+
+진단의 내부 메시지는 `PlainMessage` 또는 오류 원인을 보존하는 `InvalidDraft`입니다. `Presentation.Diagnostic`이 이를 표시 문구로 바꿉니다. HTTP의 `message`는 기존처럼 문자열이므로 다시 읽으면 `PlainMessage`가 되며 내부 오류 타입까지 복원하지 않습니다. 저장 이벤트에는 이 진단 표현이 포함되지 않습니다.
+
+새 기능은 업무 규칙을 도메인에, 명령·조회 조합을 Application에, 외부 형식 변경을 Http/Serialization에, 실제 I/O를 Runtime/Infrastructure에 추가합니다. `npm run check`는 Elm 경계와 함께 순수 Haskell 모듈의 외부 의존 및 상태 계층의 역방향 의존을 검사합니다.
 
 ### 일곱 가지 시나리오
 

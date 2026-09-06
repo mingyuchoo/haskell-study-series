@@ -4,7 +4,7 @@ import Control.Concurrent (forkIO, newEmptyMVar, putMVar, takeMVar)
 import Control.Exception (IOException, bracket, try)
 import Control.Monad (foldM, forM, when)
 import qualified Data.ByteString.Lazy.Char8 as BL
-import Data.Aeson (encode, eitherDecode)
+import MyOrg.Serialization.JSON (encodeWire, eitherDecodeWire)
 import Data.List (sort)
 import Data.Either (isLeft, isRight)
 import qualified Data.Map.Strict as Map
@@ -24,6 +24,10 @@ import MyOrg.Types
 import System.Directory
 import System.IO (hClose, openTempFile, hSetBuffering, stdout, BufferMode(LineBuffering))
 import RegistrySpec (registrySpec)
+import qualified WireSpec
+import qualified QuerySpec
+import qualified PlanSpec
+import qualified ContractSpec
 import qualified ApiSmokeSpec
 import qualified DemoSmokeSpec
 import qualified DeleteSmokeSpec
@@ -42,6 +46,10 @@ main = do
 
 tests :: Spec
 tests = do
+  WireSpec.spec
+  QuerySpec.spec
+  PlanSpec.spec
+  ContractSpec.spec
   ApiSmokeSpec.spec
   DemoSmokeSpec.spec
   DeleteSmokeSpec.spec
@@ -224,7 +232,7 @@ tests = do
       pure ()
     it "한글과 전체 이벤트가 JSON 왕복 및 동일 기준 시각에서 보존된다" $ withDemo start $ \st saved -> do
       fmap organizationName (stateOrganization st) `shouldBe` Just "북극성 스튜디오 · 체험 조직"
-      (eitherDecode (encode saved) :: Either String [StoredEvent]) `shouldBe` Right saved
+      (eitherDecodeWire (encodeWire saved) :: Either String [StoredEvent]) `shouldBe` Right saved
       demoEvents start `shouldBe` Right saved
   describe "원자적 데모 초기화" $ do
     it "전체 초기화와 재개방이 동일하며 재시드는 파일을 변경하지 않는다" $ withStorePath $ \path -> do

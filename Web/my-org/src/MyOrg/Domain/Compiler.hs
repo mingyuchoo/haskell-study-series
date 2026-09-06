@@ -8,10 +8,9 @@ module MyOrg.Domain.Compiler
   , Diagnostic (..)
   , CompileReport (..)
   , compileOrganization
-  , renderDiagnostic
+  , DiagnosticMessage (..)
   ) where
 
-import Data.Aeson (FromJSON (..), ToJSON (..), genericParseJSON, genericToJSON)
 import qualified Data.Map.Strict as Map
 import Data.Maybe (mapMaybe)
 import qualified Data.Set as Set
@@ -20,30 +19,38 @@ import qualified Data.Text as T
 import Data.Time (UTCTime)
 import GHC.Generics (Generic)
 import MyOrg.Domain.Evaluation (evaluateGoal)
-import MyOrg.Domain.Event
+import MyOrg.Domain.State
+import MyOrg.Domain.Queries
 import MyOrg.Domain.Goal (authorityCoverage, missingPermissions, validateDraft)
 import MyOrg.Domain.Graph
-import MyOrg.Types
+import MyOrg.Domain.Identity
+import MyOrg.Domain.Goal.Types
+import MyOrg.Domain.Authority
+import MyOrg.Domain.Result
+import MyOrg.Domain.Review.Types
+import MyOrg.Domain.Error
 
 data Severity = Error | Warning | Info
   deriving stock (Show, Eq, Ord, Enum, Bounded, Generic)
-  deriving anyclass (ToJSON, FromJSON)
+
+-- Invalid drafts retain structured errors until the presentation boundary.
+data DiagnosticMessage = PlainMessage Text | InvalidDraft OrganizationError
+  deriving (Show, Eq)
+
+diagnostic :: Text -> Severity -> Text -> Text -> [Text] -> Diagnostic
+diagnostic code severity subject message details = Diagnostic code severity subject (PlainMessage message) details
 
 data Diagnostic = Diagnostic
   { diagnosticCode :: Text
   , diagnosticSeverity :: Severity
   , diagnosticSubject :: Text
   -- ^ 목표, 사람 등 진단 대상
-  , diagnosticMessage :: Text
+  , diagnosticMessage :: DiagnosticMessage
   , diagnosticDetails :: [Text]
   }
   deriving stock (Show, Eq, Generic)
 
-instance ToJSON Diagnostic where
-  toJSON = genericToJSON (jsonOptions "diagnostic")
 
-instance FromJSON Diagnostic where
-  parseJSON = genericParseJSON (jsonOptions "diagnostic")
 
 data CompileReport = CompileReport
   { reportErrors :: Int
@@ -53,11 +60,7 @@ data CompileReport = CompileReport
   }
   deriving stock (Show, Eq, Generic)
 
-instance ToJSON CompileReport where
-  toJSON = genericToJSON (jsonOptions "report")
 
-instance FromJSON CompileReport where
-  parseJSON = genericParseJSON (jsonOptions "report")
 
 -- | 조직 전체를 검사한다. 오류가 앞에, 경고와 정보가 뒤에 온다.
 compileOrganization :: UTCTime -> OrgState -> CompileReport
@@ -97,7 +100,7 @@ checkOrganization :: OrgState -> [Diagnostic]
 checkOrganization st = case stateOrganization st of
   Just _ -> []
   Nothing ->
-    [Diagnostic "O000" Error "organization" "조직이 정의되지 않았습니다." []]
+    [diagnostic "O000" Error "organization" "조직이 정의되지 않았습니다." []]
 
 -- O002/O003: 초안의 정합성
 checkDrafts :: OrgState -> [Diagnostic]
@@ -106,22 +109,22 @@ checkDrafts st = mapMaybe check (Map.elems (stateGoals st))
   check g = case validateDraft g of
     Right () -> Nothing
     Left (InvalidTarget _) ->
-      Just (Diagnostic "O002" Error (showGoal g) "목표값이 기준값과 같아 성공과 실패를 판단할 수 없습니다." [])
+      Just (diagnostic "O002" Error (showGoal g) "목표값이 기준값과 같아 성공과 실패를 판단할 수 없습니다." [])
     Left (DeadlineBeforeStart _) ->
-      Just (Diagnostic "O003" Error (showGoal g) "마감이 시작일보다 앞섭니다." [])
-    Left e -> Just (Diagnostic "O009" Error (showGoal g) (describeError e) [])
+      Just (diagnostic "O003" Error (showGoal g) "마감이 시작일보다 앞섭니다." [])
+    Left e -> Just (Diagnostic "O009" Error (showGoal g) (InvalidDraft e) [])
 
 -- O001: 최종 책임자 없음
 checkOwners :: OrgState -> [Diagnostic]
 checkOwners st =
-  [ Diagnostic "O001" Error (showGoal g) "Final Owner가 존재하지 않습니다." []
+  [ diagnostic "O001" Error (showGoal g) "Final Owner가 존재하지 않습니다." []
   | g <- goalsWithoutOwner st
   ]
 
 -- O010: 책임자가 구성원 명단에 없음
 checkUnknownOwners :: OrgState -> [Diagnostic]
 checkUnknownOwners st =
-  [ Diagnostic "O010" Error (unGoalId gid)
+  [ diagnostic "O010" Error (unGoalId gid)
       ("책임자 " <> unUserId uid <> "이(가) 구성원 명단에 없습니다.") []
   | (gid, o) <- Map.toList (stateOwnership st)
   , let uid = ownershipOwner o
@@ -135,11 +138,11 @@ checkAuthority st =
   | (g, uid, coverage) <- ownersLackingAuthority st
   , let diag = case Map.lookup uid (stateAuthorities st) of
           Nothing ->
-            Diagnostic "O018" Error (unUserId uid)
+            diagnostic "O018" Error (unUserId uid)
               ("목표 " <> showGoal g <> "의 책임자이지만 권한 기록이 전혀 없습니다.")
               []
           Just a ->
-            Diagnostic "O017" Warning (unUserId uid)
+            diagnostic "O017" Warning (unUserId uid)
               "책임에 비해 권한이 부족합니다."
               ( [ "Responsibility: " <> goalDescription g <> " = " <> T.pack (show (goalTarget g))
                     <> " " <> metricUnit (goalMetric g)
@@ -158,7 +161,7 @@ checkAuthority st =
 -- O020: 같은 지표를 두 사람이 최종 책임
 checkSharedMetrics :: OrgState -> [Diagnostic]
 checkSharedMetrics st =
-  [ Diagnostic "O020" Warning (unMetricId mid)
+  [ diagnostic "O020" Warning (unMetricId mid)
       "두 명 이상이 동일한 결과를 최종 책임지고 있습니다."
       [unGoalId g <> " -> " <> unUserId u | (g, u) <- owners]
   | (mid, owners) <- sharedMetricOwners st
@@ -167,7 +170,7 @@ checkSharedMetrics st =
 -- O021: 한 사람이 너무 많은 목표를 책임짐
 checkOverload :: OrgState -> [Diagnostic]
 checkOverload st =
-  [ Diagnostic "O021" Warning (unUserId uid)
+  [ diagnostic "O021" Warning (unUserId uid)
       ("한 사람이 " <> T.pack (show n) <> "개의 목표를 최종 책임지고 있습니다.")
       []
   | (uid, n) <- Map.toList counts
@@ -180,7 +183,7 @@ checkOverload st =
 -- O031: 의사결정권 집중
 checkConcentration :: OrgState -> [Diagnostic]
 checkConcentration st =
-  [ Diagnostic "O031" Warning (unUserId uid)
+  [ diagnostic "O031" Warning (unUserId uid)
       (unUserId uid <> "이(가) 전체 조직 의사결정 권한의 " <> pct share <> "를 가지고 있습니다.")
       ["Possible bottleneck detected."]
   | (uid, share) <- Map.toList (decisionShare st)
@@ -191,7 +194,7 @@ checkConcentration st =
 -- O040: 결정도 학습도 없는 리뷰
 checkReviews :: OrgState -> [Diagnostic]
 checkReviews st =
-  [ Diagnostic "O040" Warning (unReviewId (reviewId r))
+  [ diagnostic "O040" Warning (unReviewId (reviewId r))
       "This review produced no decision."
       ["Goal: " <> unGoalId (reviewGoal r)]
   | r <- stateReviews st
@@ -202,7 +205,7 @@ checkReviews st =
 -- O050: 결과가 한 번도 보고되지 않은 활성 목표
 checkResults :: OrgState -> [Diagnostic]
 checkResults st =
-  [ Diagnostic "O050" Info (showGoal g) "활성화된 뒤 보고된 결과가 없습니다." []
+  [ diagnostic "O050" Info (showGoal g) "활성화된 뒤 보고된 결과가 없습니다." []
   | g <- activeGoals st
   , null (resultsOf st (goalId g))
   ]
@@ -210,28 +213,13 @@ checkResults st =
 -- O051: 마감이 지났는데 달성되지 않음
 checkDeadlines :: UTCTime -> OrgState -> [Diagnostic]
 checkDeadlines now st =
-  [ Diagnostic "O051" Warning (showGoal g) "마감이 지났지만 목표가 달성되지 않았습니다." []
+  [ diagnostic "O051" Warning (showGoal g) "마감이 지났지만 목표가 달성되지 않았습니다." []
   | g <- activeGoals st
   , goalDeadline g < now
   , notAchieved g
   ]
  where
   notAchieved g = evaluationStatus (evaluateGoal now g (resultsOf st (goalId g))) /= Achieved
-
--- | 컴파일러 스타일의 텍스트 출력.
---
--- > ERROR O001
--- > Goal: Enterprise Revenue +30%
--- > Final Owner가 존재하지 않습니다.
-renderDiagnostic :: Diagnostic -> Text
-renderDiagnostic Diagnostic{..} =
-  T.unlines
-    ( [ T.toUpper (T.pack (show diagnosticSeverity)) <> " " <> diagnosticCode
-      , diagnosticSubject
-      , diagnosticMessage
-      ]
-        ++ map ("  " <>) diagnosticDetails
-    )
 
 -- 사용하지 않는 import 경고 방지용 (authorityCoverage는 Graph 쪽에서 사용됨)
 _unused :: Goal -> Authority -> Double

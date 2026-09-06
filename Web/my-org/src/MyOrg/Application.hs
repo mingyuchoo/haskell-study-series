@@ -6,8 +6,17 @@ import qualified Data.Set as Set
 import Data.Text (Text)
 import qualified Data.Text as T
 import Data.Time (UTCTime)
-import MyOrg.Types
-import MyOrg.Domain.Event
+import MyOrg.Domain.Identity
+import MyOrg.Domain.Organization
+import MyOrg.Domain.Goal.Types
+import MyOrg.Domain.Authority
+import MyOrg.Domain.Result
+import MyOrg.Domain.Review.Types
+import MyOrg.Domain.Error
+import MyOrg.Domain.Event.Types
+import MyOrg.Domain.State
+import MyOrg.Domain.Queries
+import MyOrg.Domain.Validation
 import MyOrg.Domain.Goal (validateDraft)
 import MyOrg.Domain.Evaluation (evaluateGoal, latestResult)
 

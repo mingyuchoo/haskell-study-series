@@ -7,8 +7,15 @@ import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 import Data.Time (UTCTime, addUTCTime)
 import MyOrg.Application
-import MyOrg.Domain.Event
-import MyOrg.Types
+import MyOrg.Domain.Event.Types
+import MyOrg.Domain.State
+import MyOrg.Domain.Reducer
+import MyOrg.Domain.Identity
+import MyOrg.Domain.Organization
+import MyOrg.Domain.Goal.Types
+import MyOrg.Domain.Authority
+import MyOrg.Domain.Review.Types
+import MyOrg.Domain.Error
 
 demoOrganizationId :: OrgId
 demoOrganizationId = OrgId "demo-northstar-v2"

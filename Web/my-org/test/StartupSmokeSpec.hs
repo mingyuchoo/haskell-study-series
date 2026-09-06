@@ -4,7 +4,8 @@ import Control.Concurrent (threadDelay)
 import Control.Exception (bracket, try)
 import Control.Monad (void, when)
 import qualified Data.ByteString as BS
-import Data.Aeson (eitherDecodeStrict')
+import MyOrg.Serialization.JSON (eitherDecodeWire)
+import qualified Data.ByteString.Lazy as BL
 import Data.List (isInfixOf)
 import qualified Data.Text as T
 import Network.HTTP.Client (HttpException)
@@ -54,7 +55,7 @@ spec = describe "Process startup and persisted demo lifecycle" $ it "seeds, pres
                 action client
     bootstrap False
     bytes <- BS.readFile eventFile
-    seeded <- either fail pure (eitherDecodeStrict' bytes)
+    seeded <- either fail pure (eitherDecodeWire (BL.fromStrict bytes))
     length (items seeded) `shouldSatisfy` (> 50)
     serve $ \client -> do
       state <- get client "dashboard"

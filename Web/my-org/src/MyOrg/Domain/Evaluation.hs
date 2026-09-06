@@ -10,7 +10,8 @@ module MyOrg.Domain.Evaluation
 import Data.List (sortOn)
 import Data.Ord (Down (..))
 import Data.Time (UTCTime, diffUTCTime)
-import MyOrg.Types
+import MyOrg.Domain.Goal.Types
+import MyOrg.Domain.Result
 
 -- | 가장 최근에 보고된 결과.
 latestResult :: [Result] -> Maybe Result

@@ -7,16 +7,14 @@ module MyOrg.Domain.Review
   , describeReviewWarning
   ) where
 
-import Data.Aeson (FromJSON, ToJSON)
 import Data.Text (Text)
 import GHC.Generics (Generic)
-import MyOrg.Types
+import MyOrg.Domain.Review.Types
 
 data ReviewWarning
   = NoDecisionProduced
   | DecisionWithoutDeadline Text
   deriving stock (Show, Eq, Generic)
-  deriving anyclass (ToJSON, FromJSON)
 
 -- | 리뷰가 조직에 무엇을 남겼는지 검사한다.
 checkReview :: Review -> [ReviewWarning]

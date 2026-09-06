@@ -19,16 +19,17 @@ module MyOrg.Domain.Graph
   , resourceControllers
   ) where
 
-import Data.Aeson (FromJSON (..), ToJSON (..), genericParseJSON, genericToJSON)
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map
 import Data.Set (Set)
 import qualified Data.Set as Set
 import qualified Data.Text as T
 import GHC.Generics (Generic)
-import MyOrg.Domain.Event
+import MyOrg.Domain.State
 import MyOrg.Domain.Goal (authorityCoverage)
-import MyOrg.Types
+import MyOrg.Domain.Identity
+import MyOrg.Domain.Goal.Types
+import MyOrg.Domain.Authority
 
 data Node
   = PersonNode UserId
@@ -36,11 +37,9 @@ data Node
   | MetricNode MetricId
   | ResourceNode ResourceId
   deriving stock (Show, Eq, Ord, Generic)
-  deriving anyclass (ToJSON, FromJSON)
 
 data EdgeKind = Owns | DependsOn | Controls | Measures
   deriving stock (Show, Eq, Ord, Enum, Bounded, Generic)
-  deriving anyclass (ToJSON, FromJSON)
 
 data Edge = Edge
   { edgeFrom :: Node
@@ -49,11 +48,7 @@ data Edge = Edge
   }
   deriving stock (Show, Eq, Ord, Generic)
 
-instance ToJSON Edge where
-  toJSON = genericToJSON (jsonOptions "edge")
 
-instance FromJSON Edge where
-  parseJSON = genericParseJSON (jsonOptions "edge")
 
 data ResponsibilityGraph = ResponsibilityGraph
   { graphNodes :: Set Node
@@ -61,11 +56,7 @@ data ResponsibilityGraph = ResponsibilityGraph
   }
   deriving stock (Show, Eq, Generic)
 
-instance ToJSON ResponsibilityGraph where
-  toJSON = genericToJSON (jsonOptions "graph")
 
-instance FromJSON ResponsibilityGraph where
-  parseJSON = genericParseJSON (jsonOptions "graph")
 
 resourceOfPermission :: Permission -> ResourceId
 resourceOfPermission = ResourceId . T.pack . show

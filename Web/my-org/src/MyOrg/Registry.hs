@@ -10,8 +10,13 @@ import Control.Monad (foldM, unless, when)
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map
 import Data.Maybe (isJust)
-import MyOrg.Domain.Event
-import MyOrg.Types
+import MyOrg.Domain.Event.Types
+import MyOrg.Domain.State
+import MyOrg.Domain.Reducer
+import MyOrg.Domain.Identity
+import MyOrg.Domain.Organization
+import MyOrg.Domain.Goal.Types
+import MyOrg.Domain.Error
 
 data Registry = Registry
   { registryStates :: Map OrgId OrgState
