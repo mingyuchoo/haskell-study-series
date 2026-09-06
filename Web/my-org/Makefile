@@ -1,5 +1,10 @@
-.PHONY: build test run demo install lint format eval
-build:
+.DEFAULT_GOAL := build
+.PHONY: build frontend test run demo install lint format eval
+frontend:
+	npm ci
+	npm run build
+
+build: frontend
 	stack build
 
 test:

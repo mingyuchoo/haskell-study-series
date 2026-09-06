@@ -12,6 +12,12 @@ extra-source-files:
 - static/index.html
 - static/style.css
 - static/app.js
+- static/bootstrap.js
+- static/elm.json
+- static/src/*.elm
+- package.json
+- package-lock.json
+- Makefile
 
 synopsis:            Organization operating system - goals, ownership, authority, results
 category:            Web

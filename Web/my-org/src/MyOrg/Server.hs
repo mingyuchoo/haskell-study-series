@@ -25,9 +25,10 @@ import MyOrg.Domain.Review
 
 application :: Store -> Application
 application store request respond
-  | requestMethod request == methodGet && pathInfo request `elem` [[], ["app.js"], ["style.css"]] =
+  | requestMethod request == methodGet && pathInfo request `elem` [[], ["app.js"], ["bootstrap.js"], ["style.css"]] =
       let (path, mime) = case pathInfo request of
             ["app.js"] -> ("static/app.js", "text/javascript; charset=utf-8")
+            ["bootstrap.js"] -> ("static/bootstrap.js", "text/javascript; charset=utf-8")
             ["style.css"] -> ("static/style.css", "text/css; charset=utf-8")
             _ -> ("static/index.html", "text/html; charset=utf-8")
        in respond (responseFile status200 [(hContentType,mime),("Content-Security-Policy","default-src 'self'; style-src 'self'; script-src 'self'; frame-ancestors 'none'"),("X-Content-Type-Options","nosniff")] path Nothing)

@@ -1,0 +1,13 @@
+{
+  "name": "my-org-ui",
+  "private": true,
+  "scripts": {
+    "build": "cd static && elm make src/Main.elm --optimize --output=app.js",
+    "check": "elm-format static/src --validate && cd static && elm make src/Main.elm --output=/dev/null",
+    "format": "elm-format static/src --yes"
+  },
+  "devDependencies": {
+    "elm": "0.19.1-6",
+    "elm-format": "0.8.8"
+  }
+}

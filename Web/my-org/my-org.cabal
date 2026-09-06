@@ -23,6 +23,13 @@ extra-source-files:
     static/index.html
     static/style.css
     static/app.js
+    static/bootstrap.js
+    static/elm.json
+    static/src/Domain.elm
+    static/src/Main.elm
+    package.json
+    package-lock.json
+    Makefile
 
 source-repository head
   type: git

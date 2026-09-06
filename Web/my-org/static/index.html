@@ -1,1 +1,16 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>My Org · 책임에서 결과까지</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head><body><aside><a class="brand" href="/">◈ <strong>my org</strong><span>ORGANIZATION OS</span></a><div class="workspace" id="org-name">내 조직</div><nav aria-label="주요 화면"><button data-view="organizations" class="selected">▦　조직 목록 · 등록</button><button data-view="dashboard">◫　Goal Dashboard</button><button data-view="responsibility">⌘　Responsibility Map</button><button data-view="authority">◇　Authority Map</button><button data-view="reviews">↺　Review & Learning</button></nav><div class="aside-foot"><span class="dot"></span> 로컬 워크스페이스<p>책임을 명확하게.<br>권한을 충분하게.</p><small>v0.1 · Haskell powered</small></div></aside><main><header><div><span class="eyebrow">WORKSPACE / <span id="crumb">OVERVIEW</span></span><h1 id="title">Goal Dashboard</h1><p id="subtitle">모든 중요한 결과에는 명확한 책임자가 있습니다.</p></div><div class="header-actions"><button id="organization-settings" class="secondary" hidden>조직 설정</button><button id="refresh" class="secondary">↻ 새로고침</button></div></header><div id="notice" role="status" aria-live="polite"></div><div id="content"><p>워크스페이스를 불러오는 중…</p></div><footer>권한은 조직의 결정 권한을 기록합니다. 실제 시스템 접근 제어와 연결되지 않은 로컬 MVP입니다.</footer></main><dialog id="delete-organization-dialog" aria-labelledby="delete-organization-title"><form id="delete-organization-form"><span class="tag error">ORGANIZATION SETTINGS</span><h2 id="delete-organization-title">조직을 삭제할까요?</h2><p><strong id="delete-organization-name"></strong>의 구성원, 목표, 책임, 권한, 결과, 평가, 회고와 전략이 현재 워크스페이스에서 모두 제거됩니다.</p><p class="delete-retention">논리 삭제입니다. 원본 감사 이벤트는 파일 또는 DB에 남으며 완전히 지워지지 않습니다. 다른 조직은 삭제되지 않습니다. 삭제 후 새 조직이나 새 데모를 만들 수 있습니다.</p><label>확인하려면 위 조직명을 정확히 입력하세요<input id="delete-organization-confirm" name="confirmName" autocomplete="off" required></label><p id="delete-organization-error" role="alert"></p><div class="actions"><button type="button" id="cancel-organization-delete" class="secondary">취소</button><button type="submit" id="confirm-organization-delete" class="danger" disabled>조직 삭제</button></div></form></dialog></body></html>
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#12382f">
+  <title>My Org · 목표에서 학습까지</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+  <script src="/bootstrap.js" defer></script>
+</head>
+<body>
+  <div id="app"></div>
+  <noscript>이 워크스페이스를 사용하려면 JavaScript를 활성화하세요.</noscript>
+</body>
+</html>

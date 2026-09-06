@@ -33,3 +33,7 @@
 
 # Local and demonstration event stores
 runs/
+
+# Elm compiler cache and local frontend dependencies
+node_modules/
+elm-stuff/
