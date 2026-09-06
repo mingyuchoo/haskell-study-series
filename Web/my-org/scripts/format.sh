@@ -2,10 +2,10 @@
 
 echo "Formatting Haskell files..."
 
-# Resolve script directory so config files are found regardless of CWD
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-FOURMOLU_CONFIG="$SCRIPT_DIR/fourmolu.yaml"
-STYLISH_CONFIG="$SCRIPT_DIR/.stylish-haskell.yaml"
+# Resolve project directory so config files are found regardless of CWD
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+FOURMOLU_CONFIG="$PROJECT_DIR/fourmolu.yaml"
+STYLISH_CONFIG="$PROJECT_DIR/.stylish-haskell.yaml"
 
 # Format a single file: fourmolu first (overall layout), then
 # stylish-haskell (imports, pragmas, module header).
@@ -57,6 +57,32 @@ format_directory() {
   done
 }
 
+format_elm() {
+  local dir="$PROJECT_DIR/static"
+  local formatter="$PROJECT_DIR/node_modules/.bin/elm-format"
+
+  if [ ! -d "$dir" ]; then
+    echo "Directory $dir does not exist, skipping..."
+    return
+  fi
+
+  if [ ! -x "$formatter" ]; then
+    if command -v elm-format >/dev/null 2>&1; then
+      formatter="$(command -v elm-format)"
+    else
+      echo "elm-format not found, skipping Elm formatting"
+      return
+    fi
+  fi
+
+  echo "Formatting Elm files..."
+  find "$dir" -type d \( -name node_modules -o -name elm-stuff -o -name .git \) -prune \
+    -o -type f -name '*.elm' -print0 | while IFS= read -r -d '' file; do
+    echo "Processing $file"
+    "$formatter" "$file" --yes || echo "elm-format failed to format $file"
+  done
+}
+
 # Format files in common Haskell project directories
 format_directory "src"
 format_directory "app"
@@ -69,5 +95,7 @@ if [ -n "$(find . -maxdepth 1 -name '*.hs' 2>/dev/null)" ]; then
     format_file "$file"
   done
 fi
+
+format_elm
 
 echo "Formatting complete"

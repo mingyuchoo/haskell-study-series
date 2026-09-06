@@ -22,10 +22,11 @@ openFilePersistence path = do
       events <- if exists then BL.readFile path >>= decodeEvents else pure []
       let persist xs = bracketOnError
             (openBinaryTempFile dir ".my-org-events.tmp")
-            (\(tmp, h) -> hClose h >> removeFile tmp) $ \(tmp, h) -> do
-            BL.hPut h (encodeWire xs)
-            hClose h
-            renameFile tmp path
+            (\(tmp, h) -> hClose h >> removeFile tmp)
+            $ \(tmp, h) -> do
+              BL.hPut h (encodeWire xs)
+              hClose h
+              renameFile tmp path
       pure (Persistence events persist (removeDirectory lock))
     )
     `onException` removeDirectory lock

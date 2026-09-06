@@ -132,14 +132,18 @@ demoCommands now =
            , ("launch", productLead)
            ]
        ]
-    <> [ActivateGoal (gid g) | g <- ["company", "revenue", "customers", "reliability", "retention"]]
+    <> [ ActivateGoal (gid g)
+       | g <- ["company", "revenue", "customers", "reliability", "retention"]
+       ]
     <> concat
       [ samples "revenue" sales [34, 38, 42]
       , samples "customers" sales [1300, 1800, 2280]
       , samples "reliability" infra [10, 9, 9]
       , samples "retention" success [7, 5, 3]
       ]
-    <> [EvaluateGoal (gid g) | g <- ["company", "revenue", "customers", "reliability", "retention"]]
+    <> [ EvaluateGoal (gid g)
+       | g <- ["company", "revenue", "customers", "reliability", "retention"]
+       ]
     <> [ HoldReview
            (ReviewId "demo-review-retention")
            (gid "retention")

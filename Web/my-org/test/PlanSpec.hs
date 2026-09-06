@@ -68,15 +68,16 @@ spec = describe "pure command planning" $ do
     Runtime.readAudit store `shouldReturn` history
     Runtime.closeStore store
   it
-    "rethrows interruption without publishing unpersisted events or losing the runtime lock" $ do
-    store <- Runtime.openStore (Persistence history (const (throwIO ThreadKilled)) (pure ()))
-    outcome <-
-      try
-        (Runtime.runOrganizationCommand store aid Nothing (RenameOrganization aid "Interrupted" 2))
-        :: IO (Either AsyncException (Either OrganizationError [StoredEvent]))
-    outcome `shouldBe` Left ThreadKilled
-    Runtime.readAudit store `shouldReturn` history
-    Runtime.closeStore store
+    "rethrows interruption without publishing unpersisted events or losing the runtime lock"
+    $ do
+      store <- Runtime.openStore (Persistence history (const (throwIO ThreadKilled)) (pure ()))
+      outcome <-
+        try
+          (Runtime.runOrganizationCommand store aid Nothing (RenameOrganization aid "Interrupted" 2))
+          :: IO (Either AsyncException (Either OrganizationError [StoredEvent]))
+      outcome `shouldBe` Left ThreadKilled
+      Runtime.readAudit store `shouldReturn` history
+      Runtime.closeStore store
 
 now, later :: UTCTime
 now = read "2026-01-01 00:00:00 UTC"

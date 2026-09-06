@@ -4,7 +4,8 @@ frontend:
 	npm ci
 	npm run build
 
-build: frontend
+build: format
+	$(MAKE) frontend
 	stack build
 
 frontend-test:
@@ -27,6 +28,6 @@ lint:
 	stack build --ghc-options=-Werror
 
 format:
-	@echo 'Use the existing Haskell style; no formatter dependency is installed.'
+	bash scripts/format.sh
 
 eval: test

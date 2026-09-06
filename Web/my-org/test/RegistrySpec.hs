@@ -127,10 +127,11 @@ registrySpec = describe "여러 조직 레지스트리" $ do
       boxes <- forM
         [ RenameOrganization aid "변경" (stateLastSeq a)
         , DeleteOrganization aid "A 조직" (stateLastSeq a)
-        ] $ \command -> do
-        box <- newEmptyMVar
-        _ <- forkIO $ runOrganizationCommand store aid Nothing command >>= putMVar box
-        pure box
+        ]
+        $ \command -> do
+          box <- newEmptyMVar
+          _ <- forkIO $ runOrganizationCommand store aid Nothing command >>= putMVar box
+          pure box
       outcomes <- mapM takeMVar boxes
       length (filter isRight outcomes) `shouldBe` 1
       length (filter isLeft outcomes) `shouldBe` 1

@@ -75,10 +75,11 @@ spec = describe "Process startup and persisted demo lifecycle" $
                 ( createProcess
                     (config False port) {std_out = UseHandle logHandle, std_err = UseHandle logHandle}
                 )
-                stop $ \(_, _, _, process) ->
-                withClient port $ \client -> do
-                  waitReady client process 100
-                  action client
+                stop
+                $ \(_, _, _, process) ->
+                  withClient port $ \client -> do
+                    waitReady client process 100
+                    action client
       bootstrap False
       bytes <- BS.readFile eventFile
       seeded <- either fail pure (eitherDecodeWire (BL.fromStrict bytes))
@@ -146,8 +147,9 @@ runBootstrap directory config = do
   code <- withFile logFile WriteMode $ \handle ->
     bracket
       (createProcess config {std_out = UseHandle handle, std_err = UseHandle handle})
-      stop $ \(_, _, _, process) ->
-      timeout 1500000 (waitForProcess process)
+      stop
+      $ \(_, _, _, process) ->
+        timeout 1500000 (waitForProcess process)
   output <- readFile logFile
   -- Force lazy IO before the next startup overwrites this log.
   length output `seq` pure (code, output)
