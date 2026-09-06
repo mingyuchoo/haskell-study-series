@@ -21,6 +21,7 @@ import Page.Authorities
 import Page.Goals
 import Page.Learning
 import Page.Organizations
+import Page.People
 import Page.Responsibility
 import Page.Results
 import Page.Settings
@@ -44,7 +45,7 @@ type alias Flags =
 
 
 type alias Model =
-    { page : Page, org : Maybe String, organizations : Remote (List Summary), workspace : Remote Workspace, drafts : Dict String (Dict String String), goalDrafts : Dict String Form.Goal.Draft, reviewDrafts : Dict String Form.Review.Draft, request : Int, saving : SaveState, fresh : Bool, notice : String, error : Bool, deletion : Maybe Snapshot, guideOpen : Bool, flags : Flags, serial : Int, goalSerial : Dict String Int, expandedGoal : Maybe String, syncing : Bool }
+    { page : Page, org : Maybe String, organizations : Remote (List Summary), workspace : Remote Workspace, drafts : Dict String (Dict String String), goalDrafts : Dict String Form.Goal.Draft, reviewDrafts : Dict String Form.Review.Draft, request : Int, saving : SaveState, fresh : Bool, notice : String, error : Bool, deletion : Maybe Snapshot, guideOpen : Bool, flags : Flags, serial : Int, goalSerial : Dict String Int, expandedGoal : Maybe String, syncing : Bool, peopleQuery : String, peopleStatus : String, selectedPerson : Maybe String }
 
 
 type Msg
@@ -62,6 +63,10 @@ type Msg
     | CloseDelete
     | ToggleGuide
     | Guide Page String
+    | SearchPeople String
+    | FilterPeople String
+    | ResetPerson String
+    | OpenPerson String
     | NoOp
 
 
@@ -72,7 +77,7 @@ main =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    refresh { page = Organizations, org = Nothing, organizations = Loading, workspace = Loading, drafts = Dict.empty, goalDrafts = Dict.empty, reviewDrafts = Dict.empty, request = 0, saving = Idle, fresh = False, notice = "", error = False, deletion = Nothing, guideOpen = True, flags = flags, serial = 0, goalSerial = Dict.empty, expandedGoal = Nothing, syncing = True }
+    refresh { page = Organizations, org = Nothing, organizations = Loading, workspace = Loading, drafts = Dict.empty, goalDrafts = Dict.empty, reviewDrafts = Dict.empty, request = 0, saving = Idle, fresh = False, notice = "", error = False, deletion = Nothing, guideOpen = True, flags = flags, serial = 0, goalSerial = Dict.empty, expandedGoal = Nothing, syncing = True, peopleQuery = "", peopleStatus = "active", selectedPerson = Nothing }
 
 
 
@@ -117,7 +122,7 @@ update msg model =
                 ( { model | page = page, deletion = Nothing }, Cmd.none )
 
             else
-                refresh { model | page = page, org = org, workspace = Loading, notice = "", error = False, deletion = Nothing }
+                refresh { model | page = page, org = org, workspace = Loading, notice = "", error = False, deletion = Nothing, peopleQuery = "", peopleStatus = "active", selectedPerson = Nothing }
 
         Refresh ->
             if busy model then
@@ -169,8 +174,19 @@ update msg model =
 
                             current =
                                 Dict.get draftKey model.drafts |> Maybe.withDefault (draftDefaults model action)
+
+                            version =
+                                case action of
+                                    UpdatePerson _ ->
+                                        Dict.get "__version" current |> Maybe.withDefault (String.fromInt (workspaceVersion model))
+
+                                    DeactivatePerson _ ->
+                                        Dict.get "__version" current |> Maybe.withDefault (String.fromInt (workspaceVersion model))
+
+                                    _ ->
+                                        String.fromInt (workspaceVersion model)
                         in
-                        ( { model | drafts = Dict.insert draftKey (Dict.insert "__version" (String.fromInt (workspaceVersion model)) (Dict.insert key val current)) model.drafts }, Cmd.none )
+                        ( { model | drafts = Dict.insert draftKey (Dict.insert "__version" version (Dict.insert key val current)) model.drafts }, Cmd.none )
 
         EditGoal field val ->
             if busy model then
@@ -300,6 +316,31 @@ update msg model =
                 , Task.attempt (always NoOp) (Browser.Dom.focus target)
                 )
 
+        SearchPeople query ->
+            ( { model | peopleQuery = query }, Cmd.none )
+
+        FilterPeople status ->
+            ( { model | peopleStatus = status }, Cmd.none )
+
+        ResetPerson key ->
+            if busy model then
+                ( model, Cmd.none )
+
+            else
+                refresh
+                    { model
+                        | drafts = model.drafts |> Dict.remove (formKey model (UpdatePerson key)) |> Dict.remove (formKey model (DeactivatePerson key))
+                        , notice = "구성원 수정·인계 입력을 초기화하고 최신 정보를 불러옵니다. 확인한 뒤 다시 작성하세요."
+                        , error = False
+                    }
+
+        OpenPerson key ->
+            if busy model then
+                ( model, Cmd.none )
+
+            else
+                ( { model | selectedPerson = Just key }, Task.attempt (always NoOp) (Browser.Dom.focus "person-detail") )
+
         NoOp ->
             ( model, Cmd.none )
 
@@ -379,7 +420,7 @@ view model =
                             ]
                             [ text (pageName page) ]
                     )
-                    [ Organizations, Dashboard, Responsibility, Authorities, Results, Reviews ]
+                    [ Organizations, People, Dashboard, Responsibility, Authorities, Results, Reviews ]
                 )
             , div [ class "aside-foot" ] [ span [ class "dot" ] [], text "명확한 상태, 예측 가능한 변화", p [] [ text "결과를 정의하고", br [] [], text "함께 배우는 조직." ], small [] [ text "Elm UI · Haskell API" ] ]
             ]
@@ -445,6 +486,9 @@ workspaceView model =
                   else
                     text ""
                 , case model.page of
+                    People ->
+                        Page.People.view { forms = formConfig model, query = model.peopleQuery, status = model.peopleStatus, selected = model.selectedPerson, search = SearchPeople, filter = FilterPeople, open = OpenPerson, reset = ResetPerson, goals = Navigate Dashboard model.org } w
+
                     Dashboard ->
                         Page.Goals.view { draft = goalDraft model, edit = EditGoal, forms = formConfig model, expandedGoal = model.expandedGoal, results = Guide Results } w
 

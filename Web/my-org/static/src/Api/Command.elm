@@ -48,6 +48,16 @@ payload model action =
         version =
             model.value action "__version" |> String.toInt |> Maybe.withDefault model.version
 
+        profile =
+            [ str "name", str "role", ( "department", nullable (String.trim (val "department")) ), ( "email", nullable (String.trim (val "email")) ), ( "reportsTo", nullable (val "reportsTo") ) ]
+
+        current result =
+            if version /= model.version then
+                Err "작성 중 조직이 변경되었습니다. ‘최신 정보로 다시 불러오기’를 눌러 변경 내용을 확인한 뒤 다시 작성해 주세요."
+
+            else
+                result
+
         blank keys =
             List.any (\key -> String.trim (val key) == "") keys
 
@@ -82,7 +92,15 @@ payload model action =
                 )
 
         AddPerson ->
-            validate [ "name", "role" ] [] (post (path "people") [ ( "id", uid "person" ), str "name", str "role" ])
+            validate [ "name", "role" ] [] (post (path "people") (( "id", uid "person" ) :: profile))
+
+        UpdatePerson key ->
+            validate [ "name", "role" ]
+                []
+                (current (Ok ( "PATCH", path ("people/" ++ Url.percentEncode key), E.object (( "expectedVersion", E.int version ) :: profile) )))
+
+        DeactivatePerson key ->
+            current (post (path ("people/" ++ Url.percentEncode key ++ "/deactivate")) [ ( "successor", nullable (val "successor") ), ( "expectedVersion", E.int version ) ])
 
         AddGoal ->
             Form.Goal.validate model.goal

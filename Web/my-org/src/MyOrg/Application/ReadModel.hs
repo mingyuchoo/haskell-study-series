@@ -1,6 +1,7 @@
 -- | Typed query results independent of HTTP paths and JSON representation.
 module MyOrg.Application.ReadModel
-  ( OrganizationSummary (..)
+  ( PersonView (..)
+  , OrganizationSummary (..)
   , GoalView (..)
   , Dashboard (..)
   , QueryResult (..)
@@ -20,6 +21,13 @@ import MyOrg.Domain.Organization
 import MyOrg.Domain.Result
 import MyOrg.Domain.Review (ReviewWarning)
 import MyOrg.Domain.Review.Types
+
+data PersonView = PersonView
+  { viewPerson       :: Person
+  , viewProfile      :: EmployeeProfile
+  , viewPersonActive :: Bool
+  }
+  deriving (Show, Eq)
 
 data OrganizationSummary = OrganizationSummary
   { summaryOrganization :: Maybe Organization
@@ -45,7 +53,7 @@ data Dashboard = Dashboard
   { dashboardVersion        :: Int
   , dashboardDemo           :: Bool
   , dashboardOrganization   :: Maybe Organization
-  , dashboardPeople         :: [Person]
+  , dashboardPeople         :: [PersonView]
   , dashboardGoals          :: [GoalView]
   , dashboardAuthorities    :: [Authority]
   , dashboardCompiler       :: CompileReport
@@ -61,7 +69,8 @@ data QueryResult = OrganizationsResult [OrganizationSummary]
                  | SummaryResult OrganizationSummary
                  | DashboardResult Dashboard
                  | OrganizationResult (Maybe Organization)
-                 | PeopleResult [Person]
+                 | PeopleResult [PersonView]
+                 | PersonResult PersonView Int [GoalId]
                  | GoalsResult [GoalView]
                  | CompilerResult CompileReport
                  | GraphResult ResponsibilityGraph

@@ -6,6 +6,8 @@ type Action
     | ImportDemo
     | Rename
     | AddPerson
+    | UpdatePerson String
+    | DeactivatePerson String
     | AddGoal
     | Assign String
     | Grant String
@@ -31,6 +33,12 @@ actionKey action =
 
         AddPerson ->
             "person"
+
+        UpdatePerson key ->
+            "person-edit-" ++ key
+
+        DeactivatePerson key ->
+            "person-deactivate-" ++ key
 
         AddGoal ->
             "goal"

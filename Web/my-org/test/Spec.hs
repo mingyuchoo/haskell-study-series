@@ -16,6 +16,8 @@ import Data.Text (Text)
 import Data.Time (UTCTime, addUTCTime)
 import DeleteSmokeSpec qualified
 import DemoSmokeSpec qualified
+import EmployeeSmokeSpec qualified
+import EmployeeSpec qualified
 import Lib qualified
 import MyOrg.Application
 import MyOrg.Demo
@@ -56,6 +58,8 @@ tests = do
   PlanSpec.spec
   ContractSpec.spec
   ApiSmokeSpec.spec
+  EmployeeSmokeSpec.spec
+  EmployeeSpec.spec
   DemoSmokeSpec.spec
   DeleteSmokeSpec.spec
   OrganizationsSmokeSpec.spec

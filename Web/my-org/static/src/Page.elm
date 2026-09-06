@@ -3,6 +3,7 @@ module Page exposing (Page(..), pageName)
 
 type Page
     = Organizations
+    | People
     | Dashboard
     | Responsibility
     | Authorities
@@ -16,6 +17,9 @@ pageName page =
     case page of
         Organizations ->
             "조직 목록"
+
+        People ->
+            "구성원"
 
         Dashboard ->
             "목표"

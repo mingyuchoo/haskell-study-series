@@ -4,7 +4,6 @@ module MyOrg.Application.Plan
   , planDemo
   ) where
 
-import Control.Monad (unless)
 import Data.Map.Strict qualified as Map
 import Data.Time (UTCTime)
 import MyOrg.Application
@@ -12,6 +11,7 @@ import MyOrg.Demo (demoEvents, demoOrganizationId)
 import MyOrg.Domain.Error
 import MyOrg.Domain.Event.Types
 import MyOrg.Domain.Identity
+import MyOrg.Domain.Queries (requireActivePerson)
 import MyOrg.Domain.State
 import MyOrg.Registry
 
@@ -28,7 +28,7 @@ planCommand now events selected actor command = do
   st <- case command of
     CreateOrganization _ _ -> pure (Map.findWithDefault emptyState oid (registryStates registry))
     _ -> organizationState registry oid
-  mapM_ (\uid -> unless (Map.member uid (statePeople st)) (Left (PersonNotFound uid))) actor
+  mapM_ (requireActivePerson st) actor
   changes <- executeCommand now st command
   let additions =
         zipWith

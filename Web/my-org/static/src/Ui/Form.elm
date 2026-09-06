@@ -75,7 +75,7 @@ checks model action =
 
 peopleOptions : { a | people : List Person } -> List ( String, String )
 peopleOptions w =
-    ( "", "구성원 선택" ) :: List.map (\p -> ( p.id, p.name ++ " · " ++ p.role )) w.people
+    ( "", "구성원 선택" ) :: List.map (\p -> ( p.id, p.name ++ " · " ++ p.role )) (List.filter .active w.people)
 
 
 goalOptions : { a | goals : List GoalView } -> List ( String, String )

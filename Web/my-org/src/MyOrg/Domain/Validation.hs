@@ -17,7 +17,5 @@ validateActive st gid = do
   let o = goalOwnership st gid
       a = o >>= ownerAuthority st . ownershipOwner
   case o of
-    Just own
-      | not (Map.member (ownershipOwner own) (statePeople st)) ->
-          Left (PersonNotFound (ownershipOwner own))
-    _ -> validateGoal g o a
+    Just own -> requireActivePerson st (ownershipOwner own) >> validateGoal g o a
+    _        -> validateGoal g o a

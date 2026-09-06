@@ -2,6 +2,9 @@
 module MyOrg.Domain.Organization
   ( Organization (..)
   , Person (..)
+  , EmployeeProfile (..)
+  , emptyProfile
+  , handoverReports
   ) where
 
 import Data.Text (Text)
@@ -23,3 +26,22 @@ data Person = Person
   , personReportsTo :: Maybe UserId
   }
   deriving stock (Show, Eq, Generic)
+
+-- | Optional employee data is separate from the historical Person contract.
+data EmployeeProfile = EmployeeProfile
+  { profileDepartment :: Maybe Text
+  , profileEmail      :: Maybe Text
+  }
+  deriving stock (Show, Eq, Generic)
+
+emptyProfile :: EmployeeProfile
+emptyProfile = EmployeeProfile Nothing Nothing
+
+-- | Promote a direct-report successor before moving the remaining reports.
+handoverReports :: Person -> UserId -> Person -> Person
+handoverReports departing successor p
+  | personId p == personId departing = p {personReportsTo = Nothing}
+  | personId p == successor && personReportsTo p == Just (personId departing) =
+      p {personReportsTo = personReportsTo departing}
+  | personReportsTo p == Just (personId departing) = p {personReportsTo = Just successor}
+  | otherwise = p

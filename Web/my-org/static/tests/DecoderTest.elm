@@ -10,7 +10,22 @@ import Test exposing (..)
 tests : Test
 tests =
     describe "HTTP JSON contract"
-        [ test "optional measurement is absent or null, never silently mistyped" <|
+        [ test "legacy person defaults to active without optional profile" <|
+            \_ ->
+                D.decodeString personDecoder """{"id":"p","name":"Name","role":"Role"}"""
+                    |> Expect.equal (Ok { id = "p", name = "Name", role = "Role", reportsTo = Nothing, department = Nothing, email = Nothing, active = True })
+        , test "inactive person retains profile and report link" <|
+            \_ ->
+                D.decodeString personDecoder """{"id":"p","name":"Name","role":"Role","reportsTo":"boss","department":"Team","email":"a@example.com","status":"inactive"}"""
+                    |> Expect.equal (Ok { id = "p", name = "Name", role = "Role", reportsTo = Just "boss", department = Just "Team", email = Just "a@example.com", active = False })
+        , test "unknown employment status and malformed profile are rejected" <|
+            \_ ->
+                Expect.all
+                    [ \_ -> Expect.err (D.decodeString personDecoder """{"id":"p","name":"Name","role":"Role","status":"unknown"}""")
+                    , \_ -> Expect.err (D.decodeString personDecoder """{"id":"p","name":"Name","role":"Role","email":42}""")
+                    ]
+                    ()
+        , test "optional measurement is absent or null, never silently mistyped" <|
             \_ ->
                 Expect.all
                     [ \_ -> Expect.equal (Ok { status = NoData, progress = 0, latestValue = Nothing }) (D.decodeString evaluationDecoder "{\"status\":\"NoData\",\"progress\":0}")

@@ -20,7 +20,7 @@ type alias Summary =
 
 
 type alias Person =
-    { id : String, name : String, role : String }
+    { id : String, name : String, role : String, reportsTo : Maybe String, department : Maybe String, email : Maybe String, active : Bool }
 
 
 type alias Metric =
@@ -40,7 +40,7 @@ type alias Analysis =
 
 
 type alias Measurement =
-    { value : Float, reportedAt : String, note : String }
+    { value : Float, reportedAt : String, note : String, reportedBy : Maybe String }
 
 
 type alias GoalView =

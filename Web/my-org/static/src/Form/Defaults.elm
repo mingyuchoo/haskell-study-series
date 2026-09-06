@@ -12,7 +12,7 @@ type alias Context =
 
 draftDefaults : Context -> Action -> Dict String String
 draftDefaults model action =
-    ([ "name", "role", "budget", "owner", "reportedBy", "note", "value" ] ++ permissionKeys)
+    ([ "name", "role", "department", "email", "reportsTo", "successor", "budget", "owner", "reportedBy", "note", "value" ] ++ permissionKeys)
         |> List.map (\key -> ( key, defaultValue model action key ))
         |> Dict.fromList
 
@@ -33,6 +33,35 @@ defaultValue model action name =
 
             else
                 ""
+
+        UpdatePerson key ->
+            let
+                person =
+                    w |> Maybe.andThen (\data -> List.filter (.id >> (==) key) data.people |> List.head)
+            in
+            person
+                |> Maybe.map
+                    (\p ->
+                        case name of
+                            "name" ->
+                                p.name
+
+                            "role" ->
+                                p.role
+
+                            "department" ->
+                                Maybe.withDefault "" p.department
+
+                            "email" ->
+                                Maybe.withDefault "" p.email
+
+                            "reportsTo" ->
+                                Maybe.withDefault "" p.reportsTo
+
+                            _ ->
+                                ""
+                    )
+                |> Maybe.withDefault ""
 
         AddGoal ->
             case name of

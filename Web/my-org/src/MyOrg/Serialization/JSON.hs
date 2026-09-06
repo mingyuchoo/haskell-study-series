@@ -189,6 +189,13 @@ instance Wire Person where
       <*> field obj "role"
       <*> optionalField obj "reportsTo"
 
+instance Wire EmployeeProfile where
+  toWire EmployeeProfile {..} =
+    record
+      [("department", toWire <$> profileDepartment), ("email", toWire <$> profileEmail)]
+  parseWire = withObject "EmployeeProfile" $ \obj ->
+    EmployeeProfile <$> optionalField obj "department" <*> optionalField obj "email"
+
 instance Wire Metric where
   toWire Metric {..} =
     record
@@ -572,6 +579,9 @@ instance Wire OrganizationEvent where
     OrganizationDeleted a -> object ["tag" .= ("OrganizationDeleted" :: Text), "contents" .= a]
     DemoSeeded a -> object ["tag" .= ("DemoSeeded" :: Text), "contents" .= a]
     PersonAdded a -> object ["tag" .= ("PersonAdded" :: Text), "contents" .= a]
+    EmployeeAdded a b -> object ["tag" .= ("EmployeeAdded" :: Text), "contents" .= [toWire a, toWire b]]
+    PersonUpdated a b -> object ["tag" .= ("PersonUpdated" :: Text), "contents" .= [toWire a, toWire b]]
+    PersonDeactivated a b -> object ["tag" .= ("PersonDeactivated" :: Text), "contents" .= [toWire a, toWire b]]
     GoalCreated a -> object ["tag" .= ("GoalCreated" :: Text), "contents" .= a]
     OwnerAssigned a b -> object ["tag" .= ("OwnerAssigned" :: Text), "contents" .= [toWire a, toWire b]]
     AuthorityGranted a b -> object ["tag" .= ("AuthorityGranted" :: Text), "contents" .= [toWire a, toWire b]]
@@ -598,6 +608,21 @@ instance Wire OrganizationEvent where
       "OrganizationDeleted" -> OrganizationDeleted <$> field obj "contents"
       "DemoSeeded" -> DemoSeeded <$> field obj "contents"
       "PersonAdded" -> PersonAdded <$> field obj "contents"
+      "EmployeeAdded" -> do
+        values <- obj A..: "contents" :: Parser [Value]
+        case values of
+          [a, b] -> EmployeeAdded <$> parseWire a <*> parseWire b
+          _      -> fail "Expected 2 constructor arguments"
+      "PersonUpdated" -> do
+        values <- obj A..: "contents" :: Parser [Value]
+        case values of
+          [a, b] -> PersonUpdated <$> parseWire a <*> parseWire b
+          _      -> fail "Expected 2 constructor arguments"
+      "PersonDeactivated" -> do
+        values <- obj A..: "contents" :: Parser [Value]
+        case values of
+          [a, b] -> PersonDeactivated <$> parseWire a <*> parseWire b
+          _      -> fail "Expected 2 constructor arguments"
       "GoalCreated" -> GoalCreated <$> field obj "contents"
       "OwnerAssigned" -> do
         values <- obj A..: "contents" :: Parser [Value]

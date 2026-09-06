@@ -13,6 +13,7 @@ import MyOrg.Application.Query
 import MyOrg.Domain.Authority
 import MyOrg.Domain.Error
 import MyOrg.Domain.Identity
+import MyOrg.Domain.Organization
 import MyOrg.Serialization.JSON (field, optionalField, parseWire)
 import Network.HTTP.Types hiding (Query)
 
@@ -20,6 +21,8 @@ readRoute :: [Text] -> Maybe Query
 readRoute path = case path of
   ["api", "organizations"] -> Just ListOrganizations
   ["api", "organizations", oid] -> Just (OrganizationSummaryQuery (OrgId oid))
+  ["api", "organizations", oid, "people", uid] -> Just (PersonQuery (SelectedOrganization (OrgId oid)) (UserId uid))
+  ["api", "people", uid] -> Just (PersonQuery SoleOrganization (UserId uid))
   ["api", "organizations", oid, resource] -> OrganizationQuery (SelectedOrganization (OrgId oid)) <$> resourceName resource
   ["api", resource] -> OrganizationQuery SoleOrganization <$> resourceName resource
   _ -> Nothing
@@ -56,6 +59,8 @@ writeRoute method path = case (method, path) of
             <$> optionalField o "actor"
             <*> (DeleteOrganization (OrgId oid) <$> field o "confirmName" <*> field o "expectedVersion")
       )
+  ("PATCH", ["api", "organizations", oid, "people", uid]) -> Just (Just (OrgId oid), updatePerson uid)
+  ("PATCH", ["api", "people", uid]) -> Just (Nothing, updatePerson uid)
   ("POST", "api" : "organizations" : oid : rest) | knownCommand ("api" : rest) -> Just (Just (OrgId oid), parseCommand ("api" : rest))
   ("POST", _) | knownCommand path -> Just (Nothing, parseCommand path)
   _ -> Nothing
@@ -64,7 +69,7 @@ knownCommand :: [Text] -> Bool
 knownCommand path = case path of
   ["api", name] -> name `elem` ["people", "goals", "evaluations", "reviews"]
   ["api", "goals", _, action] -> action `elem` ["owner", "authority", "activate", "results", "strategy"]
-  ["api", "people", _, "authority"] -> True
+  ["api", "people", _, action] -> action `elem` ["authority", "deactivate"]
   _ -> False
 
 parseCommand :: [Text] -> Value -> Parser (Maybe UserId, Command)
@@ -72,7 +77,11 @@ parseCommand path = withObject "command" $ \o -> do
   actor <- optionalField o "actor"
   command <- case path of
     ["api", "organizations"] -> CreateOrganization <$> field o "id" <*> field o "name"
-    ["api", "people"] -> AddPerson <$> parseWire (Object o)
+    ["api", "people"] -> AddEmployee <$> parseWire (Object o) <*> parseWire (Object o)
+    ["api", "people", uid, "deactivate"] ->
+      DeactivatePerson (UserId uid)
+        <$> optionalField o "successor"
+        <*> field o "expectedVersion"
     ["api", "goals"] -> CreateGoal <$> parseWire (Object o)
     ["api", "goals", gid, "owner"] -> AssignOwner (GoalId gid) <$> field o "owner"
     ["api", "people", uid, "authority"] -> do
@@ -109,3 +118,16 @@ errorStatus = \case
   GoalAlreadyActive _ -> status409
   GoalNotActive _ -> status409
   _ -> status400
+
+updatePerson :: Text -> Value -> Parser (Maybe UserId, Command)
+updatePerson uid = withObject "update person" $ \o -> do
+  supplied <- optionalField o "id"
+  case supplied of
+    Just value | value /= uid -> fail "구성원 ID는 변경할 수 없습니다."
+    _                         -> pure ()
+  actor <- optionalField o "actor"
+  p <-
+    Person (UserId uid) <$> field o "name" <*> field o "role" <*> optionalField o "reportsTo"
+  profile <- parseWire (Object o)
+  version <- field o "expectedVersion"
+  pure (actor, UpdatePerson p profile version)

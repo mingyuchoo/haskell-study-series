@@ -22,6 +22,9 @@ describeEvent = \case
   DemoSeeded _ -> "체험용 데모 시드 생성 완료"
   OrganizationCreated o -> "조직 생성: " <> organizationName o
   PersonAdded p -> "구성원 추가: " <> personName p <> " (" <> personRole p <> ")"
+  EmployeeAdded p _ -> "구성원 추가: " <> personName p
+  PersonUpdated p _ -> "구성원 정보 수정: " <> personName p
+  PersonDeactivated uid successor -> "구성원 비활성화: " <> unUserId uid <> maybe "" ((" → 인계: " <>) . unUserId) successor
   GoalCreated g -> "목표 생성: " <> goalDescription g
   OwnerAssigned g u -> "책임자 지정: " <> unGoalId g <> " -> " <> unUserId u
   AuthorityGranted u a ->

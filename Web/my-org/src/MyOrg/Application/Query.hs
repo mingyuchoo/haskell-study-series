@@ -12,6 +12,7 @@ import Data.Time (UTCTime)
 import MyOrg.Application.ReadModel
 import MyOrg.Demo (isDemoEpoch)
 import MyOrg.Domain.Analysis (analyzeGoal)
+import MyOrg.Domain.Authority (Ownership (..))
 import MyOrg.Domain.Compiler (compileOrganization)
 import MyOrg.Domain.Error
 import MyOrg.Domain.Evaluation (evaluateGoal)
@@ -34,12 +35,26 @@ data Resource = DashboardResource | OrganizationResource | PeopleResource | Goal
 data Query = ListOrganizations
            | OrganizationSummaryQuery OrgId
            | OrganizationQuery Selection Resource
+           | PersonQuery Selection UserId
   deriving (Show, Eq)
 
 executeQuery :: UTCTime -> Registry -> Query -> Either OrganizationError QueryResult
 executeQuery now registry query = case query of
   ListOrganizations -> pure (OrganizationsResult (map summary (activeOrganizations registry)))
   OrganizationSummaryQuery oid -> SummaryResult . summary <$> organizationState registry oid
+  PersonQuery selection uid -> do
+    oid <- case selection of
+      SelectedOrganization selected -> pure selected
+      SoleOrganization -> resolveSingleOrganization registry >>= maybe (Left NoOrganization) Right
+    st <- organizationState registry oid
+    p <- maybe (Left (PersonNotFound uid)) Right (Map.lookup uid (statePeople st))
+    pure
+      ( PersonResult
+          (personView st p)
+          (stateLastSeq st)
+          [ gid | (gid, ownership) <- Map.toList (stateOwnership st), ownershipOwner ownership == uid
+          ]
+      )
   OrganizationQuery selection resource -> do
     st <- case selection of
       SelectedOrganization oid -> organizationState registry oid
@@ -50,6 +65,11 @@ executeQuery now registry query = case query of
             (organizationState registry)
     pure (project st resource)
   where
+    personView st p =
+      PersonView
+        p
+        (Map.findWithDefault emptyProfile (personId p) (stateProfiles st))
+        (not (Set.member (personId p) (stateInactivePeople st)))
     history st =
       maybe
         []
@@ -80,7 +100,7 @@ executeQuery now registry query = case query of
             { dashboardVersion = stateLastSeq st
             , dashboardDemo = isDemoEpoch (history st)
             , dashboardOrganization = stateOrganization st
-            , dashboardPeople = Map.elems (statePeople st)
+            , dashboardPeople = map (personView st) (Map.elems (statePeople st))
             , dashboardGoals = goals st
             , dashboardAuthorities = Map.elems (stateAuthorities st)
             , dashboardCompiler = compileOrganization now st
@@ -92,7 +112,7 @@ executeQuery now registry query = case query of
             , dashboardEvents = reverse (currentEpoch (history st))
             }
       OrganizationResource -> OrganizationResult (stateOrganization st)
-      PeopleResource -> PeopleResult (Map.elems (statePeople st))
+      PeopleResource -> PeopleResult (map (personView st) (Map.elems (statePeople st)))
       GoalsResource -> GoalsResult (goals st)
       CompilerResource -> CompilerResult (compileOrganization now st)
       GraphResource -> GraphResult (buildGraph st)

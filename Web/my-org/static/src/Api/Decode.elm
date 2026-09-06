@@ -68,7 +68,31 @@ summaryDecoder =
 
 personDecoder : Decoder Person
 personDecoder =
-    D.succeed Person |> field "id" D.string |> field "name" D.string |> field "role" D.string
+    D.succeed Person
+        |> field "id" D.string
+        |> field "name" D.string
+        |> field "role" D.string
+        |> andMap (optional "reportsTo" D.string)
+        |> andMap (optional "department" D.string)
+        |> andMap (optional "email" D.string)
+        |> andMap
+            (optional "status" D.string
+                |> D.andThen
+                    (\status ->
+                        case status of
+                            Nothing ->
+                                D.succeed True
+
+                            Just "active" ->
+                                D.succeed True
+
+                            Just "inactive" ->
+                                D.succeed False
+
+                            _ ->
+                                D.fail "알 수 없는 재직 상태"
+                    )
+            )
 
 
 metricDecoder : Decoder Metric
@@ -93,7 +117,7 @@ analysisDecoder =
 
 measurementDecoder : Decoder Measurement
 measurementDecoder =
-    D.succeed Measurement |> field "value" D.float |> field "reportedAt" D.string |> field "note" D.string
+    D.succeed Measurement |> field "value" D.float |> field "reportedAt" D.string |> field "note" D.string |> andMap (optional "reportedBy" D.string)
 
 
 goalViewDecoder : Decoder GoalView

@@ -19,6 +19,9 @@ data OrganizationEvent = OrganizationCreated Organization
                        | OrganizationDeleted OrgId
                        | DemoSeeded OrgId
                        | PersonAdded Person
+                       | EmployeeAdded Person EmployeeProfile
+                       | PersonUpdated Person EmployeeProfile
+                       | PersonDeactivated UserId (Maybe UserId)
                        | GoalCreated Goal
                        | OwnerAssigned GoalId UserId
                        | AuthorityGranted UserId Authority

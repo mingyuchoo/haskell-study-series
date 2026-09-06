@@ -38,7 +38,7 @@ resultCard model w g =
                     note "아직 결과가 없습니다."
 
                  else
-                    div [ class "table-wrap" ] [ h3 [ class "form-heading" ] [ text "결과 추이 · 최근 순" ], table [] [ thead [] [ tr [] [ th [] [ text "기록 시각" ], th [] [ text "측정값" ], th [] [ text "설명" ] ] ], tbody [] (List.map (\r -> tr [] [ td [] [ text r.reportedAt ], td [] [ text (formatNumber r.value) ], td [] [ text r.note ] ]) g.results) ] ]
+                    div [ class "table-wrap" ] [ h3 [ class "form-heading" ] [ text "결과 추이 · 최근 순" ], table [] [ thead [] [ tr [] [ th [] [ text "기록 시각" ], th [] [ text "측정값" ], th [] [ text "보고자" ], th [] [ text "설명" ] ] ], tbody [] (List.map (\r -> tr [] [ td [] [ text r.reportedAt ], td [] [ text (formatNumber r.value) ], td [] [ text (r.reportedBy |> Maybe.map (personName w) |> Maybe.withDefault "미기록") ], td [] [ text r.note ] ]) g.results) ] ]
                , div [ class "actions" ]
                     [ button [ class "secondary", disabled (model.forms.busy || not model.forms.fresh), onClick (model.forms.submit (Evaluate g.goal.id)) ] [ text "평가 기록" ]
                     , button [ class "secondary", disabled model.forms.busy, onClick (model.goals ("goal-" ++ g.goal.id)) ] [ text "목표 관리 →" ]

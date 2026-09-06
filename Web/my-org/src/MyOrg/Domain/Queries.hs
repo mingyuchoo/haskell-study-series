@@ -1,5 +1,6 @@
 module MyOrg.Domain.Queries
-  ( activeGoals
+  ( requireActivePerson
+  , activeGoals
   , draftGoals
   , goalOwnership
   , goalOwner
@@ -7,9 +8,11 @@ module MyOrg.Domain.Queries
   , resultsOf
   ) where
 
+import Control.Monad (unless, when)
 import Data.Map.Strict qualified as Map
 import Data.Set qualified as Set
 import MyOrg.Domain.Authority
+import MyOrg.Domain.Error
 import MyOrg.Domain.Goal.Types
 import MyOrg.Domain.Identity
 import MyOrg.Domain.Result
@@ -35,3 +38,10 @@ ownerAuthority st uid = Map.lookup uid (stateAuthorities st)
 
 resultsOf :: OrgState -> GoalId -> [Result]
 resultsOf st gid = Map.findWithDefault [] gid (stateResults st)
+
+requireActivePerson :: OrgState -> UserId -> Either OrganizationError ()
+requireActivePerson st uid = do
+  unless (Map.member uid (statePeople st)) (Left (PersonNotFound uid))
+  when
+    (Set.member uid (stateInactivePeople st))
+    (Left (InvalidInput "비활성 구성원은 새 배정이나 기록에 사용할 수 없습니다."))

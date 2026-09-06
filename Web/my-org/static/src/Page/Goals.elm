@@ -27,7 +27,6 @@ view model w =
           else
             div [ class "grid" ] (List.map (goalCard model w) w.goals)
         , details [ class "panel", id "new-goal" ] [ summary [] [ text "+ 목표 만들기" ], goalForm model w ]
-        , details [ class "panel" ] [ summary [] [ text ("구성원 추가 · 현재 " ++ String.fromInt (List.length w.people) ++ "명") ], formView model.forms AddPerson "구성원 추가" [ div [ class "fields" ] [ inputField model.forms AddPerson "이름" "name" "text" True, inputField model.forms AddPerson "역할" "role" "text" True ] ] ]
         , diagnosticView w
         ]
 

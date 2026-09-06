@@ -34,6 +34,33 @@ applyEvent st StoredEvent {storedSeq, storedAt, storedEvent} =
       OrganizationDeleted _ -> emptyState
       DemoSeeded _ -> st
       PersonAdded p -> st {statePeople = Map.insert (personId p) p (statePeople st)}
+      EmployeeAdded p profile ->
+        st
+          { statePeople = Map.insert (personId p) p (statePeople st)
+          , stateProfiles = Map.insert (personId p) profile (stateProfiles st)
+          }
+      PersonUpdated p profile ->
+        st
+          { statePeople = Map.insert (personId p) p (statePeople st)
+          , stateProfiles = Map.insert (personId p) profile (stateProfiles st)
+          }
+      PersonDeactivated uid successor ->
+        let affected = Map.keysSet (Map.filter ((== uid) . ownershipOwner) (stateOwnership st))
+            people = case (Map.lookup uid (statePeople st), successor) of
+              (Just departing, Just next) -> Map.map (handoverReports departing next) (statePeople st)
+              _ -> Map.adjust (\p -> p {personReportsTo = Nothing}) uid (statePeople st)
+            transfer ownership = case successor of
+              Just next
+                | ownershipOwner ownership == uid ->
+                    ownership {ownershipOwner = next, ownershipSince = storedAt}
+              _ -> ownership
+         in st
+              { statePeople = people
+              , stateInactivePeople = Set.insert uid (stateInactivePeople st)
+              , stateOwnership = Map.map transfer (stateOwnership st)
+              , stateAuthorities = Map.delete uid (stateAuthorities st)
+              , stateActive = Set.difference (stateActive st) affected
+              }
       GoalCreated g -> st {stateGoals = Map.insert (goalId g) g (stateGoals st)}
       OwnerAssigned gid uid ->
         st

@@ -15,7 +15,20 @@ permissionName key =
 
 personName : { a | people : List Person } -> String -> String
 personName w key =
-    w.people |> List.filter (.id >> (==) key) |> List.head |> Maybe.map .name |> Maybe.withDefault key
+    w.people
+        |> List.filter (.id >> (==) key)
+        |> List.head
+        |> Maybe.map
+            (\p ->
+                p.name
+                    ++ (if p.active then
+                            ""
+
+                        else
+                            " (비활성)"
+                       )
+            )
+        |> Maybe.withDefault key
 
 
 goalName : { a | goals : List GoalView } -> String -> String

@@ -78,6 +78,35 @@ tests =
         , test "re-editing rename captures current version" <|
             \_ ->
                 ready |> step (Edit Rename "name" "New") |> step (GotWorkspace ready.request (Ok { workspace | version = 5 })) |> step (Edit Rename "name" "Newer") |> (\m -> bodyField (D.field "expectedVersion" D.int) m Rename) |> Expect.equal (Ok 5)
+        , test "re-editing a refreshed person draft preserves the original version and refuses stale save" <|
+            \_ ->
+                let
+                    w =
+                        { workspace | people = [ { id = "p", name = "Original", role = "Original role", reportsTo = Nothing, department = Nothing, email = Nothing, active = True } ] }
+
+                    m =
+                        { ready | workspace = Loaded w }
+
+                    freshWorkspace =
+                        { w | version = 5, people = [ { id = "p", name = "Original", role = "Server changed role", reportsTo = Nothing, department = Nothing, email = Nothing, active = True } ] }
+                in
+                m |> step (Edit (UpdatePerson "p") "name" "Draft") |> step (GotWorkspace m.request (Ok freshWorkspace)) |> step (Edit (UpdatePerson "p") "name" "More edits") |> (\state -> payload state (UpdatePerson "p")) |> Expect.err
+        , test "explicit person draft reset adopts current server fields and version" <|
+            \_ ->
+                let
+                    w =
+                        { workspace | version = 5, people = [ { id = "p", name = "Server", role = "Server role", reportsTo = Nothing, department = Nothing, email = Nothing, active = True } ] }
+
+                    drafted =
+                        ready |> step (Edit (UpdatePerson "p") "name" "Draft") |> step (Edit (DeactivatePerson "p") "successor" "other")
+
+                    reset =
+                        drafted |> step (ResetPerson "p")
+
+                    loaded =
+                        reset |> step (GotWorkspace reset.request (Ok w)) |> step (Edit (UpdatePerson "p") "name" "Fresh edit")
+                in
+                Expect.equal ( Ok 5, "Server role", "" ) ( bodyField (D.field "expectedVersion" D.int) loaded (UpdatePerson "p"), get loaded (UpdatePerson "p") "role", get loaded (DeactivatePerson "p") "successor" )
         , test "delete requires exact confirmation and captures the displayed version" <|
             \_ ->
                 let

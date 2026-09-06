@@ -129,7 +129,7 @@ view model w =
                         steps
                     )
                 , note "전사 성장 지수는 하위 목표의 자동 합계가 아닌 별도 보고 KPI입니다. 초기 진단과 결과 샘플은 의도한 가상 체험 사례입니다. 감사 시각은 실제 가져온 시각입니다."
-                , div [ class "actions" ] [ button [ class "secondary", disabled model.busy, onClick (model.go Responsibility "responsibility-graph") ] [ text "관계 그래프 →" ], button [ class "secondary", disabled model.busy, onClick (model.go Reviews "audit-history") ] [ text "감사 기록 →" ] ]
+                , div [ class "actions" ] [ button [ class "secondary", disabled model.busy, onClick (model.go People "new-person") ] [ text "구성원 관리 →" ], button [ class "secondary", disabled model.busy, onClick (model.go Responsibility "responsibility-graph") ] [ text "관계 그래프 →" ], button [ class "secondary", disabled model.busy, onClick (model.go Reviews "audit-history") ] [ text "감사 기록 →" ] ]
                 ]
 
           else

@@ -43,6 +43,7 @@ extra-source-files:
     static/src/Page/Goals.elm
     static/src/Page/Learning.elm
     static/src/Page/Organizations.elm
+    static/src/Page/People.elm
     static/src/Page/Responsibility.elm
     static/src/Page/Results.elm
     static/src/Page/Settings.elm
@@ -53,6 +54,7 @@ extra-source-files:
     static/tests/DecoderTest.elm
     static/tests/FormTest.elm
     static/tests/PageTest.elm
+    static/tests/PeopleTest.elm
     static/tests/StateTest.elm
     static/tests/run.cjs
     test/fixtures/dashboard.json
@@ -185,6 +187,8 @@ test-suite my-org-test
       ContractSpec
       DeleteSmokeSpec
       DemoSmokeSpec
+      EmployeeSmokeSpec
+      EmployeeSpec
       OrganizationsSmokeSpec
       PlanSpec
       QuerySpec

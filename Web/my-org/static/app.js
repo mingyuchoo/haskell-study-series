@@ -519,11 +519,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.aN.am === region.a5.am)
+	if (region.aQ.am === region.a9.am)
 	{
-		return 'on line ' + region.aN.am;
+		return 'on line ' + region.aQ.am;
 	}
-	return 'on lines ' + region.aN.am + ' through ' + region.a5.am;
+	return 'on lines ' + region.aQ.am + ' through ' + region.a9.am;
 }
 
 
@@ -1857,9 +1857,9 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.cV,
-		impl.d1,
-		impl.dR,
+		impl.c$,
+		impl.ec,
+		impl.d0,
 		function() { return function() {} }
 	);
 });
@@ -2719,9 +2719,9 @@ var _VirtualDom_mapEventTuple = F2(function(func, tuple)
 var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
-		c0: func(record.c0),
-		aO: record.aO,
-		aL: record.aL
+		c6: func(record.c6),
+		aR: record.aR,
+		aO: record.aO
 	}
 });
 
@@ -2989,11 +2989,11 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 		// 3 = Custom
 
 		var value = result.a;
-		var message = !tag ? value : tag < 3 ? value.a : value.c0;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.aO;
+		var message = !tag ? value : tag < 3 ? value.a : value.c6;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.aR;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
-			(tag == 2 ? value.b : tag == 3 && value.aL) && event.preventDefault(),
+			(tag == 2 ? value.b : tag == 3 && value.aO) && event.preventDefault(),
 			eventNode
 		);
 		var tagger;
@@ -3943,11 +3943,11 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.cV,
-		impl.d1,
-		impl.dR,
+		impl.c$,
+		impl.ec,
+		impl.d0,
 		function(sendToApp, initialModel) {
-			var view = impl.d2;
+			var view = impl.ed;
 			/**/
 			var domNode = args['node'];
 			//*/
@@ -3979,12 +3979,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.cV,
-		impl.d1,
-		impl.dR,
+		impl.c$,
+		impl.ec,
+		impl.d0,
 		function(sendToApp, initialModel) {
-			var divertHrefToApp = impl.aM && impl.aM(sendToApp)
-			var view = impl.d2;
+			var divertHrefToApp = impl.aP && impl.aP(sendToApp)
+			var view = impl.ed;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
 			var currNode = _VirtualDom_virtualize(bodyNode);
@@ -3992,12 +3992,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 			{
 				_VirtualDom_divertHrefToApp = divertHrefToApp;
 				var doc = view(model);
-				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.b9);
+				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.cc);
 				var patches = _VirtualDom_diff(currNode, nextNode);
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.bP) && (_VirtualDom_doc.title = title = doc.bP);
+				(title !== doc.bT) && (_VirtualDom_doc.title = title = doc.bT);
 			});
 		}
 	);
@@ -4053,12 +4053,12 @@ function _Browser_makeAnimator(model, draw)
 
 function _Browser_application(impl)
 {
-	var onUrlChange = impl.di;
-	var onUrlRequest = impl.dj;
+	var onUrlChange = impl.$7;
+	var onUrlRequest = impl.dp;
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
-		aM: function(sendToApp)
+		aP: function(sendToApp)
 		{
 			key.a = sendToApp;
 			_Browser_window.addEventListener('popstate', key);
@@ -4074,9 +4074,9 @@ function _Browser_application(impl)
 					var next = $elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.by === next.by
-							&& curr.be === next.be
-							&& curr.bv.a === next.bv.a
+							&& curr.bD === next.bD
+							&& curr.bi === next.bi
+							&& curr.bA.a === next.bA.a
 						)
 							? $elm$browser$Browser$Internal(next)
 							: $elm$browser$Browser$External(href)
@@ -4084,13 +4084,13 @@ function _Browser_application(impl)
 				}
 			});
 		},
-		cV: function(flags)
+		c$: function(flags)
 		{
-			return A3(impl.cV, flags, _Browser_getUrl(), key);
+			return A3(impl.c$, flags, _Browser_getUrl(), key);
 		},
-		d2: impl.d2,
-		d1: impl.d1,
-		dR: impl.dR
+		ed: impl.ed,
+		ec: impl.ec,
+		d0: impl.d0
 	});
 }
 
@@ -4156,17 +4156,17 @@ var _Browser_decodeEvent = F2(function(decoder, event)
 function _Browser_visibilityInfo()
 {
 	return (typeof _VirtualDom_doc.hidden !== 'undefined')
-		? { cS: 'hidden', ch: 'visibilitychange' }
+		? { cY: 'hidden', ck: 'visibilitychange' }
 		:
 	(typeof _VirtualDom_doc.mozHidden !== 'undefined')
-		? { cS: 'mozHidden', ch: 'mozvisibilitychange' }
+		? { cY: 'mozHidden', ck: 'mozvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.msHidden !== 'undefined')
-		? { cS: 'msHidden', ch: 'msvisibilitychange' }
+		? { cY: 'msHidden', ck: 'msvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.webkitHidden !== 'undefined')
-		? { cS: 'webkitHidden', ch: 'webkitvisibilitychange' }
-		: { cS: 'hidden', ch: 'visibilitychange' };
+		? { cY: 'webkitHidden', ck: 'webkitvisibilitychange' }
+		: { cY: 'hidden', ck: 'visibilitychange' };
 }
 
 
@@ -4247,12 +4247,12 @@ var _Browser_call = F2(function(functionName, id)
 function _Browser_getViewport()
 {
 	return {
-		bF: _Browser_getScene(),
-		bS: {
-			bX: _Browser_window.pageXOffset,
-			bY: _Browser_window.pageYOffset,
-			bV: _Browser_doc.documentElement.clientWidth,
-			bd: _Browser_doc.documentElement.clientHeight
+		bJ: _Browser_getScene(),
+		bW: {
+			b$: _Browser_window.pageXOffset,
+			b0: _Browser_window.pageYOffset,
+			bZ: _Browser_doc.documentElement.clientWidth,
+			bh: _Browser_doc.documentElement.clientHeight
 		}
 	};
 }
@@ -4262,8 +4262,8 @@ function _Browser_getScene()
 	var body = _Browser_doc.body;
 	var elem = _Browser_doc.documentElement;
 	return {
-		bV: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
-		bd: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
+		bZ: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
+		bh: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
 
@@ -4286,15 +4286,15 @@ function _Browser_getViewportOf(id)
 	return _Browser_withNode(id, function(node)
 	{
 		return {
-			bF: {
-				bV: node.scrollWidth,
-				bd: node.scrollHeight
+			bJ: {
+				bZ: node.scrollWidth,
+				bh: node.scrollHeight
 			},
-			bS: {
-				bX: node.scrollLeft,
-				bY: node.scrollTop,
-				bV: node.clientWidth,
-				bd: node.clientHeight
+			bW: {
+				b$: node.scrollLeft,
+				b0: node.scrollTop,
+				bZ: node.clientWidth,
+				bh: node.clientHeight
 			}
 		};
 	});
@@ -4324,18 +4324,18 @@ function _Browser_getElement(id)
 		var x = _Browser_window.pageXOffset;
 		var y = _Browser_window.pageYOffset;
 		return {
-			bF: _Browser_getScene(),
-			bS: {
-				bX: x,
-				bY: y,
-				bV: _Browser_doc.documentElement.clientWidth,
-				bd: _Browser_doc.documentElement.clientHeight
+			bJ: _Browser_getScene(),
+			bW: {
+				b$: x,
+				b0: y,
+				bZ: _Browser_doc.documentElement.clientWidth,
+				bh: _Browser_doc.documentElement.clientHeight
 			},
-			cD: {
-				bX: x + rect.left,
-				bY: y + rect.top,
-				bV: rect.width,
-				bd: rect.height
+			cH: {
+				b$: x + rect.left,
+				b0: y + rect.top,
+				bZ: rect.width,
+				bh: rect.height
 			}
 		};
 	});
@@ -4380,25 +4380,25 @@ var _Http_toTask = F3(function(router, toTask, request)
 	return _Scheduler_binding(function(callback)
 	{
 		function done(response) {
-			callback(toTask(request.aD.a(response)));
+			callback(toTask(request.aG.a(response)));
 		}
 
 		var xhr = new XMLHttpRequest();
 		xhr.addEventListener('error', function() { done($elm$http$Http$NetworkError_); });
 		xhr.addEventListener('timeout', function() { done($elm$http$Http$Timeout_); });
-		xhr.addEventListener('load', function() { done(_Http_toResponse(request.aD.b, xhr)); });
-		$elm$core$Maybe$isJust(request.d_) && _Http_track(router, xhr, request.d_.a);
+		xhr.addEventListener('load', function() { done(_Http_toResponse(request.aG.b, xhr)); });
+		$elm$core$Maybe$isJust(request.d9) && _Http_track(router, xhr, request.d9.a);
 
 		try {
-			xhr.open(request.c1, request.aP, true);
+			xhr.open(request.c7, request.aS, true);
 		} catch (e) {
-			return done($elm$http$Http$BadUrl_(request.aP));
+			return done($elm$http$Http$BadUrl_(request.aS));
 		}
 
 		_Http_configureRequest(xhr, request);
 
-		request.b9.a && xhr.setRequestHeader('Content-Type', request.b9.a);
-		xhr.send(request.b9.b);
+		request.cc.a && xhr.setRequestHeader('Content-Type', request.cc.a);
+		xhr.send(request.cc.b);
 
 		return function() { xhr.c = true; xhr.abort(); };
 	});
@@ -4409,13 +4409,13 @@ var _Http_toTask = F3(function(router, toTask, request)
 
 function _Http_configureRequest(xhr, request)
 {
-	for (var headers = request.cQ; headers.b; headers = headers.b) // WHILE_CONS
+	for (var headers = request.cW; headers.b; headers = headers.b) // WHILE_CONS
 	{
 		xhr.setRequestHeader(headers.a.a, headers.a.b);
 	}
-	xhr.timeout = request.dX.a || 0;
-	xhr.responseType = request.aD.d;
-	xhr.withCredentials = request.b1;
+	xhr.timeout = request.d6.a || 0;
+	xhr.responseType = request.aG.d;
+	xhr.withCredentials = request.b4;
 }
 
 
@@ -4436,10 +4436,10 @@ function _Http_toResponse(toBody, xhr)
 function _Http_toMetadata(xhr)
 {
 	return {
-		aP: xhr.responseURL,
-		dM: xhr.status,
-		dN: xhr.statusText,
-		cQ: _Http_parseHeaders(xhr.getAllResponseHeaders())
+		aS: xhr.responseURL,
+		dX: xhr.status,
+		dY: xhr.statusText,
+		cW: _Http_parseHeaders(xhr.getAllResponseHeaders())
 	};
 }
 
@@ -4534,15 +4534,15 @@ function _Http_track(router, xhr, tracker)
 	xhr.upload.addEventListener('progress', function(event) {
 		if (xhr.c) { return; }
 		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Sending({
-			dG: event.loaded,
-			bJ: event.total
+			dR: event.loaded,
+			bN: event.total
 		}))));
 	});
 	xhr.addEventListener('progress', function(event) {
 		if (xhr.c) { return; }
 		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Receiving({
-			dt: event.loaded,
-			bJ: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
+			dz: event.loaded,
+			bN: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
 		}))));
 	});
 }
@@ -5071,7 +5071,7 @@ var $elm$url$Url$Http = 0;
 var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {a8: fragment, be: host, bt: path, bv: port_, by: protocol, bz: query};
+		return {bc: fragment, bi: host, by: path, bA: port_, bD: protocol, dy: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5954,7 +5954,7 @@ var $elm$http$Http$resolve = F2(
 			case 3:
 				var metadata = response.a;
 				return $elm$core$Result$Err(
-					$elm$http$Http$BadStatus(metadata.dM));
+					$elm$http$Http$BadStatus(metadata.dX));
 			default:
 				var body = response.b;
 				return A2(
@@ -5982,7 +5982,7 @@ var $elm$http$Http$Request = function (a) {
 };
 var $elm$http$Http$State = F2(
 	function (reqs, subs) {
-		return {bB: reqs, bN: subs};
+		return {bF: reqs, bR: subs};
 	});
 var $elm$http$Http$init = $elm$core$Task$succeed(
 	A2($elm$http$Http$State, $elm$core$Dict$empty, _List_Nil));
@@ -6026,7 +6026,7 @@ var $elm$http$Http$updateReqs = F3(
 					return A2(
 						$elm$core$Task$andThen,
 						function (pid) {
-							var _v4 = req.d_;
+							var _v4 = req.d9;
 							if (_v4.$ === 1) {
 								return A3($elm$http$Http$updateReqs, router, otherCmds, reqs);
 							} else {
@@ -6056,7 +6056,7 @@ var $elm$http$Http$onEffects = F4(
 				return $elm$core$Task$succeed(
 					A2($elm$http$Http$State, reqs, subs));
 			},
-			A3($elm$http$Http$updateReqs, router, cmds, state.bB));
+			A3($elm$http$Http$updateReqs, router, cmds, state.bF));
 	});
 var $elm$core$List$maybeCons = F3(
 	function (f, mx, xs) {
@@ -6099,7 +6099,7 @@ var $elm$http$Http$onSelfMsg = F3(
 				A2(
 					$elm$core$List$filterMap,
 					A3($elm$http$Http$maybeSend, router, tracker, progress),
-					state.bN)));
+					state.bR)));
 	});
 var $elm$http$Http$Cancel = function (a) {
 	return {$: 0, a: a};
@@ -6113,14 +6113,14 @@ var $elm$http$Http$cmdMap = F2(
 			var r = cmd.a;
 			return $elm$http$Http$Request(
 				{
-					b1: r.b1,
-					b9: r.b9,
-					aD: A2(_Http_mapExpect, func, r.aD),
-					cQ: r.cQ,
-					c1: r.c1,
-					dX: r.dX,
-					d_: r.d_,
-					aP: r.aP
+					b4: r.b4,
+					cc: r.cc,
+					aG: A2(_Http_mapExpect, func, r.aG),
+					cW: r.cW,
+					c7: r.c7,
+					d6: r.d6,
+					d9: r.d9,
+					aS: r.aS
 				});
 		}
 	});
@@ -6143,16 +6143,16 @@ var $elm$http$Http$subscription = _Platform_leaf('Http');
 var $elm$http$Http$request = function (r) {
 	return $elm$http$Http$command(
 		$elm$http$Http$Request(
-			{b1: false, b9: r.b9, aD: r.aD, cQ: r.cQ, c1: r.c1, dX: r.dX, d_: r.d_, aP: r.aP}));
+			{b4: false, cc: r.cc, aG: r.aG, cW: r.cW, c7: r.c7, d6: r.d6, d9: r.d9, aS: r.aS}));
 };
 var $elm$http$Http$get = function (r) {
 	return $elm$http$Http$request(
-		{b9: $elm$http$Http$emptyBody, aD: r.aD, cQ: _List_Nil, c1: 'GET', dX: $elm$core$Maybe$Nothing, d_: $elm$core$Maybe$Nothing, aP: r.aP});
+		{cc: $elm$http$Http$emptyBody, aG: r.aG, cW: _List_Nil, c7: 'GET', d6: $elm$core$Maybe$Nothing, d9: $elm$core$Maybe$Nothing, aS: r.aS});
 };
 var $elm$json$Json$Decode$list = _Json_decodeList;
 var $author$project$Domain$Summary = F4(
 	function (organization, demo, peopleCount, goalCount) {
-		return {a2: demo, cO: goalCount, bs: organization, dp: peopleCount};
+		return {a6: demo, cU: goalCount, bx: organization, du: peopleCount};
 	});
 var $elm$json$Json$Decode$bool = _Json_decodeBool;
 var $author$project$Api$Decode$andMap = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
@@ -6164,7 +6164,7 @@ var $author$project$Api$Decode$field = F2(
 var $elm$json$Json$Decode$int = _Json_decodeInt;
 var $author$project$Domain$Organization = F3(
 	function (id, name, createdAt) {
-		return {cp: createdAt, bf: id, c7: name};
+		return {cs: createdAt, bj: id, dd: name};
 	});
 var $elm$json$Json$Decode$map3 = _Json_map3;
 var $elm$json$Json$Decode$string = _Json_decodeString;
@@ -6194,11 +6194,11 @@ var $author$project$Api$Decode$summaryDecoder = A3(
 var $author$project$Api$Http$organizations = function (onResult) {
 	return $elm$http$Http$get(
 		{
-			aD: A2(
+			aG: A2(
 				$elm$http$Http$expectJson,
 				onResult,
 				$elm$json$Json$Decode$list($author$project$Api$Decode$summaryDecoder)),
-			aP: '/api/organizations'
+			aS: '/api/organizations'
 		});
 };
 var $elm$url$Url$percentEncode = _Url_percentEncode;
@@ -6208,7 +6208,7 @@ var $author$project$Api$Path$orgPath = F2(
 	});
 var $author$project$Domain$ReviewWarning = F2(
 	function (id, warnings) {
-		return {bf: id, bT: warnings};
+		return {bj: id, bX: warnings};
 	});
 var $author$project$Domain$Workspace = function (organization) {
 	return function (version) {
@@ -6222,7 +6222,7 @@ var $author$project$Domain$Workspace = function (organization) {
 									return function (events) {
 										return function (decisionShare) {
 											return function (reviewWarnings) {
-												return {b5: authorities, cl: compiler, cs: decisionShare, a2: demo, cC: edges, cH: events, cP: goals, bs: organization, $7: people, dB: reviewWarnings, dC: reviews, aA: version};
+												return {b8: authorities, co: compiler, cv: decisionShare, a6: demo, cG: edges, cM: events, cV: goals, bx: organization, dt: people, dK: reviewWarnings, dL: reviews, av: version};
 											};
 										};
 									};
@@ -6241,7 +6241,7 @@ var $elm$json$Json$Decode$at = F2(
 	});
 var $author$project$Domain$Audit = F6(
 	function (seq, at, actor, description, evaluatedGoal, evaluatedStatus) {
-		return {b$: actor, b4: at, cw: description, cF: evaluatedGoal, cG: evaluatedStatus, dH: seq};
+		return {b2: actor, b7: at, cA: description, cK: evaluatedGoal, cL: evaluatedStatus, dS: seq};
 	});
 var $elm$json$Json$Decode$index = _Json_decodeIndex;
 var $elm$json$Json$Decode$oneOf = _Json_oneOf;
@@ -6393,7 +6393,7 @@ var $author$project$Api$Decode$auditDecoder = A2(
 						$elm$json$Json$Decode$succeed($author$project$Domain$Audit)))))));
 var $author$project$Domain$Authority = F5(
 	function (owner, budgetLimit, canHire, canChangePrice, canApprove) {
-		return {cc: budgetLimit, ce: canApprove, cf: canChangePrice, cg: canHire, aK: owner};
+		return {cf: budgetLimit, ch: canApprove, ci: canChangePrice, cj: canHire, aN: owner};
 	});
 var $elm$json$Json$Decode$float = _Json_decodeFloat;
 var $author$project$Api$Decode$authorityDecoder = A3(
@@ -6419,11 +6419,11 @@ var $author$project$Api$Decode$authorityDecoder = A3(
 					$elm$json$Json$Decode$succeed($author$project$Domain$Authority))))));
 var $author$project$Domain$Compiler = F3(
 	function (errors, warnings, diagnostics) {
-		return {cy: diagnostics, cE: errors, bT: warnings};
+		return {cC: diagnostics, cJ: errors, bX: warnings};
 	});
 var $author$project$Domain$Diagnostic = F5(
 	function (severity, code, message, subject, details) {
-		return {ck: code, cx: details, c0: message, dJ: severity, dP: subject};
+		return {cn: code, cB: details, c6: message, dU: severity, d_: subject};
 	});
 var $author$project$Api$Decode$diagnosticDecoder = A3(
 	$author$project$Api$Decode$field,
@@ -6479,11 +6479,11 @@ var $elm$json$Json$Decode$dict = function (decoder) {
 };
 var $author$project$Domain$Edge = F3(
 	function (from, to, kind) {
-		return {cM: from, cX: kind, dY: to};
+		return {cS: from, c1: kind, d7: to};
 	});
 var $author$project$Domain$Node = F2(
 	function (tag, contents) {
-		return {cn: contents, dT: tag};
+		return {cq: contents, d2: tag};
 	});
 var $author$project$Api$Decode$nodeDecoder = A3(
 	$author$project$Api$Decode$field,
@@ -6509,11 +6509,11 @@ var $author$project$Api$Decode$edgeDecoder = A3(
 			$elm$json$Json$Decode$succeed($author$project$Domain$Edge))));
 var $author$project$Domain$Analysis = F2(
 	function (coverage, possibleCause) {
-		return {co: coverage, dr: possibleCause};
+		return {cr: coverage, dw: possibleCause};
 	});
 var $author$project$Domain$GoalView = F7(
 	function (goal, owner, active, evaluation, analysis, results, strategies) {
-		return {b_: active, b2: analysis, a6: evaluation, aF: goal, aK: owner, dz: results, dO: strategies};
+		return {aU: active, b5: analysis, ba: evaluation, aI: goal, aN: owner, dI: results, dZ: strategies};
 	});
 var $author$project$Api$Decode$analysisDecoder = A3(
 	$author$project$Api$Decode$field,
@@ -6526,7 +6526,7 @@ var $author$project$Api$Decode$analysisDecoder = A3(
 		$elm$json$Json$Decode$succeed($author$project$Domain$Analysis)));
 var $author$project$Domain$Evaluation = F3(
 	function (status, progress, latestValue) {
-		return {cY: latestValue, ds: progress, dL: status};
+		return {c2: latestValue, dx: progress, dW: status};
 	});
 var $author$project$Api$Decode$evaluationDecoder = A2(
 	$author$project$Api$Decode$andMap,
@@ -6542,11 +6542,11 @@ var $author$project$Api$Decode$evaluationDecoder = A2(
 			$elm$json$Json$Decode$succeed($author$project$Domain$Evaluation))));
 var $author$project$Domain$Goal = F8(
 	function (id, description, metric, baseline, target, deadline, requiredBudget, requiredPermissions) {
-		return {b8: baseline, cq: deadline, cw: description, bf: id, c2: metric, dx: requiredBudget, dy: requiredPermissions, dV: target};
+		return {cb: baseline, ct: deadline, cA: description, bj: id, c8: metric, dF: requiredBudget, dG: requiredPermissions, d4: target};
 	});
 var $author$project$Domain$Metric = F4(
 	function (id, name, unit, direction) {
-		return {cz: direction, bf: id, c7: name, d0: unit};
+		return {cD: direction, bj: id, dd: name, eb: unit};
 	});
 var $author$project$Api$Decode$metricDecoder = A3(
 	$author$project$Api$Decode$field,
@@ -6598,23 +6598,26 @@ var $author$project$Api$Decode$goalDecoder = A3(
 								'id',
 								$elm$json$Json$Decode$string,
 								$elm$json$Json$Decode$succeed($author$project$Domain$Goal)))))))));
-var $author$project$Domain$Measurement = F3(
-	function (value, reportedAt, note) {
-		return {dh: note, dw: reportedAt, aQ: value};
+var $author$project$Domain$Measurement = F4(
+	function (value, reportedAt, note, reportedBy) {
+		return {dn: note, dC: reportedAt, dD: reportedBy, aT: value};
 	});
-var $author$project$Api$Decode$measurementDecoder = A3(
-	$author$project$Api$Decode$field,
-	'note',
-	$elm$json$Json$Decode$string,
+var $author$project$Api$Decode$measurementDecoder = A2(
+	$author$project$Api$Decode$andMap,
+	A2($author$project$Api$Decode$optional, 'reportedBy', $elm$json$Json$Decode$string),
 	A3(
 		$author$project$Api$Decode$field,
-		'reportedAt',
+		'note',
 		$elm$json$Json$Decode$string,
 		A3(
 			$author$project$Api$Decode$field,
-			'value',
-			$elm$json$Json$Decode$float,
-			$elm$json$Json$Decode$succeed($author$project$Domain$Measurement))));
+			'reportedAt',
+			$elm$json$Json$Decode$string,
+			A3(
+				$author$project$Api$Decode$field,
+				'value',
+				$elm$json$Json$Decode$float,
+				$elm$json$Json$Decode$succeed($author$project$Domain$Measurement)))));
 var $elm$core$Tuple$pair = F2(
 	function (a, b) {
 		return _Utils_Tuple2(a, b);
@@ -6658,30 +6661,58 @@ var $author$project$Api$Decode$goalViewDecoder = A3(
 							'goal',
 							$author$project$Api$Decode$goalDecoder,
 							$elm$json$Json$Decode$succeed($author$project$Domain$GoalView))))))));
-var $author$project$Domain$Person = F3(
-	function (id, name, role) {
-		return {bf: id, c7: name, dF: role};
+var $author$project$Domain$Person = F7(
+	function (id, name, role, reportsTo, department, email, active) {
+		return {aU: active, cz: department, cI: email, bj: id, dd: name, dE: reportsTo, dO: role};
 	});
-var $author$project$Api$Decode$personDecoder = A3(
-	$author$project$Api$Decode$field,
-	'role',
-	$elm$json$Json$Decode$string,
-	A3(
-		$author$project$Api$Decode$field,
-		'name',
-		$elm$json$Json$Decode$string,
-		A3(
-			$author$project$Api$Decode$field,
-			'id',
-			$elm$json$Json$Decode$string,
-			$elm$json$Json$Decode$succeed($author$project$Domain$Person))));
+var $author$project$Api$Decode$personDecoder = A2(
+	$author$project$Api$Decode$andMap,
+	A2(
+		$elm$json$Json$Decode$andThen,
+		function (status) {
+			if (status.$ === 1) {
+				return $elm$json$Json$Decode$succeed(true);
+			} else {
+				switch (status.a) {
+					case 'active':
+						return $elm$json$Json$Decode$succeed(true);
+					case 'inactive':
+						return $elm$json$Json$Decode$succeed(false);
+					default:
+						return $elm$json$Json$Decode$fail('알 수 없는 재직 상태');
+				}
+			}
+		},
+		A2($author$project$Api$Decode$optional, 'status', $elm$json$Json$Decode$string)),
+	A2(
+		$author$project$Api$Decode$andMap,
+		A2($author$project$Api$Decode$optional, 'email', $elm$json$Json$Decode$string),
+		A2(
+			$author$project$Api$Decode$andMap,
+			A2($author$project$Api$Decode$optional, 'department', $elm$json$Json$Decode$string),
+			A2(
+				$author$project$Api$Decode$andMap,
+				A2($author$project$Api$Decode$optional, 'reportsTo', $elm$json$Json$Decode$string),
+				A3(
+					$author$project$Api$Decode$field,
+					'role',
+					$elm$json$Json$Decode$string,
+					A3(
+						$author$project$Api$Decode$field,
+						'name',
+						$elm$json$Json$Decode$string,
+						A3(
+							$author$project$Api$Decode$field,
+							'id',
+							$elm$json$Json$Decode$string,
+							$elm$json$Json$Decode$succeed($author$project$Domain$Person))))))));
 var $author$project$Domain$Review = F7(
 	function (id, goal, heldAt, note, evaluation, learnings, decisions) {
-		return {ct: decisions, a6: evaluation, aF: goal, cR: heldAt, bf: id, cZ: learnings, dh: note};
+		return {cw: decisions, ba: evaluation, aI: goal, cX: heldAt, bj: id, c3: learnings, dn: note};
 	});
 var $author$project$Domain$Decision = F3(
 	function (text, owner, deadline) {
-		return {cq: deadline, aK: owner, dW: text};
+		return {ct: deadline, aN: owner, d5: text};
 	});
 var $author$project$Api$Decode$decisionDecoder = A2(
 	$author$project$Api$Decode$andMap,
@@ -6789,16 +6820,16 @@ var $author$project$Api$Http$workspace = F2(
 	function (org, onResult) {
 		return $elm$http$Http$get(
 			{
-				aD: A2($elm$http$Http$expectJson, onResult, $author$project$Api$Decode$workspaceDecoder),
-				aP: A2($author$project$Api$Path$orgPath, org, 'dashboard')
+				aG: A2($elm$http$Http$expectJson, onResult, $author$project$Api$Decode$workspaceDecoder),
+				aS: A2($author$project$Api$Path$orgPath, org, 'dashboard')
 			});
 	});
 var $author$project$Main$refresh = function (model) {
-	var token = model.L + 1;
+	var token = model.M + 1;
 	var next = _Utils_update(
 		model,
-		{a1: $elm$core$Maybe$Nothing, x: false, L: token, N: true});
-	var _v0 = model.au;
+		{a5: $elm$core$Maybe$Nothing, y: false, M: token, O: true});
+	var _v0 = model.ay;
 	if (_v0.$ === 1) {
 		return _Utils_Tuple2(
 			next,
@@ -6816,13 +6847,16 @@ var $author$project$Main$refresh = function (model) {
 };
 var $author$project$Main$init = function (flags) {
 	return $author$project$Main$refresh(
-		{a1: $elm$core$Maybe$Nothing, B: $elm$core$Dict$empty, p: false, Z: $elm$core$Maybe$Nothing, aa: flags, x: false, C: $elm$core$Dict$empty, ab: $elm$core$Dict$empty, ac: true, s: '', au: $elm$core$Maybe$Nothing, T: $author$project$Remote$Loading, y: 0, L: 0, t: $elm$core$Dict$empty, M: $author$project$Main$Idle, bH: 0, N: true, bW: $author$project$Remote$Loading});
+		{a5: $elm$core$Maybe$Nothing, v: $elm$core$Dict$empty, o: false, Z: $elm$core$Maybe$Nothing, aa: flags, y: false, C: $elm$core$Dict$empty, ab: $elm$core$Dict$empty, ac: true, p: '', ay: $elm$core$Maybe$Nothing, T: $author$project$Remote$Loading, z: 0, ao: '', ap: 'active', M: 0, t: $elm$core$Dict$empty, N: $author$project$Main$Idle, aq: $elm$core$Maybe$Nothing, bL: 0, O: true, b_: $author$project$Remote$Loading});
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
-var $author$project$Form$Action$AddGoal = {$: 4};
-var $author$project$Form$Action$AddReview = {$: 9};
-var $author$project$Form$Action$DeleteOrg = {$: 12};
+var $author$project$Form$Action$AddGoal = {$: 6};
+var $author$project$Form$Action$AddReview = {$: 11};
+var $author$project$Form$Action$DeactivatePerson = function (a) {
+	return {$: 5, a: a};
+};
+var $author$project$Form$Action$DeleteOrg = {$: 14};
 var $author$project$Main$EditGoal = F2(
 	function (a, b) {
 		return {$: 5, a: a, b: b};
@@ -6838,14 +6872,17 @@ var $author$project$Form$Review$Goal = 0;
 var $author$project$Remote$Loaded = function (a) {
 	return {$: 1, a: a};
 };
-var $author$project$Main$NoOp = {$: 14};
-var $author$project$Page$Reviews = 5;
+var $author$project$Main$NoOp = {$: 18};
+var $author$project$Page$Reviews = 6;
 var $author$project$Main$Saved = F3(
 	function (a, b, c) {
 		return {$: 8, a: a, b: b, c: c};
 	});
 var $author$project$Main$Saving = function (a) {
 	return {$: 1, a: a};
+};
+var $author$project$Form$Action$UpdatePerson = function (a) {
+	return {$: 4, a: a};
 };
 var $author$project$Form$Action$actionKey = function (action) {
 	switch (action.$) {
@@ -6858,25 +6895,31 @@ var $author$project$Form$Action$actionKey = function (action) {
 		case 3:
 			return 'person';
 		case 4:
-			return 'goal';
+			var key = action.a;
+			return 'person-edit-' + key;
 		case 5:
 			var key = action.a;
-			return 'owner-' + key;
+			return 'person-deactivate-' + key;
 		case 6:
-			var key = action.a;
-			return 'authority-' + key;
+			return 'goal';
 		case 7:
 			var key = action.a;
-			return 'result-' + key;
+			return 'owner-' + key;
 		case 8:
 			var key = action.a;
-			return 'strategy-' + key;
+			return 'authority-' + key;
 		case 9:
-			return 'review';
+			var key = action.a;
+			return 'result-' + key;
 		case 10:
 			var key = action.a;
-			return 'activate-' + key;
+			return 'strategy-' + key;
 		case 11:
+			return 'review';
+		case 12:
+			var key = action.a;
+			return 'activate-' + key;
+		case 13:
 			var key = action.a;
 			return 'evaluate-' + key;
 		default:
@@ -6908,7 +6951,7 @@ var $elm$core$Task$attempt = F2(
 	});
 var $elm$core$Basics$neq = _Utils_notEqual;
 var $author$project$Main$busy = function (model) {
-	return !_Utils_eq(model.M, $author$project$Main$Idle);
+	return !_Utils_eq(model.N, $author$project$Main$Idle);
 };
 var $elm$core$Maybe$withDefault = F2(
 	function (_default, maybe) {
@@ -6921,18 +6964,18 @@ var $elm$core$Maybe$withDefault = F2(
 	});
 var $author$project$Main$defaultContext = function (model) {
 	return {
-		cq: model.aa.cq,
-		bc: A2(
+		ct: model.aa.ct,
+		bg: A2(
 			$elm$core$Maybe$withDefault,
 			0,
 			A2(
 				$elm$core$Dict$get,
-				A2($elm$core$Maybe$withDefault, '', model.au),
+				A2($elm$core$Maybe$withDefault, '', model.ay),
 				model.ab)),
-		bG: model.aa.bG,
-		bR: model.aa.bR,
-		bW: function () {
-			var _v0 = model.bW;
+		bK: model.aa.bK,
+		bV: model.aa.bV,
+		b_: function () {
+			var _v0 = model.b_;
 			if (_v0.$ === 1) {
 				var data = _v0.a;
 				return $elm$core$Maybe$Just(data);
@@ -6993,7 +7036,7 @@ var $elm$core$List$member = F2(
 	});
 var $author$project$Form$Defaults$defaultValue = F3(
 	function (model, action, name) {
-		var w = model.bW;
+		var w = model.b_;
 		var owner = function (key) {
 			return A2(
 				$elm$core$Maybe$withDefault,
@@ -7004,7 +7047,7 @@ var $author$project$Form$Defaults$defaultValue = F3(
 						return A2(
 							$elm$core$Maybe$andThen,
 							function ($) {
-								return $.aK;
+								return $.aN;
 							},
 							$elm$core$List$head(
 								A2(
@@ -7012,15 +7055,15 @@ var $author$project$Form$Defaults$defaultValue = F3(
 									A2(
 										$elm$core$Basics$composeR,
 										function ($) {
-											return $.aF;
+											return $.aI;
 										},
 										A2(
 											$elm$core$Basics$composeR,
 											function ($) {
-												return $.bf;
+												return $.bj;
 											},
 											$elm$core$Basics$eq(key))),
-									data.cP)));
+									data.cV)));
 					},
 					w));
 		};
@@ -7034,13 +7077,52 @@ var $author$project$Form$Defaults$defaultValue = F3(
 						A2(
 							$elm$core$Basics$composeR,
 							function ($) {
-								return $.bs;
+								return $.bx;
 							},
 							function ($) {
-								return $.c7;
+								return $.dd;
 							}),
 						w)) : '';
 			case 4:
+				var key = action.a;
+				var person = A2(
+					$elm$core$Maybe$andThen,
+					function (data) {
+						return $elm$core$List$head(
+							A2(
+								$elm$core$List$filter,
+								A2(
+									$elm$core$Basics$composeR,
+									function ($) {
+										return $.bj;
+									},
+									$elm$core$Basics$eq(key)),
+								data.dt));
+					},
+					w);
+				return A2(
+					$elm$core$Maybe$withDefault,
+					'',
+					A2(
+						$elm$core$Maybe$map,
+						function (p) {
+							switch (name) {
+								case 'name':
+									return p.dd;
+								case 'role':
+									return p.dO;
+								case 'department':
+									return A2($elm$core$Maybe$withDefault, '', p.cz);
+								case 'email':
+									return A2($elm$core$Maybe$withDefault, '', p.cI);
+								case 'reportsTo':
+									return A2($elm$core$Maybe$withDefault, '', p.dE);
+								default:
+									return '';
+							}
+						},
+						person));
+			case 6:
 				switch (name) {
 					case 'baseline':
 						return '0';
@@ -7049,23 +7131,23 @@ var $author$project$Form$Defaults$defaultValue = F3(
 					case 'budget':
 						return '0';
 					case 'metricId':
-						return 'metric-' + (model.bG + ('-' + $elm$core$String$fromInt(model.bc)));
+						return 'metric-' + (model.bK + ('-' + $elm$core$String$fromInt(model.bg)));
 					case 'direction':
 						return 'HigherIsBetter';
 					case 'startsAt':
-						return model.bR;
+						return model.bV;
 					case 'deadline':
-						return model.cq;
+						return model.ct;
 					default:
 						return '';
 				}
-			case 5:
-				var key = action.a;
-				return (name === 'owner') ? owner(key) : '';
 			case 7:
 				var key = action.a;
+				return (name === 'owner') ? owner(key) : '';
+			case 9:
+				var key = action.a;
 				return (name === 'reportedBy') ? owner(key) : '';
-			case 6:
+			case 8:
 				var key = action.a;
 				var authority = A2(
 					$elm$core$Maybe$andThen,
@@ -7076,10 +7158,10 @@ var $author$project$Form$Defaults$defaultValue = F3(
 								A2(
 									$elm$core$Basics$composeR,
 									function ($) {
-										return $.aK;
+										return $.aN;
 									},
 									$elm$core$Basics$eq(key)),
-								data.b5));
+								data.b8));
 					},
 					w);
 				return (name === 'budget') ? A2(
@@ -7090,7 +7172,7 @@ var $author$project$Form$Defaults$defaultValue = F3(
 						A2(
 							$elm$core$Basics$composeR,
 							function ($) {
-								return $.cc;
+								return $.cf;
 							},
 							$elm$core$String$fromFloat),
 						authority)) : (A2(
@@ -7099,7 +7181,7 @@ var $author$project$Form$Defaults$defaultValue = F3(
 					A2(
 						$elm$core$Maybe$map,
 						function (a) {
-							return A2($elm$core$List$member, name, a.ce) || (((name === 'Hiring') && a.cg) || ((name === 'Pricing') && a.cf));
+							return A2($elm$core$List$member, name, a.ch) || (((name === 'Hiring') && a.cj) || ((name === 'Pricing') && a.ci));
 						},
 						authority)) ? 'true' : 'false');
 			default:
@@ -7120,7 +7202,7 @@ var $author$project$Form$Defaults$draftDefaults = F2(
 				},
 				_Utils_ap(
 					_List_fromArray(
-						['name', 'role', 'budget', 'owner', 'reportedBy', 'note', 'value']),
+						['name', 'role', 'department', 'email', 'reportsTo', 'successor', 'budget', 'owner', 'reportedBy', 'note', 'value']),
 					$author$project$Domain$Permission$permissionKeys)));
 	});
 var $author$project$Main$draftDefaults = function (model) {
@@ -7133,62 +7215,62 @@ var $author$project$Form$Goal$edit = F3(
 			case 0:
 				return _Utils_update(
 					draft,
-					{cw: content});
+					{cA: content});
 			case 1:
 				return _Utils_update(
 					draft,
-					{c4: content});
+					{da: content});
 			case 2:
 				return _Utils_update(
 					draft,
-					{d0: content});
+					{eb: content});
 			case 3:
 				return _Utils_update(
 					draft,
-					{c3: content});
+					{c9: content});
 			case 4:
 				return _Utils_update(
 					draft,
-					{cz: content});
+					{cD: content});
 			case 5:
 				return _Utils_update(
 					draft,
-					{b8: content});
+					{cb: content});
 			case 6:
 				return _Utils_update(
 					draft,
-					{dV: content});
+					{d4: content});
 			case 7:
 				return _Utils_update(
 					draft,
-					{dK: content});
+					{dV: content});
 			case 8:
 				return _Utils_update(
 					draft,
-					{cq: content});
+					{ct: content});
 			case 9:
 				return _Utils_update(
 					draft,
-					{cb: content});
+					{ce: content});
 			case 10:
 				return _Utils_update(
 					draft,
-					{dn: content});
+					{ds: content});
 			default:
 				var permission = key.a;
 				return _Utils_update(
 					draft,
 					{
-						dq: (content === 'true') ? A2(
+						dv: (content === 'true') ? A2(
 							$elm$core$List$cons,
 							permission,
 							A2(
 								$elm$core$List$filter,
 								$elm$core$Basics$neq(permission),
-								draft.dq)) : A2(
+								draft.dv)) : A2(
 							$elm$core$List$filter,
 							$elm$core$Basics$neq(permission),
-							draft.dq)
+							draft.dv)
 					});
 		}
 	});
@@ -7198,27 +7280,27 @@ var $author$project$Form$Review$edit = F3(
 			case 0:
 				return _Utils_update(
 					draft,
-					{aF: content});
+					{aI: content});
 			case 1:
 				return _Utils_update(
 					draft,
-					{dh: content});
+					{dn: content});
 			case 2:
 				return _Utils_update(
 					draft,
-					{bl: content});
+					{bp: content});
 			case 3:
 				return _Utils_update(
 					draft,
-					{a_: content});
+					{a2: content});
 			case 4:
 				return _Utils_update(
 					draft,
-					{cr: content});
+					{cu: content});
 			default:
 				return _Utils_update(
 					draft,
-					{a$: content});
+					{a3: content});
 		}
 	});
 var $author$project$Api$Http$errorText = function (err) {
@@ -7275,7 +7357,7 @@ var $elm$core$Dict$filter = F2(
 var $elm$browser$Browser$Dom$focus = _Browser_call('focus');
 var $author$project$Main$formKey = F2(
 	function (model, action) {
-		return A2($elm$core$Maybe$withDefault, 'list', model.au) + ('/' + $author$project$Form$Action$actionKey(action));
+		return A2($elm$core$Maybe$withDefault, 'list', model.ay) + ('/' + $author$project$Form$Action$actionKey(action));
 	});
 var $author$project$Form$Goal$Baseline = {$: 5};
 var $author$project$Form$Goal$Budget = {$: 9};
@@ -7349,23 +7431,23 @@ var $author$project$Main$defaultValue = function (model) {
 };
 var $author$project$Form$Goal$fromValues = function (get) {
 	return {
-		b8: get('baseline'),
-		cb: get('budget'),
-		cq: get('deadline'),
-		cw: get('description'),
-		cz: get('direction'),
-		c3: get('metricId'),
-		c4: get('metricName'),
-		dn: get('parent'),
-		dq: A2(
+		cb: get('baseline'),
+		ce: get('budget'),
+		ct: get('deadline'),
+		cA: get('description'),
+		cD: get('direction'),
+		c9: get('metricId'),
+		da: get('metricName'),
+		ds: get('parent'),
+		dv: A2(
 			$elm$core$List$filter,
 			function (key) {
 				return get(key) === 'true';
 			},
 			$author$project$Domain$Permission$permissionKeys),
-		dK: get('startsAt'),
-		dV: get('target'),
-		d0: get('unit')
+		dV: get('startsAt'),
+		d4: get('target'),
+		eb: get('unit')
 	};
 };
 var $author$project$Main$goalDraft = function (model) {
@@ -7380,12 +7462,12 @@ var $author$project$Main$goalDraft = function (model) {
 };
 var $author$project$Form$Review$fromValues = function (get) {
 	return {
-		a_: get('decision'),
-		a$: get('decisionDeadline'),
-		cr: get('decisionOwner'),
-		aF: get('goal'),
-		bl: get('learning'),
-		dh: get('note')
+		a2: get('decision'),
+		a3: get('decisionDeadline'),
+		cu: get('decisionOwner'),
+		aI: get('goal'),
+		bp: get('learning'),
+		dn: get('note')
 	};
 };
 var $author$project$Main$reviewDraft = function (model) {
@@ -7402,53 +7484,53 @@ var $author$project$Form$Goal$value = F2(
 	function (draft, key) {
 		switch (key.$) {
 			case 0:
-				return draft.cw;
+				return draft.cA;
 			case 1:
-				return draft.c4;
+				return draft.da;
 			case 2:
-				return draft.d0;
+				return draft.eb;
 			case 3:
-				return draft.c3;
+				return draft.c9;
 			case 4:
-				return draft.cz;
+				return draft.cD;
 			case 5:
-				return draft.b8;
-			case 6:
-				return draft.dV;
-			case 7:
-				return draft.dK;
-			case 8:
-				return draft.cq;
-			case 9:
 				return draft.cb;
+			case 6:
+				return draft.d4;
+			case 7:
+				return draft.dV;
+			case 8:
+				return draft.ct;
+			case 9:
+				return draft.ce;
 			case 10:
-				return draft.dn;
+				return draft.ds;
 			default:
 				var permission = key.a;
-				return A2($elm$core$List$member, permission, draft.dq) ? 'true' : 'false';
+				return A2($elm$core$List$member, permission, draft.dv) ? 'true' : 'false';
 		}
 	});
 var $author$project$Form$Review$value = F2(
 	function (draft, key) {
 		switch (key) {
 			case 0:
-				return draft.aF;
+				return draft.aI;
 			case 1:
-				return draft.dh;
+				return draft.dn;
 			case 2:
-				return draft.bl;
+				return draft.bp;
 			case 3:
-				return draft.a_;
+				return draft.a2;
 			case 4:
-				return draft.cr;
+				return draft.cu;
 			default:
-				return draft.a$;
+				return draft.a3;
 		}
 	});
 var $author$project$Main$get = F3(
 	function (model, action, name) {
 		switch (action.$) {
-			case 4:
+			case 6:
 				return A2(
 					$elm$core$Maybe$withDefault,
 					'',
@@ -7457,7 +7539,7 @@ var $author$project$Main$get = F3(
 						$author$project$Form$Goal$value(
 							$author$project$Main$goalDraft(model)),
 						$author$project$Form$Goal$fromKey(name)));
-			case 9:
+			case 11:
 				return A2(
 					$elm$core$Maybe$withDefault,
 					'',
@@ -7476,7 +7558,7 @@ var $author$project$Main$get = F3(
 						A2(
 							$elm$core$Dict$get,
 							A2($author$project$Main$formKey, model, action),
-							model.B)));
+							model.v)));
 		}
 	});
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
@@ -7530,19 +7612,19 @@ var $author$project$Form$Goal$validate = function (draft) {
 			$elm$core$String$trim,
 			$elm$core$Basics$eq('')),
 		_List_fromArray(
-			[draft.cw, draft.c3, draft.c4, draft.d0, draft.dK, draft.cq]))) {
+			[draft.cA, draft.c9, draft.da, draft.eb, draft.dV, draft.ct]))) {
 		return $elm$core$Result$Err('필수 항목을 모두 입력하세요.');
 	} else {
 		var _v0 = _Utils_Tuple3(
-			$elm$core$String$toFloat(draft.b8),
-			$elm$core$String$toFloat(draft.dV),
-			$elm$core$String$toFloat(draft.cb));
+			$elm$core$String$toFloat(draft.cb),
+			$elm$core$String$toFloat(draft.d4),
+			$elm$core$String$toFloat(draft.ce));
 		if (((!_v0.a.$) && (!_v0.b.$)) && (!_v0.c.$)) {
 			var baseline = _v0.a.a;
 			var target = _v0.b.a;
 			var budget = _v0.c.a;
-			return (_Utils_cmp(draft.cq, draft.dK) < 0) ? $elm$core$Result$Err('마감일은 시작일 이후여야 합니다.') : $elm$core$Result$Ok(
-				{b8: baseline, cb: budget, cq: draft.cq, cw: draft.cw, cz: draft.cz, c3: draft.c3, c4: draft.c4, dn: draft.dn, dq: draft.dq, dK: draft.dK, dV: target, d0: draft.d0});
+			return (_Utils_cmp(draft.ct, draft.dV) < 0) ? $elm$core$Result$Err('마감일은 시작일 이후여야 합니다.') : $elm$core$Result$Ok(
+				{cb: baseline, ce: budget, ct: draft.ct, cA: draft.cA, cD: draft.cD, c9: draft.c9, da: draft.da, ds: draft.ds, dv: draft.dv, dV: draft.dV, d4: target, eb: draft.eb});
 		} else {
 			return $elm$core$Result$Err('숫자 항목을 올바르게 입력하세요.');
 		}
@@ -7556,19 +7638,19 @@ var $author$project$Form$Review$validate = function (draft) {
 			$elm$core$String$trim,
 			$elm$core$Basics$eq('')),
 		_List_fromArray(
-			[draft.aF, draft.dh])) ? $elm$core$Result$Err('필수 항목을 모두 입력하세요.') : ((($elm$core$String$trim(draft.a_) !== '') && (draft.cr === '')) ? $elm$core$Result$Err('다음 결정의 담당자를 선택하세요.') : $elm$core$Result$Ok(draft));
+			[draft.aI, draft.dn])) ? $elm$core$Result$Err('필수 항목을 모두 입력하세요.') : ((($elm$core$String$trim(draft.a2) !== '') && (draft.cu === '')) ? $elm$core$Result$Err('다음 결정의 담당자를 선택하세요.') : $elm$core$Result$Ok(draft));
 };
 var $author$project$Api$Command$payload = F2(
 	function (model, action) {
 		var version = A2(
 			$elm$core$Maybe$withDefault,
-			model.aA,
+			model.av,
 			$elm$core$String$toInt(
-				A2(model.aQ, action, '__version')));
-		var val = model.aQ(action);
+				A2(model.aT, action, '__version')));
+		var val = model.aT(action);
 		var uid = function (prefix) {
 			return $elm$json$Json$Encode$string(
-				prefix + ('-' + (model.bG + ('-' + $elm$core$String$fromInt(model.bH)))));
+				prefix + ('-' + (model.bK + ('-' + $elm$core$String$fromInt(model.bL)))));
 		};
 		var str = function (key) {
 			return _Utils_Tuple2(
@@ -7596,7 +7678,7 @@ var $author$project$Api$Command$payload = F2(
 		var path = function (tail) {
 			return A2(
 				$author$project$Api$Path$orgPath,
-				A2($elm$core$Maybe$withDefault, '', model.au),
+				A2($elm$core$Maybe$withDefault, '', model.ay),
 				tail);
 		};
 		var num = function (key) {
@@ -7609,6 +7691,28 @@ var $author$project$Api$Command$payload = F2(
 		};
 		var nullable = function (value_) {
 			return (value_ === '') ? $elm$json$Json$Encode$null : $elm$json$Json$Encode$string(value_);
+		};
+		var profile = _List_fromArray(
+			[
+				str('name'),
+				str('role'),
+				_Utils_Tuple2(
+				'department',
+				nullable(
+					$elm$core$String$trim(
+						val('department')))),
+				_Utils_Tuple2(
+				'email',
+				nullable(
+					$elm$core$String$trim(
+						val('email')))),
+				_Utils_Tuple2(
+				'reportsTo',
+				nullable(
+					val('reportsTo')))
+			]);
+		var current = function (result) {
+			return (!_Utils_eq(version, model.av)) ? $elm$core$Result$Err('작성 중 조직이 변경되었습니다. ‘최신 정보로 다시 불러오기’를 눌러 변경 내용을 확인한 뒤 다시 작성해 주세요.') : result;
 		};
 		var blank = function (keys) {
 			return A2(
@@ -7659,7 +7763,7 @@ var $author$project$Api$Command$payload = F2(
 					_List_fromArray(
 						['name']),
 					_List_Nil,
-					(!_Utils_eq(version, model.aA)) ? $elm$core$Result$Err('작성 중 조직이 변경되었습니다. 최신 조직 이름을 확인하고 수정 입력을 다시 해 주세요.') : $elm$core$Result$Ok(
+					(!_Utils_eq(version, model.av)) ? $elm$core$Result$Err('작성 중 조직이 변경되었습니다. 최신 조직 이름을 확인하고 수정 입력을 다시 해 주세요.') : $elm$core$Result$Ok(
 						_Utils_Tuple3(
 							'PATCH',
 							path(''),
@@ -7680,15 +7784,50 @@ var $author$project$Api$Command$payload = F2(
 					A2(
 						post,
 						path('people'),
+						A2(
+							$elm$core$List$cons,
+							_Utils_Tuple2(
+								'id',
+								uid('person')),
+							profile)));
+			case 4:
+				var key = action.a;
+				return A3(
+					validate,
+					_List_fromArray(
+						['name', 'role']),
+					_List_Nil,
+					current(
+						$elm$core$Result$Ok(
+							_Utils_Tuple3(
+								'PATCH',
+								path(
+									'people/' + $elm$url$Url$percentEncode(key)),
+								$elm$json$Json$Encode$object(
+									A2(
+										$elm$core$List$cons,
+										_Utils_Tuple2(
+											'expectedVersion',
+											$elm$json$Json$Encode$int(version)),
+										profile))))));
+			case 5:
+				var key = action.a;
+				return current(
+					A2(
+						post,
+						path(
+							'people/' + ($elm$url$Url$percentEncode(key) + '/deactivate')),
 						_List_fromArray(
 							[
 								_Utils_Tuple2(
-								'id',
-								uid('person')),
-								str('name'),
-								str('role')
+								'successor',
+								nullable(
+									val('successor'))),
+								_Utils_Tuple2(
+								'expectedVersion',
+								$elm$json$Json$Encode$int(version))
 							])));
-			case 4:
+			case 6:
 				return A2(
 					$elm$core$Result$map,
 					function (goal) {
@@ -7704,10 +7843,10 @@ var $author$project$Api$Command$payload = F2(
 										_Utils_Tuple2(
 										'organization',
 										$elm$json$Json$Encode$string(
-											A2($elm$core$Maybe$withDefault, '', model.au))),
+											A2($elm$core$Maybe$withDefault, '', model.ay))),
 										_Utils_Tuple2(
 										'description',
-										$elm$json$Json$Encode$string(goal.cw)),
+										$elm$json$Json$Encode$string(goal.cA)),
 										_Utils_Tuple2(
 										'metric',
 										$elm$json$Json$Encode$object(
@@ -7715,32 +7854,32 @@ var $author$project$Api$Command$payload = F2(
 												[
 													_Utils_Tuple2(
 													'id',
-													$elm$json$Json$Encode$string(goal.c3)),
+													$elm$json$Json$Encode$string(goal.c9)),
 													_Utils_Tuple2(
 													'name',
-													$elm$json$Json$Encode$string(goal.c4)),
+													$elm$json$Json$Encode$string(goal.da)),
 													_Utils_Tuple2(
 													'unit',
-													$elm$json$Json$Encode$string(goal.d0)),
+													$elm$json$Json$Encode$string(goal.eb)),
 													_Utils_Tuple2(
 													'direction',
-													$elm$json$Json$Encode$string(goal.cz))
+													$elm$json$Json$Encode$string(goal.cD))
 												]))),
 										_Utils_Tuple2(
 										'baseline',
-										$elm$json$Json$Encode$float(goal.b8)),
+										$elm$json$Json$Encode$float(goal.cb)),
 										_Utils_Tuple2(
 										'target',
-										$elm$json$Json$Encode$float(goal.dV)),
+										$elm$json$Json$Encode$float(goal.d4)),
 										_Utils_Tuple2(
 										'startsAt',
-										$elm$json$Json$Encode$string(goal.dK + 'T00:00:00Z')),
+										$elm$json$Json$Encode$string(goal.dV + 'T00:00:00Z')),
 										_Utils_Tuple2(
 										'deadline',
-										$elm$json$Json$Encode$string(goal.cq + 'T00:00:00Z')),
+										$elm$json$Json$Encode$string(goal.ct + 'T00:00:00Z')),
 										_Utils_Tuple2(
 										'parent',
-										nullable(goal.dn)),
+										nullable(goal.ds)),
 										_Utils_Tuple2(
 										'requiredPermissions',
 										A2(
@@ -7749,16 +7888,16 @@ var $author$project$Api$Command$payload = F2(
 											A2(
 												$elm$core$List$filter,
 												function (key) {
-													return A2($elm$core$List$member, key, goal.dq);
+													return A2($elm$core$List$member, key, goal.dv);
 												},
 												$author$project$Domain$Permission$permissionKeys))),
 										_Utils_Tuple2(
 										'requiredBudget',
-										$elm$json$Json$Encode$float(goal.cb))
+										$elm$json$Json$Encode$float(goal.ce))
 									])));
 					},
-					$author$project$Form$Goal$validate(model.aF));
-			case 5:
+					$author$project$Form$Goal$validate(model.aI));
+			case 7:
 				var key = action.a;
 				return A3(
 					validate,
@@ -7773,7 +7912,7 @@ var $author$project$Api$Command$payload = F2(
 							[
 								str('owner')
 							])));
-			case 6:
+			case 8:
 				var key = action.a;
 				return A3(
 					validate,
@@ -7800,7 +7939,7 @@ var $author$project$Api$Command$payload = F2(
 								$elm$json$Json$Encode$bool(false)),
 								_Utils_Tuple2('canApprove', ps)
 							])));
-			case 7:
+			case 9:
 				var key = action.a;
 				return A3(
 					validate,
@@ -7824,7 +7963,7 @@ var $author$project$Api$Command$payload = F2(
 								$elm$json$Json$Encode$string(
 									val('reportedBy')))
 							])));
-			case 8:
+			case 10:
 				var key = action.a;
 				return A3(
 					validate,
@@ -7839,14 +7978,14 @@ var $author$project$Api$Command$payload = F2(
 							[
 								str('note')
 							])));
-			case 10:
+			case 12:
 				var key = action.a;
 				return A2(
 					post,
 					path(
 						'goals/' + ($elm$url$Url$percentEncode(key) + '/activate')),
 					_List_Nil);
-			case 11:
+			case 13:
 				var key = action.a;
 				return A2(
 					post,
@@ -7857,7 +7996,7 @@ var $author$project$Api$Command$payload = F2(
 							'goal',
 							$elm$json$Json$Encode$string(key))
 						]));
-			case 9:
+			case 11:
 				return A2(
 					$elm$core$Result$map,
 					function (review) {
@@ -7872,23 +8011,23 @@ var $author$project$Api$Command$payload = F2(
 										uid('review')),
 										_Utils_Tuple2(
 										'goal',
-										$elm$json$Json$Encode$string(review.aF)),
+										$elm$json$Json$Encode$string(review.aI)),
 										_Utils_Tuple2(
 										'note',
-										$elm$json$Json$Encode$string(review.dh)),
+										$elm$json$Json$Encode$string(review.dn)),
 										_Utils_Tuple2(
 										'learnings',
 										A2(
 											$elm$json$Json$Encode$list,
 											$elm$core$Basics$identity,
-											($elm$core$String$trim(review.bl) === '') ? _List_Nil : _List_fromArray(
+											($elm$core$String$trim(review.bp) === '') ? _List_Nil : _List_fromArray(
 												[
 													$elm$json$Json$Encode$object(
 													_List_fromArray(
 														[
 															_Utils_Tuple2(
 															'text',
-															$elm$json$Json$Encode$string(review.bl))
+															$elm$json$Json$Encode$string(review.bp))
 														]))
 												]))),
 										_Utils_Tuple2(
@@ -7896,44 +8035,44 @@ var $author$project$Api$Command$payload = F2(
 										A2(
 											$elm$json$Json$Encode$list,
 											$elm$core$Basics$identity,
-											($elm$core$String$trim(review.a_) === '') ? _List_Nil : _List_fromArray(
+											($elm$core$String$trim(review.a2) === '') ? _List_Nil : _List_fromArray(
 												[
 													$elm$json$Json$Encode$object(
 													_List_fromArray(
 														[
 															_Utils_Tuple2(
 															'text',
-															$elm$json$Json$Encode$string(review.a_)),
+															$elm$json$Json$Encode$string(review.a2)),
 															_Utils_Tuple2(
 															'owner',
-															$elm$json$Json$Encode$string(review.cr)),
+															$elm$json$Json$Encode$string(review.cu)),
 															_Utils_Tuple2(
 															'deadline',
-															(review.a$ === '') ? $elm$json$Json$Encode$null : $elm$json$Json$Encode$string(review.a$ + 'T23:59:59Z'))
+															(review.a3 === '') ? $elm$json$Json$Encode$null : $elm$json$Json$Encode$string(review.a3 + 'T23:59:59Z'))
 														]))
 												])))
 									])));
 					},
-					$author$project$Form$Review$validate(model.bD));
+					$author$project$Form$Review$validate(model.bH));
 			default:
-				var _v1 = model.a1;
+				var _v1 = model.a5;
 				if (!_v1.$) {
 					var snapshot = _v1.a;
-					return (_Utils_eq(snapshot.aX, snapshot.c7) && _Utils_eq(
-						model.au,
-						$elm$core$Maybe$Just(snapshot.bf))) ? $elm$core$Result$Ok(
+					return (_Utils_eq(snapshot.a$, snapshot.dd) && _Utils_eq(
+						model.ay,
+						$elm$core$Maybe$Just(snapshot.bj))) ? $elm$core$Result$Ok(
 						_Utils_Tuple3(
 							'DELETE',
-							A2($author$project$Api$Path$orgPath, snapshot.bf, ''),
+							A2($author$project$Api$Path$orgPath, snapshot.bj, ''),
 							$elm$json$Json$Encode$object(
 								_List_fromArray(
 									[
 										_Utils_Tuple2(
 										'confirmName',
-										$elm$json$Json$Encode$string(snapshot.aX)),
+										$elm$json$Json$Encode$string(snapshot.a$)),
 										_Utils_Tuple2(
 										'expectedVersion',
-										$elm$json$Json$Encode$int(snapshot.aA))
+										$elm$json$Json$Encode$int(snapshot.av))
 									])))) : $elm$core$Result$Err('조직 이름을 정확히 입력하세요.');
 				} else {
 					return $elm$core$Result$Err('삭제 확인을 먼저 열어 주세요.');
@@ -7941,10 +8080,10 @@ var $author$project$Api$Command$payload = F2(
 		}
 	});
 var $author$project$Main$workspaceVersion = function (model) {
-	var _v0 = model.bW;
+	var _v0 = model.b_;
 	if (_v0.$ === 1) {
 		var w = _v0.a;
-		return w.aA;
+		return w.av;
 	} else {
 		return 0;
 	}
@@ -7954,14 +8093,14 @@ var $author$project$Main$payload = F2(
 		return A2(
 			$author$project$Api$Command$payload,
 			{
-				a1: model.a1,
-				aF: $author$project$Main$goalDraft(model),
-				au: model.au,
-				bD: $author$project$Main$reviewDraft(model),
-				bG: model.aa.bG,
-				bH: model.bH,
-				aQ: $author$project$Main$get(model),
-				aA: $author$project$Main$workspaceVersion(model)
+				a5: model.a5,
+				aI: $author$project$Main$goalDraft(model),
+				ay: model.ay,
+				bH: $author$project$Main$reviewDraft(model),
+				bK: model.aa.bK,
+				bL: model.bL,
+				aT: $author$project$Main$get(model),
+				av: $author$project$Main$workspaceVersion(model)
 			},
 			action);
 	});
@@ -7984,8 +8123,8 @@ var $author$project$Api$Http$send = F4(
 	function (onResult, method, path, body) {
 		return $elm$http$Http$request(
 			{
-				b9: $elm$http$Http$jsonBody(body),
-				aD: A2(
+				cc: $elm$http$Http$jsonBody(body),
+				aG: A2(
 					$elm$http$Http$expectStringResponse,
 					onResult,
 					function (response) {
@@ -8006,16 +8145,16 @@ var $author$project$Api$Http$send = F4(
 										A2(
 											$elm$json$Json$Decode$decodeString,
 											A2($elm$json$Json$Decode$field, 'error', $elm$json$Json$Decode$string),
-											content)) + (' (' + ($elm$core$String$fromInt(metadata.dM) + ')')));
+											content)) + (' (' + ($elm$core$String$fromInt(metadata.dX) + ')')));
 							default:
 								return $elm$core$Result$Ok(0);
 						}
 					}),
-				cQ: _List_Nil,
-				c1: method,
-				dX: $elm$core$Maybe$Just(30000),
-				d_: $elm$core$Maybe$Nothing,
-				aP: path
+				cW: _List_Nil,
+				c7: method,
+				d6: $elm$core$Maybe$Just(30000),
+				d9: $elm$core$Maybe$Nothing,
+				aS: path
 			});
 	});
 var $author$project$Main$update = F2(
@@ -8024,20 +8163,20 @@ var $author$project$Main$update = F2(
 			case 0:
 				var page = msg.a;
 				var org = msg.b;
-				return $author$project$Main$busy(model) ? _Utils_Tuple2(model, $elm$core$Platform$Cmd$none) : ((_Utils_eq(org, model.au) && (!_Utils_eq(org, $elm$core$Maybe$Nothing))) ? _Utils_Tuple2(
+				return $author$project$Main$busy(model) ? _Utils_Tuple2(model, $elm$core$Platform$Cmd$none) : ((_Utils_eq(org, model.ay) && (!_Utils_eq(org, $elm$core$Maybe$Nothing))) ? _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{a1: $elm$core$Maybe$Nothing, y: page}),
+						{a5: $elm$core$Maybe$Nothing, z: page}),
 					$elm$core$Platform$Cmd$none) : $author$project$Main$refresh(
 					_Utils_update(
 						model,
-						{a1: $elm$core$Maybe$Nothing, p: false, s: '', au: org, y: page, bW: $author$project$Remote$Loading})));
+						{a5: $elm$core$Maybe$Nothing, o: false, p: '', ay: org, z: page, ao: '', ap: 'active', aq: $elm$core$Maybe$Nothing, b_: $author$project$Remote$Loading})));
 			case 1:
 				return $author$project$Main$busy(model) ? _Utils_Tuple2(model, $elm$core$Platform$Cmd$none) : $author$project$Main$refresh(model);
 			case 2:
 				var token = msg.a;
 				var response = msg.b;
-				if (!_Utils_eq(token, model.L)) {
+				if (!_Utils_eq(token, model.M)) {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				} else {
 					if (!response.$) {
@@ -8046,9 +8185,9 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								model,
 								{
-									x: true,
+									y: true,
 									T: $author$project$Remote$Loaded(items),
-									N: false
+									O: false
 								}),
 							$elm$core$Platform$Cmd$none);
 					} else {
@@ -8057,12 +8196,12 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								model,
 								{
-									p: true,
-									x: false,
-									s: $author$project$Api$Http$errorText(err),
+									o: true,
+									y: false,
+									p: $author$project$Api$Http$errorText(err),
 									T: $author$project$Remote$Failed(
 										$author$project$Api$Http$errorText(err)),
-									N: false
+									O: false
 								}),
 							$elm$core$Platform$Cmd$none);
 					}
@@ -8070,7 +8209,7 @@ var $author$project$Main$update = F2(
 			case 3:
 				var token = msg.a;
 				var response = msg.b;
-				if (!_Utils_eq(token, model.L)) {
+				if (!_Utils_eq(token, model.M)) {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				} else {
 					if (!response.$) {
@@ -8079,9 +8218,9 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								model,
 								{
-									x: true,
-									N: false,
-									bW: $author$project$Remote$Loaded(workspace)
+									y: true,
+									O: false,
+									b_: $author$project$Remote$Loaded(workspace)
 								}),
 							$elm$core$Platform$Cmd$none);
 					} else {
@@ -8090,11 +8229,11 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								model,
 								{
-									p: true,
-									x: false,
-									s: $author$project$Api$Http$errorText(err),
-									N: false,
-									bW: $author$project$Remote$Failed(
+									o: true,
+									y: false,
+									p: $author$project$Api$Http$errorText(err),
+									O: false,
+									b_: $author$project$Remote$Failed(
 										$author$project$Api$Http$errorText(err))
 								}),
 							$elm$core$Platform$Cmd$none);
@@ -8108,7 +8247,7 @@ var $author$project$Main$update = F2(
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				} else {
 					switch (action.$) {
-						case 4:
+						case 6:
 							return A2(
 								$elm$core$Maybe$withDefault,
 								_Utils_Tuple2(model, $elm$core$Platform$Cmd$none),
@@ -8121,7 +8260,7 @@ var $author$project$Main$update = F2(
 											model);
 									},
 									$author$project$Form$Goal$fromKey(key)));
-						case 9:
+						case 11:
 							return A2(
 								$elm$core$Maybe$withDefault,
 								_Utils_Tuple2(model, $elm$core$Platform$Cmd$none),
@@ -8139,21 +8278,39 @@ var $author$project$Main$update = F2(
 							var current = A2(
 								$elm$core$Maybe$withDefault,
 								A2($author$project$Main$draftDefaults, model, action),
-								A2($elm$core$Dict$get, draftKey, model.B));
+								A2($elm$core$Dict$get, draftKey, model.v));
+							var version = function () {
+								switch (action.$) {
+									case 4:
+										return A2(
+											$elm$core$Maybe$withDefault,
+											$elm$core$String$fromInt(
+												$author$project$Main$workspaceVersion(model)),
+											A2($elm$core$Dict$get, '__version', current));
+									case 5:
+										return A2(
+											$elm$core$Maybe$withDefault,
+											$elm$core$String$fromInt(
+												$author$project$Main$workspaceVersion(model)),
+											A2($elm$core$Dict$get, '__version', current));
+									default:
+										return $elm$core$String$fromInt(
+											$author$project$Main$workspaceVersion(model));
+								}
+							}();
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
 									{
-										B: A3(
+										v: A3(
 											$elm$core$Dict$insert,
 											draftKey,
 											A3(
 												$elm$core$Dict$insert,
 												'__version',
-												$elm$core$String$fromInt(
-													$author$project$Main$workspaceVersion(model)),
+												version,
 												A3($elm$core$Dict$insert, key, val, current)),
-											model.B)
+											model.v)
 									}),
 								$elm$core$Platform$Cmd$none);
 					}
@@ -8199,39 +8356,39 @@ var $author$project$Main$update = F2(
 				if ($author$project$Main$busy(model)) {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				} else {
-					if (!model.x) {
+					if (!model.y) {
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
-								{p: true, s: '최신 상태를 먼저 불러와 주세요. 입력 내용은 보존됩니다.'}),
+								{o: true, p: '최신 상태를 먼저 불러와 주세요. 입력 내용은 보존됩니다.'}),
 							$elm$core$Platform$Cmd$none);
 					} else {
-						var _v4 = A2($author$project$Main$payload, model, action);
-						if (_v4.$ === 1) {
-							var message = _v4.a;
+						var _v5 = A2($author$project$Main$payload, model, action);
+						if (_v5.$ === 1) {
+							var message = _v5.a;
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
-									{p: true, s: message}),
+									{o: true, p: message}),
 								$elm$core$Platform$Cmd$none);
 						} else {
-							var _v5 = _v4.a;
-							var method = _v5.a;
-							var path = _v5.b;
-							var body = _v5.c;
+							var _v6 = _v5.a;
+							var method = _v6.a;
+							var path = _v6.b;
+							var body = _v6.c;
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
 									{
-										p: false,
-										s: '저장 중입니다…',
-										M: $author$project$Main$Saving(
+										o: false,
+										p: '저장 중입니다…',
+										N: $author$project$Main$Saving(
 											$author$project$Form$Action$actionKey(action)),
-										bH: model.bH + 1
+										bL: model.bL + 1
 									}),
 								A4(
 									$author$project$Api$Http$send,
-									A2($author$project$Main$Saved, model.L, action),
+									A2($author$project$Main$Saved, model.M, action),
 									method,
 									path,
 									body));
@@ -8242,7 +8399,7 @@ var $author$project$Main$update = F2(
 				var token = msg.a;
 				var action = msg.b;
 				var response = msg.c;
-				if (!_Utils_eq(token, model.L)) {
+				if (!_Utils_eq(token, model.M)) {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				} else {
 					if (response.$ === 1) {
@@ -8250,24 +8407,24 @@ var $author$project$Main$update = F2(
 						return $author$project$Main$refresh(
 							_Utils_update(
 								model,
-								{a1: $elm$core$Maybe$Nothing, p: true, s: message + ' 자동 재시도하지 않았습니다. 최신 상태를 확인한 뒤 다시 저장하세요. 입력 내용은 보존됩니다.', M: $author$project$Main$Idle}));
+								{a5: $elm$core$Maybe$Nothing, o: true, p: message + ' 자동 재시도하지 않았습니다. 최신 상태를 확인한 뒤 다시 저장하세요. 입력 내용은 보존됩니다.', N: $author$project$Main$Idle}));
 					} else {
 						var saved = _Utils_update(
 							model,
 							{
-								a1: $elm$core$Maybe$Nothing,
-								B: A2(
+								a5: $elm$core$Maybe$Nothing,
+								v: A2(
 									$elm$core$Dict$remove,
 									A2($author$project$Main$formKey, model, action),
-									model.B),
-								p: false,
+									model.v),
+								o: false,
 								C: _Utils_eq(action, $author$project$Form$Action$AddGoal) ? A2(
 									$elm$core$Dict$remove,
 									A2($author$project$Main$formKey, model, action),
 									model.C) : model.C,
 								ab: _Utils_eq(action, $author$project$Form$Action$AddGoal) ? A3(
 									$elm$core$Dict$update,
-									A2($elm$core$Maybe$withDefault, '', model.au),
+									A2($elm$core$Maybe$withDefault, '', model.ay),
 									A2(
 										$elm$core$Basics$composeR,
 										$elm$core$Maybe$withDefault(0),
@@ -8276,65 +8433,65 @@ var $author$project$Main$update = F2(
 											$elm$core$Basics$add(1),
 											$elm$core$Maybe$Just)),
 									model.ab) : model.ab,
-								s: '저장했습니다. 최신 조직 상태와 감사 기록을 확인하세요.',
+								p: '저장했습니다. 최신 조직 상태와 감사 기록을 확인하세요.',
 								t: _Utils_eq(action, $author$project$Form$Action$AddReview) ? A2(
 									$elm$core$Dict$remove,
 									A2($author$project$Main$formKey, model, action),
 									model.t) : model.t,
-								M: $author$project$Main$Idle
+								N: $author$project$Main$Idle
 							});
 						return _Utils_eq(action, $author$project$Form$Action$DeleteOrg) ? $author$project$Main$refresh(
 							_Utils_update(
 								saved,
 								{
-									B: A2(
-										$elm$core$Dict$filter,
-										F2(
-											function (key, _v7) {
-												return !A2(
-													$elm$core$String$startsWith,
-													A2($elm$core$Maybe$withDefault, '', model.au) + '/',
-													key);
-											}),
-										model.B),
-									C: A2(
+									v: A2(
 										$elm$core$Dict$filter,
 										F2(
 											function (key, _v8) {
 												return !A2(
 													$elm$core$String$startsWith,
-													A2($elm$core$Maybe$withDefault, '', model.au) + '/',
+													A2($elm$core$Maybe$withDefault, '', model.ay) + '/',
 													key);
 											}),
-										saved.C),
-									s: '조직을 논리 삭제했습니다. 원본 감사 기록과 다른 조직은 보존됩니다.',
-									au: $elm$core$Maybe$Nothing,
-									T: $author$project$Remote$Loading,
-									y: 0,
-									t: A2(
+										model.v),
+									C: A2(
 										$elm$core$Dict$filter,
 										F2(
 											function (key, _v9) {
 												return !A2(
 													$elm$core$String$startsWith,
-													A2($elm$core$Maybe$withDefault, '', model.au) + '/',
+													A2($elm$core$Maybe$withDefault, '', model.ay) + '/',
+													key);
+											}),
+										saved.C),
+									p: '조직을 논리 삭제했습니다. 원본 감사 기록과 다른 조직은 보존됩니다.',
+									ay: $elm$core$Maybe$Nothing,
+									T: $author$project$Remote$Loading,
+									z: 0,
+									t: A2(
+										$elm$core$Dict$filter,
+										F2(
+											function (key, _v10) {
+												return !A2(
+													$elm$core$String$startsWith,
+													A2($elm$core$Maybe$withDefault, '', model.ay) + '/',
 													key);
 											}),
 										saved.t),
-									bW: $author$project$Remote$Loading
+									b_: $author$project$Remote$Loading
 								})) : $author$project$Main$refresh(saved);
 					}
 				}
 			case 9:
-				var _v10 = model.bW;
-				if (_v10.$ === 1) {
-					var w = _v10.a;
-					return (model.x && (!$author$project$Main$busy(model))) ? _Utils_Tuple2(
+				var _v11 = model.b_;
+				if (_v11.$ === 1) {
+					var w = _v11.a;
+					return (model.y && (!$author$project$Main$busy(model))) ? _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{
-								a1: $elm$core$Maybe$Just(
-									{aX: '', bf: w.bs.bf, c7: w.bs.c7, aA: w.aA})
+								a5: $elm$core$Maybe$Just(
+									{a$: '', bj: w.bx.bj, dd: w.bx.dd, av: w.av})
 							}),
 						A2(
 							$elm$core$Task$attempt,
@@ -8342,7 +8499,7 @@ var $author$project$Main$update = F2(
 							$elm$browser$Browser$Dom$focus('delete-confirm'))) : _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{p: true, s: '최신 조직 정보를 불러온 뒤 다시 확인하세요.'}),
+							{o: true, p: '최신 조직 정보를 불러온 뒤 다시 확인하세요.'}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -8353,21 +8510,21 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{
-							a1: A2(
+							a5: A2(
 								$elm$core$Maybe$map,
 								function (snapshot) {
 									return _Utils_update(
 										snapshot,
-										{aX: name});
+										{a$: name});
 								},
-								model.a1)
+								model.a5)
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 11:
 				return $author$project$Main$busy(model) ? _Utils_Tuple2(model, $elm$core$Platform$Cmd$none) : _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{a1: $elm$core$Maybe$Nothing}),
+						{a5: $elm$core$Maybe$Nothing}),
 					$elm$core$Platform$Cmd$none);
 			case 12:
 				return _Utils_Tuple2(
@@ -8381,7 +8538,7 @@ var $author$project$Main$update = F2(
 				if ($author$project$Main$busy(model)) {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				} else {
-					var reviews = ((page === 5) && ((target === 'review-form') && (A3($author$project$Main$get, model, $author$project$Form$Action$AddReview, 'goal') === ''))) ? A3(
+					var reviews = ((page === 6) && ((target === 'review-form') && (A3($author$project$Main$get, model, $author$project$Form$Action$AddReview, 'goal') === ''))) ? A3(
 						$elm$core$Dict$insert,
 						A2($author$project$Main$formKey, model, $author$project$Form$Action$AddReview),
 						A3(
@@ -8396,7 +8553,7 @@ var $author$project$Main$update = F2(
 							{
 								Z: A2($elm$core$String$startsWith, 'goal-', target) ? $elm$core$Maybe$Just(
 									A2($elm$core$String$dropLeft, 5, target)) : model.Z,
-								y: page,
+								z: page,
 								t: reviews
 							}),
 						A2(
@@ -8404,20 +8561,69 @@ var $author$project$Main$update = F2(
 							$elm$core$Basics$always($author$project$Main$NoOp),
 							$elm$browser$Browser$Dom$focus(target)));
 				}
+			case 14:
+				var query = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{ao: query}),
+					$elm$core$Platform$Cmd$none);
+			case 15:
+				var status = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{ap: status}),
+					$elm$core$Platform$Cmd$none);
+			case 16:
+				var key = msg.a;
+				return $author$project$Main$busy(model) ? _Utils_Tuple2(model, $elm$core$Platform$Cmd$none) : $author$project$Main$refresh(
+					_Utils_update(
+						model,
+						{
+							v: A2(
+								$elm$core$Dict$remove,
+								A2(
+									$author$project$Main$formKey,
+									model,
+									$author$project$Form$Action$DeactivatePerson(key)),
+								A2(
+									$elm$core$Dict$remove,
+									A2(
+										$author$project$Main$formKey,
+										model,
+										$author$project$Form$Action$UpdatePerson(key)),
+									model.v)),
+							o: false,
+							p: '구성원 수정·인계 입력을 초기화하고 최신 정보를 불러옵니다. 확인한 뒤 다시 작성하세요.'
+						}));
+			case 17:
+				var key = msg.a;
+				return $author$project$Main$busy(model) ? _Utils_Tuple2(model, $elm$core$Platform$Cmd$none) : _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							aq: $elm$core$Maybe$Just(key)
+						}),
+					A2(
+						$elm$core$Task$attempt,
+						$elm$core$Basics$always($author$project$Main$NoOp),
+						$elm$browser$Browser$Dom$focus('person-detail')));
 			default:
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 		}
 	});
-var $author$project$Page$Authorities = 3;
-var $author$project$Page$Dashboard = 1;
+var $author$project$Page$Authorities = 4;
+var $author$project$Page$Dashboard = 2;
 var $author$project$Main$Navigate = F2(
 	function (a, b) {
 		return {$: 0, a: a, b: b};
 	});
+var $author$project$Page$People = 1;
 var $author$project$Main$Refresh = {$: 1};
-var $author$project$Page$Responsibility = 2;
-var $author$project$Page$Results = 4;
-var $author$project$Page$Settings = 6;
+var $author$project$Page$Responsibility = 3;
+var $author$project$Page$Results = 5;
+var $author$project$Page$Settings = 7;
 var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$html$Html$aside = _VirtualDom_node('aside');
 var $elm$virtual_dom$VirtualDom$attribute = F2(
@@ -8471,11 +8677,11 @@ var $author$project$Main$Submit = function (a) {
 };
 var $author$project$Main$formConfig = function (model) {
 	return {
-		aV: $author$project$Main$busy(model),
-		aC: $author$project$Main$Edit,
-		x: model.x,
-		M: function () {
-			var _v0 = model.M;
+		aZ: $author$project$Main$busy(model),
+		aF: $author$project$Main$Edit,
+		y: model.y,
+		N: function () {
+			var _v0 = model.N;
 			if (!_v0.$) {
 				return $elm$core$Maybe$Nothing;
 			} else {
@@ -8483,8 +8689,8 @@ var $author$project$Main$formConfig = function (model) {
 				return $elm$core$Maybe$Just(key);
 			}
 		}(),
-		dQ: $author$project$Main$Submit,
-		aQ: $author$project$Main$get(model)
+		d$: $author$project$Main$Submit,
+		aT: $author$project$Main$get(model)
 	};
 };
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
@@ -8524,14 +8730,16 @@ var $author$project$Page$pageName = function (page) {
 		case 0:
 			return '조직 목록';
 		case 1:
-			return '목표';
+			return '구성원';
 		case 2:
-			return '책임';
+			return '목표';
 		case 3:
-			return '권한';
+			return '책임';
 		case 4:
-			return '결과';
+			return '권한';
 		case 5:
+			return '결과';
+		case 6:
 			return '학습';
 		default:
 			return '조직 설정';
@@ -8610,7 +8818,7 @@ var $author$project$Ui$Form$formView = F4(
 			_List_fromArray(
 				[
 					$elm$html$Html$Events$onSubmit(
-					model.dQ(action))
+					model.d$(action))
 				]),
 			_List_fromArray(
 				[
@@ -8618,7 +8826,7 @@ var $author$project$Ui$Form$formView = F4(
 					$elm$html$Html$fieldset,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$disabled(model.aV)
+							$elm$html$Html$Attributes$disabled(model.aZ)
 						]),
 					_Utils_ap(
 						children,
@@ -8629,13 +8837,13 @@ var $author$project$Ui$Form$formView = F4(
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$type_('submit'),
-										$elm$html$Html$Attributes$disabled(!model.x)
+										$elm$html$Html$Attributes$disabled(!model.y)
 									]),
 								_List_fromArray(
 									[
 										$elm$html$Html$text(
 										_Utils_eq(
-											model.M,
+											model.N,
 											$elm$core$Maybe$Just(
 												$author$project$Form$Action$actionKey(action))) ? '저장 중…' : label_)
 									]))
@@ -8698,9 +8906,9 @@ var $author$project$Ui$Form$inputField = F6(
 							$elm$html$Html$Attributes$name(key),
 							$elm$html$Html$Attributes$type_(kind),
 							$elm$html$Html$Attributes$value(
-							A2(model.aQ, action, key)),
+							A2(model.aT, action, key)),
 							$elm$html$Html$Events$onInput(
-							A2(model.aC, action, key)),
+							A2(model.aF, action, key)),
 							$elm$html$Html$Attributes$required(required_),
 							$elm$html$Html$Attributes$step('any'),
 							$elm$html$Html$Attributes$autocomplete(false)
@@ -8783,12 +8991,12 @@ var $author$project$Page$Organizations$view = function (model) {
 						$author$project$Ui$Common$note('각 조직의 구성원, 목표와 학습은 독립적으로 관리됩니다.'),
 						A4(
 						$author$project$Ui$Form$formView,
-						model.Q,
+						model.J,
 						$author$project$Form$Action$CreateOrg,
 						'조직 등록',
 						_List_fromArray(
 							[
-								A6($author$project$Ui$Form$inputField, model.Q, $author$project$Form$Action$CreateOrg, '조직 이름', 'name', 'text', true)
+								A6($author$project$Ui$Form$inputField, model.J, $author$project$Form$Action$CreateOrg, '조직 이름', 'name', 'text', true)
 							])),
 						A2(
 						$elm$html$Html$button,
@@ -8796,7 +9004,7 @@ var $author$project$Page$Organizations$view = function (model) {
 							[
 								$elm$html$Html$Attributes$class('secondary'),
 								$elm$html$Html$Attributes$disabled(
-								model.Q.aV || ((!model.Q.x) || function () {
+								model.J.aZ || ((!model.J.y) || function () {
 									var _v0 = model.T;
 									if (_v0.$ === 1) {
 										var items = _v0.a;
@@ -8805,12 +9013,12 @@ var $author$project$Page$Organizations$view = function (model) {
 											A2(
 												$elm$core$Basics$composeR,
 												function ($) {
-													return $.bs;
+													return $.bx;
 												},
 												A2(
 													$elm$core$Basics$composeR,
 													function ($) {
-														return $.bf;
+														return $.bj;
 													},
 													$elm$core$Basics$eq('demo-northstar-v2'))),
 											items);
@@ -8819,7 +9027,7 @@ var $author$project$Page$Organizations$view = function (model) {
 									}
 								}())),
 								$elm$html$Html$Events$onClick(
-								model.Q.dQ($author$project$Form$Action$ImportDemo))
+								model.J.d$($author$project$Form$Action$ImportDemo))
 							]),
 						_List_fromArray(
 							[
@@ -8889,14 +9097,14 @@ var $author$project$Page$Organizations$view = function (model) {
 													_List_fromArray(
 														[
 															$elm$html$Html$text(
-															item.a2 ? '가상 데이터 · 데모' : '내 조직')
+															item.a6 ? '가상 데이터 · 데모' : '내 조직')
 														])),
 													A2(
 													$elm$html$Html$h2,
 													_List_Nil,
 													_List_fromArray(
 														[
-															$elm$html$Html$text(item.bs.c7)
+															$elm$html$Html$text(item.bx.dd)
 														])),
 													A2(
 													$elm$html$Html$p,
@@ -8904,7 +9112,7 @@ var $author$project$Page$Organizations$view = function (model) {
 													_List_fromArray(
 														[
 															$elm$html$Html$text(
-															'구성원 ' + ($elm$core$String$fromInt(item.dp) + ('명 · 목표 ' + ($elm$core$String$fromInt(item.cO) + '개'))))
+															'구성원 ' + ($elm$core$String$fromInt(item.du) + ('명 · 목표 ' + ($elm$core$String$fromInt(item.cU) + '개'))))
 														])),
 													A2(
 													$elm$html$Html$small,
@@ -8912,7 +9120,7 @@ var $author$project$Page$Organizations$view = function (model) {
 													_List_fromArray(
 														[
 															$elm$html$Html$text(
-															'등록 ' + A2($elm$core$String$left, 10, item.bs.cp))
+															'등록 ' + A2($elm$core$String$left, 10, item.bx.cs))
 														])),
 													A2(
 													$elm$html$Html$div,
@@ -8926,9 +9134,9 @@ var $author$project$Page$Organizations$view = function (model) {
 															$elm$html$Html$button,
 															_List_fromArray(
 																[
-																	$elm$html$Html$Attributes$disabled(model.Q.aV),
+																	$elm$html$Html$Attributes$disabled(model.J.aZ),
 																	$elm$html$Html$Events$onClick(
-																	model.dk(item.bs.bf))
+																	model.bw(item.bx.bj))
 																]),
 															_List_fromArray(
 																[
@@ -8939,9 +9147,9 @@ var $author$project$Page$Organizations$view = function (model) {
 															_List_fromArray(
 																[
 																	$elm$html$Html$Attributes$class('secondary'),
-																	$elm$html$Html$Attributes$disabled(model.Q.aV),
+																	$elm$html$Html$Attributes$disabled(model.J.aZ),
 																	$elm$html$Html$Events$onClick(
-																	model.dI(item.bs.bf))
+																	model.dT(item.bx.bj))
 																]),
 															_List_fromArray(
 																[
@@ -8959,14 +9167,26 @@ var $author$project$Main$CloseDelete = {$: 11};
 var $author$project$Main$ConfirmDelete = function (a) {
 	return {$: 10, a: a};
 };
+var $author$project$Main$FilterPeople = function (a) {
+	return {$: 15, a: a};
+};
 var $author$project$Main$Guide = F2(
 	function (a, b) {
 		return {$: 13, a: a, b: b};
 	});
 var $author$project$Main$OpenDelete = {$: 9};
+var $author$project$Main$OpenPerson = function (a) {
+	return {$: 17, a: a};
+};
+var $author$project$Main$ResetPerson = function (a) {
+	return {$: 16, a: a};
+};
+var $author$project$Main$SearchPeople = function (a) {
+	return {$: 14, a: a};
+};
 var $author$project$Main$ToggleGuide = {$: 12};
 var $author$project$Form$Action$Grant = function (a) {
-	return {$: 6, a: a};
+	return {$: 8, a: a};
 };
 var $elm$html$Html$Attributes$checked = $elm$html$Html$Attributes$boolProperty('checked');
 var $elm$html$Html$legend = _VirtualDom_node('legend');
@@ -9030,11 +9250,11 @@ var $author$project$Ui$Form$checks = F2(
 											[
 												$elm$html$Html$Attributes$type_('checkbox'),
 												$elm$html$Html$Attributes$checked(
-												A2(model.aQ, action, key) === 'true'),
+												A2(model.aT, action, key) === 'true'),
 												$elm$html$Html$Events$onCheck(
 												function (checked_) {
 													return A3(
-														model.aC,
+														model.aF,
 														action,
 														key,
 														checked_ ? 'true' : 'false');
@@ -9072,10 +9292,10 @@ var $author$project$Ui$Common$diagnosticView = function (w) {
 						_List_fromArray(
 							[
 								$elm$html$Html$text(
-								$elm$core$String$fromInt(w.cl.cE) + (' 오류 · ' + ($elm$core$String$fromInt(w.cl.bT) + ' 경고')))
+								$elm$core$String$fromInt(w.co.cJ) + (' 오류 · ' + ($elm$core$String$fromInt(w.co.bX) + ' 경고')))
 							]))
 					])),
-				$elm$core$List$isEmpty(w.cl.cy) ? $author$project$Ui$Common$note('구조 검사를 통과했습니다. 결과를 보고하고 학습을 이어가세요.') : A2(
+				$elm$core$List$isEmpty(w.co.cC) ? $author$project$Ui$Common$note('구조 검사를 통과했습니다. 결과를 보고하고 학습을 이어가세요.') : A2(
 				$elm$html$Html$div,
 				_List_Nil,
 				A2(
@@ -9089,7 +9309,7 @@ var $author$project$Ui$Common$diagnosticView = function (w) {
 									_List_fromArray(
 										[
 											_Utils_Tuple2('diagnostic', true),
-											_Utils_Tuple2('error', d.dJ === 'Error')
+											_Utils_Tuple2('error', d.dU === 'Error')
 										]))
 								]),
 							_List_fromArray(
@@ -9099,21 +9319,21 @@ var $author$project$Ui$Common$diagnosticView = function (w) {
 									_List_Nil,
 									_List_fromArray(
 										[
-											$elm$html$Html$text(d.ck)
+											$elm$html$Html$text(d.cn)
 										])),
 									A2(
 									$elm$html$Html$strong,
 									_List_Nil,
 									_List_fromArray(
 										[
-											$elm$html$Html$text(d.c0)
+											$elm$html$Html$text(d.c6)
 										])),
 									A2(
 									$elm$html$Html$p,
 									_List_Nil,
 									_List_fromArray(
 										[
-											$elm$html$Html$text(d.dP)
+											$elm$html$Html$text(d.d_)
 										])),
 									A2(
 									$elm$html$Html$div,
@@ -9129,10 +9349,10 @@ var $author$project$Ui$Common$diagnosticView = function (w) {
 														$elm$html$Html$text(line)
 													]));
 										},
-										d.cx))
+										d.cB))
 								]));
 					},
-					w.cl.cy)),
+					w.co.cC)),
 				$author$project$Ui$Common$note('권한 집중도는 권한 종류와 예산 보유를 각각 1점으로 세는 규칙 기반 추정치입니다.')
 			]));
 };
@@ -9152,7 +9372,13 @@ var $author$project$Page$Authorities$view = F2(
 							$author$project$Ui$Common$note('권한을 줄여 활성 목표의 요건이 깨지면 해당 목표는 자동으로 초안으로 돌아갑니다.'),
 							$author$project$Ui$Common$note('집중도 = 보유 권한 종류 수 + 예산 보유 1점 / 조직 전체 점수. 실제 의사결정 빈도나 권력의 측정값은 아닙니다.')
 						])),
-					$elm$core$List$isEmpty(w.$7) ? A2($author$project$Ui$Common$emptyState, '구성원을 먼저 추가하세요', '목표 메뉴에서 구성원을 추가한 뒤 권한을 부여할 수 있습니다.') : A2(
+					$elm$core$List$isEmpty(
+					A2(
+						$elm$core$List$filter,
+						function ($) {
+							return $.aU;
+						},
+						w.dt)) ? A2($author$project$Ui$Common$emptyState, '구성원을 먼저 추가하세요', '구성원 메뉴에서 재직 구성원을 추가한 뒤 권한을 부여할 수 있습니다.') : A2(
 					$elm$html$Html$div,
 					_List_fromArray(
 						[
@@ -9166,7 +9392,7 @@ var $author$project$Page$Authorities$view = F2(
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$class('panel'),
-										$elm$html$Html$Attributes$id('authority-' + person.bf),
+										$elm$html$Html$Attributes$id('authority-' + person.bj),
 										$elm$html$Html$Attributes$tabindex(-1)
 									]),
 								_List_fromArray(
@@ -9185,7 +9411,7 @@ var $author$project$Page$Authorities$view = F2(
 														100 * A2(
 															$elm$core$Maybe$withDefault,
 															0,
-															A2($elm$core$Dict$get, person.bf, w.cs)))) + '%'))
+															A2($elm$core$Dict$get, person.bj, w.cv)))) + '%'))
 											])),
 										A2(
 										$elm$html$Html$h2,
@@ -9195,7 +9421,7 @@ var $author$project$Page$Authorities$view = F2(
 											]),
 										_List_fromArray(
 											[
-												$elm$html$Html$text(person.c7)
+												$elm$html$Html$text(person.dd)
 											])),
 										A2(
 										$elm$html$Html$p,
@@ -9205,27 +9431,27 @@ var $author$project$Page$Authorities$view = F2(
 											]),
 										_List_fromArray(
 											[
-												$elm$html$Html$text(person.dF)
+												$elm$html$Html$text(person.dO)
 											])),
 										A4(
 										$author$project$Ui$Form$formView,
-										model.Q,
-										$author$project$Form$Action$Grant(person.bf),
+										model.J,
+										$author$project$Form$Action$Grant(person.bj),
 										'권한 저장',
 										_List_fromArray(
 											[
 												A6(
 												$author$project$Ui$Form$inputField,
-												model.Q,
-												$author$project$Form$Action$Grant(person.bf),
+												model.J,
+												$author$project$Form$Action$Grant(person.bj),
 												'집행 가능한 예산 한도 (KRW)',
 												'budget',
 												'number',
 												true),
 												A2(
 												$author$project$Ui$Form$checks,
-												model.Q,
-												$author$project$Form$Action$Grant(person.bf))
+												model.J,
+												$author$project$Form$Action$Grant(person.bj))
 											])),
 										$author$project$Ui$Common$note(
 										'담당 목표 ' + ($elm$core$String$fromInt(
@@ -9235,27 +9461,31 @@ var $author$project$Page$Authorities$view = F2(
 													A2(
 														$elm$core$Basics$composeR,
 														function ($) {
-															return $.aK;
+															return $.aN;
 														},
 														$elm$core$Basics$eq(
-															$elm$core$Maybe$Just(person.bf))),
-													w.cP))) + '개'))
+															$elm$core$Maybe$Just(person.bj))),
+													w.cV))) + '개'))
 									]));
 						},
-						w.$7)),
+						A2(
+							$elm$core$List$filter,
+							function ($) {
+								return $.aU;
+							},
+							w.dt))),
 					$author$project$Ui$Common$diagnosticView(w)
 				]));
 	});
-var $author$project$Form$Action$AddPerson = {$: 3};
 var $elm$html$Html$details = _VirtualDom_node('details');
 var $author$project$Form$Action$Activate = function (a) {
-	return {$: 10, a: a};
+	return {$: 12, a: a};
 };
 var $author$project$Form$Action$Assign = function (a) {
-	return {$: 5, a: a};
+	return {$: 7, a: a};
 };
 var $author$project$Form$Action$Strategy = function (a) {
-	return {$: 8, a: a};
+	return {$: 10, a: a};
 };
 var $elm$html$Html$article = _VirtualDom_node('article');
 var $author$project$Ui$Label$statusName = function (s) {
@@ -9281,15 +9511,15 @@ var $author$project$Ui$Common$badge = function (g) {
 				_List_fromArray(
 					[
 						_Utils_Tuple2('tag', true),
-						_Utils_Tuple2('draft', !g.b_),
-						_Utils_Tuple2('error', g.a6.dL === 3),
-						_Utils_Tuple2('warn', g.a6.dL === 2)
+						_Utils_Tuple2('draft', !g.aU),
+						_Utils_Tuple2('error', g.ba.dW === 3),
+						_Utils_Tuple2('warn', g.ba.dW === 2)
 					]))
 			]),
 		_List_fromArray(
 			[
 				$elm$html$Html$text(
-				g.b_ ? $author$project$Ui$Label$statusName(g.a6.dL) : '초안')
+				g.aU ? $author$project$Ui$Label$statusName(g.ba.dW) : '초안')
 			]));
 };
 var $elm$core$Basics$clamp = F3(
@@ -9361,8 +9591,10 @@ var $author$project$Ui$Label$personName = F2(
 			key,
 			A2(
 				$elm$core$Maybe$map,
-				function ($) {
-					return $.c7;
+				function (p) {
+					return _Utils_ap(
+						p.dd,
+						p.aU ? '' : ' (비활성)');
 				},
 				$elm$core$List$head(
 					A2(
@@ -9370,10 +9602,10 @@ var $author$project$Ui$Label$personName = F2(
 						A2(
 							$elm$core$Basics$composeR,
 							function ($) {
-								return $.bf;
+								return $.bj;
 							},
 							$elm$core$Basics$eq(key)),
-						w.$7))));
+						w.dt))));
 	});
 var $elm$html$Html$progress = _VirtualDom_node('progress');
 var $author$project$Ui$Common$goalSummary = F2(
@@ -9386,7 +9618,7 @@ var $author$project$Ui$Common$goalSummary = F2(
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text(g.aF.cw)
+						$elm$html$Html$text(g.aI.cA)
 					])),
 				A2(
 				$elm$html$Html$small,
@@ -9394,7 +9626,7 @@ var $author$project$Ui$Common$goalSummary = F2(
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
-						g.aF.c2.c7 + (' · ' + (((g.aF.c2.cz === 'HigherIsBetter') ? '↑ 증가' : '↓ 감소') + ' 목표')))
+						g.aI.c8.dd + (' · ' + (((g.aI.c8.cD === 'HigherIsBetter') ? '↑ 증가' : '↓ 감소') + ' 목표')))
 					])),
 				A2(
 				$elm$html$Html$div,
@@ -9413,7 +9645,7 @@ var $author$project$Ui$Common$goalSummary = F2(
 								A2(
 									$elm$core$Maybe$withDefault,
 									'—',
-									A2($elm$core$Maybe$map, $author$project$Ui$Label$formatNumber, g.a6.cY)))
+									A2($elm$core$Maybe$map, $author$project$Ui$Label$formatNumber, g.ba.c2)))
 							])),
 						A2(
 						$elm$html$Html$span,
@@ -9424,7 +9656,7 @@ var $author$project$Ui$Common$goalSummary = F2(
 						_List_fromArray(
 							[
 								$elm$html$Html$text(
-								'/ ' + ($author$project$Ui$Label$formatNumber(g.aF.dV) + (' ' + g.aF.c2.d0)))
+								'/ ' + ($author$project$Ui$Label$formatNumber(g.aI.d4) + (' ' + g.aI.c8.eb)))
 							]))
 					])),
 				A2(
@@ -9434,7 +9666,7 @@ var $author$project$Ui$Common$goalSummary = F2(
 						$elm$html$Html$Attributes$max('1'),
 						$elm$html$Html$Attributes$value(
 						$elm$core$String$fromFloat(
-							A3($elm$core$Basics$clamp, 0, 1, g.a6.ds))),
+							A3($elm$core$Basics$clamp, 0, 1, g.ba.dx))),
 						A2($elm$html$Html$Attributes$attribute, 'aria-label', '목표 달성률')
 					]),
 				_List_Nil),
@@ -9445,7 +9677,7 @@ var $author$project$Ui$Common$goalSummary = F2(
 					[
 						$elm$html$Html$text(
 						$elm$core$String$fromInt(
-							$elm$core$Basics$round(g.a6.ds * 100)) + ('% 달성 · 기준 ' + $author$project$Ui$Label$formatNumber(g.aF.b8)))
+							$elm$core$Basics$round(g.ba.dx * 100)) + ('% 달성 · 기준 ' + $author$project$Ui$Label$formatNumber(g.aI.cb)))
 					])),
 				A2(
 				$elm$html$Html$div,
@@ -9467,7 +9699,7 @@ var $author$project$Ui$Common$goalSummary = F2(
 									A2(
 										$elm$core$Maybe$map,
 										$author$project$Ui$Label$personName(w),
-										g.aK)))
+										g.aN)))
 							])),
 						A2(
 						$elm$html$Html$span,
@@ -9475,7 +9707,7 @@ var $author$project$Ui$Common$goalSummary = F2(
 						_List_fromArray(
 							[
 								$elm$html$Html$text(
-								A2($elm$core$String$left, 10, g.aF.cq) + ' 마감')
+								A2($elm$core$String$left, 10, g.aI.ct) + ' 마감')
 							]))
 					]))
 			]);
@@ -9487,9 +9719,14 @@ var $author$project$Ui$Form$peopleOptions = function (w) {
 		A2(
 			$elm$core$List$map,
 			function (p) {
-				return _Utils_Tuple2(p.bf, p.c7 + (' · ' + p.dF));
+				return _Utils_Tuple2(p.bj, p.dd + (' · ' + p.dO));
 			},
-			w.$7));
+			A2(
+				$elm$core$List$filter,
+				function ($) {
+					return $.aU;
+				},
+				w.dt)));
 };
 var $elm$virtual_dom$VirtualDom$property = F2(
 	function (key, value) {
@@ -9516,9 +9753,9 @@ var $author$project$Ui$Form$selectField = F6(
 						[
 							$elm$html$Html$Attributes$name(key),
 							$elm$html$Html$Attributes$value(
-							A2(model.aQ, action, key)),
+							A2(model.aT, action, key)),
 							$elm$html$Html$Events$onInput(
-							A2(model.aC, action, key)),
+							A2(model.aF, action, key)),
 							$elm$html$Html$Attributes$required(required_)
 						]),
 					A2(
@@ -9533,7 +9770,7 @@ var $author$project$Ui$Form$selectField = F6(
 										$elm$html$Html$Attributes$value(key_),
 										$elm$html$Html$Attributes$selected(
 										_Utils_eq(
-											A2(model.aQ, action, key),
+											A2(model.aT, action, key),
 											key_))
 									]),
 								_List_fromArray(
@@ -9552,7 +9789,7 @@ var $author$project$Page$Goals$goalCard = F3(
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class('goal-card'),
-					$elm$html$Html$Attributes$id('goal-' + g.aF.bf),
+					$elm$html$Html$Attributes$id('goal-' + g.aI.bj),
 					$elm$html$Html$Attributes$tabindex(-1)
 				]),
 			_Utils_ap(
@@ -9572,9 +9809,9 @@ var $author$project$Page$Goals$goalCard = F3(
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$class('secondary'),
-										$elm$html$Html$Attributes$disabled(model.Q.aV),
+										$elm$html$Html$Attributes$disabled(model.J.aZ),
 										$elm$html$Html$Events$onClick(
-										model.dz('goal-' + g.aF.bf))
+										model.dI('goal-' + g.aI.bj))
 									]),
 								_List_fromArray(
 									[
@@ -9591,7 +9828,7 @@ var $author$project$Page$Goals$goalCard = F3(
 								$elm$json$Json$Encode$bool(
 									_Utils_eq(
 										model.Z,
-										$elm$core$Maybe$Just(g.aF.bf))))
+										$elm$core$Maybe$Just(g.aI.bj))))
 							]),
 						_List_fromArray(
 							[
@@ -9602,18 +9839,18 @@ var $author$project$Page$Goals$goalCard = F3(
 									[
 										$elm$html$Html$text('책임 · 권한 · 전략 관리')
 									])),
-								$author$project$Ui$Common$note(g.b2.dr),
+								$author$project$Ui$Common$note(g.b5.dw),
 								A4(
 								$author$project$Ui$Form$formView,
-								model.Q,
-								$author$project$Form$Action$Assign(g.aF.bf),
+								model.J,
+								$author$project$Form$Action$Assign(g.aI.bj),
 								'책임자 지정',
 								_List_fromArray(
 									[
 										A6(
 										$author$project$Ui$Form$selectField,
-										model.Q,
-										$author$project$Form$Action$Assign(g.aF.bf),
+										model.J,
+										$author$project$Form$Action$Assign(g.aI.bj),
 										'단일 최종 책임자',
 										'owner',
 										true,
@@ -9632,28 +9869,28 @@ var $author$project$Page$Goals$goalCard = F3(
 										$elm$html$Html$button,
 										_List_fromArray(
 											[
-												$elm$html$Html$Attributes$disabled(model.Q.aV || ((!model.Q.x) || g.b_)),
+												$elm$html$Html$Attributes$disabled(model.J.aZ || ((!model.J.y) || g.aU)),
 												$elm$html$Html$Events$onClick(
-												model.Q.dQ(
-													$author$project$Form$Action$Activate(g.aF.bf)))
+												model.J.d$(
+													$author$project$Form$Action$Activate(g.aI.bj)))
 											]),
 										_List_fromArray(
 											[
 												$elm$html$Html$text(
-												g.b_ ? '활성화됨' : '목표 활성화')
+												g.aU ? '활성화됨' : '목표 활성화')
 											]))
 									])),
 								A4(
 								$author$project$Ui$Form$formView,
-								model.Q,
-								$author$project$Form$Action$Strategy(g.aF.bf),
+								model.J,
+								$author$project$Form$Action$Strategy(g.aI.bj),
 								'전략 변경 기록',
 								_List_fromArray(
 									[
 										A6(
 										$author$project$Ui$Form$inputField,
-										model.Q,
-										$author$project$Form$Action$Strategy(g.aF.bf),
+										model.J,
+										$author$project$Form$Action$Strategy(g.aI.bj),
 										'새로운 전략과 변경 이유',
 										'note',
 										'text',
@@ -9670,7 +9907,7 @@ var $author$project$Page$Goals$goalCard = F3(
 										return $author$project$Ui$Common$note(
 											A2($elm$core$String$left, 10, at) + (' · ' + message));
 									},
-									g.dO))
+									g.dZ))
 							]))
 					])));
 	});
@@ -9786,8 +10023,8 @@ var $author$project$Page$Goals$formInput = F5(
 		return A6(
 			$author$project$Ui$Form$inputValue,
 			$author$project$Form$Goal$fieldName(field),
-			A2($author$project$Form$Goal$value, model.a4, field),
-			model.aC(field),
+			A2($author$project$Form$Goal$value, model.a8, field),
+			model.aF(field),
 			label_,
 			kind,
 			required_);
@@ -9835,8 +10072,8 @@ var $author$project$Page$Goals$formSelect = F5(
 		return A6(
 			$author$project$Ui$Form$selectValue,
 			$author$project$Form$Goal$fieldName(field),
-			A2($author$project$Form$Goal$value, model.a4, field),
-			model.aC(field),
+			A2($author$project$Form$Goal$value, model.a8, field),
+			model.aF(field),
 			label_,
 			required_,
 			options);
@@ -9848,15 +10085,15 @@ var $author$project$Ui$Form$goalOptions = function (w) {
 		A2(
 			$elm$core$List$map,
 			function (g) {
-				return _Utils_Tuple2(g.aF.bf, g.aF.cw);
+				return _Utils_Tuple2(g.aI.bj, g.aI.cA);
 			},
-			w.cP));
+			w.cV));
 };
 var $author$project$Page$Goals$goalForm = F2(
 	function (model, w) {
 		return A4(
 			$author$project$Ui$Form$formView,
-			model.Q,
+			model.J,
 			$author$project$Form$Action$AddGoal,
 			'목표 초안 생성',
 			_List_fromArray(
@@ -9909,11 +10146,11 @@ var $author$project$Page$Goals$goalForm = F2(
 					function (key) {
 						return A2(
 							$author$project$Form$Goal$value,
-							model.a4,
+							model.a8,
 							$author$project$Form$Goal$Permission(key));
 					},
 					function (key) {
-						return model.aC(
+						return model.aF(
 							$author$project$Form$Goal$Permission(key));
 					})
 				]));
@@ -9976,7 +10213,7 @@ var $author$project$Page$Goals$view = F2(
 							[
 								_Utils_Tuple3(
 								'전체 목표',
-								$elm$core$List$length(w.cP),
+								$elm$core$List$length(w.cV),
 								'측정 가능한 결과'),
 								_Utils_Tuple3(
 								'활성 목표',
@@ -9984,11 +10221,11 @@ var $author$project$Page$Goals$view = F2(
 									A2(
 										$elm$core$List$filter,
 										function ($) {
-											return $.b_;
+											return $.aU;
 										},
-										w.cP)),
+										w.cV)),
 								'책임과 권한 검증 완료'),
-								_Utils_Tuple3('구조 진단', w.cl.cE + w.cl.bT, '확인이 필요한 항목'),
+								_Utils_Tuple3('구조 진단', w.co.cJ + w.co.bX, '확인이 필요한 항목'),
 								_Utils_Tuple3(
 								'누적 학습',
 								$elm$core$List$sum(
@@ -9997,10 +10234,10 @@ var $author$project$Page$Goals$view = F2(
 										A2(
 											$elm$core$Basics$composeR,
 											function ($) {
-												return $.cZ;
+												return $.c3;
 											},
 											$elm$core$List$length),
-										w.dC)),
+										w.dL)),
 								'다음 결정의 근거')
 							]))),
 					A2(
@@ -10029,7 +10266,7 @@ var $author$project$Page$Goals$view = F2(
 									$elm$html$Html$text('+ 목표 만들기')
 								]))
 						])),
-					$elm$core$List$isEmpty(w.cP) ? A2($author$project$Ui$Common$emptyState, '어떤 결과를 만들고 싶나요?', '아래에서 측정 가능한 목표를 정의하고 책임자를 연결하세요.') : A2(
+					$elm$core$List$isEmpty(w.cV) ? A2($author$project$Ui$Common$emptyState, '어떤 결과를 만들고 싶나요?', '아래에서 측정 가능한 목표를 정의하고 책임자를 연결하세요.') : A2(
 					$elm$html$Html$div,
 					_List_fromArray(
 						[
@@ -10038,7 +10275,7 @@ var $author$project$Page$Goals$view = F2(
 					A2(
 						$elm$core$List$map,
 						A2($author$project$Page$Goals$goalCard, model, w),
-						w.cP)),
+						w.cV)),
 					A2(
 					$elm$html$Html$details,
 					_List_fromArray(
@@ -10056,43 +10293,6 @@ var $author$project$Page$Goals$view = F2(
 									$elm$html$Html$text('+ 목표 만들기')
 								])),
 							A2($author$project$Page$Goals$goalForm, model, w)
-						])),
-					A2(
-					$elm$html$Html$details,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('panel')
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$summary,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text(
-									'구성원 추가 · 현재 ' + ($elm$core$String$fromInt(
-										$elm$core$List$length(w.$7)) + '명'))
-								])),
-							A4(
-							$author$project$Ui$Form$formView,
-							model.Q,
-							$author$project$Form$Action$AddPerson,
-							'구성원 추가',
-							_List_fromArray(
-								[
-									A2(
-									$elm$html$Html$div,
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$class('fields')
-										]),
-									_List_fromArray(
-										[
-											A6($author$project$Ui$Form$inputField, model.Q, $author$project$Form$Action$AddPerson, '이름', 'name', 'text', true),
-											A6($author$project$Ui$Form$inputField, model.Q, $author$project$Form$Action$AddPerson, '역할', 'role', 'text', true)
-										]))
-								]))
 						])),
 					$author$project$Ui$Common$diagnosticView(w)
 				]));
@@ -10134,8 +10334,8 @@ var $author$project$Page$Learning$formInput = F5(
 		return A6(
 			$author$project$Ui$Form$inputValue,
 			$author$project$Form$Review$fieldName(field),
-			A2($author$project$Form$Review$value, model.a4, field),
-			model.aC(field),
+			A2($author$project$Form$Review$value, model.a8, field),
+			model.aF(field),
 			label_,
 			kind,
 			required_);
@@ -10145,8 +10345,8 @@ var $author$project$Page$Learning$formSelect = F5(
 		return A6(
 			$author$project$Ui$Form$selectValue,
 			$author$project$Form$Review$fieldName(field),
-			A2($author$project$Form$Review$value, model.a4, field),
-			model.aC(field),
+			A2($author$project$Form$Review$value, model.a8, field),
+			model.aF(field),
 			label_,
 			required_,
 			options);
@@ -10161,10 +10361,10 @@ var $author$project$Ui$Label$goalName = F2(
 				A2(
 					$elm$core$Basics$composeR,
 					function ($) {
-						return $.aF;
+						return $.aI;
 					},
 					function ($) {
-						return $.cw;
+						return $.cA;
 					}),
 				$elm$core$List$head(
 					A2(
@@ -10172,15 +10372,15 @@ var $author$project$Ui$Label$goalName = F2(
 						A2(
 							$elm$core$Basics$composeR,
 							function ($) {
-								return $.aF;
+								return $.aI;
 							},
 							A2(
 								$elm$core$Basics$composeR,
 								function ($) {
-									return $.bf;
+									return $.bj;
 								},
 								$elm$core$Basics$eq(key))),
-						w.cP))));
+						w.cV))));
 	});
 var $elm$html$Html$h3 = _VirtualDom_node('h3');
 var $elm$html$Html$textarea = _VirtualDom_node('textarea');
@@ -10210,7 +10410,7 @@ var $author$project$Page$Learning$view = F2(
 								])),
 							A4(
 							$author$project$Ui$Form$formView,
-							model.Q,
+							model.J,
 							$author$project$Form$Action$AddReview,
 							'회고 기록',
 							_List_fromArray(
@@ -10234,9 +10434,9 @@ var $author$project$Page$Learning$view = F2(
 											_List_fromArray(
 												[
 													$elm$html$Html$Attributes$value(
-													A2($author$project$Form$Review$value, model.a4, 2)),
+													A2($author$project$Form$Review$value, model.a8, 2)),
 													$elm$html$Html$Events$onInput(
-													model.aC(2))
+													model.aF(2))
 												]),
 											_List_Nil)
 										])),
@@ -10287,7 +10487,7 @@ var $author$project$Page$Learning$view = F2(
 										_List_fromArray(
 											[
 												$elm$html$Html$text(
-												A2($elm$core$String$left, 10, r.cR) + (' · ' + $author$project$Ui$Label$statusName(r.a6.dL)))
+												A2($elm$core$String$left, 10, r.cX) + (' · ' + $author$project$Ui$Label$statusName(r.ba.dW)))
 											])),
 										A2(
 										$elm$html$Html$h2,
@@ -10298,14 +10498,14 @@ var $author$project$Page$Learning$view = F2(
 										_List_fromArray(
 											[
 												$elm$html$Html$text(
-												A2($author$project$Ui$Label$goalName, w, r.aF))
+												A2($author$project$Ui$Label$goalName, w, r.aI))
 											])),
 										A2(
 										$elm$html$Html$p,
 										_List_Nil,
 										_List_fromArray(
 											[
-												$elm$html$Html$text(r.dh)
+												$elm$html$Html$text(r.dn)
 											])),
 										A2(
 										$elm$html$Html$h3,
@@ -10314,7 +10514,7 @@ var $author$project$Page$Learning$view = F2(
 											[
 												$elm$html$Html$text('학습')
 											])),
-										$elm$core$List$isEmpty(r.cZ) ? $author$project$Ui$Common$note('기록된 학습 없음') : A2(
+										$elm$core$List$isEmpty(r.c3) ? $author$project$Ui$Common$note('기록된 학습 없음') : A2(
 										$elm$html$Html$div,
 										_List_Nil,
 										A2(
@@ -10328,7 +10528,7 @@ var $author$project$Page$Learning$view = F2(
 															$elm$html$Html$text(learning)
 														]));
 											},
-											r.cZ)),
+											r.c3)),
 										A2(
 										$elm$html$Html$h3,
 										_List_Nil,
@@ -10336,7 +10536,7 @@ var $author$project$Page$Learning$view = F2(
 											[
 												$elm$html$Html$text('다음 결정')
 											])),
-										$elm$core$List$isEmpty(r.ct) ? $author$project$Ui$Common$note('기록된 결정 없음') : A2(
+										$elm$core$List$isEmpty(r.cw) ? $author$project$Ui$Common$note('기록된 결정 없음') : A2(
 										$elm$html$Html$div,
 										_List_Nil,
 										A2(
@@ -10347,7 +10547,7 @@ var $author$project$Page$Learning$view = F2(
 													_List_Nil,
 													_List_fromArray(
 														[
-															$elm$html$Html$text(d.dW),
+															$elm$html$Html$text(d.d5),
 															A2($elm$html$Html$br, _List_Nil, _List_Nil),
 															A2(
 															$elm$html$Html$small,
@@ -10355,17 +10555,17 @@ var $author$project$Page$Learning$view = F2(
 															_List_fromArray(
 																[
 																	$elm$html$Html$text(
-																	A2($author$project$Ui$Label$personName, w, d.aK) + (' · ' + A2(
+																	A2($author$project$Ui$Label$personName, w, d.aN) + (' · ' + A2(
 																		$elm$core$Maybe$withDefault,
 																		'기한 미정',
 																		A2(
 																			$elm$core$Maybe$map,
 																			$elm$core$String$left(10),
-																			d.cq))))
+																			d.ct))))
 																]))
 														]));
 											},
-											r.ct)),
+											r.cw)),
 										A2(
 										$elm$html$Html$div,
 										_List_Nil,
@@ -10386,20 +10586,20 @@ var $author$project$Page$Learning$view = F2(
 											A2(
 												$elm$core$List$concatMap,
 												function ($) {
-													return $.bT;
+													return $.bX;
 												},
 												A2(
 													$elm$core$List$filter,
 													A2(
 														$elm$core$Basics$composeR,
 														function ($) {
-															return $.bf;
+															return $.bj;
 														},
-														$elm$core$Basics$eq(r.bf)),
-													w.dB))))
+														$elm$core$Basics$eq(r.bj)),
+													w.dK))))
 									]));
 						},
-						w.dC)),
+						w.dL)),
 					A2(
 					$elm$html$Html$section,
 					_List_fromArray(
@@ -10418,7 +10618,7 @@ var $author$project$Page$Learning$view = F2(
 									$elm$html$Html$text('조직의 의사결정 기록')
 								])),
 							$author$project$Ui$Common$note('서버가 시각과 순번을 부여합니다. 행위자는 요청의 기록 주체이며 인증된 신원 증명이 아닙니다.'),
-							$elm$core$List$isEmpty(w.cH) ? $author$project$Ui$Common$note('아직 기록이 없습니다.') : A2(
+							$elm$core$List$isEmpty(w.cM) ? $author$project$Ui$Common$note('아직 기록이 없습니다.') : A2(
 							$elm$html$Html$div,
 							_List_Nil,
 							A2(
@@ -10438,7 +10638,7 @@ var $author$project$Page$Learning$view = F2(
 												_List_fromArray(
 													[
 														$elm$html$Html$text(
-														'#' + ($elm$core$String$fromInt(event.dH) + (' · ' + event.b4))),
+														'#' + ($elm$core$String$fromInt(event.dS) + (' · ' + event.b7))),
 														A2($elm$html$Html$br, _List_Nil, _List_Nil),
 														$elm$html$Html$text(
 														A2(
@@ -10447,32 +10647,450 @@ var $author$project$Page$Learning$view = F2(
 															A2(
 																$elm$core$Maybe$map,
 																$author$project$Ui$Label$personName(w),
-																event.b$)))
+																event.b2)))
 													])),
 												A2(
 												$elm$html$Html$p,
 												_List_Nil,
 												_List_fromArray(
 													[
-														$elm$html$Html$text(event.cw)
+														$elm$html$Html$text(event.cA)
 													]))
 											]));
 								},
-								w.cH))
+								w.cM))
+						]))
+				]));
+	});
+var $author$project$Form$Action$AddPerson = {$: 3};
+var $elm$html$Html$li = _VirtualDom_node('li');
+var $author$project$Page$People$profileFields = F4(
+	function (forms, w, action, personId) {
+		return _List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('fields')
+					]),
+				_List_fromArray(
+					[
+						A6($author$project$Ui$Form$inputField, forms, action, '이름', 'name', 'text', true),
+						A6($author$project$Ui$Form$inputField, forms, action, '역할', 'role', 'text', true),
+						A6($author$project$Ui$Form$inputField, forms, action, '부서 (선택)', 'department', 'text', false),
+						A6($author$project$Ui$Form$inputField, forms, action, '이메일 (선택)', 'email', 'email', false),
+						A6(
+						$author$project$Ui$Form$selectField,
+						forms,
+						action,
+						'보고 대상 (선택)',
+						'reportsTo',
+						false,
+						A2(
+							$elm$core$List$cons,
+							_Utils_Tuple2('', '없음'),
+							A2(
+								$elm$core$List$map,
+								function (p) {
+									return _Utils_Tuple2(p.bj, p.dd + (' · ' + p.dO));
+								},
+								A2(
+									$elm$core$List$filter,
+									function (p) {
+										return p.aU && (!_Utils_eq(
+											$elm$core$Maybe$Just(p.bj),
+											personId));
+									},
+									w.dt))))
+					]))
+			]);
+	});
+var $elm$html$Html$ul = _VirtualDom_node('ul');
+var $author$project$Page$People$detail = F3(
+	function (model, w, person) {
+		var reports = A2(
+			$elm$core$List$filter,
+			A2(
+				$elm$core$Basics$composeR,
+				function ($) {
+					return $.dE;
+				},
+				$elm$core$Basics$eq(
+					$elm$core$Maybe$Just(person.bj))),
+			w.dt);
+		var goals = A2(
+			$elm$core$List$filter,
+			A2(
+				$elm$core$Basics$composeR,
+				function ($) {
+					return $.aN;
+				},
+				$elm$core$Basics$eq(
+					$elm$core$Maybe$Just(person.bj))),
+			w.cV);
+		var requiresSuccessor = !($elm$core$List$isEmpty(goals) && $elm$core$List$isEmpty(reports));
+		var action = $author$project$Form$Action$DeactivatePerson(person.bj);
+		return A2(
+			$elm$html$Html$section,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('panel'),
+					$elm$html$Html$Attributes$id('person-detail'),
+					$elm$html$Html$Attributes$tabindex(-1)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$h2,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							A2($author$project$Ui$Label$personName, w, person.bj) + ' · 상세')
+						])),
+					$author$project$Ui$Common$note('구성원 ID: ' + person.bj),
+					$author$project$Ui$Common$note(
+					'보고 대상: ' + A2(
+						$elm$core$Maybe$withDefault,
+						'없음',
+						A2(
+							$elm$core$Maybe$map,
+							$author$project$Ui$Label$personName(w),
+							person.dE))),
+					$author$project$Ui$Common$note(
+					'직속 보고자: ' + ($elm$core$List$isEmpty(reports) ? '없음' : A2(
+						$elm$core$String$join,
+						', ',
+						A2(
+							$elm$core$List$map,
+							function (p) {
+								return A2($author$project$Ui$Label$personName, w, p.bj);
+							},
+							reports)))),
+					A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('secondary'),
+							$elm$html$Html$Attributes$disabled(model.J.aZ || (!model.J.y)),
+							$elm$html$Html$Events$onClick(
+							model.dH(person.bj))
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('최신 정보로 다시 불러오기')
+						])),
+					$author$project$Ui$Common$note('다시 불러오면 이 구성원의 저장하지 않은 기본정보와 인계 입력이 초기화됩니다.'),
+					A4(
+					$author$project$Ui$Form$formView,
+					model.J,
+					$author$project$Form$Action$UpdatePerson(person.bj),
+					'기본정보 저장',
+					A4(
+						$author$project$Page$People$profileFields,
+						model.J,
+						w,
+						$author$project$Form$Action$UpdatePerson(person.bj),
+						$elm$core$Maybe$Just(person.bj))),
+					A2(
+					$elm$html$Html$h3,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('담당 목표')
+						])),
+					$elm$core$List$isEmpty(goals) ? $author$project$Ui$Common$note('현재 담당 목표가 없습니다.') : A2(
+					$elm$html$Html$ul,
+					_List_Nil,
+					A2(
+						$elm$core$List$map,
+						function (g) {
+							return A2(
+								$elm$html$Html$li,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text(g.aI.cA)
+									]));
+						},
+						goals)),
+					A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('secondary'),
+							$elm$html$Html$Attributes$disabled(model.J.aZ),
+							$elm$html$Html$Events$onClick(model.cV)
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('목표 관리 →')
+						])),
+					person.aU ? A2(
+					$elm$html$Html$details,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('person-deactivate')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$summary,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('구성원 비활성화 · 업무 인계')
+								])),
+							$author$project$Ui$Common$note(
+							'담당 목표 ' + ($elm$core$String$fromInt(
+								$elm$core$List$length(goals)) + ('개와 직속 보고자 ' + ($elm$core$String$fromInt(
+								$elm$core$List$length(reports)) + '명을 인계합니다. 연결된 업무 또는 보고자가 있으면 후임을 지정해야 합니다.')))),
+							$author$project$Ui$Common$note('인계한 목표는 초안으로 전환됩니다. 후임의 권한과 예산을 확인한 뒤 다시 활성화하세요. 기존 권한은 자동 복사되지 않습니다. 직속 보고자가 후임이면 기존 상위 보고자에게 연결됩니다.'),
+							$author$project$Ui$Common$note('과거 결과·회고·감사 기록은 기존 구성원을 유지합니다. 비활성화 후 신규 배정은 제한됩니다.'),
+							A4(
+							$author$project$Ui$Form$formView,
+							model.J,
+							action,
+							'비활성화 및 인계 확정',
+							_List_fromArray(
+								[
+									A6(
+									$author$project$Ui$Form$selectField,
+									model.J,
+									action,
+									'후임 구성원',
+									'successor',
+									requiresSuccessor,
+									A2(
+										$elm$core$List$cons,
+										_Utils_Tuple2(
+											'',
+											requiresSuccessor ? '후임 선택 (필수)' : '인계 대상 없음'),
+										A2(
+											$elm$core$List$map,
+											function (p) {
+												return _Utils_Tuple2(p.bj, p.dd + (' · ' + p.dO));
+											},
+											A2(
+												$elm$core$List$filter,
+												function (p) {
+													return p.aU && (!_Utils_eq(p.bj, person.bj));
+												},
+												w.dt))))
+								]))
+						])) : $author$project$Ui$Common$note('비활성 구성원입니다. 기본정보를 수정하고 과거 기록을 조회할 수 있으며 새 업무를 배정할 수 없습니다.')
+				]));
+	});
+var $elm$core$String$toLower = _String_toLower;
+var $author$project$Page$People$matches = F3(
+	function (query, status, person) {
+		return ((status === 'all') || (((status === 'active') && person.aU) || ((status === 'inactive') && (!person.aU)))) && A2(
+			$elm$core$String$contains,
+			$elm$core$String$toLower(
+				$elm$core$String$trim(query)),
+			$elm$core$String$toLower(
+				A2(
+					$elm$core$String$join,
+					' ',
+					_List_fromArray(
+						[
+							person.dd,
+							person.dO,
+							A2($elm$core$Maybe$withDefault, '', person.cz),
+							A2($elm$core$Maybe$withDefault, '', person.cI)
+						]))));
+	});
+var $author$project$Page$People$personCard = F3(
+	function (model, w, person) {
+		return A2(
+			$elm$html$Html$article,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('person-card goal-card')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$h3,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text(person.dd)
+						])),
+					A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('tag')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							person.aU ? '재직' : '비활성')
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							person.dO + (' · ' + A2($elm$core$Maybe$withDefault, '부서 미입력', person.cz)))
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('muted')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							A2($elm$core$Maybe$withDefault, '이메일 미입력', person.cI))
+						])),
+					$author$project$Ui$Common$note(
+					'담당 목표 ' + ($elm$core$String$fromInt(
+						$elm$core$List$length(
+							A2(
+								$elm$core$List$filter,
+								A2(
+									$elm$core$Basics$composeR,
+									function ($) {
+										return $.aN;
+									},
+									$elm$core$Basics$eq(
+										$elm$core$Maybe$Just(person.bj))),
+								w.cV))) + '개')),
+					A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('secondary'),
+							$elm$html$Html$Attributes$disabled(model.J.aZ),
+							$elm$html$Html$Events$onClick(
+							model.bw(person.bj))
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('상세 · 수정')
+						]))
+				]));
+	});
+var $author$project$Page$People$view = F2(
+	function (model, w) {
+		var selected = $elm$core$List$head(
+			A2(
+				$elm$core$List$filter,
+				function (p) {
+					return _Utils_eq(
+						$elm$core$Maybe$Just(p.bj),
+						model.dQ);
+				},
+				w.dt));
+		var people = A2(
+			$elm$core$List$filter,
+			A2($author$project$Page$People$matches, model.dy, model.dW),
+			w.dt);
+		return A2(
+			$elm$html$Html$div,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					$author$project$Ui$Common$panel,
+					'구성원 관리',
+					_List_fromArray(
+						[
+							$author$project$Ui$Common$note('구성원의 기본정보와 보고 관계를 관리합니다. 비활성화하면 새 업무 배정에서 제외되며 과거 기록은 보존됩니다.'),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('fields')
+								]),
+							_List_fromArray(
+								[
+									A6($author$project$Ui$Form$inputValue, 'people-search', model.dy, model.dP, '이름 · 역할 · 부서 · 이메일 검색', 'search', false),
+									A6(
+									$author$project$Ui$Form$selectValue,
+									'people-status',
+									model.dW,
+									model.cR,
+									'재직 상태',
+									true,
+									_List_fromArray(
+										[
+											_Utils_Tuple2('active', '재직'),
+											_Utils_Tuple2('inactive', '비활성'),
+											_Utils_Tuple2('all', '전체')
+										]))
+								])),
+							A2(
+							$elm$html$Html$p,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text(
+									'검색 결과 ' + ($elm$core$String$fromInt(
+										$elm$core$List$length(people)) + ('명 / 전체 ' + ($elm$core$String$fromInt(
+										$elm$core$List$length(w.dt)) + '명'))))
+								])),
+							$elm$core$List$isEmpty(people) ? A2($author$project$Ui$Common$emptyState, '표시할 구성원이 없습니다', '아래에서 구성원을 등록하거나 검색어와 재직 상태 필터를 변경하세요.') : A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('grid')
+								]),
+							A2(
+								$elm$core$List$map,
+								A2($author$project$Page$People$personCard, model, w),
+								people))
+						])),
+					function () {
+					if (!selected.$) {
+						var person = selected.a;
+						return A3($author$project$Page$People$detail, model, w, person);
+					} else {
+						return $author$project$Ui$Common$note('목록에서 ‘상세 · 수정’을 눌러 구성원 정보와 담당 목표를 확인하세요.');
+					}
+				}(),
+					A2(
+					$elm$html$Html$section,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('panel'),
+							$elm$html$Html$Attributes$id('new-person'),
+							$elm$html$Html$Attributes$tabindex(-1)
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$h2,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('구성원 등록')
+								])),
+							A4(
+							$author$project$Ui$Form$formView,
+							model.J,
+							$author$project$Form$Action$AddPerson,
+							'구성원 등록',
+							A4($author$project$Page$People$profileFields, model.J, w, $author$project$Form$Action$AddPerson, $elm$core$Maybe$Nothing))
 						]))
 				]));
 	});
 var $elm$html$Html$b = _VirtualDom_node('b');
 var $author$project$Page$Responsibility$nodeName = F2(
 	function (w, node) {
-		var _v0 = node.dT;
+		var _v0 = node.d2;
 		switch (_v0) {
 			case 'PersonNode':
-				return A2($author$project$Ui$Label$personName, w, node.cn);
+				return A2($author$project$Ui$Label$personName, w, node.cq);
 			case 'GoalNode':
-				return A2($author$project$Ui$Label$goalName, w, node.cn);
+				return A2($author$project$Ui$Label$goalName, w, node.cq);
 			default:
-				return node.cn;
+				return node.cq;
 		}
 	});
 var $author$project$Ui$Label$permissionName = function (key) {
@@ -10555,7 +11173,7 @@ var $author$project$Page$Responsibility$view = F2(
 														$elm$html$Html$tr,
 														_List_fromArray(
 															[
-																$elm$html$Html$Attributes$id('owner-' + g.aF.bf),
+																$elm$html$Html$Attributes$id('owner-' + g.aI.bj),
 																$elm$html$Html$Attributes$tabindex(-1)
 															]),
 														_List_fromArray(
@@ -10570,9 +11188,9 @@ var $author$project$Page$Responsibility$view = F2(
 																		_List_Nil,
 																		_List_fromArray(
 																			[
-																				$elm$html$Html$text(g.aF.cw)
+																				$elm$html$Html$text(g.aI.cA)
 																			])),
-																		$elm$html$Html$text(g.aF.c2.c7)
+																		$elm$html$Html$text(g.aI.c8.dd)
 																	])),
 																A2(
 																$elm$html$Html$td,
@@ -10581,15 +11199,15 @@ var $author$project$Page$Responsibility$view = F2(
 																	[
 																		A4(
 																		$author$project$Ui$Form$formView,
-																		model.Q,
-																		$author$project$Form$Action$Assign(g.aF.bf),
+																		model.J,
+																		$author$project$Form$Action$Assign(g.aI.bj),
 																		'책임자 지정',
 																		_List_fromArray(
 																			[
 																				A6(
 																				$author$project$Ui$Form$selectField,
-																				model.Q,
-																				$author$project$Form$Action$Assign(g.aF.bf),
+																				model.J,
+																				$author$project$Form$Action$Assign(g.aI.bj),
 																				'책임자',
 																				'owner',
 																				true,
@@ -10602,7 +11220,7 @@ var $author$project$Page$Responsibility$view = F2(
 																_List_fromArray(
 																	[
 																		$elm$html$Html$text(
-																		$author$project$Ui$Label$formatNumber(g.aF.dV) + (' ' + g.aF.c2.d0))
+																		$author$project$Ui$Label$formatNumber(g.aI.d4) + (' ' + g.aI.c8.eb))
 																	])),
 																A2(
 																$elm$html$Html$td,
@@ -10613,10 +11231,10 @@ var $author$project$Page$Responsibility$view = F2(
 																		A2(
 																			$elm$core$String$join,
 																			' · ',
-																			A2($elm$core$List$map, $author$project$Ui$Label$permissionName, g.aF.dy))),
+																			A2($elm$core$List$map, $author$project$Ui$Label$permissionName, g.aI.dG))),
 																		$author$project$Ui$Common$note(
-																		'예산 ' + ($author$project$Ui$Label$formatNumber(g.aF.dx) + ('원 · ' + ($elm$core$String$fromInt(
-																			$elm$core$Basics$round(g.b2.co * 100)) + '% 통제'))))
+																		'예산 ' + ($author$project$Ui$Label$formatNumber(g.aI.dF) + ('원 · ' + ($elm$core$String$fromInt(
+																			$elm$core$Basics$round(g.b5.cr * 100)) + '% 통제'))))
 																	])),
 																A2(
 																$elm$html$Html$td,
@@ -10627,7 +11245,7 @@ var $author$project$Page$Responsibility$view = F2(
 																	]))
 															]));
 												},
-												w.cP))
+												w.cV))
 										]))
 								]))
 						])),
@@ -10649,7 +11267,7 @@ var $author$project$Page$Responsibility$view = F2(
 									$elm$html$Html$text('책임 관계 그래프')
 								])),
 							$author$project$Ui$Common$note('사람 → 목표 → 지표. 목표 간 의존 관계와 자원 통제를 연결합니다.'),
-							$elm$core$List$isEmpty(w.cC) ? $author$project$Ui$Common$note('책임자와 목표를 연결하면 그래프가 만들어집니다.') : A2(
+							$elm$core$List$isEmpty(w.cG) ? $author$project$Ui$Common$note('책임자와 목표를 연결하면 그래프가 만들어집니다.') : A2(
 							$elm$html$Html$div,
 							_List_Nil,
 							A2(
@@ -10669,14 +11287,14 @@ var $author$project$Page$Responsibility$view = F2(
 												_List_fromArray(
 													[
 														$elm$html$Html$text(
-														A2($author$project$Page$Responsibility$nodeName, w, edge.cM))
+														A2($author$project$Page$Responsibility$nodeName, w, edge.cS))
 													])),
 												A2(
 												$elm$html$Html$b,
 												_List_Nil,
 												_List_fromArray(
 													[
-														$elm$html$Html$text('─ ' + (edge.cX + ' →'))
+														$elm$html$Html$text('─ ' + (edge.c1 + ' →'))
 													])),
 												A2(
 												$elm$html$Html$span,
@@ -10684,20 +11302,20 @@ var $author$project$Page$Responsibility$view = F2(
 												_List_fromArray(
 													[
 														$elm$html$Html$text(
-														A2($author$project$Page$Responsibility$nodeName, w, edge.dY))
+														A2($author$project$Page$Responsibility$nodeName, w, edge.d7))
 													]))
 											]));
 								},
-								w.cC))
+								w.cG))
 						])),
 					$author$project$Ui$Common$diagnosticView(w)
 				]));
 	});
 var $author$project$Form$Action$Evaluate = function (a) {
-	return {$: 11, a: a};
+	return {$: 13, a: a};
 };
 var $author$project$Form$Action$Report = function (a) {
-	return {$: 7, a: a};
+	return {$: 9, a: a};
 };
 var $author$project$Page$Results$resultCard = F3(
 	function (model, w, g) {
@@ -10706,14 +11324,14 @@ var $author$project$Page$Results$resultCard = F3(
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class('goal-card'),
-					$elm$html$Html$Attributes$id('goal-' + g.aF.bf),
+					$elm$html$Html$Attributes$id('goal-' + g.aI.bj),
 					$elm$html$Html$Attributes$tabindex(-1)
 				]),
 			_Utils_ap(
 				A2($author$project$Ui$Common$goalSummary, w, g),
 				_List_fromArray(
 					[
-						$author$project$Ui$Common$note(g.b2.dr),
+						$author$project$Ui$Common$note(g.b5.dw),
 						A2(
 						$elm$html$Html$h3,
 						_List_fromArray(
@@ -10726,8 +11344,8 @@ var $author$project$Page$Results$resultCard = F3(
 							])),
 						A4(
 						$author$project$Ui$Form$formView,
-						model.Q,
-						$author$project$Form$Action$Report(g.aF.bf),
+						model.J,
+						$author$project$Form$Action$Report(g.aI.bj),
 						'결과 보고',
 						_List_fromArray(
 							[
@@ -10741,16 +11359,16 @@ var $author$project$Page$Results$resultCard = F3(
 									[
 										A6(
 										$author$project$Ui$Form$inputField,
-										model.Q,
-										$author$project$Form$Action$Report(g.aF.bf),
+										model.J,
+										$author$project$Form$Action$Report(g.aI.bj),
 										'실측값',
 										'value',
 										'number',
 										true),
 										A6(
 										$author$project$Ui$Form$selectField,
-										model.Q,
-										$author$project$Form$Action$Report(g.aF.bf),
+										model.J,
+										$author$project$Form$Action$Report(g.aI.bj),
 										'보고자',
 										'reportedBy',
 										true,
@@ -10758,14 +11376,14 @@ var $author$project$Page$Results$resultCard = F3(
 									])),
 								A6(
 								$author$project$Ui$Form$inputField,
-								model.Q,
-								$author$project$Form$Action$Report(g.aF.bf),
+								model.J,
+								$author$project$Form$Action$Report(g.aI.bj),
 								'결과 설명',
 								'note',
 								'text',
 								true)
 							])),
-						$elm$core$List$isEmpty(g.dz) ? $author$project$Ui$Common$note('아직 결과가 없습니다.') : A2(
+						$elm$core$List$isEmpty(g.dI) ? $author$project$Ui$Common$note('아직 결과가 없습니다.') : A2(
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
@@ -10817,6 +11435,13 @@ var $author$project$Page$Results$resultCard = F3(
 														_List_Nil,
 														_List_fromArray(
 															[
+																$elm$html$Html$text('보고자')
+															])),
+														A2(
+														$elm$html$Html$th,
+														_List_Nil,
+														_List_fromArray(
+															[
 																$elm$html$Html$text('설명')
 															]))
 													]))
@@ -10837,7 +11462,7 @@ var $author$project$Page$Results$resultCard = F3(
 															_List_Nil,
 															_List_fromArray(
 																[
-																	$elm$html$Html$text(r.dw)
+																	$elm$html$Html$text(r.dC)
 																])),
 															A2(
 															$elm$html$Html$td,
@@ -10845,18 +11470,32 @@ var $author$project$Page$Results$resultCard = F3(
 															_List_fromArray(
 																[
 																	$elm$html$Html$text(
-																	$author$project$Ui$Label$formatNumber(r.aQ))
+																	$author$project$Ui$Label$formatNumber(r.aT))
 																])),
 															A2(
 															$elm$html$Html$td,
 															_List_Nil,
 															_List_fromArray(
 																[
-																	$elm$html$Html$text(r.dh)
+																	$elm$html$Html$text(
+																	A2(
+																		$elm$core$Maybe$withDefault,
+																		'미기록',
+																		A2(
+																			$elm$core$Maybe$map,
+																			$author$project$Ui$Label$personName(w),
+																			r.dD)))
+																])),
+															A2(
+															$elm$html$Html$td,
+															_List_Nil,
+															_List_fromArray(
+																[
+																	$elm$html$Html$text(r.dn)
 																]))
 														]));
 											},
-											g.dz))
+											g.dI))
 									]))
 							])),
 						A2(
@@ -10872,10 +11511,10 @@ var $author$project$Page$Results$resultCard = F3(
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$class('secondary'),
-										$elm$html$Html$Attributes$disabled(model.Q.aV || (!model.Q.x)),
+										$elm$html$Html$Attributes$disabled(model.J.aZ || (!model.J.y)),
 										$elm$html$Html$Events$onClick(
-										model.Q.dQ(
-											$author$project$Form$Action$Evaluate(g.aF.bf)))
+										model.J.d$(
+											$author$project$Form$Action$Evaluate(g.aI.bj)))
 									]),
 								_List_fromArray(
 									[
@@ -10886,9 +11525,9 @@ var $author$project$Page$Results$resultCard = F3(
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$class('secondary'),
-										$elm$html$Html$Attributes$disabled(model.Q.aV),
+										$elm$html$Html$Attributes$disabled(model.J.aZ),
 										$elm$html$Html$Events$onClick(
-										model.cP('goal-' + g.aF.bf))
+										model.cV('goal-' + g.aI.bj))
 									]),
 								_List_fromArray(
 									[
@@ -10921,7 +11560,7 @@ var $author$project$Page$Results$view = F2(
 								]))
 						])),
 					$author$project$Ui$Common$note('실측값을 보고하고 현재 성과를 평가하세요. 결과 이력은 다음 학습의 근거가 됩니다.'),
-					$elm$core$List$isEmpty(w.cP) ? A2($author$project$Ui$Common$emptyState, '아직 측정할 목표가 없습니다', '목표 메뉴에서 목표를 만든 뒤 결과를 기록하세요.') : A2(
+					$elm$core$List$isEmpty(w.cV) ? A2($author$project$Ui$Common$emptyState, '아직 측정할 목표가 없습니다', '목표 메뉴에서 목표를 만든 뒤 결과를 기록하세요.') : A2(
 					$elm$html$Html$div,
 					_List_fromArray(
 						[
@@ -10930,7 +11569,7 @@ var $author$project$Page$Results$view = F2(
 					A2(
 						$elm$core$List$map,
 						A2($author$project$Page$Results$resultCard, model, w),
-						w.cP))
+						w.cV))
 				]));
 	});
 var $author$project$Form$Action$Rename = {$: 2};
@@ -10946,7 +11585,7 @@ var $author$project$Page$Settings$view = F2(
 				[
 					A2(
 					$author$project$Ui$Common$panel,
-					w.bs.c7,
+					w.bx.dd,
 					_List_fromArray(
 						[
 							A2(
@@ -10969,7 +11608,7 @@ var $author$project$Page$Settings$view = F2(
 									_List_Nil,
 									_List_fromArray(
 										[
-											$elm$html$Html$text(w.bs.bf)
+											$elm$html$Html$text(w.bx.bj)
 										])),
 									A2(
 									$elm$html$Html$dt,
@@ -10984,7 +11623,7 @@ var $author$project$Page$Settings$view = F2(
 									_List_fromArray(
 										[
 											$elm$html$Html$text(
-											A2($elm$core$String$left, 10, w.bs.cp))
+											A2($elm$core$String$left, 10, w.bx.cs))
 										])),
 									A2(
 									$elm$html$Html$dt,
@@ -11000,7 +11639,7 @@ var $author$project$Page$Settings$view = F2(
 										[
 											$elm$html$Html$text(
 											$elm$core$String$fromInt(
-												$elm$core$List$length(w.$7)) + '명')
+												$elm$core$List$length(w.dt)) + '명')
 										])),
 									A2(
 									$elm$html$Html$dt,
@@ -11016,15 +11655,15 @@ var $author$project$Page$Settings$view = F2(
 										[
 											$elm$html$Html$text(
 											$elm$core$String$fromInt(
-												$elm$core$List$length(w.cP)) + '개')
+												$elm$core$List$length(w.cV)) + '개')
 										]))
 								])),
 							A2(
 							$elm$html$Html$button,
 							_List_fromArray(
 								[
-									$elm$html$Html$Attributes$disabled(model.Q.aV),
-									$elm$html$Html$Events$onClick(model.cP)
+									$elm$html$Html$Attributes$disabled(model.J.aZ),
+									$elm$html$Html$Events$onClick(model.cV)
 								]),
 							_List_fromArray(
 								[
@@ -11038,12 +11677,12 @@ var $author$project$Page$Settings$view = F2(
 						[
 							A4(
 							$author$project$Ui$Form$formView,
-							model.Q,
+							model.J,
 							$author$project$Form$Action$Rename,
 							'이름 저장',
 							_List_fromArray(
 								[
-									A6($author$project$Ui$Form$inputField, model.Q, $author$project$Form$Action$Rename, '조직 이름', 'name', 'text', true),
+									A6($author$project$Ui$Form$inputField, model.J, $author$project$Form$Action$Rename, '조직 이름', 'name', 'text', true),
 									$author$project$Ui$Common$note('구성원과 목표, 기존 기록을 유지합니다. 다른 변경과 충돌하면 최신 상태를 확인한 뒤 다시 저장하세요.')
 								]))
 						])),
@@ -11071,15 +11710,15 @@ var $author$project$Page$Settings$view = F2(
 								])),
 							$author$project$Ui$Common$note('논리 삭제입니다. 원본 감사 이벤트는 파일·DB에 보존되며 완전히 지워지지 않습니다. 다른 조직은 삭제되지 않습니다.'),
 							function () {
-							var _v0 = model.a1;
+							var _v0 = model.a5;
 							if (_v0.$ === 1) {
 								return A2(
 									$elm$html$Html$button,
 									_List_fromArray(
 										[
 											$elm$html$Html$Attributes$class('danger-outline'),
-											$elm$html$Html$Attributes$disabled(model.Q.aV || (!model.Q.x)),
-											$elm$html$Html$Events$onClick(model.dl)
+											$elm$html$Html$Attributes$disabled(model.J.aZ || (!model.J.y)),
+											$elm$html$Html$Events$onClick(model.dq)
 										]),
 									_List_fromArray(
 										[
@@ -11092,14 +11731,14 @@ var $author$project$Page$Settings$view = F2(
 									_List_fromArray(
 										[
 											$elm$html$Html$Events$onSubmit(
-											model.Q.dQ($author$project$Form$Action$DeleteOrg)),
+											model.J.d$($author$project$Form$Action$DeleteOrg)),
 											A2(
 											$elm$html$Html$Events$preventDefaultOn,
 											'keydown',
 											A2(
 												$elm$json$Json$Decode$map,
 												function (key) {
-													return (key === 'Escape') ? _Utils_Tuple2(model.cj, true) : _Utils_Tuple2(model.c9, false);
+													return (key === 'Escape') ? _Utils_Tuple2(model.cm, true) : _Utils_Tuple2(model.df, false);
 												},
 												A2($elm$json$Json$Decode$field, 'key', $elm$json$Json$Decode$string))),
 											$elm$html$Html$Attributes$class('delete-confirmation'),
@@ -11115,13 +11754,13 @@ var $author$project$Page$Settings$view = F2(
 												]),
 											_List_fromArray(
 												[
-													$elm$html$Html$text(snapshot.c7 + ' 조직을 삭제할까요?')
+													$elm$html$Html$text(snapshot.dd + ' 조직을 삭제할까요?')
 												])),
 											A2(
 											$elm$html$Html$fieldset,
 											_List_fromArray(
 												[
-													$elm$html$Html$Attributes$disabled(model.Q.aV)
+													$elm$html$Html$Attributes$disabled(model.J.aZ)
 												]),
 											_List_fromArray(
 												[
@@ -11136,8 +11775,8 @@ var $author$project$Page$Settings$view = F2(
 															_List_fromArray(
 																[
 																	$elm$html$Html$Attributes$id('delete-confirm'),
-																	$elm$html$Html$Attributes$value(snapshot.aX),
-																	$elm$html$Html$Events$onInput(model.cm),
+																	$elm$html$Html$Attributes$value(snapshot.a$),
+																	$elm$html$Html$Events$onInput(model.cp),
 																	$elm$html$Html$Attributes$autocomplete(false),
 																	$elm$html$Html$Attributes$required(true)
 																]),
@@ -11157,7 +11796,7 @@ var $author$project$Page$Settings$view = F2(
 																[
 																	$elm$html$Html$Attributes$type_('button'),
 																	$elm$html$Html$Attributes$class('secondary'),
-																	$elm$html$Html$Events$onClick(model.cj)
+																	$elm$html$Html$Events$onClick(model.cm)
 																]),
 															_List_fromArray(
 																[
@@ -11170,12 +11809,12 @@ var $author$project$Page$Settings$view = F2(
 																	$elm$html$Html$Attributes$type_('submit'),
 																	$elm$html$Html$Attributes$class('danger'),
 																	$elm$html$Html$Attributes$disabled(
-																	(!_Utils_eq(snapshot.aX, snapshot.c7)) || (!model.Q.x))
+																	(!_Utils_eq(snapshot.a$, snapshot.dd)) || (!model.J.y))
 																]),
 															_List_fromArray(
 																[
 																	$elm$html$Html$text(
-																	model.Q.aV ? '삭제 중…' : '조직 삭제')
+																	model.J.aZ ? '삭제 중…' : '조직 삭제')
 																]))
 														]))
 												]))
@@ -11187,21 +11826,21 @@ var $author$project$Page$Settings$view = F2(
 	});
 var $author$project$Ui$Guide$GuideStep = F5(
 	function (done, title, instruction, page, target) {
-		return {ak: done, bh: instruction, y: page, dV: target, bP: title};
+		return {ak: done, bl: instruction, z: page, d4: target, bT: title};
 	});
 var $author$project$Ui$Guide$view = F2(
 	function (model, w) {
 		var reviewed = A2(
 			$elm$core$List$any,
 			function (r) {
-				return (r.aF === 'demo-revenue') && ((r.a6.dL === 4) && ((!$elm$core$List$isEmpty(r.cZ)) && A2(
+				return (r.aI === 'demo-revenue') && ((r.ba.dW === 4) && ((!$elm$core$List$isEmpty(r.c3)) && A2(
 					$elm$core$List$any,
 					function (d) {
-						return (d.aK !== '') && (!_Utils_eq(d.cq, $elm$core$Maybe$Nothing));
+						return (d.aN !== '') && (!_Utils_eq(d.ct, $elm$core$Maybe$Nothing));
 					},
-					r.ct)));
+					r.cw)));
 			},
-			w.dC);
+			w.dL);
 		var goal = function (key) {
 			return $elm$core$List$head(
 				A2(
@@ -11209,15 +11848,15 @@ var $author$project$Ui$Guide$view = F2(
 					A2(
 						$elm$core$Basics$composeR,
 						function ($) {
-							return $.aF;
+							return $.aI;
 						},
 						A2(
 							$elm$core$Basics$composeR,
 							function ($) {
-								return $.bf;
+								return $.bj;
 							},
 							$elm$core$Basics$eq('demo-' + key))),
-					w.cP));
+					w.cV));
 		};
 		var ready = A2(
 			$elm$core$Maybe$withDefault,
@@ -11227,12 +11866,12 @@ var $author$project$Ui$Guide$view = F2(
 				A2(
 					$elm$core$Basics$composeR,
 					function ($) {
-						return $.b2;
+						return $.b5;
 					},
 					A2(
 						$elm$core$Basics$composeR,
 						function ($) {
-							return $.co;
+							return $.cr;
 						},
 						$elm$core$Basics$eq(1))),
 				goal('launch')));
@@ -11240,18 +11879,18 @@ var $author$project$Ui$Guide$view = F2(
 			$elm$core$List$any,
 			function (e) {
 				return _Utils_eq(
-					e.cF,
+					e.cK,
 					$elm$core$Maybe$Just('demo-revenue')) && _Utils_eq(
-					e.cG,
+					e.cL,
 					$elm$core$Maybe$Just(4));
 			},
-			w.cH);
+			w.cM);
 		var assigned = !_Utils_eq(
 			$elm$core$Maybe$Nothing,
 			A2(
 				$elm$core$Maybe$andThen,
 				function ($) {
-					return $.aK;
+					return $.aN;
 				},
 				goal('partners')));
 		var active = function (key) {
@@ -11261,7 +11900,7 @@ var $author$project$Ui$Guide$view = F2(
 				A2(
 					$elm$core$Maybe$map,
 					function ($) {
-						return $.b_;
+						return $.aU;
 					},
 					goal(key)));
 		};
@@ -11273,12 +11912,12 @@ var $author$project$Ui$Guide$view = F2(
 				A2(
 					$elm$core$Basics$composeR,
 					function ($) {
-						return $.a6;
+						return $.ba;
 					},
 					A2(
 						$elm$core$Basics$composeR,
 						function ($) {
-							return $.dL;
+							return $.dW;
 						},
 						$elm$core$Basics$eq(4))),
 				goal('revenue')));
@@ -11289,17 +11928,17 @@ var $author$project$Ui$Guide$view = F2(
 				active('partners'),
 				'01 · 빈 책임 자리 채우기',
 				'파트너십 목표에 계약 권한을 가진 한유진을 최종 책임자로 지정하고 활성화하세요.',
-				assigned ? 1 : 2,
+				assigned ? 2 : 3,
 				assigned ? 'goal-demo-partners' : 'owner-demo-partners'),
 				A5(
 				$author$project$Ui$Guide$GuideStep,
 				active('launch'),
 				'02 · 책임에 맞는 권한 주기',
 				'이지원에게 채용 권한과 예산 30,000,000원을 부여하세요. 제품 출시 권한을 유지하고 신제품 출시 목표를 활성화하세요.',
-				ready ? 1 : 3,
+				ready ? 2 : 4,
 				ready ? 'goal-demo-launch' : 'authority-demo-product'),
-				A5($author$project$Ui$Guide$GuideStep, achieved && evaluated, '03 · 결과에서 평가까지', '매출 실측값 50 (단위: 억원)과 보고자, 설명을 보고한 뒤 평가 기록을 누르세요.', 4, 'goal-demo-revenue'),
-				A5($author$project$Ui$Guide$GuideStep, reviewed, '04 · 배움을 다음 결정으로', '매출 목표의 학습과 다음 결정, 담당자, 미래 기한을 기록하세요. 달성 결과와 평가가 함께 보존됩니다.', 5, 'review-form')
+				A5($author$project$Ui$Guide$GuideStep, achieved && evaluated, '03 · 결과에서 평가까지', '매출 실측값 50 (단위: 억원)과 보고자, 설명을 보고한 뒤 평가 기록을 누르세요.', 5, 'goal-demo-revenue'),
+				A5($author$project$Ui$Guide$GuideStep, reviewed, '04 · 배움을 다음 결정으로', '매출 목표의 학습과 다음 결정, 담당자, 미래 기한을 기록하세요. 달성 결과와 평가가 함께 보존됩니다.', 6, 'review-form')
 			]);
 		var count = $elm$core$List$length(
 			A2(
@@ -11371,7 +12010,7 @@ var $author$project$Ui$Guide$view = F2(
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$class('guide-toggle secondary'),
-							$elm$html$Html$Events$onClick(model.dZ),
+							$elm$html$Html$Events$onClick(model.d8),
 							A2(
 							$elm$html$Html$Attributes$attribute,
 							'aria-expanded',
@@ -11425,23 +12064,23 @@ var $author$project$Ui$Guide$view = F2(
 												_List_Nil,
 												_List_fromArray(
 													[
-														$elm$html$Html$text(step_.bP)
+														$elm$html$Html$text(step_.bT)
 													])),
 												A2(
 												$elm$html$Html$p,
 												_List_Nil,
 												_List_fromArray(
 													[
-														$elm$html$Html$text(step_.bh)
+														$elm$html$Html$text(step_.bl)
 													])),
 												A2(
 												$elm$html$Html$button,
 												_List_fromArray(
 													[
 														$elm$html$Html$Attributes$class('secondary'),
-														$elm$html$Html$Attributes$disabled(model.aV),
+														$elm$html$Html$Attributes$disabled(model.aZ),
 														$elm$html$Html$Events$onClick(
-														A2(model.cN, step_.y, step_.dV))
+														A2(model.cT, step_.z, step_.d4))
 													]),
 												_List_fromArray(
 													[
@@ -11465,9 +12104,22 @@ var $author$project$Ui$Guide$view = F2(
 									_List_fromArray(
 										[
 											$elm$html$Html$Attributes$class('secondary'),
-											$elm$html$Html$Attributes$disabled(model.aV),
+											$elm$html$Html$Attributes$disabled(model.aZ),
 											$elm$html$Html$Events$onClick(
-											A2(model.cN, 2, 'responsibility-graph'))
+											A2(model.cT, 1, 'new-person'))
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('구성원 관리 →')
+										])),
+									A2(
+									$elm$html$Html$button,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('secondary'),
+											$elm$html$Html$Attributes$disabled(model.aZ),
+											$elm$html$Html$Events$onClick(
+											A2(model.cT, 3, 'responsibility-graph'))
 										]),
 									_List_fromArray(
 										[
@@ -11478,9 +12130,9 @@ var $author$project$Ui$Guide$view = F2(
 									_List_fromArray(
 										[
 											$elm$html$Html$Attributes$class('secondary'),
-											$elm$html$Html$Attributes$disabled(model.aV),
+											$elm$html$Html$Attributes$disabled(model.aZ),
 											$elm$html$Html$Events$onClick(
-											A2(model.cN, 5, 'audit-history'))
+											A2(model.cT, 6, 'audit-history'))
 										]),
 									_List_fromArray(
 										[
@@ -11493,78 +12145,93 @@ var $author$project$Ui$Guide$view = F2(
 var $author$project$Main$workspaceView = function (model) {
 	return A2(
 		$author$project$Remote$view,
-		model.bW,
+		model.b_,
 		function (w) {
 			return A2(
 				$elm$html$Html$div,
 				_List_Nil,
 				_List_fromArray(
 					[
-						(w.a2 && (model.y !== 6)) ? A2(
+						(w.a6 && (model.z !== 7)) ? A2(
 						$author$project$Ui$Guide$view,
 						{
-							aV: $author$project$Main$busy(model),
-							cN: $author$project$Main$Guide,
+							aZ: $author$project$Main$busy(model),
+							cT: $author$project$Main$Guide,
 							ac: model.ac,
-							dZ: $author$project$Main$ToggleGuide
+							d8: $author$project$Main$ToggleGuide
 						},
 						w) : $elm$html$Html$text(''),
 						function () {
-						var _v0 = model.y;
+						var _v0 = model.z;
 						switch (_v0) {
 							case 1:
 								return A2(
-									$author$project$Page$Goals$view,
+									$author$project$Page$People$view,
 									{
-										a4: $author$project$Main$goalDraft(model),
-										aC: $author$project$Main$EditGoal,
-										Z: model.Z,
-										Q: $author$project$Main$formConfig(model),
-										dz: $author$project$Main$Guide(4)
+										cR: $author$project$Main$FilterPeople,
+										J: $author$project$Main$formConfig(model),
+										cV: A2($author$project$Main$Navigate, 2, model.ay),
+										bw: $author$project$Main$OpenPerson,
+										dy: model.ao,
+										dH: $author$project$Main$ResetPerson,
+										dP: $author$project$Main$SearchPeople,
+										dQ: model.aq,
+										dW: model.ap
 									},
 									w);
 							case 2:
 								return A2(
-									$author$project$Page$Responsibility$view,
+									$author$project$Page$Goals$view,
 									{
-										Q: $author$project$Main$formConfig(model)
+										a8: $author$project$Main$goalDraft(model),
+										aF: $author$project$Main$EditGoal,
+										Z: model.Z,
+										J: $author$project$Main$formConfig(model),
+										dI: $author$project$Main$Guide(5)
 									},
 									w);
 							case 3:
 								return A2(
-									$author$project$Page$Authorities$view,
+									$author$project$Page$Responsibility$view,
 									{
-										Q: $author$project$Main$formConfig(model)
+										J: $author$project$Main$formConfig(model)
 									},
 									w);
 							case 4:
 								return A2(
-									$author$project$Page$Results$view,
+									$author$project$Page$Authorities$view,
 									{
-										Q: $author$project$Main$formConfig(model),
-										cP: $author$project$Main$Guide(1)
+										J: $author$project$Main$formConfig(model)
 									},
 									w);
 							case 5:
 								return A2(
-									$author$project$Page$Learning$view,
+									$author$project$Page$Results$view,
 									{
-										a4: $author$project$Main$reviewDraft(model),
-										aC: $author$project$Main$EditReview,
-										Q: $author$project$Main$formConfig(model)
+										J: $author$project$Main$formConfig(model),
+										cV: $author$project$Main$Guide(2)
 									},
 									w);
 							case 6:
 								return A2(
+									$author$project$Page$Learning$view,
+									{
+										a8: $author$project$Main$reviewDraft(model),
+										aF: $author$project$Main$EditReview,
+										J: $author$project$Main$formConfig(model)
+									},
+									w);
+							case 7:
+								return A2(
 									$author$project$Page$Settings$view,
 									{
-										cj: $author$project$Main$CloseDelete,
-										cm: $author$project$Main$ConfirmDelete,
-										a1: model.a1,
-										Q: $author$project$Main$formConfig(model),
-										cP: A2($author$project$Main$Navigate, 1, model.au),
-										c9: $author$project$Main$NoOp,
-										dl: $author$project$Main$OpenDelete
+										cm: $author$project$Main$CloseDelete,
+										cp: $author$project$Main$ConfirmDelete,
+										a5: model.a5,
+										J: $author$project$Main$formConfig(model),
+										cV: A2($author$project$Main$Navigate, 2, model.ay),
+										df: $author$project$Main$NoOp,
+										dq: $author$project$Main$OpenDelete
 									},
 									w);
 							default:
@@ -11631,10 +12298,10 @@ var $author$project$Main$view = function (model) {
 							[
 								$elm$html$Html$text(
 								function () {
-									var _v0 = model.bW;
+									var _v0 = model.b_;
 									if (_v0.$ === 1) {
 										var w = _v0.a;
-										return w.bs.c7;
+										return w.bx.dd;
 									} else {
 										return '조직 워크스페이스';
 									}
@@ -11659,19 +12326,19 @@ var $author$project$Main$view = function (model) {
 												[
 													_Utils_Tuple2(
 													'selected',
-													_Utils_eq(model.y, page))
+													_Utils_eq(model.z, page))
 												])),
 											A2(
 											$elm$html$Html$Attributes$attribute,
 											'aria-current',
-											_Utils_eq(model.y, page) ? 'page' : 'false'),
+											_Utils_eq(model.z, page) ? 'page' : 'false'),
 											$elm$html$Html$Attributes$disabled(
-											$author$project$Main$busy(model) || ((!(!page)) && _Utils_eq(model.au, $elm$core$Maybe$Nothing))),
+											$author$project$Main$busy(model) || ((!(!page)) && _Utils_eq(model.ay, $elm$core$Maybe$Nothing))),
 											$elm$html$Html$Events$onClick(
 											A2(
 												$author$project$Main$Navigate,
 												page,
-												(!page) ? $elm$core$Maybe$Nothing : model.au))
+												(!page) ? $elm$core$Maybe$Nothing : model.ay))
 										]),
 									_List_fromArray(
 										[
@@ -11680,7 +12347,7 @@ var $author$project$Main$view = function (model) {
 										]));
 							},
 							_List_fromArray(
-								[0, 1, 2, 3, 4, 5]))),
+								[0, 1, 2, 3, 4, 5, 6]))),
 						A2(
 						$elm$html$Html$div,
 						_List_fromArray(
@@ -11750,7 +12417,7 @@ var $author$project$Main$view = function (model) {
 										_List_fromArray(
 											[
 												$elm$html$Html$text(
-												$author$project$Page$pageName(model.y))
+												$author$project$Page$pageName(model.z))
 											])),
 										A2(
 										$elm$html$Html$p,
@@ -11768,7 +12435,7 @@ var $author$project$Main$view = function (model) {
 									]),
 								_List_fromArray(
 									[
-										(!_Utils_eq(model.au, $elm$core$Maybe$Nothing)) ? A2(
+										(!_Utils_eq(model.ay, $elm$core$Maybe$Nothing)) ? A2(
 										$elm$html$Html$button,
 										_List_fromArray(
 											[
@@ -11776,7 +12443,7 @@ var $author$project$Main$view = function (model) {
 												$elm$html$Html$Attributes$disabled(
 												$author$project$Main$busy(model)),
 												$elm$html$Html$Events$onClick(
-												A2($author$project$Main$Navigate, 6, model.au))
+												A2($author$project$Main$Navigate, 7, model.ay))
 											]),
 										_List_fromArray(
 											[
@@ -11805,17 +12472,17 @@ var $author$project$Main$view = function (model) {
 								$elm$html$Html$Attributes$classList(
 								_List_fromArray(
 									[
-										_Utils_Tuple2('error', model.p)
+										_Utils_Tuple2('error', model.o)
 									])),
 								A2(
 								$elm$html$Html$Attributes$attribute,
 								'role',
-								model.p ? 'alert' : 'status'),
+								model.o ? 'alert' : 'status'),
 								A2($elm$html$Html$Attributes$attribute, 'aria-live', 'polite')
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text(model.s)
+								$elm$html$Html$text(model.p)
 							])),
 						A2(
 						$elm$html$Html$div,
@@ -11834,22 +12501,22 @@ var $author$project$Main$view = function (model) {
 									]),
 								_List_Nil),
 								$elm$html$Html$text(
-								$author$project$Main$busy(model) ? '저장 중 · 완료 후 다음 작업을 진행하세요' : (model.x ? '최신 상태 · 입력은 화면을 이동해도 유지됩니다' : (model.N ? '최신 상태를 확인하고 있습니다…' : '최신 상태 확인 실패 · 새로고침해 주세요')))
+								$author$project$Main$busy(model) ? '저장 중 · 완료 후 다음 작업을 진행하세요' : (model.y ? '최신 상태 · 입력은 화면을 이동해도 유지됩니다' : (model.O ? '최신 상태를 확인하고 있습니다…' : '최신 상태 확인 실패 · 새로고침해 주세요')))
 							])),
-						(!model.y) ? $author$project$Page$Organizations$view(
+						(!model.z) ? $author$project$Page$Organizations$view(
 						{
-							Q: $author$project$Main$formConfig(model),
-							dk: function (org) {
+							J: $author$project$Main$formConfig(model),
+							bw: function (org) {
 								return A2(
 									$author$project$Main$Navigate,
-									1,
+									2,
 									$elm$core$Maybe$Just(org));
 							},
 							T: model.T,
-							dI: function (org) {
+							dT: function (org) {
 								return A2(
 									$author$project$Main$Navigate,
-									6,
+									7,
 									$elm$core$Maybe$Just(org));
 							}
 						}) : $author$project$Main$workspaceView(model),
@@ -11865,10 +12532,10 @@ var $author$project$Main$view = function (model) {
 };
 var $author$project$Main$main = $elm$browser$Browser$element(
 	{
-		cV: $author$project$Main$init,
-		dR: $elm$core$Basics$always($elm$core$Platform$Sub$none),
-		d1: $author$project$Main$update,
-		d2: $author$project$Main$view
+		c$: $author$project$Main$init,
+		d0: $elm$core$Basics$always($elm$core$Platform$Sub$none),
+		ec: $author$project$Main$update,
+		ed: $author$project$Main$view
 	});
 _Platform_export({'Main':{'init':$author$project$Main$main(
 	A2(
@@ -11881,7 +12548,7 @@ _Platform_export({'Main':{'init':$author$project$Main$main(
 						$elm$json$Json$Decode$andThen,
 						function (deadline) {
 							return $elm$json$Json$Decode$succeed(
-								{cq: deadline, bG: seed, bR: today});
+								{ct: deadline, bK: seed, bV: today});
 						},
 						A2($elm$json$Json$Decode$field, 'deadline', $elm$json$Json$Decode$string));
 				},
