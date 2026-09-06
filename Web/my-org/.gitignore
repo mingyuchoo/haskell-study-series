@@ -1,0 +1,4 @@
+.stack-work/
+*~
+# Local and demonstration event stores
+runs/

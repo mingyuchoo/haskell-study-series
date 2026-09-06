@@ -1,0 +1,88 @@
+name:                my-org
+version:             0.1.0.0
+github:              "mingyuchoo/my-org"
+license:             BSD-3-Clause
+author:              "Mingyu Choo"
+maintainer:          "mingyuchoo@gmail.com"
+copyright:           "2026 Mingyu Choo"
+
+extra-source-files:
+- README.md
+- CHANGELOG.md
+- static/index.html
+- static/style.css
+- static/app.js
+
+synopsis:            Organization operating system - goals, ownership, authority, results
+category:            Web
+
+description:         Please see the README on GitHub at <https://github.com/mingyuchoo/my-org#readme>
+
+language: GHC2021
+
+default-extensions:
+- OverloadedStrings
+- DerivingStrategies
+- DeriveAnyClass
+- LambdaCase
+- RecordWildCards
+- NamedFieldPuns
+- DataKinds
+- TypeOperators
+- StrictData
+
+dependencies:
+- base >= 4.7 && < 5
+- aeson
+- bytestring
+- containers
+- directory
+- mtl
+- stm
+- text
+- time
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wmissing-export-lists
+- -Wmissing-home-modules
+- -Wpartial-fields
+- -Wredundant-constraints
+
+library:
+  source-dirs: src
+  dependencies:
+  - http-types
+  - postgresql-simple
+  - servant
+  - servant-server
+  - wai
+  - warp
+
+executables:
+  my-org-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - my-org
+
+tests:
+  my-org-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - my-org
+    - hspec
+    - QuickCheck

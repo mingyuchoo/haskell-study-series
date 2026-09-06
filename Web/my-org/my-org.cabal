@@ -1,0 +1,148 @@
+cabal-version: 2.2
+
+-- This file has been generated from package.yaml by hpack version 0.39.6.
+--
+-- see: https://github.com/sol/hpack
+
+name:           my-org
+version:        0.1.0.0
+synopsis:       Organization operating system - goals, ownership, authority, results
+description:    Please see the README on GitHub at <https://github.com/mingyuchoo/my-org#readme>
+category:       Web
+homepage:       https://github.com/mingyuchoo/my-org#readme
+bug-reports:    https://github.com/mingyuchoo/my-org/issues
+author:         Mingyu Choo
+maintainer:     mingyuchoo@gmail.com
+copyright:      2026 Mingyu Choo
+license:        BSD-3-Clause
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    CHANGELOG.md
+    static/index.html
+    static/style.css
+    static/app.js
+
+source-repository head
+  type: git
+  location: https://github.com/mingyuchoo/my-org
+
+library
+  exposed-modules:
+      Lib
+      MyOrg.Application
+      MyOrg.Demo
+      MyOrg.Domain.Analysis
+      MyOrg.Domain.Compiler
+      MyOrg.Domain.Evaluation
+      MyOrg.Domain.Event
+      MyOrg.Domain.Goal
+      MyOrg.Domain.Graph
+      MyOrg.Domain.Review
+      MyOrg.Registry
+      MyOrg.Server
+      MyOrg.Store
+      MyOrg.Types
+  other-modules:
+      Paths_my_org
+  autogen-modules:
+      Paths_my_org
+  hs-source-dirs:
+      src
+  default-extensions:
+      OverloadedStrings
+      DerivingStrategies
+      DeriveAnyClass
+      LambdaCase
+      RecordWildCards
+      NamedFieldPuns
+      DataKinds
+      TypeOperators
+      StrictData
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , bytestring
+    , containers
+    , directory
+    , http-types
+    , mtl
+    , postgresql-simple
+    , servant
+    , servant-server
+    , stm
+    , text
+    , time
+    , wai
+    , warp
+  default-language: GHC2021
+
+executable my-org-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_my_org
+  autogen-modules:
+      Paths_my_org
+  hs-source-dirs:
+      app
+  default-extensions:
+      OverloadedStrings
+      DerivingStrategies
+      DeriveAnyClass
+      LambdaCase
+      RecordWildCards
+      NamedFieldPuns
+      DataKinds
+      TypeOperators
+      StrictData
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , bytestring
+    , containers
+    , directory
+    , mtl
+    , my-org
+    , stm
+    , text
+    , time
+  default-language: GHC2021
+
+test-suite my-org-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      RegistrySpec
+      Paths_my_org
+  autogen-modules:
+      Paths_my_org
+  hs-source-dirs:
+      test
+  default-extensions:
+      OverloadedStrings
+      DerivingStrategies
+      DeriveAnyClass
+      LambdaCase
+      RecordWildCards
+      NamedFieldPuns
+      DataKinds
+      TypeOperators
+      StrictData
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      QuickCheck
+    , aeson
+    , base >=4.7 && <5
+    , bytestring
+    , containers
+    , directory
+    , hspec
+    , mtl
+    , my-org
+    , stm
+    , text
+    , time
+  default-language: GHC2021
