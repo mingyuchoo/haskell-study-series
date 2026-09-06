@@ -76,7 +76,7 @@ type alias Edge =
 
 
 type alias Audit =
-    { seq : Int, at : String, actor : Maybe String, description : String, evaluatedGoal : Maybe String, evaluatedStatus : Maybe Status }
+    { seq : Int, at : String, actor : Maybe String, description : String, evaluatedGoal : Maybe String, evaluatedStatus : Maybe Status, activity : Activity }
 
 
 type alias ReviewWarning =
@@ -85,3 +85,7 @@ type alias ReviewWarning =
 
 type alias Workspace =
     { organization : Organization, version : Int, demo : Bool, people : List Person, goals : List GoalView, authorities : List Authority, reviews : List Review, compiler : Compiler, edges : List Edge, events : List Audit, decisionShare : Dict String Float, reviewWarnings : List ReviewWarning }
+
+
+type alias Activity =
+    { tag : String, targetKind : String, targetId : String, personId : Maybe String, detail : String, reviewId : Maybe String, raw : String }

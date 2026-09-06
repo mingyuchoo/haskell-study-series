@@ -1,4 +1,4 @@
-module Page.People exposing (matches, view)
+module Page.People exposing (matches, view, viewWith)
 
 import Domain exposing (..)
 import Form.Action exposing (..)
@@ -8,6 +8,7 @@ import Html.Events exposing (..)
 import Ui.Common exposing (..)
 import Ui.Form exposing (..)
 import Ui.Label exposing (personName)
+import Ui.ListView as ListView exposing (Mode(..))
 
 
 type alias Controls msg =
@@ -21,7 +22,12 @@ matches query status person =
 
 
 view : Controls msg -> Workspace -> Html msg
-view model w =
+view =
+    viewWith Table
+
+
+viewWith : Mode -> Controls msg -> Workspace -> Html msg
+viewWith mode model w =
     let
         people =
             List.filter (matches model.query model.status) w.people
@@ -39,6 +45,9 @@ view model w =
             , p [] [ text ("검색 결과 " ++ String.fromInt (List.length people) ++ "명 / 전체 " ++ String.fromInt (List.length w.people) ++ "명") ]
             , if List.isEmpty people then
                 emptyState "표시할 구성원이 없습니다" "아래에서 구성원을 등록하거나 검색어와 재직 상태 필터를 변경하세요."
+
+              else if mode == Table then
+                peopleTable model w people
 
               else
                 div [ class "grid" ] (List.map (personCard model w) people)
@@ -160,3 +169,30 @@ detail model w person =
           else
             note "비활성 구성원입니다. 기본정보를 수정하고 과거 기록을 조회할 수 있으며 새 업무를 배정할 수 없습니다."
         ]
+
+
+peopleTable model w people =
+    ListView.tableView "구성원"
+        [ "이름", "역할", "부서", "이메일", "재직 상태", "담당 목표", "관리" ]
+        (List.map
+            (\person ->
+                tr []
+                    [ th [ scope "row" ] [ text person.name ]
+                    , td [] [ text person.role ]
+                    , td [] [ text (Maybe.withDefault "부서 미입력" person.department) ]
+                    , td [] [ text (Maybe.withDefault "이메일 미입력" person.email) ]
+                    , td []
+                        [ text
+                            (if person.active then
+                                "재직"
+
+                             else
+                                "비활성"
+                            )
+                        ]
+                    , td [] [ text (String.fromInt (List.length (List.filter (.owner >> (==) (Just person.id)) w.goals)) ++ "개") ]
+                    , td [] [ button [ class "secondary", disabled model.forms.busy, onClick (model.open person.id) ] [ text "상세 · 수정" ] ]
+                    ]
+            )
+            people
+        )

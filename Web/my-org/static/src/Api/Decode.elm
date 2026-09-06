@@ -1,5 +1,6 @@
 module Api.Decode exposing (..)
 
+import Api.Activity
 import Domain exposing (..)
 import Json.Decode as D exposing (Decoder)
 
@@ -167,23 +168,26 @@ auditDecoder =
         |> andMap (D.at [ "record", "at" ] D.string)
         |> andMap (D.field "record" (optional "actor" D.string))
         |> field "description" D.string
-        |> andMap
-            (D.oneOf
-                [ D.at [ "record", "event" ]
-                    (D.field "tag" D.string
-                        |> D.andThen
-                            (\tag ->
-                                if tag == "GoalEvaluated" then
-                                    D.field "contents" (D.index 0 D.string |> D.map Just)
+        |> andMap (evaluationField (D.field "contents" (D.index 0 D.string)))
+        |> andMap (evaluationField (D.field "contents" (D.index 1 (D.field "status" statusDecoder))))
+        |> andMap (D.oneOf [ D.at [ "record", "event" ] Api.Activity.decoder, D.succeed Api.Activity.empty ])
 
-                                else
-                                    D.succeed Nothing
-                            )
-                    )
-                , D.succeed Nothing
-                ]
-            )
-        |> andMap (D.oneOf [ D.at [ "record", "event", "contents" ] (D.index 1 (D.field "status" statusDecoder)) |> D.map Just, D.succeed Nothing ])
+
+evaluationField : Decoder a -> Decoder (Maybe a)
+evaluationField decoder =
+    D.oneOf
+        [ D.at [ "record", "event" ] D.value
+            |> D.map Api.Activity.unscoped
+            |> D.map
+                (\raw ->
+                    if D.decodeValue (D.field "tag" D.string) raw == Ok "GoalEvaluated" then
+                        D.decodeValue decoder raw |> Result.toMaybe
+
+                    else
+                        Nothing
+                )
+        , D.succeed Nothing
+        ]
 
 
 workspaceDecoder : Decoder Workspace

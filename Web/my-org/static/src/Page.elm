@@ -9,6 +9,7 @@ type Page
     | Authorities
     | Results
     | Reviews
+    | ActivityLog
     | Settings
 
 
@@ -35,6 +36,9 @@ pageName page =
 
         Reviews ->
             "학습"
+
+        ActivityLog ->
+            "활동 기록"
 
         Settings ->
             "조직 설정"

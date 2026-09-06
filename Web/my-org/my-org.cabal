@@ -29,6 +29,7 @@ extra-source-files:
     static/src/Main.elm
     static/src/Page.elm
     static/src/Remote.elm
+    static/src/Api/Activity.elm
     static/src/Api/Command.elm
     static/src/Api/Decode.elm
     static/src/Api/Http.elm
@@ -39,6 +40,7 @@ extra-source-files:
     static/src/Form/Goal.elm
     static/src/Form/Review.elm
     static/src/Form/Snapshot.elm
+    static/src/Page/Activity.elm
     static/src/Page/Authorities.elm
     static/src/Page/Goals.elm
     static/src/Page/Learning.elm
@@ -47,14 +49,21 @@ extra-source-files:
     static/src/Page/Responsibility.elm
     static/src/Page/Results.elm
     static/src/Page/Settings.elm
+    static/src/Ui/Activity.elm
     static/src/Ui/Common.elm
     static/src/Ui/Form.elm
     static/src/Ui/Guide.elm
     static/src/Ui/Label.elm
+    static/src/Ui/ListView.elm
+    static/src/Ui/ResponsibilityGraph.elm
+    static/tests/ActivityTest.elm
     static/tests/DecoderTest.elm
     static/tests/FormTest.elm
+    static/tests/GraphFixture.elm
+    static/tests/ListViewTest.elm
     static/tests/PageTest.elm
     static/tests/PeopleTest.elm
+    static/tests/ResponsibilityGraphTest.elm
     static/tests/StateTest.elm
     static/tests/run.cjs
     test/fixtures/dashboard.json

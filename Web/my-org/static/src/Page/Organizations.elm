@@ -1,4 +1,4 @@
-module Page.Organizations exposing (view)
+module Page.Organizations exposing (view, viewWith)
 
 import Domain exposing (..)
 import Form.Action exposing (..)
@@ -9,10 +9,16 @@ import Remote
 import Ui.Common exposing (..)
 import Ui.Form exposing (..)
 import Ui.Label exposing (..)
+import Ui.ListView as ListView exposing (Mode(..))
 
 
 view : { a | forms : Config msg, organizations : Remote.Remote (List Summary), open : String -> msg, settings : String -> msg } -> Html msg
-view model =
+view =
+    viewWith Table
+
+
+viewWith : Mode -> { a | forms : Config msg, organizations : Remote.Remote (List Summary), open : String -> msg, settings : String -> msg } -> Html msg
+viewWith mode model =
     div []
         [ panel "새 조직 등록"
             [ note "각 조직의 구성원, 목표와 학습은 독립적으로 관리됩니다."
@@ -41,6 +47,9 @@ view model =
                     , if List.isEmpty items then
                         emptyState "첫 조직을 시작하세요" "조직 이름을 입력하거나 가상 데이터로 운영 흐름을 체험하세요."
 
+                      else if mode == Table then
+                        organizationTable model items
+
                       else
                         div [ class "grid" ]
                             (List.map
@@ -66,3 +75,29 @@ view model =
                     ]
             )
         ]
+
+
+organizationTable model items =
+    ListView.tableView "등록된 조직"
+        [ "조직명", "구분", "구성원 수", "목표 수", "등록일", "관리" ]
+        (List.map
+            (\item ->
+                tr []
+                    [ th [ scope "row" ] [ text item.organization.name ]
+                    , td []
+                        [ text
+                            (if item.demo then
+                                "가상 데이터 · 데모"
+
+                             else
+                                "내 조직"
+                            )
+                        ]
+                    , td [] [ text (String.fromInt item.peopleCount ++ "명") ]
+                    , td [] [ text (String.fromInt item.goalCount ++ "개") ]
+                    , td [] [ text (String.left 10 item.organization.createdAt) ]
+                    , td [] [ div [ class "actions" ] [ button [ disabled model.forms.busy, onClick (model.open item.organization.id) ] [ text "조직 열기 →" ], button [ class "secondary", disabled model.forms.busy, onClick (model.settings item.organization.id) ] [ text "상세 · 수정 · 삭제" ] ] ]
+                    ]
+            )
+            items
+        )

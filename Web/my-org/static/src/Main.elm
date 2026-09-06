@@ -17,6 +17,7 @@ import Html.Events exposing (onClick)
 import Http
 import Json.Encode as E
 import Page exposing (Page(..), pageName)
+import Page.Activity
 import Page.Authorities
 import Page.Goals
 import Page.Learning
@@ -27,8 +28,11 @@ import Page.Results
 import Page.Settings
 import Remote exposing (Remote(..))
 import Task
+import Ui.Activity
 import Ui.Form
 import Ui.Guide
+import Ui.ListView as ListView exposing (Mode(..))
+import Ui.ResponsibilityGraph as Graph
 
 
 
@@ -45,11 +49,16 @@ type alias Flags =
 
 
 type alias Model =
-    { page : Page, org : Maybe String, organizations : Remote (List Summary), workspace : Remote Workspace, drafts : Dict String (Dict String String), goalDrafts : Dict String Form.Goal.Draft, reviewDrafts : Dict String Form.Review.Draft, request : Int, saving : SaveState, fresh : Bool, notice : String, error : Bool, deletion : Maybe Snapshot, guideOpen : Bool, flags : Flags, serial : Int, goalSerial : Dict String Int, expandedGoal : Maybe String, syncing : Bool, peopleQuery : String, peopleStatus : String, selectedPerson : Maybe String }
+    { activity : Ui.Activity.State, graph : Graph.State, listModes : Dict String Mode, page : Page, org : Maybe String, organizations : Remote (List Summary), workspace : Remote Workspace, drafts : Dict String (Dict String String), goalDrafts : Dict String Form.Goal.Draft, reviewDrafts : Dict String Form.Review.Draft, request : Int, saving : SaveState, fresh : Bool, notice : String, error : Bool, deletion : Maybe Snapshot, guideOpen : Bool, flags : Flags, serial : Int, goalSerial : Dict String Int, expandedGoal : Maybe String, syncing : Bool, peopleQuery : String, peopleStatus : String, selectedPerson : Maybe String }
 
 
 type Msg
     = Navigate Page (Maybe String)
+    | SetListMode Page Mode
+    | ActivityChange Ui.Activity.State
+    | OpenReviewActivity String
+    | GraphMsg Graph.Msg
+    | GraphGo String
     | Refresh
     | GotOrganizations Int (Result Http.Error (List Summary))
     | GotWorkspace Int (Result Http.Error Workspace)
@@ -77,7 +86,7 @@ main =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    refresh { page = Organizations, org = Nothing, organizations = Loading, workspace = Loading, drafts = Dict.empty, goalDrafts = Dict.empty, reviewDrafts = Dict.empty, request = 0, saving = Idle, fresh = False, notice = "", error = False, deletion = Nothing, guideOpen = True, flags = flags, serial = 0, goalSerial = Dict.empty, expandedGoal = Nothing, syncing = True, peopleQuery = "", peopleStatus = "active", selectedPerson = Nothing }
+    refresh { activity = Ui.Activity.init, graph = Graph.init, listModes = Dict.empty, page = Organizations, org = Nothing, organizations = Loading, workspace = Loading, drafts = Dict.empty, goalDrafts = Dict.empty, reviewDrafts = Dict.empty, request = 0, saving = Idle, fresh = False, notice = "", error = False, deletion = Nothing, guideOpen = False, flags = flags, serial = 0, goalSerial = Dict.empty, expandedGoal = Nothing, syncing = True, peopleQuery = "", peopleStatus = "active", selectedPerson = Nothing }
 
 
 
@@ -114,6 +123,36 @@ busy model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        ActivityChange state ->
+            ( { model | activity = state }, Cmd.none )
+
+        OpenReviewActivity review ->
+            if busy model then
+                ( model, Cmd.none )
+
+            else
+                update (Guide ActivityLog "audit-history") model
+                    |> Tuple.mapFirst (\next -> { next | activity = { query = "", kind = "", from = "", until = "", review = Just review } })
+
+        GraphGo target ->
+            if busy model then
+                ( model, Cmd.none )
+
+            else if String.startsWith "person:" target then
+                update (OpenPerson (String.dropLeft 7 target)) { model | page = People }
+
+            else if String.startsWith "authority-" target then
+                update (Guide Authorities target) model
+
+            else
+                update (Guide Responsibility target) model
+
+        GraphMsg graphMsg ->
+            ( { model | graph = Graph.update graphMsg model.graph }, Cmd.none )
+
+        SetListMode page mode ->
+            ( { model | listModes = Dict.insert (pageName page) mode model.listModes }, Cmd.none )
+
         Navigate page org ->
             if busy model then
                 ( model, Cmd.none )
@@ -122,7 +161,7 @@ update msg model =
                 ( { model | page = page, deletion = Nothing }, Cmd.none )
 
             else
-                refresh { model | page = page, org = org, workspace = Loading, notice = "", error = False, deletion = Nothing, peopleQuery = "", peopleStatus = "active", selectedPerson = Nothing }
+                refresh { model | activity = Ui.Activity.init, graph = Graph.init, page = page, org = org, workspace = Loading, notice = "", error = False, deletion = Nothing, peopleQuery = "", peopleStatus = "active", selectedPerson = Nothing }
 
         Refresh ->
             if busy model then
@@ -305,6 +344,12 @@ update msg model =
                 in
                 ( { model
                     | page = page
+                    , activity =
+                        if page == ActivityLog then
+                            Ui.Activity.init
+
+                        else
+                            model.activity
                     , reviewDrafts = reviews
                     , expandedGoal =
                         if String.startsWith "goal-" target then
@@ -420,7 +465,7 @@ view model =
                             ]
                             [ text (pageName page) ]
                     )
-                    [ Organizations, People, Dashboard, Responsibility, Authorities, Results, Reviews ]
+                    [ Organizations, People, Dashboard, Responsibility, Authorities, Results, Reviews, ActivityLog ]
                 )
             , div [ class "aside-foot" ] [ span [ class "dot" ] [], text "명확한 상태, 예측 가능한 변화", p [] [ text "결과를 정의하고", br [] [], text "함께 배우는 조직." ], small [] [ text "Elm UI · Haskell API" ] ]
             ]
@@ -465,8 +510,13 @@ view model =
                         "최신 상태 확인 실패 · 새로고침해 주세요"
                     )
                 ]
+            , if model.page /= Settings then
+                ListView.controls (listMode model) (SetListMode model.page)
+
+              else
+                text ""
             , if model.page == Organizations then
-                Page.Organizations.view { forms = formConfig model, organizations = model.organizations, open = \org -> Navigate Dashboard (Just org), settings = \org -> Navigate Settings (Just org) }
+                Page.Organizations.viewWith (listMode model) { forms = formConfig model, organizations = model.organizations, open = \org -> Navigate Dashboard (Just org), settings = \org -> Navigate Settings (Just org) }
 
               else
                 workspaceView model
@@ -487,22 +537,25 @@ workspaceView model =
                     text ""
                 , case model.page of
                     People ->
-                        Page.People.view { forms = formConfig model, query = model.peopleQuery, status = model.peopleStatus, selected = model.selectedPerson, search = SearchPeople, filter = FilterPeople, open = OpenPerson, reset = ResetPerson, goals = Navigate Dashboard model.org } w
+                        Page.People.viewWith (listMode model) { forms = formConfig model, query = model.peopleQuery, status = model.peopleStatus, selected = model.selectedPerson, search = SearchPeople, filter = FilterPeople, open = OpenPerson, reset = ResetPerson, goals = Navigate Dashboard model.org } w
 
                     Dashboard ->
-                        Page.Goals.view { draft = goalDraft model, edit = EditGoal, forms = formConfig model, expandedGoal = model.expandedGoal, results = Guide Results } w
+                        Page.Goals.viewWith (listMode model) { draft = goalDraft model, edit = EditGoal, forms = formConfig model, expandedGoal = model.expandedGoal, results = Guide Results } w
 
                     Responsibility ->
-                        Page.Responsibility.view { forms = formConfig model } w
+                        Page.Responsibility.viewInteractive (listMode model) model.graph (Just GraphMsg) (Just GraphGo) { forms = formConfig model } w
 
                     Authorities ->
-                        Page.Authorities.view { forms = formConfig model } w
+                        Page.Authorities.viewWith (listMode model) { forms = formConfig model } w
 
                     Results ->
-                        Page.Results.view { forms = formConfig model, goals = Guide Dashboard } w
+                        Page.Results.viewWith (listMode model) { forms = formConfig model, goals = Guide Dashboard } w
 
                     Reviews ->
-                        Page.Learning.view { draft = reviewDraft model, edit = EditReview, forms = formConfig model } w
+                        Page.Learning.viewWithActivity (Just OpenReviewActivity) (listMode model) { draft = reviewDraft model, edit = EditReview, forms = formConfig model } w
+
+                    ActivityLog ->
+                        Page.Activity.view (listMode model) model.activity ActivityChange w
 
                     Settings ->
                         Page.Settings.view { forms = formConfig model, deletion = model.deletion, goals = Navigate Dashboard model.org, openDelete = OpenDelete, closeDelete = CloseDelete, confirmDelete = ConfirmDelete, noOp = NoOp } w
@@ -569,3 +622,9 @@ defaultValue model =
 draftDefaults : Model -> Action -> Dict String String
 draftDefaults model =
     Form.Defaults.draftDefaults (defaultContext model)
+
+
+listMode : Model -> Mode
+listMode model =
+    Dict.get (pageName model.page) model.listModes
+        |> Maybe.withDefault Table

@@ -54,4 +54,29 @@ tests =
                 D.decodeString reviewDecoder """{"id":"r","goal":"g","heldAt":"now","note":"review","evaluation":{"status":"NoData","progress":0},"learnings":[{"text":"learned"}],"decisions":[{"text":"next","owner":"p"}]}"""
                     |> Result.map (\r -> ( r.learnings, r.decisions ))
                     |> Expect.equal (Ok ( [ "learned" ], [ { text = "next", owner = "p", deadline = Nothing } ] ))
+        , test "scoped owner assignment retains structural IDs independent of description" <|
+            \_ ->
+                D.decodeString auditDecoder """{"record":{"seq":4,"at":"2026-09-07T00:00:00Z","actor":null,"event":{"tag":"OrganizationScoped","contents":["org-a",{"tag":"OwnerAssigned","contents":["goal-a","person-a"]}]}},"description":"arbitrary prose"}"""
+                    |> Result.map (\a -> ( a.activity.tag, a.activity.targetId, a.activity.personId ))
+                    |> Expect.equal (Ok ( "OwnerAssigned", "goal-a", Just "person-a" ))
+        , test "review event retains both goal and exact review identity" <|
+            \_ ->
+                D.decodeString auditDecoder """{"record":{"seq":5,"at":"2026-09-07T00:00:00Z","actor":"person-a","event":{"tag":"ReviewHeld","contents":{"id":"review-a","goal":"goal-a","note":"회고"}}},"description":"review"}"""
+                    |> Result.map (\a -> ( a.activity.targetId, a.activity.reviewId ))
+                    |> Expect.equal (Ok ( "goal-a", Just "review-a" ))
+        , test "unknown event preserves raw payload for inspection" <|
+            \_ ->
+                D.decodeString auditDecoder """{"record":{"seq":6,"at":"2026-09-07T00:00:00Z","actor":null,"event":{"tag":"FutureEvent","contents":{"futureField":"kept"}}},"description":"future"}"""
+                    |> Result.map (\a -> ( a.activity.tag, String.contains "futureField" a.activity.raw ))
+                    |> Expect.equal (Ok ( "FutureEvent", True ))
+        , test "employee profile events extract person ID from tuple rather than prose" <|
+            \_ ->
+                D.decodeString auditDecoder """{"record":{"seq":7,"at":"2026-09-07T00:00:00Z","actor":null,"event":{"tag":"PersonUpdated","contents":[{"id":"person-a","name":"새 이름","role":"개발"},{"department":"제품"}]}},"description":"old name person-b"}"""
+                    |> Result.map (\a -> ( a.activity.targetKind, a.activity.targetId ))
+                    |> Expect.equal (Ok ( "person", "person-a" ))
+        , test "scoped evaluation continues to drive guide progress" <|
+            \_ ->
+                D.decodeString auditDecoder """{"record":{"seq":8,"at":"2026-09-07T00:00:00Z","actor":null,"event":{"tag":"OrganizationScoped","contents":["org-a",{"tag":"GoalEvaluated","contents":["demo-revenue",{"status":"Achieved"}]}]}},"description":"evaluated"}"""
+                    |> Result.map (\a -> ( a.evaluatedGoal, a.evaluatedStatus ))
+                    |> Expect.equal (Ok ( Just "demo-revenue", Just Achieved ))
         ]
