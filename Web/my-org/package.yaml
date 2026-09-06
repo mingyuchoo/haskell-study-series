@@ -86,3 +86,13 @@ tests:
     - my-org
     - hspec
     - QuickCheck
+    - async
+    - filepath
+    - http-client
+    - http-types
+    - network
+    - process
+    - scientific
+    - temporary
+    - unix
+    - warp

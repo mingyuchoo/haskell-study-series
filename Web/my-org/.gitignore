@@ -1,4 +1,34 @@
+# Stack, Cabal, and GHC build outputs
 .stack-work/
+/dist/
+/dist-newstyle/
+*.o
+*.hi
+*.dyn_o
+*.dyn_hi
+*.hie
+*.prof
+*.tix
+.hpc/
+
+# Local Haskell environments and generated IDE data
+/.ghc.environment.*
+/cabal.project.local
+/cabal.project.local~
+/.cabal-sandbox/
+/cabal.sandbox.config
+/.hie/
+/.ghci_history
+
+# Local environment values and editor temporary files
+/.env
+/.env.local
+/.env.*.local
+/.direnv/
+*.swp
+*.swo
 *~
+.DS_Store
+
 # Local and demonstration event stores
 runs/

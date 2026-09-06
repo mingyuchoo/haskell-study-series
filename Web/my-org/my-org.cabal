@@ -115,7 +115,13 @@ test-suite my-org-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      ApiSmokeSpec
+      DeleteSmokeSpec
+      DemoSmokeSpec
+      OrganizationsSmokeSpec
       RegistrySpec
+      SmokeSupport
+      StartupSmokeSpec
       Paths_my_org
   autogen-modules:
       Paths_my_org
@@ -135,14 +141,24 @@ test-suite my-org-test
   build-depends:
       QuickCheck
     , aeson
+    , async
     , base >=4.7 && <5
     , bytestring
     , containers
     , directory
+    , filepath
     , hspec
+    , http-client
+    , http-types
     , mtl
     , my-org
+    , network
+    , process
+    , scientific
     , stm
+    , temporary
     , text
     , time
+    , unix
+    , warp
   default-language: GHC2021

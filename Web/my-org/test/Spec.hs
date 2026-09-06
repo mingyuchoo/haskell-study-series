@@ -22,14 +22,31 @@ import MyOrg.Domain.Review
 import MyOrg.Store
 import MyOrg.Types
 import System.Directory
-import System.IO (hClose, openTempFile)
+import System.IO (hClose, openTempFile, hSetBuffering, stdout, BufferMode(LineBuffering))
 import RegistrySpec (registrySpec)
+import qualified ApiSmokeSpec
+import qualified DemoSmokeSpec
+import qualified DeleteSmokeSpec
+import qualified OrganizationsSmokeSpec
+import qualified StartupSmokeSpec
+import qualified Lib
+import System.Environment (getArgs)
 import MyOrg.Registry
 import Test.Hspec
 import Test.QuickCheck (property)
 
 main :: IO ()
-main = hspec $ do
+main = do
+  args <- getArgs
+  if args == ["--startup-server"] then hSetBuffering stdout LineBuffering >> Lib.someFunc else hspec tests
+
+tests :: Spec
+tests = do
+  ApiSmokeSpec.spec
+  DemoSmokeSpec.spec
+  DeleteSmokeSpec.spec
+  OrganizationsSmokeSpec.spec
+  StartupSmokeSpec.spec
   registrySpec
   describe "목표 활성화 불변식" $ do
     it "최종 책임자가 없으면 거부한다" $
