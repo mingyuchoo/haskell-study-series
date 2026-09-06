@@ -23,6 +23,7 @@ type Page
     | Dashboard
     | Responsibility
     | Authorities
+    | Results
     | Reviews
     | Settings
 
@@ -672,16 +673,19 @@ pageName page =
             "조직 목록"
 
         Dashboard ->
-            "목표 대시보드"
+            "목표"
 
         Responsibility ->
-            "책임 지도"
+            "책임"
 
         Authorities ->
-            "권한 지도"
+            "권한"
+
+        Results ->
+            "결과"
 
         Reviews ->
-            "회고와 학습"
+            "학습"
 
         Settings ->
             "조직 설정"
@@ -729,7 +733,7 @@ view model =
                             ]
                             [ text (pageName page) ]
                     )
-                    [ Organizations, Dashboard, Responsibility, Authorities, Reviews ]
+                    [ Organizations, Dashboard, Responsibility, Authorities, Results, Reviews ]
                 )
             , div [ class "aside-foot" ] [ span [ class "dot" ] [], text "명확한 상태, 예측 가능한 변화", p [] [ text "결과를 정의하고", br [] [], text "함께 배우는 조직." ], small [] [ text "Elm UI · Haskell API" ] ]
             ]
@@ -889,6 +893,9 @@ workspaceView model =
                     Authorities ->
                         authorityView model w
 
+                    Results ->
+                        resultsView model w
+
                     Reviews ->
                         reviewsView model w
 
@@ -1016,53 +1023,86 @@ badge g =
 goalCard : Model -> Workspace -> GoalView -> Html Msg
 goalCard model w g =
     article [ class "goal-card", id ("goal-" ++ g.goal.id), tabindex -1 ]
-        [ badge g
-        , h2 [] [ text g.goal.description ]
-        , small []
-            [ text
-                (g.goal.metric.name
-                    ++ " · "
-                    ++ (if g.goal.metric.direction == "HigherIsBetter" then
-                            "↑ 증가"
+        (goalSummary w g
+            ++ [ div [ class "actions" ] [ button [ class "secondary", disabled (busy model), onClick (Guide Results ("goal-" ++ g.goal.id)) ] [ text "결과 보고 · 평가 →" ] ]
+               , details [ property "open" (E.bool (model.expandedGoal == Just g.goal.id)) ]
+                    [ summary [] [ text "책임 · 권한 · 전략 관리" ]
+                    , note g.analysis.possibleCause
+                    , formView model (Assign g.goal.id) "책임자 지정" [ selectField model (Assign g.goal.id) "단일 최종 책임자" "owner" True (peopleOptions w) ]
+                    , note "책임자 변경 또는 권한 부족 시 초안으로 돌아갑니다. 권한 메뉴에서 결정 권한을 조정하세요."
+                    , div [ class "actions" ]
+                        [ button [ disabled (busy model || not model.fresh || g.active), onClick (Submit (Activate g.goal.id)) ]
+                            [ text
+                                (if g.active then
+                                    "활성화됨"
 
-                        else
-                            "↓ 감소"
-                       )
-                    ++ " 목표"
-                )
-            ]
-        , div [ class "goal-values" ] [ strong [] [ text (g.evaluation.latestValue |> Maybe.map formatNumber |> Maybe.withDefault "—") ], span [ class "muted" ] [ text ("/ " ++ formatNumber g.goal.target ++ " " ++ g.goal.metric.unit) ] ]
-        , progress [ Html.Attributes.max "1", value (String.fromFloat (clamp 0 1 g.evaluation.progress)), attribute "aria-label" "목표 달성률" ] []
-        , small [] [ text (String.fromInt (round (g.evaluation.progress * 100)) ++ "% 달성 · 기준 " ++ formatNumber g.goal.baseline) ]
-        , div [ class "meta" ] [ span [] [ text (g.owner |> Maybe.map (personName w) |> Maybe.withDefault "책임자 미지정") ], span [] [ text (String.left 10 g.goal.deadline ++ " 마감") ] ]
-        , details [ property "open" (E.bool (model.expandedGoal == Just g.goal.id)) ]
-            [ summary [] [ text "책임 · 권한 · 결과 관리" ]
-            , note g.analysis.possibleCause
-            , formView model (Assign g.goal.id) "책임자 지정" [ selectField model (Assign g.goal.id) "단일 최종 책임자" "owner" True (peopleOptions w) ]
-            , note "책임자 변경 또는 권한 부족 시 초안으로 돌아갑니다. 권한 지도에서 결정 권한을 조정하세요."
-            , div [ class "actions" ]
-                [ button [ disabled (busy model || not model.fresh || g.active), onClick (Submit (Activate g.goal.id)) ]
-                    [ text
-                        (if g.active then
-                            "활성화됨"
-
-                         else
-                            "목표 활성화"
-                        )
+                                 else
+                                    "목표 활성화"
+                                )
+                            ]
+                        ]
+                    , formView model (Strategy g.goal.id) "전략 변경 기록" [ inputField model (Strategy g.goal.id) "새로운 전략과 변경 이유" "note" "text" True ]
+                    , div [] (List.map (\( at, message ) -> note (String.left 10 at ++ " · " ++ message)) g.strategies)
                     ]
-                , button [ class "secondary", disabled (busy model || not model.fresh), onClick (Submit (Evaluate g.goal.id)) ] [ text "평가 기록" ]
-                ]
-            , h3 [ class "form-heading" ] [ text "결과 보고" ]
-            , formView model (Report g.goal.id) "결과 보고" [ div [ class "fields" ] [ inputField model (Report g.goal.id) "실측값" "value" "number" True, selectField model (Report g.goal.id) "보고자" "reportedBy" True (peopleOptions w) ], inputField model (Report g.goal.id) "결과 설명" "note" "text" True ]
-            , if List.isEmpty g.results then
-                note "아직 결과가 없습니다."
+               ]
+        )
 
-              else
-                div [ class "table-wrap" ] [ h3 [ class "form-heading" ] [ text "결과 추이 · 최근 순" ], table [] [ thead [] [ tr [] [ th [] [ text "기록 시각" ], th [] [ text "측정값" ], th [] [ text "설명" ] ] ], tbody [] (List.map (\r -> tr [] [ td [] [ text r.reportedAt ], td [] [ text (formatNumber r.value) ], td [] [ text r.note ] ]) g.results) ] ]
-            , formView model (Strategy g.goal.id) "전략 변경 기록" [ inputField model (Strategy g.goal.id) "새로운 전략과 변경 이유" "note" "text" True ]
-            , div [] (List.map (\( at, message ) -> note (String.left 10 at ++ " · " ++ message)) g.strategies)
-            ]
+
+resultsView : Model -> Workspace -> Html Msg
+resultsView model w =
+    div []
+        [ div [ class "section-head" ] [ h2 [] [ text "목표별 결과와 평가" ] ]
+        , note "실측값을 보고하고 현재 성과를 평가하세요. 결과 이력은 다음 학습의 근거가 됩니다."
+        , if List.isEmpty w.goals then
+            emptyState "아직 측정할 목표가 없습니다" "목표 메뉴에서 목표를 만든 뒤 결과를 기록하세요."
+
+          else
+            div [ class "grid" ] (List.map (resultCard model w) w.goals)
         ]
+
+
+resultCard : Model -> Workspace -> GoalView -> Html Msg
+resultCard model w g =
+    article [ class "goal-card", id ("goal-" ++ g.goal.id), tabindex -1 ]
+        (goalSummary w g
+            ++ [ note g.analysis.possibleCause
+               , h3 [ class "form-heading" ] [ text "결과 보고" ]
+               , formView model (Report g.goal.id) "결과 보고" [ div [ class "fields" ] [ inputField model (Report g.goal.id) "실측값" "value" "number" True, selectField model (Report g.goal.id) "보고자" "reportedBy" True (peopleOptions w) ], inputField model (Report g.goal.id) "결과 설명" "note" "text" True ]
+               , if List.isEmpty g.results then
+                    note "아직 결과가 없습니다."
+
+                 else
+                    div [ class "table-wrap" ] [ h3 [ class "form-heading" ] [ text "결과 추이 · 최근 순" ], table [] [ thead [] [ tr [] [ th [] [ text "기록 시각" ], th [] [ text "측정값" ], th [] [ text "설명" ] ] ], tbody [] (List.map (\r -> tr [] [ td [] [ text r.reportedAt ], td [] [ text (formatNumber r.value) ], td [] [ text r.note ] ]) g.results) ] ]
+               , div [ class "actions" ]
+                    [ button [ class "secondary", disabled (busy model || not model.fresh), onClick (Submit (Evaluate g.goal.id)) ] [ text "평가 기록" ]
+                    , button [ class "secondary", disabled (busy model), onClick (Guide Dashboard ("goal-" ++ g.goal.id)) ] [ text "목표 관리 →" ]
+                    ]
+               ]
+        )
+
+
+goalSummary : Workspace -> GoalView -> List (Html Msg)
+goalSummary w g =
+    [ badge g
+    , h2 [] [ text g.goal.description ]
+    , small []
+        [ text
+            (g.goal.metric.name
+                ++ " · "
+                ++ (if g.goal.metric.direction == "HigherIsBetter" then
+                        "↑ 증가"
+
+                    else
+                        "↓ 감소"
+                   )
+                ++ " 목표"
+            )
+        ]
+    , div [ class "goal-values" ] [ strong [] [ text (g.evaluation.latestValue |> Maybe.map formatNumber |> Maybe.withDefault "—") ], span [ class "muted" ] [ text ("/ " ++ formatNumber g.goal.target ++ " " ++ g.goal.metric.unit) ] ]
+    , progress [ Html.Attributes.max "1", value (String.fromFloat (clamp 0 1 g.evaluation.progress)), attribute "aria-label" "목표 달성률" ] []
+    , small [] [ text (String.fromInt (round (g.evaluation.progress * 100)) ++ "% 달성 · 기준 " ++ formatNumber g.goal.baseline) ]
+    , div [ class "meta" ] [ span [] [ text (g.owner |> Maybe.map (personName w) |> Maybe.withDefault "책임자 미지정") ], span [] [ text (String.left 10 g.goal.deadline ++ " 마감") ] ]
+    ]
 
 
 diagnosticView : Workspace -> Html Msg
@@ -1113,7 +1153,7 @@ authorityView model w =
     div []
         [ panel "책임을 실행할 수 있는 권한" [ note "권한을 줄여 활성 목표의 요건이 깨지면 해당 목표는 자동으로 초안으로 돌아갑니다.", note "집중도 = 보유 권한 종류 수 + 예산 보유 1점 / 조직 전체 점수. 실제 의사결정 빈도나 권력의 측정값은 아닙니다." ]
         , if List.isEmpty w.people then
-            emptyState "구성원을 먼저 추가하세요" "목표 대시보드에서 구성원을 추가한 뒤 권한을 부여할 수 있습니다."
+            emptyState "구성원을 먼저 추가하세요" "목표 메뉴에서 구성원을 추가한 뒤 권한을 부여할 수 있습니다."
 
           else
             div [ class "grid" ] (List.map (\person -> section [ class "panel", id ("authority-" ++ person.id), tabindex -1 ] [ span [ class "tag" ] [ text ("권한 비중 " ++ String.fromInt (round (100 * (Dict.get person.id w.decisionShare |> Maybe.withDefault 0))) ++ "%") ], h2 [ class "form-heading" ] [ text person.name ], p [ class "muted" ] [ text person.role ], formView model (Grant person.id) "권한 저장" [ inputField model (Grant person.id) "집행 가능한 예산 한도 (KRW)" "budget" "number" True, checks model (Grant person.id) ], note ("담당 목표 " ++ String.fromInt (List.length (List.filter (.owner >> (==) (Just person.id)) w.goals)) ++ "개") ]) w.people)
@@ -1164,7 +1204,7 @@ reviewsView model w =
 settingsView : Model -> Workspace -> Html Msg
 settingsView model w =
     div []
-        [ panel w.organization.name [ dl [ class "organization-meta" ] [ dt [] [ text "조직 ID" ], dd [] [ text w.organization.id ], dt [] [ text "등록일" ], dd [] [ text (String.left 10 w.organization.createdAt) ], dt [] [ text "구성원" ], dd [] [ text (String.fromInt (List.length w.people) ++ "명") ], dt [] [ text "목표" ], dd [] [ text (String.fromInt (List.length w.goals) ++ "개") ] ], button [ disabled (busy model), onClick (Navigate Dashboard model.org) ] [ text "목표 대시보드 →" ] ]
+        [ panel w.organization.name [ dl [ class "organization-meta" ] [ dt [] [ text "조직 ID" ], dd [] [ text w.organization.id ], dt [] [ text "등록일" ], dd [] [ text (String.left 10 w.organization.createdAt) ], dt [] [ text "구성원" ], dd [] [ text (String.fromInt (List.length w.people) ++ "명") ], dt [] [ text "목표" ], dd [] [ text (String.fromInt (List.length w.goals) ++ "개") ] ], button [ disabled (busy model), onClick (Navigate Dashboard model.org) ] [ text "목표 →" ] ]
         , panel "조직 이름 수정" [ formView model Rename "이름 저장" [ inputField model Rename "조직 이름" "name" "text" True, note "구성원과 목표, 기존 기록을 유지합니다. 다른 변경과 충돌하면 최신 상태를 확인한 뒤 다시 저장하세요." ] ]
         , section [ class "panel danger-zone" ]
             [ h2 [] [ text "조직 삭제" ]
@@ -1271,7 +1311,7 @@ guideView model w =
                  else
                     "authority-demo-product"
                 )
-            , GuideStep (achieved && evaluated) "03 · 결과에서 평가까지" "매출 실측값 50 (단위: 억원)과 보고자, 설명을 보고한 뒤 평가 기록을 누르세요." Dashboard "goal-demo-revenue"
+            , GuideStep (achieved && evaluated) "03 · 결과에서 평가까지" "매출 실측값 50 (단위: 억원)과 보고자, 설명을 보고한 뒤 평가 기록을 누르세요." Results "goal-demo-revenue"
             , GuideStep reviewed "04 · 배움을 다음 결정으로" "매출 목표의 학습과 다음 결정, 담당자, 미래 기한을 기록하세요. 달성 결과와 평가가 함께 보존됩니다." Reviews "review-form"
             ]
 

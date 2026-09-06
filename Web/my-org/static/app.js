@@ -6822,7 +6822,7 @@ var $author$project$Main$Loaded = function (a) {
 	return {$: 1, a: a};
 };
 var $author$project$Main$NoOp = {$: 12};
-var $author$project$Main$Reviews = 4;
+var $author$project$Main$Reviews = 5;
 var $author$project$Main$Saving = function (a) {
 	return {$: 1, a: a};
 };
@@ -7917,7 +7917,7 @@ var $author$project$Main$update = F2(
 				if ($author$project$Main$busy(model)) {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				} else {
-					var drafts = ((page === 4) && ((target === 'review-form') && (A3($author$project$Main$get, model, $author$project$Main$AddReview, 'goal') === ''))) ? A3(
+					var drafts = ((page === 5) && ((target === 'review-form') && (A3($author$project$Main$get, model, $author$project$Main$AddReview, 'goal') === ''))) ? A3(
 						$elm$core$Dict$insert,
 						A2($author$project$Main$formKey, model, $author$project$Main$AddReview),
 						A3(
@@ -7958,7 +7958,8 @@ var $author$project$Main$Navigate = F2(
 	});
 var $author$project$Main$Refresh = {$: 1};
 var $author$project$Main$Responsibility = 2;
-var $author$project$Main$Settings = 5;
+var $author$project$Main$Results = 4;
+var $author$project$Main$Settings = 6;
 var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$html$Html$aside = _VirtualDom_node('aside');
 var $elm$virtual_dom$VirtualDom$attribute = F2(
@@ -8447,7 +8448,7 @@ var $author$project$Main$organizationsView = function (model) {
 																	$elm$html$Html$Events$onClick(
 																	A2(
 																		$author$project$Main$Navigate,
-																		5,
+																		6,
 																		$elm$core$Maybe$Just(item.aA.v)))
 																]),
 															_List_fromArray(
@@ -8467,13 +8468,15 @@ var $author$project$Main$pageName = function (page) {
 		case 0:
 			return '조직 목록';
 		case 1:
-			return '목표 대시보드';
+			return '목표';
 		case 2:
-			return '책임 지도';
+			return '책임';
 		case 3:
-			return '권한 지도';
+			return '권한';
 		case 4:
-			return '회고와 학습';
+			return '결과';
+		case 5:
+			return '학습';
 		default:
 			return '조직 설정';
 	}
@@ -8662,7 +8665,7 @@ var $author$project$Main$authorityView = F2(
 							$author$project$Main$note('권한을 줄여 활성 목표의 요건이 깨지면 해당 목표는 자동으로 초안으로 돌아갑니다.'),
 							$author$project$Main$note('집중도 = 보유 권한 종류 수 + 예산 보유 1점 / 조직 전체 점수. 실제 의사결정 빈도나 권력의 측정값은 아닙니다.')
 						])),
-					$elm$core$List$isEmpty(w.aC) ? A2($author$project$Main$emptyState, '구성원을 먼저 추가하세요', '목표 대시보드에서 구성원을 추가한 뒤 권한을 부여할 수 있습니다.') : A2(
+					$elm$core$List$isEmpty(w.aC) ? A2($author$project$Main$emptyState, '구성원을 먼저 추가하세요', '목표 메뉴에서 구성원을 추가한 뒤 권한을 부여할 수 있습니다.') : A2(
 					$elm$html$Html$div,
 					_List_fromArray(
 						[
@@ -8764,12 +8767,10 @@ var $author$project$Main$Activate = function (a) {
 var $author$project$Main$Assign = function (a) {
 	return {$: 5, a: a};
 };
-var $author$project$Main$Evaluate = function (a) {
-	return {$: 11, a: a};
-};
-var $author$project$Main$Report = function (a) {
-	return {$: 7, a: a};
-};
+var $author$project$Main$Guide = F2(
+	function (a, b) {
+		return {$: 11, a: a, b: b};
+	});
 var $author$project$Main$Strategy = function (a) {
 	return {$: 8, a: a};
 };
@@ -8869,19 +8870,7 @@ var $author$project$Main$formatNumber = function (number) {
 		(number < 0) ? '-' : '',
 		_Utils_ap(whole, fraction));
 };
-var $elm$html$Html$h3 = _VirtualDom_node('h3');
 var $elm$html$Html$Attributes$max = $elm$html$Html$Attributes$stringProperty('max');
-var $author$project$Main$peopleOptions = function (w) {
-	return A2(
-		$elm$core$List$cons,
-		_Utils_Tuple2('', '구성원 선택'),
-		A2(
-			$elm$core$List$map,
-			function (p) {
-				return _Utils_Tuple2(p.v, p.X + (' · ' + p.bS));
-			},
-			w.aC));
-};
 var $author$project$Domain$personName = F2(
 	function (w, key) {
 		return A2(
@@ -8904,6 +8893,121 @@ var $author$project$Domain$personName = F2(
 						w.aC))));
 	});
 var $elm$html$Html$progress = _VirtualDom_node('progress');
+var $author$project$Main$goalSummary = F2(
+	function (w, g) {
+		return _List_fromArray(
+			[
+				$author$project$Main$badge(g),
+				A2(
+				$elm$html$Html$h2,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(g.W.Z)
+					])),
+				A2(
+				$elm$html$Html$small,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						g.W.bD.X + (' · ' + (((g.W.bD.bi === 'HigherIsBetter') ? '↑ 증가' : '↓ 감소') + ' 목표')))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('goal-values')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$strong,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								A2(
+									$elm$core$Maybe$withDefault,
+									'—',
+									A2($elm$core$Maybe$map, $author$project$Main$formatNumber, g.ap.bz)))
+							])),
+						A2(
+						$elm$html$Html$span,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('muted')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								'/ ' + ($author$project$Main$formatNumber(g.W.b1) + (' ' + g.W.bD.b6)))
+							]))
+					])),
+				A2(
+				$elm$html$Html$progress,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$max('1'),
+						$elm$html$Html$Attributes$value(
+						$elm$core$String$fromFloat(
+							A3($elm$core$Basics$clamp, 0, 1, g.ap.bJ))),
+						A2($elm$html$Html$Attributes$attribute, 'aria-label', '목표 달성률')
+					]),
+				_List_Nil),
+				A2(
+				$elm$html$Html$small,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						$elm$core$String$fromInt(
+							$elm$core$Basics$round(g.ap.bJ * 100)) + ('% 달성 · 기준 ' + $author$project$Main$formatNumber(g.W.a2)))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('meta')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$span,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								A2(
+									$elm$core$Maybe$withDefault,
+									'책임자 미지정',
+									A2(
+										$elm$core$Maybe$map,
+										$author$project$Domain$personName(w),
+										g.ac)))
+							])),
+						A2(
+						$elm$html$Html$span,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								A2($elm$core$String$left, 10, g.W.am) + ' 마감')
+							]))
+					]))
+			]);
+	});
+var $author$project$Main$peopleOptions = function (w) {
+	return A2(
+		$elm$core$List$cons,
+		_Utils_Tuple2('', '구성원 선택'),
+		A2(
+			$elm$core$List$map,
+			function (p) {
+				return _Utils_Tuple2(p.v, p.X + (' · ' + p.bS));
+			},
+			w.aC));
+};
 var $elm$virtual_dom$VirtualDom$property = F2(
 	function (key, value) {
 		return A2(
@@ -8958,12 +9062,6 @@ var $author$project$Main$selectField = F6(
 				]));
 	});
 var $elm$html$Html$summary = _VirtualDom_node('summary');
-var $elm$html$Html$table = _VirtualDom_node('table');
-var $elm$html$Html$tbody = _VirtualDom_node('tbody');
-var $elm$html$Html$td = _VirtualDom_node('td');
-var $elm$html$Html$th = _VirtualDom_node('th');
-var $elm$html$Html$thead = _VirtualDom_node('thead');
-var $elm$html$Html$tr = _VirtualDom_node('tr');
 var $author$project$Main$goalCard = F3(
 	function (model, w, g) {
 		return A2(
@@ -8974,359 +9072,126 @@ var $author$project$Main$goalCard = F3(
 					$elm$html$Html$Attributes$id('goal-' + g.W.v),
 					$elm$html$Html$Attributes$tabindex(-1)
 				]),
-			_List_fromArray(
-				[
-					$author$project$Main$badge(g),
-					A2(
-					$elm$html$Html$h2,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$elm$html$Html$text(g.W.Z)
-						])),
-					A2(
-					$elm$html$Html$small,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$elm$html$Html$text(
-							g.W.bD.X + (' · ' + (((g.W.bD.bi === 'HigherIsBetter') ? '↑ 증가' : '↓ 감소') + ' 목표')))
-						])),
-					A2(
-					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('goal-values')
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$strong,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text(
-									A2(
-										$elm$core$Maybe$withDefault,
-										'—',
-										A2($elm$core$Maybe$map, $author$project$Main$formatNumber, g.ap.bz)))
-								])),
-							A2(
-							$elm$html$Html$span,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('muted')
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text(
-									'/ ' + ($author$project$Main$formatNumber(g.W.b1) + (' ' + g.W.bD.b6)))
-								]))
-						])),
-					A2(
-					$elm$html$Html$progress,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$max('1'),
-							$elm$html$Html$Attributes$value(
-							$elm$core$String$fromFloat(
-								A3($elm$core$Basics$clamp, 0, 1, g.ap.bJ))),
-							A2($elm$html$Html$Attributes$attribute, 'aria-label', '목표 달성률')
-						]),
-					_List_Nil),
-					A2(
-					$elm$html$Html$small,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$elm$html$Html$text(
-							$elm$core$String$fromInt(
-								$elm$core$Basics$round(g.ap.bJ * 100)) + ('% 달성 · 기준 ' + $author$project$Main$formatNumber(g.W.a2)))
-						])),
-					A2(
-					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('meta')
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$span,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text(
-									A2(
-										$elm$core$Maybe$withDefault,
-										'책임자 미지정',
+			_Utils_ap(
+				A2($author$project$Main$goalSummary, w, g),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('actions')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('secondary'),
+										$elm$html$Html$Attributes$disabled(
+										$author$project$Main$busy(model)),
+										$elm$html$Html$Events$onClick(
+										A2($author$project$Main$Guide, 4, 'goal-' + g.W.v))
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('결과 보고 · 평가 →')
+									]))
+							])),
+						A2(
+						$elm$html$Html$details,
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$Attributes$property,
+								'open',
+								$elm$json$Json$Encode$bool(
+									_Utils_eq(
+										model.P,
+										$elm$core$Maybe$Just(g.W.v))))
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$summary,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text('책임 · 권한 · 전략 관리')
+									])),
+								$author$project$Main$note(g.a_.bI),
+								A4(
+								$author$project$Main$formView,
+								model,
+								$author$project$Main$Assign(g.W.v),
+								'책임자 지정',
+								_List_fromArray(
+									[
+										A6(
+										$author$project$Main$selectField,
+										model,
+										$author$project$Main$Assign(g.W.v),
+										'단일 최종 책임자',
+										'owner',
+										true,
+										$author$project$Main$peopleOptions(w))
+									])),
+								$author$project$Main$note('책임자 변경 또는 권한 부족 시 초안으로 돌아갑니다. 권한 메뉴에서 결정 권한을 조정하세요.'),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('actions')
+									]),
+								_List_fromArray(
+									[
 										A2(
-											$elm$core$Maybe$map,
-											$author$project$Domain$personName(w),
-											g.ac)))
-								])),
-							A2(
-							$elm$html$Html$span,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text(
-									A2($elm$core$String$left, 10, g.W.am) + ' 마감')
-								]))
-						])),
-					A2(
-					$elm$html$Html$details,
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$Attributes$property,
-							'open',
-							$elm$json$Json$Encode$bool(
-								_Utils_eq(
-									model.P,
-									$elm$core$Maybe$Just(g.W.v))))
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$summary,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text('책임 · 권한 · 결과 관리')
-								])),
-							$author$project$Main$note(g.a_.bI),
-							A4(
-							$author$project$Main$formView,
-							model,
-							$author$project$Main$Assign(g.W.v),
-							'책임자 지정',
-							_List_fromArray(
-								[
-									A6(
-									$author$project$Main$selectField,
-									model,
-									$author$project$Main$Assign(g.W.v),
-									'단일 최종 책임자',
-									'owner',
-									true,
-									$author$project$Main$peopleOptions(w))
-								])),
-							$author$project$Main$note('책임자 변경 또는 권한 부족 시 초안으로 돌아갑니다. 권한 지도에서 결정 권한을 조정하세요.'),
-							A2(
-							$elm$html$Html$div,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('actions')
-								]),
-							_List_fromArray(
-								[
-									A2(
-									$elm$html$Html$button,
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$disabled(
-											$author$project$Main$busy(model) || ((!model.f) || g.aX)),
-											$elm$html$Html$Events$onClick(
-											$author$project$Main$Submit(
-												$author$project$Main$Activate(g.W.v)))
-										]),
-									_List_fromArray(
-										[
-											$elm$html$Html$text(
-											g.aX ? '활성화됨' : '목표 활성화')
-										])),
-									A2(
-									$elm$html$Html$button,
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$class('secondary'),
-											$elm$html$Html$Attributes$disabled(
-											$author$project$Main$busy(model) || (!model.f)),
-											$elm$html$Html$Events$onClick(
-											$author$project$Main$Submit(
-												$author$project$Main$Evaluate(g.W.v)))
-										]),
-									_List_fromArray(
-										[
-											$elm$html$Html$text('평가 기록')
-										]))
-								])),
-							A2(
-							$elm$html$Html$h3,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('form-heading')
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('결과 보고')
-								])),
-							A4(
-							$author$project$Main$formView,
-							model,
-							$author$project$Main$Report(g.W.v),
-							'결과 보고',
-							_List_fromArray(
-								[
-									A2(
-									$elm$html$Html$div,
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$class('fields')
-										]),
-									_List_fromArray(
-										[
-											A6(
-											$author$project$Main$inputField,
-											model,
-											$author$project$Main$Report(g.W.v),
-											'실측값',
-											'value',
-											'number',
-											true),
-											A6(
-											$author$project$Main$selectField,
-											model,
-											$author$project$Main$Report(g.W.v),
-											'보고자',
-											'reportedBy',
-											true,
-											$author$project$Main$peopleOptions(w))
-										])),
-									A6(
-									$author$project$Main$inputField,
-									model,
-									$author$project$Main$Report(g.W.v),
-									'결과 설명',
-									'note',
-									'text',
-									true)
-								])),
-							$elm$core$List$isEmpty(g.bO) ? $author$project$Main$note('아직 결과가 없습니다.') : A2(
-							$elm$html$Html$div,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('table-wrap')
-								]),
-							_List_fromArray(
-								[
-									A2(
-									$elm$html$Html$h3,
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$class('form-heading')
-										]),
-									_List_fromArray(
-										[
-											$elm$html$Html$text('결과 추이 · 최근 순')
-										])),
-									A2(
-									$elm$html$Html$table,
-									_List_Nil,
-									_List_fromArray(
-										[
-											A2(
-											$elm$html$Html$thead,
-											_List_Nil,
-											_List_fromArray(
-												[
-													A2(
-													$elm$html$Html$tr,
-													_List_Nil,
-													_List_fromArray(
-														[
-															A2(
-															$elm$html$Html$th,
-															_List_Nil,
-															_List_fromArray(
-																[
-																	$elm$html$Html$text('기록 시각')
-																])),
-															A2(
-															$elm$html$Html$th,
-															_List_Nil,
-															_List_fromArray(
-																[
-																	$elm$html$Html$text('측정값')
-																])),
-															A2(
-															$elm$html$Html$th,
-															_List_Nil,
-															_List_fromArray(
-																[
-																	$elm$html$Html$text('설명')
-																]))
-														]))
-												])),
-											A2(
-											$elm$html$Html$tbody,
-											_List_Nil,
-											A2(
-												$elm$core$List$map,
-												function (r) {
-													return A2(
-														$elm$html$Html$tr,
-														_List_Nil,
-														_List_fromArray(
-															[
-																A2(
-																$elm$html$Html$td,
-																_List_Nil,
-																_List_fromArray(
-																	[
-																		$elm$html$Html$text(r.bL)
-																	])),
-																A2(
-																$elm$html$Html$td,
-																_List_Nil,
-																_List_fromArray(
-																	[
-																		$elm$html$Html$text(
-																		$author$project$Main$formatNumber(r.b8))
-																	])),
-																A2(
-																$elm$html$Html$td,
-																_List_Nil,
-																_List_fromArray(
-																	[
-																		$elm$html$Html$text(r.ay)
-																	]))
-															]));
-												},
-												g.bO))
-										]))
-								])),
-							A4(
-							$author$project$Main$formView,
-							model,
-							$author$project$Main$Strategy(g.W.v),
-							'전략 변경 기록',
-							_List_fromArray(
-								[
-									A6(
-									$author$project$Main$inputField,
-									model,
-									$author$project$Main$Strategy(g.W.v),
-									'새로운 전략과 변경 이유',
-									'note',
-									'text',
-									true)
-								])),
-							A2(
-							$elm$html$Html$div,
-							_List_Nil,
-							A2(
-								$elm$core$List$map,
-								function (_v0) {
-									var at = _v0.a;
-									var message = _v0.b;
-									return $author$project$Main$note(
-										A2($elm$core$String$left, 10, at) + (' · ' + message));
-								},
-								g.bZ))
-						]))
-				]));
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$disabled(
+												$author$project$Main$busy(model) || ((!model.f) || g.aX)),
+												$elm$html$Html$Events$onClick(
+												$author$project$Main$Submit(
+													$author$project$Main$Activate(g.W.v)))
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text(
+												g.aX ? '활성화됨' : '목표 활성화')
+											]))
+									])),
+								A4(
+								$author$project$Main$formView,
+								model,
+								$author$project$Main$Strategy(g.W.v),
+								'전략 변경 기록',
+								_List_fromArray(
+									[
+										A6(
+										$author$project$Main$inputField,
+										model,
+										$author$project$Main$Strategy(g.W.v),
+										'새로운 전략과 변경 이유',
+										'note',
+										'text',
+										true)
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_Nil,
+								A2(
+									$elm$core$List$map,
+									function (_v0) {
+										var at = _v0.a;
+										var message = _v0.b;
+										return $author$project$Main$note(
+											A2($elm$core$String$left, 10, at) + (' · ' + message));
+									},
+									g.bZ))
+							]))
+					])));
 	});
 var $author$project$Main$goalOptions = function (w) {
 	return A2(
@@ -9575,15 +9440,12 @@ var $author$project$Main$dashboardView = F2(
 					$author$project$Main$diagnosticView(w)
 				]));
 	});
-var $author$project$Main$Guide = F2(
-	function (a, b) {
-		return {$: 11, a: a, b: b};
-	});
 var $author$project$Main$GuideStep = F5(
 	function (done, title, instruction, page, target) {
 		return {O: done, av: instruction, i: page, b1: target, aQ: title};
 	});
 var $author$project$Main$ToggleGuide = {$: 10};
+var $elm$html$Html$h3 = _VirtualDom_node('h3');
 var $author$project$Main$guideView = F2(
 	function (model, w) {
 		var reviewed = A2(
@@ -9693,8 +9555,8 @@ var $author$project$Main$guideView = F2(
 				'이지원에게 채용 권한과 예산 30,000,000원을 부여하세요. 제품 출시 권한을 유지하고 신제품 출시 목표를 활성화하세요.',
 				ready ? 1 : 3,
 				ready ? 'goal-demo-launch' : 'authority-demo-product'),
-				A5($author$project$Main$GuideStep, achieved && evaluated, '03 · 결과에서 평가까지', '매출 실측값 50 (단위: 억원)과 보고자, 설명을 보고한 뒤 평가 기록을 누르세요.', 1, 'goal-demo-revenue'),
-				A5($author$project$Main$GuideStep, reviewed, '04 · 배움을 다음 결정으로', '매출 목표의 학습과 다음 결정, 담당자, 미래 기한을 기록하세요. 달성 결과와 평가가 함께 보존됩니다.', 4, 'review-form')
+				A5($author$project$Main$GuideStep, achieved && evaluated, '03 · 결과에서 평가까지', '매출 실측값 50 (단위: 억원)과 보고자, 설명을 보고한 뒤 평가 기록을 누르세요.', 4, 'goal-demo-revenue'),
+				A5($author$project$Main$GuideStep, reviewed, '04 · 배움을 다음 결정으로', '매출 목표의 학습과 다음 결정, 담당자, 미래 기한을 기록하세요. 달성 결과와 평가가 함께 보존됩니다.', 5, 'review-form')
 			]);
 		var count = $elm$core$List$length(
 			A2(
@@ -9878,7 +9740,7 @@ var $author$project$Main$guideView = F2(
 											$elm$html$Html$Attributes$disabled(
 											$author$project$Main$busy(model)),
 											$elm$html$Html$Events$onClick(
-											A2($author$project$Main$Guide, 4, 'audit-history'))
+											A2($author$project$Main$Guide, 5, 'audit-history'))
 										]),
 									_List_fromArray(
 										[
@@ -9948,6 +9810,12 @@ var $author$project$Domain$permissionName = function (key) {
 						$elm$core$Basics$eq(key)),
 					$author$project$Domain$permissions))));
 };
+var $elm$html$Html$table = _VirtualDom_node('table');
+var $elm$html$Html$tbody = _VirtualDom_node('tbody');
+var $elm$html$Html$td = _VirtualDom_node('td');
+var $elm$html$Html$th = _VirtualDom_node('th');
+var $elm$html$Html$thead = _VirtualDom_node('thead');
+var $elm$html$Html$tr = _VirtualDom_node('tr');
 var $author$project$Main$responsibilityView = F2(
 	function (model, w) {
 		return A2(
@@ -10142,6 +10010,248 @@ var $author$project$Main$responsibilityView = F2(
 								w.bk))
 						])),
 					$author$project$Main$diagnosticView(w)
+				]));
+	});
+var $author$project$Main$Evaluate = function (a) {
+	return {$: 11, a: a};
+};
+var $author$project$Main$Report = function (a) {
+	return {$: 7, a: a};
+};
+var $author$project$Main$resultCard = F3(
+	function (model, w, g) {
+		return A2(
+			$elm$html$Html$article,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('goal-card'),
+					$elm$html$Html$Attributes$id('goal-' + g.W.v),
+					$elm$html$Html$Attributes$tabindex(-1)
+				]),
+			_Utils_ap(
+				A2($author$project$Main$goalSummary, w, g),
+				_List_fromArray(
+					[
+						$author$project$Main$note(g.a_.bI),
+						A2(
+						$elm$html$Html$h3,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('form-heading')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('결과 보고')
+							])),
+						A4(
+						$author$project$Main$formView,
+						model,
+						$author$project$Main$Report(g.W.v),
+						'결과 보고',
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('fields')
+									]),
+								_List_fromArray(
+									[
+										A6(
+										$author$project$Main$inputField,
+										model,
+										$author$project$Main$Report(g.W.v),
+										'실측값',
+										'value',
+										'number',
+										true),
+										A6(
+										$author$project$Main$selectField,
+										model,
+										$author$project$Main$Report(g.W.v),
+										'보고자',
+										'reportedBy',
+										true,
+										$author$project$Main$peopleOptions(w))
+									])),
+								A6(
+								$author$project$Main$inputField,
+								model,
+								$author$project$Main$Report(g.W.v),
+								'결과 설명',
+								'note',
+								'text',
+								true)
+							])),
+						$elm$core$List$isEmpty(g.bO) ? $author$project$Main$note('아직 결과가 없습니다.') : A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('table-wrap')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$h3,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('form-heading')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('결과 추이 · 최근 순')
+									])),
+								A2(
+								$elm$html$Html$table,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$thead,
+										_List_Nil,
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$tr,
+												_List_Nil,
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$th,
+														_List_Nil,
+														_List_fromArray(
+															[
+																$elm$html$Html$text('기록 시각')
+															])),
+														A2(
+														$elm$html$Html$th,
+														_List_Nil,
+														_List_fromArray(
+															[
+																$elm$html$Html$text('측정값')
+															])),
+														A2(
+														$elm$html$Html$th,
+														_List_Nil,
+														_List_fromArray(
+															[
+																$elm$html$Html$text('설명')
+															]))
+													]))
+											])),
+										A2(
+										$elm$html$Html$tbody,
+										_List_Nil,
+										A2(
+											$elm$core$List$map,
+											function (r) {
+												return A2(
+													$elm$html$Html$tr,
+													_List_Nil,
+													_List_fromArray(
+														[
+															A2(
+															$elm$html$Html$td,
+															_List_Nil,
+															_List_fromArray(
+																[
+																	$elm$html$Html$text(r.bL)
+																])),
+															A2(
+															$elm$html$Html$td,
+															_List_Nil,
+															_List_fromArray(
+																[
+																	$elm$html$Html$text(
+																	$author$project$Main$formatNumber(r.b8))
+																])),
+															A2(
+															$elm$html$Html$td,
+															_List_Nil,
+															_List_fromArray(
+																[
+																	$elm$html$Html$text(r.ay)
+																]))
+														]));
+											},
+											g.bO))
+									]))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('actions')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('secondary'),
+										$elm$html$Html$Attributes$disabled(
+										$author$project$Main$busy(model) || (!model.f)),
+										$elm$html$Html$Events$onClick(
+										$author$project$Main$Submit(
+											$author$project$Main$Evaluate(g.W.v)))
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('평가 기록')
+									])),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('secondary'),
+										$elm$html$Html$Attributes$disabled(
+										$author$project$Main$busy(model)),
+										$elm$html$Html$Events$onClick(
+										A2($author$project$Main$Guide, 1, 'goal-' + g.W.v))
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('목표 관리 →')
+									]))
+							]))
+					])));
+	});
+var $author$project$Main$resultsView = F2(
+	function (model, w) {
+		return A2(
+			$elm$html$Html$div,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('section-head')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$h2,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('목표별 결과와 평가')
+								]))
+						])),
+					$author$project$Main$note('실측값을 보고하고 현재 성과를 평가하세요. 결과 이력은 다음 학습의 근거가 됩니다.'),
+					$elm$core$List$isEmpty(w.as) ? A2($author$project$Main$emptyState, '아직 측정할 목표가 없습니다', '목표 메뉴에서 목표를 만든 뒤 결과를 기록하세요.') : A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('grid')
+						]),
+					A2(
+						$elm$core$List$map,
+						A2($author$project$Main$resultCard, model, w),
+						w.as))
 				]));
 	});
 var $elm$core$List$append = F2(
@@ -10543,7 +10653,7 @@ var $author$project$Main$settingsView = F2(
 								]),
 							_List_fromArray(
 								[
-									$elm$html$Html$text('목표 대시보드 →')
+									$elm$html$Html$text('목표 →')
 								]))
 						])),
 					A2(
@@ -10712,7 +10822,7 @@ var $author$project$Main$workspaceView = function (model) {
 				_List_Nil,
 				_List_fromArray(
 					[
-						(w.an && (model.i !== 5)) ? A2($author$project$Main$guideView, model, w) : $elm$html$Html$text(''),
+						(w.an && (model.i !== 6)) ? A2($author$project$Main$guideView, model, w) : $elm$html$Html$text(''),
 						function () {
 						var _v0 = model.i;
 						switch (_v0) {
@@ -10723,8 +10833,10 @@ var $author$project$Main$workspaceView = function (model) {
 							case 3:
 								return A2($author$project$Main$authorityView, model, w);
 							case 4:
-								return A2($author$project$Main$reviewsView, model, w);
+								return A2($author$project$Main$resultsView, model, w);
 							case 5:
+								return A2($author$project$Main$reviewsView, model, w);
+							case 6:
 								return A2($author$project$Main$settingsView, model, w);
 							default:
 								return $elm$html$Html$text('');
@@ -10839,7 +10951,7 @@ var $author$project$Main$view = function (model) {
 										]));
 							},
 							_List_fromArray(
-								[0, 1, 2, 3, 4]))),
+								[0, 1, 2, 3, 4, 5]))),
 						A2(
 						$elm$html$Html$div,
 						_List_fromArray(
@@ -10935,7 +11047,7 @@ var $author$project$Main$view = function (model) {
 												$elm$html$Html$Attributes$disabled(
 												$author$project$Main$busy(model)),
 												$elm$html$Html$Events$onClick(
-												A2($author$project$Main$Navigate, 5, model.c))
+												A2($author$project$Main$Navigate, 6, model.c))
 											]),
 										_List_fromArray(
 											[

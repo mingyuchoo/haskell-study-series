@@ -33,3 +33,20 @@
 - 검토: reviewer 최종 APPROVE (모든 항목 pass).
 - 제약: 초안은 앱 내 이동·조회 동안 유지되며 전체 페이지 재로드/종료 시 사라짐. 날짜 입력 UTC. 브라우저에서 실제 삭제는 실행하지 않음(기존 Haskell 삭제 회귀 테스트 통과).
 - 정리: 검증 서버/브라우저 종료. 사용자 데이터와 분리된 runs/elm-ui-check/ 사용.
+
+## T-2026-0906-004
+- 요청: 메뉴를 목표·책임·권한·결과·학습으로 재구성
+- 상태: DONE
+- 담당: coder (화면 재구성), orchestrator (통합/문서), reviewer (검토)
+- 가정: 조직 목록은 유지하고 결과 보고·평가를 결과 화면으로 분리하며 회고·학습은 학습 화면에 배치한다.
+- 결과: 조직 목록 유지, 목표·책임·권한·결과·학습 순서 적용. 결과 보고·평가·이력 Results 화면 분리, 목표↔결과 바로가기 및 데모 03 연결 갱신. README/컴파일 app.js 반영.
+- 검증: npm run format/build/check 및 git diff --check 통과. 브라우저 메뉴·결과/학습 화면·초안 보존·양방향 이동·데모 결과 이동 확인. 오류 로그 없음.
+- 검토: reviewer APPROVE (모든 항목 pass).
+
+## T-2026-0906-005
+- 요청: make build에서 frontend도 함께 빌드
+- 상태: DONE
+- 가정: 이미 있는 build: frontend 의존성을 유지하고 실제 실행을 검증한다.
+- 담당: orchestrator (실행 확인), reviewer (검토)
+- 확인: frontend는 npm ci 및 npm run build, build는 frontend 이후 stack build를 실행한다.
+- 결과: Makefile은 이미 요청을 충족하여 추가 수정 없음. 실제 make build 종료 코드 0: npm ci → Elm 최적화 빌드 → stack build 통과. reviewer APPROVE.
