@@ -170,8 +170,9 @@ selectionSpec =
       ( if sqlite
           then "selects SQLite and restores it after restart"
           else "defaults to the local JSON file"
-      ) $
-      withSystemTempDirectory "my-org-selection-" $ \directory -> do
+      )
+      $ withSystemTempDirectory "my-org-selection-"
+      $ \directory -> do
         root <- getCurrentDirectory
         createDirectoryLink (root </> "static") (directory </> "static")
         binary <- getExecutablePath
@@ -204,8 +205,9 @@ selectionSpec =
               withFile (directory </> "selection.log") WriteMode $ \handle ->
                 bracket
                   (createProcess config {std_out = UseHandle handle, std_err = UseHandle handle})
-                  stop $ \(_, _, _, process) ->
-                  withClient port $ \client -> waitReady client process 100 >> action client
+                  stop
+                  $ \(_, _, _, process) ->
+                    withClient port $ \client -> waitReady client process 100 >> action client
         serve $ \client ->
           void
             ( post
