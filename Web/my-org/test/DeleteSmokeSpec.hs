@@ -1,7 +1,9 @@
-module DeleteSmokeSpec (spec) where
+module DeleteSmokeSpec
+  ( spec
+  ) where
 
 import Control.Monad (void)
-import qualified Data.Text as T
+import Data.Text qualified as T
 import SmokeSupport
 import Test.Hspec
 
@@ -16,23 +18,48 @@ spec = describe "HTTP organization deletion" $ it "checks confirmation, projecti
       identifier = case field org "id" of String text -> T.unpack text; value -> error (show value)
       version = number (field state "version")
       name = field org "name"
-      delete target confirmation revision status = void (call client "DELETE" ("organizations/" <> target) (Just (object ["confirmName" .= confirmation, "expectedVersion" .= revision])) status)
+      delete target confirmation revision status =
+        void
+          ( call
+              client
+              "DELETE"
+              ("organizations/" <> target)
+              (Just (object ["confirmName" .= confirmation, "expectedVersion" .= revision]))
+              status
+          )
   oldEvents <- get client "events"
   oldPeople <- get client "people"
   delete "missing" name version 404
   delete identifier (String "wrong") version 400
   delete identifier name (version - 1) 409
-  _ <- call client "DELETE" ("organizations/" <> identifier) (Just (object ["confirmName" .= name])) 400
+  _ <-
+    call
+      client
+      "DELETE"
+      ("organizations/" <> identifier)
+      (Just (object ["confirmName" .= name]))
+      400
   get client "events" `shouldReturn` oldEvents
-  _ <- post client "people" (object ["id" .= String "deletion-test", "name" .= String "삭제 검증 가상 인물", "role" .= String "검증"]) 201
+  _ <-
+    post
+      client
+      "people"
+      ( object
+          ["id" .= String "deletion-test", "name" .= String "삭제 검증 가상 인물", "role" .= String "검증"]
+      )
+      201
   delete identifier name version 409
   currentVersion <- number . (`field` "version") <$> get client "dashboard"
   delete identifier name currentVersion 200
   cleared <- get client "dashboard"
   number (field cleared "version") `shouldBe` currentVersion + 1
   field cleared "organization" `shouldBe` Null
-  mapM_ (\key -> items (field cleared key) `shouldBe` []) ["people", "goals", "authorities", "reviews"]
-  mapM_ (\path -> (items <$> get client path) `shouldReturn` []) ["people", "goals", "events", "reviews"]
+  mapM_
+    (\key -> items (field cleared key) `shouldBe` [])
+    ["people", "goals", "authorities", "reviews"]
+  mapM_
+    (\path -> (items <$> get client path) `shouldReturn` [])
+    ["people", "goals", "events", "reviews"]
   graph <- get client "graph"
   items (field graph "nodes") `shouldBe` []
   items (field graph "edges") `shouldBe` []
@@ -52,5 +79,6 @@ spec = describe "HTTP organization deletion" $ it "checks confirmation, projecti
   field seeded "demo" `shouldBe` Bool True
   length (items (field seeded "goals")) `shouldBe` 7
   reseededEvents <- items <$> get client "events"
-  number (field (first reseededEvents) "seq") `shouldSatisfy` (> number (field new "version"))
+  number (field (first reseededEvents) "seq")
+    `shouldSatisfy` (> number (field new "version"))
   get client "people" `shouldReturn` oldPeople

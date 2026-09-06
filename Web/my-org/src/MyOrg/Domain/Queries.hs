@@ -1,12 +1,19 @@
-module MyOrg.Domain.Queries (activeGoals, draftGoals, goalOwnership, goalOwner, ownerAuthority, resultsOf) where
+module MyOrg.Domain.Queries
+  ( activeGoals
+  , draftGoals
+  , goalOwnership
+  , goalOwner
+  , ownerAuthority
+  , resultsOf
+  ) where
 
-import qualified Data.Map.Strict as Map
-import qualified Data.Set as Set
-import MyOrg.Domain.State
-import MyOrg.Domain.Identity
-import MyOrg.Domain.Goal.Types
+import Data.Map.Strict qualified as Map
+import Data.Set qualified as Set
 import MyOrg.Domain.Authority
+import MyOrg.Domain.Goal.Types
+import MyOrg.Domain.Identity
 import MyOrg.Domain.Result
+import MyOrg.Domain.State
 
 -- | 활성화된 목표 목록.
 activeGoals :: OrgState -> [Goal]

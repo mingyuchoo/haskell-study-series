@@ -11,16 +11,18 @@ import Data.Text (Text)
 import GHC.Generics (Generic)
 import MyOrg.Domain.Review.Types
 
-data ReviewWarning
-  = NoDecisionProduced
-  | DecisionWithoutDeadline Text
+data ReviewWarning = NoDecisionProduced
+                   | DecisionWithoutDeadline Text
   deriving stock (Show, Eq, Generic)
 
 -- | 리뷰가 조직에 무엇을 남겼는지 검사한다.
 checkReview :: Review -> [ReviewWarning]
 checkReview r =
   [NoDecisionProduced | null (reviewDecisions r) && null (reviewLearnings r)]
-    ++ [DecisionWithoutDeadline (decisionText d) | d <- reviewDecisions r, decisionDeadline d == Nothing]
+    ++ [ DecisionWithoutDeadline (decisionText d)
+       | d <- reviewDecisions r
+       , decisionDeadline d == Nothing
+       ]
 
 describeReviewWarning :: ReviewWarning -> Text
 describeReviewWarning = \case

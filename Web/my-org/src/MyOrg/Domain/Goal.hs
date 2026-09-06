@@ -17,34 +17,44 @@ module MyOrg.Domain.Goal
   ) where
 
 import Data.Set (Set)
-import qualified Data.Set as Set
-import qualified Data.Text as T
-import MyOrg.Domain.Identity
-import MyOrg.Domain.Goal.Types
+import Data.Set qualified as Set
+import Data.Text qualified as T
 import MyOrg.Domain.Authority
 import MyOrg.Domain.Error
+import MyOrg.Domain.Goal.Types
+import MyOrg.Domain.Identity
 
 -- | 아직 활성화되지 않은 목표.
-newtype DraftGoal = DraftGoal {unDraftGoal :: Goal}
+newtype DraftGoal = DraftGoal { unDraftGoal :: Goal }
   deriving stock (Show, Eq)
 
 -- | 활성화된 목표. 생성자는 외부에 노출하지 않는다.
 data ActiveGoal = ActiveGoal
-  { internalGoal :: Goal
+  { internalGoal      :: Goal
   , internalOwnership :: Ownership
   , internalAuthority :: Authority
-  , internalMetric :: Metric
+  , internalMetric    :: Metric
   }
   deriving stock (Show, Eq)
 
 -- | 초안 자체의 정합성. 책임자와 무관하게 성립해야 하는 규칙.
 validateDraft :: Goal -> Either OrganizationError ()
 validateDraft g
-  | any (T.null . T.strip) [goalDescription g, metricName (goalMetric g), metricUnit (goalMetric g), unMetricId (metricId (goalMetric g))] = Left (InvalidInput "목표 설명과 KPI 이름·단위·식별자가 필요합니다.")
-  | any (\x -> isNaN x || isInfinite x) [goalBaseline g, goalTarget g] = Left (InvalidInput "지표는 유한한 숫자여야 합니다.")
+  | any
+      (T.null . T.strip)
+      [ goalDescription g
+      , metricName (goalMetric g)
+      , metricUnit (goalMetric g)
+      , unMetricId (metricId (goalMetric g))
+      ] =
+      Left (InvalidInput "목표 설명과 KPI 이름·단위·식별자가 필요합니다.")
+  | any (\x -> isNaN x || isInfinite x) [goalBaseline g, goalTarget g] =
+      Left (InvalidInput "지표는 유한한 숫자여야 합니다.")
   | goalRequiredBudget g < 0 = Left (InvalidInput "예산은 음수일 수 없습니다.")
-  | metricDirection (goalMetric g) == HigherIsBetter && goalTarget g < goalBaseline g = Left (InvalidInput "증가 지표의 목표값은 기준값보다 커야 합니다.")
-  | metricDirection (goalMetric g) == LowerIsBetter && goalTarget g > goalBaseline g = Left (InvalidInput "감소 지표의 목표값은 기준값보다 작아야 합니다.")
+  | metricDirection (goalMetric g) == HigherIsBetter && goalTarget g < goalBaseline g =
+      Left (InvalidInput "증가 지표의 목표값은 기준값보다 커야 합니다.")
+  | metricDirection (goalMetric g) == LowerIsBetter && goalTarget g > goalBaseline g =
+      Left (InvalidInput "감소 지표의 목표값은 기준값보다 작아야 합니다.")
   | goalTarget g == goalBaseline g = Left (InvalidTarget (goalId g))
   | goalDeadline g <= goalStartsAt g = Left (DeadlineBeforeStart (goalId g))
   | otherwise = Right ()
@@ -61,13 +71,13 @@ authorityCoverage :: Goal -> Authority -> Double
 authorityCoverage g a
   | total == 0 = 1
   | otherwise = fromIntegral controlled / fromIntegral total
- where
-  perms = goalRequiredPermissions g
-  needsBudget = goalRequiredBudget g > Money 0
-  total = Set.size perms + (if needsBudget then 1 else 0) :: Int
-  controlledPerms = Set.size (perms `Set.intersection` grantedPermissions a)
-  budgetOk = needsBudget && authorityBudgetLimit a >= goalRequiredBudget g
-  controlled = controlledPerms + (if budgetOk then 1 else 0)
+  where
+    perms = goalRequiredPermissions g
+    needsBudget = goalRequiredBudget g > Money 0
+    total = Set.size perms + (if needsBudget then 1 else 0) :: Int
+    controlledPerms = Set.size (perms `Set.intersection` grantedPermissions a)
+    budgetOk = needsBudget && authorityBudgetLimit a >= goalRequiredBudget g
+    controlled = controlledPerms + (if budgetOk then 1 else 0)
 
 -- | 목표, 책임, 권한을 합쳐 검증한다.
 --

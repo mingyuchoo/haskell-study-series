@@ -16,7 +16,7 @@ import MyOrg.Domain.Result
 -- | 가장 최근에 보고된 결과.
 latestResult :: [Result] -> Maybe Result
 latestResult rs = case sortOn (Down . resultReportedAt) rs of
-  [] -> Nothing
+  []      -> Nothing
   (r : _) -> Just r
 
 -- | 기준값을 0, 목표값을 1로 두었을 때 현재 값의 위치. 0 이상 1 이하로 자른다.
@@ -26,17 +26,17 @@ progressOf :: Goal -> Double -> Double
 progressOf g value
   | span' == 0 = if value == goalTarget g then 1 else 0
   | otherwise = clamp ((value - goalBaseline g) / span')
- where
-  span' = goalTarget g - goalBaseline g
+  where
+    span' = goalTarget g - goalBaseline g
 
 -- | 시간 경과에 따라 기대되는 진척률. 0 이상 1 이하.
 expectedProgress :: UTCTime -> Goal -> Double
 expectedProgress now g
   | total <= 0 = 1
   | otherwise = clamp (elapsed / total)
- where
-  total = realToFrac (diffUTCTime (goalDeadline g) (goalStartsAt g)) :: Double
-  elapsed = realToFrac (diffUTCTime now (goalStartsAt g)) :: Double
+  where
+    total = realToFrac (diffUTCTime (goalDeadline g) (goalStartsAt g)) :: Double
+    elapsed = realToFrac (diffUTCTime now (goalStartsAt g)) :: Double
 
 clamp :: Double -> Double
 clamp = max 0 . min 1
@@ -64,10 +64,10 @@ evaluateGoal now g rs =
     , evaluationLatestValue = resultValue <$> latest
     , evaluationEvaluatedAt = now
     }
- where
-  latest = latestResult rs
-  expected = expectedProgress now g
-  progress = maybe 0 (progressOf g . resultValue) latest
-  status = case latest of
-    Nothing -> NoData
-    Just _ -> classify progress expected
+  where
+    latest = latestResult rs
+    expected = expectedProgress now g
+    progress = maybe 0 (progressOf g . resultValue) latest
+    status = case latest of
+      Nothing -> NoData
+      Just _  -> classify progress expected

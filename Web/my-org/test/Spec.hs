@@ -1,48 +1,52 @@
-module Main (main) where
+module Main
+  ( main
+  ) where
 
+import ApiSmokeSpec qualified
+import ContractSpec qualified
 import Control.Concurrent (forkIO, newEmptyMVar, putMVar, takeMVar)
 import Control.Exception (IOException, bracket, try)
 import Control.Monad (foldM, forM, when)
-import qualified Data.ByteString.Lazy.Char8 as BL
-import MyOrg.Serialization.JSON (encodeWire, eitherDecodeWire)
-import Data.List (sort)
+import Data.ByteString.Lazy.Char8 qualified as BL
 import Data.Either (isLeft, isRight)
-import qualified Data.Map.Strict as Map
-import qualified Data.Set as Set
+import Data.List (sort)
+import Data.Map.Strict qualified as Map
+import Data.Set qualified as Set
 import Data.Text (Text)
 import Data.Time (UTCTime, addUTCTime)
-import MyOrg.Demo
-import MyOrg.Domain.Graph
+import DeleteSmokeSpec qualified
+import DemoSmokeSpec qualified
+import Lib qualified
 import MyOrg.Application
+import MyOrg.Demo
 import MyOrg.Domain.Compiler
 import MyOrg.Domain.Evaluation
 import MyOrg.Domain.Event
 import MyOrg.Domain.Goal
+import MyOrg.Domain.Graph
 import MyOrg.Domain.Review
+import MyOrg.Registry
+import MyOrg.Serialization.JSON (eitherDecodeWire, encodeWire)
 import MyOrg.Store
 import MyOrg.Types
-import System.Directory
-import System.IO (hClose, openTempFile, hSetBuffering, stdout, BufferMode(LineBuffering))
+import OrganizationsSmokeSpec qualified
+import PlanSpec qualified
+import QuerySpec qualified
 import RegistrySpec (registrySpec)
-import qualified WireSpec
-import qualified QuerySpec
-import qualified PlanSpec
-import qualified ContractSpec
-import qualified ApiSmokeSpec
-import qualified DemoSmokeSpec
-import qualified DeleteSmokeSpec
-import qualified OrganizationsSmokeSpec
-import qualified StartupSmokeSpec
-import qualified Lib
+import StartupSmokeSpec qualified
+import System.Directory
 import System.Environment (getArgs)
-import MyOrg.Registry
+import System.IO (BufferMode (LineBuffering), hClose, hSetBuffering, openTempFile, stdout)
 import Test.Hspec
 import Test.QuickCheck (property)
+import WireSpec qualified
 
 main :: IO ()
 main = do
   args <- getArgs
-  if args == ["--startup-server"] then hSetBuffering stdout LineBuffering >> Lib.someFunc else hspec tests
+  if args == ["--startup-server"]
+    then hSetBuffering stdout LineBuffering >> Lib.someFunc
+    else hspec tests
 
 tests :: Spec
 tests = do
@@ -96,7 +100,8 @@ tests = do
       progressOf decreasing 50 `shouldBe` 0.5
       evaluationStatus (evaluateGoal end decreasing [result (-1) start]) `shouldBe` Achieved
     it "입력 순서가 아닌 보고 시각으로 최신 실측을 고른다" $
-      evaluationLatestValue (evaluateGoal end goal [result 110 end, result 200 start]) `shouldBe` Just 110
+      evaluationLatestValue (evaluateGoal end goal [result 110 end, result 200 start])
+        `shouldBe` Just 110
     it "결과가 없으면 NoData이고 지연 정도를 구분한다" $ do
       evaluationStatus (evaluateGoal end goal []) `shouldBe` NoData
       map (`classify` 1) [1, 0.95, 0.8, 0.1] `shouldBe` [Achieved, OnTrack, AtRisk, OffTrack]
@@ -107,7 +112,10 @@ tests = do
       let st = applyEvent (replay (take 3 events)) (StoredEvent 4 start Nothing (GoalActivated gid))
       Set.member gid (stateActive st) `shouldBe` False
     it "예산 축소 후에는 활성 목표를 다시 검증한다" $ do
-      let st = applyEvent ready (StoredEvent 7 end Nothing (AuthorityGranted uid authority {authorityBudgetLimit = 0}))
+      let st =
+            applyEvent
+              ready
+              (StoredEvent 7 end Nothing (AuthorityGranted uid authority {authorityBudgetLimit = 0}))
       Set.member gid (stateActive st) `shouldBe` False
     it "전체 재생과 부분 재생 후 이어 붙인 상태가 같다" $ do
       let (prefix, suffix) = splitAt 3 events
@@ -125,11 +133,16 @@ tests = do
       codes (replay (take 3 events)) `shouldContain` ["O001"]
     it "권한 부족과 결과 없는 활성 목표를 진단한다" $ do
       codes ready `shouldContain` ["O050"]
-      codes ready {stateAuthorities = Map.singleton uid (emptyAuthority uid)} `shouldContain` ["O017"]
+      codes ready {stateAuthorities = Map.singleton uid (emptyAuthority uid)}
+        `shouldContain` ["O017"]
     it "같은 KPI를 서로 다른 최종 책임자가 맡으면 경고한다" $ do
       let gid2 = GoalId "g2"
-          st = ready {stateGoals = Map.insert gid2 goal {goalId = gid2} (stateGoals ready),
-                      stateOwnership = Map.insert gid2 (Ownership gid2 (UserId "other") start) (stateOwnership ready)}
+          st =
+            ready
+              { stateGoals = Map.insert gid2 goal {goalId = gid2} (stateGoals ready)
+              , stateOwnership =
+                  Map.insert gid2 (Ownership gid2 (UserId "other") start) (stateOwnership ready)
+              }
       codes st `shouldContain` ["O020"]
     it "결정도 학습도 없는 리뷰와 기한 없는 결정을 경고한다" $ do
       checkReview review `shouldBe` [NoDecisionProduced]
@@ -145,17 +158,31 @@ tests = do
     it "없는 사람을 책임자로 지정하지 못한다" $
       executeCommand start ready (AssignOwner gid (UserId "missing")) `shouldSatisfy` isLeft
     it "없는 부모와 다른 조직의 목표를 거부한다" $ do
-      executeCommand start ready (CreateGoal goal {goalId = GoalId "new", goalParent = Just (GoalId "missing")}) `shouldSatisfy` isLeft
-      executeCommand start ready (CreateGoal goal {goalId = GoalId "new", goalOrganization = OrgId "other"}) `shouldSatisfy` isLeft
+      executeCommand
+        start
+        ready
+        (CreateGoal goal {goalId = GoalId "new", goalParent = Just (GoalId "missing")})
+        `shouldSatisfy` isLeft
+      executeCommand
+        start
+        ready
+        (CreateGoal goal {goalId = GoalId "new", goalOrganization = OrgId "other"})
+        `shouldSatisfy` isLeft
     it "없는 보고자와 비유한 결과를 거부한다" $ do
-      executeCommand end ready (ReportResult gid 150 (UserId "missing") "보고") `shouldSatisfy` isLeft
+      executeCommand end ready (ReportResult gid 150 (UserId "missing") "보고")
+        `shouldSatisfy` isLeft
       executeCommand end ready (ReportResult gid (1 / 0) uid "보고") `shouldSatisfy` isLeft
     it "정상 결과를 받아 평가 및 회고로 이어진다" $ do
       executeCommand end ready (ReportResult gid 200 uid "달성") `shouldSatisfy` isRight
       executeCommand end ready (EvaluateGoal gid) `shouldSatisfy` isRight
-      executeCommand end ready (HoldReview (ReviewId "r2") gid [Learning "배움"] [] "회고") `shouldSatisfy` isRight
+      executeCommand end ready (HoldReview (ReviewId "r2") gid [Learning "배움"] [] "회고")
+        `shouldSatisfy` isRight
     it "없는 결정 담당자를 가진 회고를 거부한다" $
-      executeCommand end ready (HoldReview (ReviewId "r2") gid [] [Decision "실험" (UserId "missing") Nothing] "회고") `shouldSatisfy` isLeft
+      executeCommand
+        end
+        ready
+        (HoldReview (ReviewId "r2") gid [] [Decision "실험" (UserId "missing") Nothing] "회고")
+        `shouldSatisfy` isLeft
     it "필수 권한을 회수한 뒤 무효한 활성 목표가 남지 않는다" $
       case executeCommand end ready (RevokeAuthority uid Pricing) of
         Left _ -> pure ()
@@ -166,7 +193,8 @@ tests = do
   describe "이벤트 파일 저장소" $ do
     it "재개방해도 이벤트와 재생 상태가 동일하다" $ withStorePath $ \path -> do
       savedBefore <- bracket (openFileStore path) closeStore $ \store -> do
-        runCommand store Nothing (CreateOrganization (OrgId "org") "조직") >>= (`shouldSatisfy` isRight)
+        runCommand store Nothing (CreateOrganization (OrgId "org") "조직")
+          >>= (`shouldSatisfy` isRight)
         runCommand store Nothing (AddPerson person) >>= (`shouldSatisfy` isRight)
         readStore store
       bracket (openFileStore path) closeStore $ \store -> readStore store `shouldReturn` savedBefore
@@ -183,15 +211,20 @@ tests = do
       bracket (openFileStore path) closeStore $ \store -> do
         createDirectory path
         savedBefore <- readStore store
-        runCommand store Nothing (CreateOrganization (OrgId "org") "조직") >>= (`shouldSatisfy` isLeft)
+        runCommand store Nothing (CreateOrganization (OrgId "org") "조직")
+          >>= (`shouldSatisfy` isLeft)
         readStore store `shouldReturn` savedBefore
         removeDirectory path
     it "동시 쓰기를 직렬화하고 감사 순번을 중복시키지 않는다" $ withStorePath $ \path ->
       bracket (openFileStore path) closeStore $ \store -> do
-        runCommand store Nothing (CreateOrganization (OrgId "org") "조직") >>= (`shouldSatisfy` isRight)
+        runCommand store Nothing (CreateOrganization (OrgId "org") "조직")
+          >>= (`shouldSatisfy` isRight)
         boxes <- forM ["alice", "bob", "charlie"] $ \name -> do
           box <- newEmptyMVar
-          _ <- forkIO $ runCommand store Nothing (AddPerson (Person (UserId name) name "역할" Nothing)) >>= putMVar box
+          _ <-
+            forkIO $
+              runCommand store Nothing (AddPerson (Person (UserId name) name "역할" Nothing))
+                >>= putMVar box
           pure box
         outcomes <- mapM takeMVar boxes
         outcomes `shouldSatisfy` all isRight
@@ -213,16 +246,21 @@ tests = do
       codes st `shouldContain` ["O017"]
       codes st `shouldContain` ["O031"]
       codes st `shouldContain` ["O040"]
-      Set.fromList (map edgeKind (graphEdges (buildGraph st))) `shouldBe` Set.fromList [Owns, DependsOn, Measures, Controls]
+      Set.fromList (map edgeKind (graphEdges (buildGraph st)))
+        `shouldBe` Set.fromList [Owns, DependsOn, Measures, Controls]
       length (goalsWithoutOwner st) `shouldBe` 1
       ownersLackingAuthority st `shouldSatisfy` (not . null)
       stateStrategies st `shouldSatisfy` (not . Map.null)
     it "수년 후 생성해도 같은 상태와 미래 기한을 유지한다" $
-      mapM_ (\now -> withDemo now $ \st _ -> do
-        demoStatuses now st `shouldBe` sort [NoData, OnTrack, AtRisk, OffTrack, Achieved]
-        mapM_ (\g -> goalDeadline g `shouldSatisfy` (> now)) (Map.elems (stateGoals st))
-        mapM_ (\d -> decisionDeadline d `shouldSatisfy` maybe True (> now)) (concatMap reviewDecisions (stateReviews st)))
-      [start, addUTCTime (3650 * 86400) start]
+      mapM_
+        ( \now -> withDemo now $ \st _ -> do
+            demoStatuses now st `shouldBe` sort [NoData, OnTrack, AtRisk, OffTrack, Achieved]
+            mapM_ (\g -> goalDeadline g `shouldSatisfy` (> now)) (Map.elems (stateGoals st))
+            mapM_
+              (\d -> decisionDeadline d `shouldSatisfy` maybe True (> now))
+              (concatMap reviewDecisions (stateReviews st))
+        )
+        [start, addUTCTime (3650 * 86400) start]
     it "감사 시각을 꾸미지 않으며 actor는 이미 존재하는 사람이다" $ withDemo start $ \_ saved -> do
       map storedAt saved `shouldBe` replicate (length saved) start
       let checkActor st event = do
@@ -232,7 +270,8 @@ tests = do
       pure ()
     it "한글과 전체 이벤트가 JSON 왕복 및 동일 기준 시각에서 보존된다" $ withDemo start $ \st saved -> do
       fmap organizationName (stateOrganization st) `shouldBe` Just "북극성 스튜디오 · 체험 조직"
-      (eitherDecodeWire (encodeWire saved) :: Either String [StoredEvent]) `shouldBe` Right saved
+      (eitherDecodeWire (encodeWire saved) :: Either String [StoredEvent])
+        `shouldBe` Right saved
       demoEvents start `shouldBe` Right saved
   describe "원자적 데모 초기화" $ do
     it "전체 초기화와 재개방이 동일하며 재시드는 파일을 변경하지 않는다" $ withStorePath $ \path -> do
@@ -250,12 +289,14 @@ tests = do
         readStore store `shouldReturn` original
     it "일반 기존 데이터를 보존하며 별도 데모를 추가한다" $ withStorePath $ \path ->
       bracket (openFileStore path) closeStore $ \store -> do
-        runCommand store Nothing (CreateOrganization (OrgId "real-org") "기존 조직") >>= (`shouldSatisfy` isRight)
+        runCommand store Nothing (CreateOrganization (OrgId "real-org") "기존 조직")
+          >>= (`shouldSatisfy` isRight)
         original <- readRegistry store
         audit <- readAudit store
         seedDemo store >>= (`shouldSatisfy` isRight)
         registry <- readRegistry store
-        organizationState registry (OrgId "real-org") `shouldBe` organizationState original (OrgId "real-org")
+        organizationState registry (OrgId "real-org")
+          `shouldBe` organizationState original (OrgId "real-org")
         length (activeOrganizations registry) `shouldBe` 2
         saved <- readAudit store
         take (length audit) saved `shouldBe` audit
@@ -285,7 +326,10 @@ tests = do
   describe "조직 논리 삭제" $ do
     it "삭제 시 현재 데이터 전체를 초기화하고 감사 순번을 유지한다" $ withDemo start $ \st saved -> do
       let org = maybe (error "missing demo") id (stateOrganization st)
-      case executeCommand end st (DeleteOrganization (organizationId org) (organizationName org) (stateLastSeq st)) of
+      case executeCommand
+        end
+        st
+        (DeleteOrganization (organizationId org) (organizationName org) (stateLastSeq st)) of
         Left err -> expectationFailure (show err)
         Right changes -> do
           let additions = zipWith (\n e -> StoredEvent n end Nothing e) [length saved + 1 ..] changes
@@ -294,20 +338,31 @@ tests = do
           currentEpoch allEvents `shouldBe` []
           take (length saved) allEvents `shouldBe` saved
     it "잘못된 대상·이름·버전 및 없는 조직의 삭제를 거부한다" $ do
-      executeCommand end emptyState (DeleteOrganization (OrgId "org") "테스트 조직" 0) `shouldSatisfy` isLeft
-      executeCommand end ready (DeleteOrganization (OrgId "wrong") "테스트 조직" 6) `shouldSatisfy` isLeft
-      executeCommand end ready (DeleteOrganization (OrgId "org") "wrong" 6) `shouldSatisfy` isLeft
-      executeCommand end ready (DeleteOrganization (OrgId "org") "테스트 조직" 5) `shouldSatisfy` isLeft
+      executeCommand end emptyState (DeleteOrganization (OrgId "org") "테스트 조직" 0)
+        `shouldSatisfy` isLeft
+      executeCommand end ready (DeleteOrganization (OrgId "wrong") "테스트 조직" 6)
+        `shouldSatisfy` isLeft
+      executeCommand end ready (DeleteOrganization (OrgId "org") "wrong" 6)
+        `shouldSatisfy` isLeft
+      executeCommand end ready (DeleteOrganization (OrgId "org") "테스트 조직" 5)
+        `shouldSatisfy` isLeft
     it "동일 ID의 새 조직에는 과거 기록과 참조가 섞이지 않는다" $ do
       let deleted = events <> [StoredEvent 7 end Nothing (OrganizationDeleted (OrgId "org"))]
-          created = StoredEvent 8 end Nothing (OrganizationCreated (Organization (OrgId "org") "테스트 조직" end))
+          created =
+            StoredEvent 8 end Nothing (OrganizationCreated (Organization (OrgId "org") "테스트 조직" end))
           st = replay (deleted <> [created])
       currentEpoch (deleted <> [created]) `shouldBe` [created]
       Map.null (statePeople st) `shouldBe` True
       Map.null (stateGoals st) `shouldBe` True
       executeCommand end st (DeleteOrganization (OrgId "org") "테스트 조직" 6) `shouldSatisfy` isLeft
     it "데모 ID만 흉내 낸 일반 조직은 데모가 아니다" $ do
-      let fake = [StoredEvent 1 start Nothing (OrganizationCreated (Organization demoOrganizationId "직접 만든 조직" start))]
+      let fake =
+            [ StoredEvent
+                1
+                start
+                Nothing
+                (OrganizationCreated (Organization demoOrganizationId "직접 만든 조직" start))
+            ]
       isDemoEpoch fake `shouldBe` False
       isDemoStore fake `shouldBe` False
     it "삭제 저장 실패 시 현재 상태와 감사 파일을 보존한다" $ withStorePath $ \path ->
@@ -318,7 +373,11 @@ tests = do
         bytes <- BL.readFile path
         renameFile path (path <> ".saved")
         createDirectory path
-        runCommand store Nothing (DeleteOrganization (organizationId org) (organizationName org) (stateLastSeq st)) `shouldReturn` Left StorageFailure
+        runCommand
+          store
+          Nothing
+          (DeleteOrganization (organizationId org) (organizationName org) (stateLastSeq st))
+          `shouldReturn` Left StorageFailure
         readStore store `shouldReturn` saved
         BL.readFile (path <> ".saved") `shouldReturn` bytes
         removeDirectory path
@@ -329,7 +388,11 @@ tests = do
         (st, _) <- readStore store
         saved <- readAudit store
         let org = maybe (error "missing demo") id (stateOrganization st)
-        runCommand store Nothing (DeleteOrganization (organizationId org) (organizationName org) (stateLastSeq st)) >>= (`shouldSatisfy` isRight)
+        runCommand
+          store
+          Nothing
+          (DeleteOrganization (organizationId org) (organizationName org) (stateLastSeq st))
+          >>= (`shouldSatisfy` isRight)
         audit <- readAudit store
         take (length saved) audit `shouldBe` saved
         pure audit
@@ -340,13 +403,19 @@ tests = do
         take (length deleted) audit `shouldBe` deleted
         map storedSeq audit `shouldBe` [1 .. length audit]
         registry <- readRegistry store
-        map storedSeq (currentEpoch (Map.findWithDefault [] demoOrganizationId (registryEvents registry))) `shouldBe` [length deleted + 1 .. length audit]
+        map
+          storedSeq
+          (currentEpoch (Map.findWithDefault [] demoOrganizationId (registryEvents registry)))
+          `shouldBe` [length deleted + 1 .. length audit]
     it "동일 확인 버전의 동시 삭제는 단 한 번만 성공한다" $ withStorePath $ \path ->
       bracket (openFileStore path) closeStore $ \store -> do
-        runCommand store Nothing (CreateOrganization (OrgId "org") "가상 조직") >>= (`shouldSatisfy` isRight)
+        runCommand store Nothing (CreateOrganization (OrgId "org") "가상 조직")
+          >>= (`shouldSatisfy` isRight)
         boxes <- forM [1 .. 2 :: Int] $ \_ -> do
           box <- newEmptyMVar
-          _ <- forkIO $ runCommand store Nothing (DeleteOrganization (OrgId "org") "가상 조직" 1) >>= putMVar box
+          _ <-
+            forkIO $
+              runCommand store Nothing (DeleteOrganization (OrgId "org") "가상 조직" 1) >>= putMVar box
           pure box
         outcomes <- mapM takeMVar boxes
         length (filter isRight outcomes) `shouldBe` 1
@@ -356,36 +425,40 @@ tests = do
         length audit `shouldBe` 2
     it "확인창 이후 변경된 조직은 오래된 확인으로 삭제되지 않는다" $ withStorePath $ \path ->
       bracket (openFileStore path) closeStore $ \store -> do
-        runCommand store Nothing (CreateOrganization (OrgId "org") "가상 조직") >>= (`shouldSatisfy` isRight)
+        runCommand store Nothing (CreateOrganization (OrgId "org") "가상 조직")
+          >>= (`shouldSatisfy` isRight)
         runCommand store Nothing (AddPerson person) >>= (`shouldSatisfy` isRight)
         saved <- readStore store
-        runCommand store Nothing (DeleteOrganization (OrgId "org") "가상 조직" 1) >>= (`shouldSatisfy` isLeft)
+        runCommand store Nothing (DeleteOrganization (OrgId "org") "가상 조직" 1)
+          >>= (`shouldSatisfy` isLeft)
         readStore store `shouldReturn` saved
 
 withDemo :: UTCTime -> (OrgState -> [StoredEvent] -> IO ()) -> IO ()
 withDemo now action = case demoEvents now of
-  Left err -> expectationFailure (show err)
+  Left err    -> expectationFailure (show err)
   Right saved -> action (replay saved) saved
 
 demoStatuses :: UTCTime -> OrgState -> [GoalStatus]
-demoStatuses now st = sort [evaluationStatus (evaluateGoal now g (resultsOf st (goalId g))) | g <- activeGoals st]
+demoStatuses now st =
+  sort
+    [evaluationStatus (evaluateGoal now g (resultsOf st (goalId g))) | g <- activeGoals st]
 
 withStorePath :: (FilePath -> IO a) -> IO a
 withStorePath = bracket acquire cleanup
- where
-  acquire = do
-    dir <- getTemporaryDirectory
-    (path, handle) <- openTempFile dir "my-org-store-test.json"
-    hClose handle
-    removeFile path
-    pure path
-  cleanup path = do
-    isFile <- doesFileExist path
-    when isFile (removeFile path)
-    isDir <- doesDirectoryExist path
-    when isDir (removeDirectory path)
-    locked <- doesDirectoryExist (path <> ".lock")
-    when locked (removeDirectory (path <> ".lock"))
+  where
+    acquire = do
+      dir <- getTemporaryDirectory
+      (path, handle) <- openTempFile dir "my-org-store-test.json"
+      hClose handle
+      removeFile path
+      pure path
+    cleanup path = do
+      isFile <- doesFileExist path
+      when isFile (removeFile path)
+      isDir <- doesDirectoryExist path
+      when isDir (removeDirectory path)
+      locked <- doesDirectoryExist (path <> ".lock")
+      when locked (removeDirectory (path <> ".lock"))
 
 start, end :: UTCTime
 start = read "2026-01-01 00:00:00 UTC"
@@ -398,7 +471,19 @@ uid = UserId "owner"
 metric :: Metric
 metric = Metric (MetricId "revenue") "매출" "KRW" HigherIsBetter
 goal :: Goal
-goal = Goal gid (OrgId "org") "매출 성장" metric 100 200 start end Nothing (Set.singleton Pricing) 100
+goal =
+  Goal
+    gid
+    (OrgId "org")
+    "매출 성장"
+    metric
+    100
+    200
+    start
+    end
+    Nothing
+    (Set.singleton Pricing)
+    100
 person :: Person
 person = Person uid "책임자" "영업" Nothing
 ownership :: Ownership
@@ -410,14 +495,17 @@ result value at = Result gid value at uid "실측"
 review :: Review
 review = Review (ReviewId "r1") gid Nothing (evaluateGoal end goal []) [] [] end "회고"
 events :: [StoredEvent]
-events = zipWith (\n e -> StoredEvent n start (Just uid) e) [1 ..]
-  [ OrganizationCreated (Organization (OrgId "org") "테스트 조직" start)
-  , PersonAdded person
-  , GoalCreated goal
-  , OwnerAssigned gid uid
-  , AuthorityGranted uid authority
-  , GoalActivated gid
-  ]
+events =
+  zipWith
+    (\n e -> StoredEvent n start (Just uid) e)
+    [1 ..]
+    [ OrganizationCreated (Organization (OrgId "org") "테스트 조직" start)
+    , PersonAdded person
+    , GoalCreated goal
+    , OwnerAssigned gid uid
+    , AuthorityGranted uid authority
+    , GoalActivated gid
+    ]
 ready :: OrgState
 ready = replay events
 codes :: OrgState -> [Text]

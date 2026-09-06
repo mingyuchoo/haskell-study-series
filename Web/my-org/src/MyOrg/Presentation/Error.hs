@@ -1,8 +1,10 @@
-module MyOrg.Presentation.Error (describeError) where
+module MyOrg.Presentation.Error
+  ( describeError
+  ) where
 
+import Data.Set qualified as Set
 import Data.Text (Text)
-import qualified Data.Text as T
-import qualified Data.Set as Set
+import Data.Text qualified as T
 import MyOrg.Domain.Error
 import MyOrg.Domain.Identity
 
@@ -18,15 +20,29 @@ describeError = \case
   PersonNotFound u -> "구성원을 찾을 수 없습니다: " <> unUserId u
   NoOwner g -> "최종 책임자(Final Owner)가 존재하지 않습니다: " <> unGoalId g
   OwnerMismatch g o a ->
-    "목표 " <> unGoalId g <> "의 책임자(" <> unUserId o
-      <> ")와 권한 소유자(" <> unUserId a <> ")가 다릅니다."
+    "목표 "
+      <> unGoalId g
+      <> "의 책임자("
+      <> unUserId o
+      <> ")와 권한 소유자("
+      <> unUserId a
+      <> ")가 다릅니다."
   NoAuthority u -> "권한 기록이 없습니다: " <> unUserId u
   MissingPermissions g u ps ->
-    "목표 " <> unGoalId g <> "의 책임자 " <> unUserId u <> "에게 다음 권한이 없습니다: "
+    "목표 "
+      <> unGoalId g
+      <> "의 책임자 "
+      <> unUserId u
+      <> "에게 다음 권한이 없습니다: "
       <> T.intercalate ", " (map (T.pack . show) (Set.toList ps))
   InsufficientBudget g (Money need) (Money have) ->
-    "목표 " <> unGoalId g <> "에 필요한 예산 " <> T.pack (show need)
-      <> " 대비 부여된 예산이 " <> T.pack (show have) <> "입니다."
+    "목표 "
+      <> unGoalId g
+      <> "에 필요한 예산 "
+      <> T.pack (show need)
+      <> " 대비 부여된 예산이 "
+      <> T.pack (show have)
+      <> "입니다."
   InvalidTarget g -> "목표값이 기준값과 같아 성공을 판단할 수 없습니다: " <> unGoalId g
   DeadlineBeforeStart g -> "마감이 시작일보다 앞섭니다: " <> unGoalId g
   GoalAlreadyActive g -> "이미 활성화된 목표입니다: " <> unGoalId g

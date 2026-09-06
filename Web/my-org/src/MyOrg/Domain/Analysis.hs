@@ -10,51 +10,46 @@ module MyOrg.Domain.Analysis
   , renderAnalysis
   ) where
 
-import qualified Data.Map.Strict as Map
-import qualified Data.Set as Set
+import Data.Map.Strict qualified as Map
+import Data.Set qualified as Set
 import Data.Text (Text)
-import qualified Data.Text as T
+import Data.Text qualified as T
 import GHC.Generics (Generic)
-import MyOrg.Domain.State
-import MyOrg.Domain.Queries
+import MyOrg.Domain.Authority
+import MyOrg.Domain.Error
 import MyOrg.Domain.Goal (authorityCoverage, missingPermissions)
+import MyOrg.Domain.Goal.Types
 import MyOrg.Domain.Graph (resourceControllers)
 import MyOrg.Domain.Identity
-import MyOrg.Domain.Goal.Types
-import MyOrg.Domain.Authority
+import MyOrg.Domain.Queries
 import MyOrg.Domain.Result
-import MyOrg.Domain.Error
+import MyOrg.Domain.State
 
 -- | 필요한 자원 하나와 그것을 실제로 쥔 사람들.
 data ResourceHolder = ResourceHolder
-  { holderResource :: Text
-  , holderRequired :: Bool
-  , holderOwnerHas :: Bool
+  { holderResource     :: Text
+  , holderRequired     :: Bool
+  , holderOwnerHas     :: Bool
   , holderControlledBy :: [UserId]
   }
   deriving stock (Show, Eq, Generic)
 
-
-
-data Recommendation
-  = IncreaseOwnerAuthority UserId [Text]
-  | MoveAccountabilityUpward UserId
-  | AssignOwner
-  | NoStructuralIssue
+data Recommendation = IncreaseOwnerAuthority UserId [Text]
+                    | MoveAccountabilityUpward UserId
+                    | AssignOwner
+                    | NoStructuralIssue
   deriving stock (Show, Eq, Generic)
 
 data Analysis = Analysis
-  { analysisGoal :: GoalId
-  , analysisOwner :: Maybe UserId
-  , analysisCoverage :: Double
-  , analysisStatus :: Maybe GoalStatus
-  , analysisResources :: [ResourceHolder]
-  , analysisPossibleCause :: Text
+  { analysisGoal            :: GoalId
+  , analysisOwner           :: Maybe UserId
+  , analysisCoverage        :: Double
+  , analysisStatus          :: Maybe GoalStatus
+  , analysisResources       :: [ResourceHolder]
+  , analysisPossibleCause   :: Text
   , analysisRecommendations :: [Recommendation]
   }
   deriving stock (Show, Eq, Generic)
-
-
 
 analyzeGoal :: OrgState -> GoalId -> Either OrganizationError Analysis
 analyzeGoal st gid = do
@@ -74,15 +69,15 @@ analyzeGoal st gid = do
         | p <- Set.toList required
         ]
           ++ [ ResourceHolder
-                { holderResource = "Budget " <> T.pack (show (unMoney (goalRequiredBudget g)))
-                , holderRequired = True
-                , holderOwnerHas = maybe False ((>= goalRequiredBudget g) . authorityBudgetLimit) mAuth
-                , holderControlledBy =
-                    [ uid
-                    | (uid, a) <- Map.toList (stateAuthorities st)
-                    , authorityBudgetLimit a >= goalRequiredBudget g
-                    ]
-                }
+                 { holderResource = "Budget " <> T.pack (show (unMoney (goalRequiredBudget g)))
+                 , holderRequired = True
+                 , holderOwnerHas = maybe False ((>= goalRequiredBudget g) . authorityBudgetLimit) mAuth
+                 , holderControlledBy =
+                     [ uid
+                     | (uid, a) <- Map.toList (stateAuthorities st)
+                     , authorityBudgetLimit a >= goalRequiredBudget g
+                     ]
+                 }
              | goalRequiredBudget g > Money 0
              ]
       missing = maybe (Set.toList required) (Set.toList . missingPermissions g) mAuth
@@ -99,13 +94,19 @@ analyzeGoal st gid = do
           )
         Just owner
           | coverage >= 1 ->
-              ( unUserId owner <> "이(가) 목표 달성에 필요한 자원을 모두 통제하고 있습니다. "
+              ( unUserId owner
+                  <> "이(가) 목표 달성에 필요한 자원을 모두 통제하고 있습니다. "
                   <> "구조적 병목은 발견되지 않았으며, 실행 자체를 점검해야 합니다."
               , [NoStructuralIssue]
               )
           | otherwise ->
-              ( unUserId owner <> " owns " <> goalDescription g <> ". However, "
-                  <> unUserId owner <> " controls only " <> pct coverage
+              ( unUserId owner
+                  <> " owns "
+                  <> goalDescription g
+                  <> ". However, "
+                  <> unUserId owner
+                  <> " controls only "
+                  <> pct coverage
                   <> " of the resources required to achieve the assigned goal."
               , [IncreaseOwnerAuthority owner missingNames, MoveAccountabilityUpward owner]
               )
@@ -127,8 +128,12 @@ renderAnalysis :: Analysis -> Text
 renderAnalysis a =
   T.unlines $
     ["Possible cause", analysisPossibleCause a, ""]
-      ++ [ holderResource h <> " authority -> "
-            <> (if null (holderControlledBy h) then "(nobody)" else T.intercalate ", " (map unUserId (holderControlledBy h)))
+      ++ [ holderResource h
+             <> " authority -> "
+             <> ( if null (holderControlledBy h)
+                    then "(nobody)"
+                    else T.intercalate ", " (map unUserId (holderControlledBy h))
+                )
          | h <- analysisResources a
          ]
       ++ ["", "Recommendation:"]
@@ -136,10 +141,10 @@ renderAnalysis a =
         (\i r -> T.pack (show (i :: Int)) <> ". " <> renderRec r)
         [1 ..]
         (analysisRecommendations a)
- where
-  renderRec = \case
-    IncreaseOwnerAuthority u ms ->
-      "increase " <> unUserId u <> " authority (" <> T.intercalate ", " ms <> ")"
-    MoveAccountabilityUpward u -> "move accountability for this goal upward from " <> unUserId u
-    AssignOwner -> "assign a final owner"
-    NoStructuralIssue -> "no structural change needed"
+  where
+    renderRec = \case
+      IncreaseOwnerAuthority u ms ->
+        "increase " <> unUserId u <> " authority (" <> T.intercalate ", " ms <> ")"
+      MoveAccountabilityUpward u -> "move accountability for this goal upward from " <> unUserId u
+      AssignOwner -> "assign a final owner"
+      NoStructuralIssue -> "no structural change needed"
