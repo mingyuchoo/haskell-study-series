@@ -5339,13 +5339,17 @@ var $author$project$Domain$Task$Draft = {$: 'Draft'};
 var $author$project$Domain$Task$Important = {$: 'Important'};
 var $author$project$Domain$Task$NotUrgent = {$: 'NotUrgent'};
 var $author$project$Domain$Task$emptyInput = {description: '', expectedResult: '', importance: $author$project$Domain$Task$Important, outcomeOwner: '', status: $author$project$Domain$Task$Draft, taskOwner: '', title: '', urgency: $author$project$Domain$Task$NotUrgent};
-var $author$project$Application$TaskBoard$initialModel = {draft: $author$project$Domain$Task$emptyInput, draggedTaskId: $elm$core$Maybe$Nothing, dropTarget: $elm$core$Maybe$Nothing, editing: $elm$core$Maybe$Nothing, loading: true, notice: $elm$core$Maybe$Nothing, noticeVersion: 0, tasks: _List_Nil};
+var $author$project$Application$TaskBoard$initialModel = {draft: $author$project$Domain$Task$emptyInput, draggedTaskId: $elm$core$Maybe$Nothing, dropTarget: $elm$core$Maybe$Nothing, editing: $elm$core$Maybe$Nothing, loading: true, notice: $elm$core$Maybe$Nothing, noticeVersion: 0, reviewDraft: '', selectedTaskId: $elm$core$Maybe$Nothing, submissionDraft: '', tasks: _List_Nil};
 var $author$project$Application$TaskBoard$init = _Utils_Tuple2(
 	$author$project$Application$TaskBoard$initialModel,
 	_List_fromArray(
 		[$author$project$Application$TaskBoard$LoadTasks]));
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
+var $author$project$Application$TaskBoard$ApproveTaskResult = F3(
+	function (a, b, c) {
+		return {$: 'ApproveTaskResult', a: a, b: b, c: c};
+	});
 var $author$project$Application$TaskBoard$CreateTask = function (a) {
 	return {$: 'CreateTask', a: a};
 };
@@ -5355,6 +5359,14 @@ var $author$project$Application$TaskBoard$DeleteTask = function (a) {
 var $author$project$Application$TaskBoard$MoveTask = F2(
 	function (a, b) {
 		return {$: 'MoveTask', a: a, b: b};
+	});
+var $author$project$Application$TaskBoard$RequestTaskRevision = F3(
+	function (a, b, c) {
+		return {$: 'RequestTaskRevision', a: a, b: b, c: c};
+	});
+var $author$project$Application$TaskBoard$SubmitTaskResult = F3(
+	function (a, b, c) {
+		return {$: 'SubmitTaskResult', a: a, b: b, c: c};
 	});
 var $author$project$Application$TaskBoard$UpdateTask = F2(
 	function (a, b) {
@@ -5367,6 +5379,50 @@ var $author$project$Application$TaskBoard$addEffect = F2(
 		return _Utils_Tuple2(
 			model,
 			A2($elm$core$List$cons, effect, effects));
+	});
+var $elm$core$Maybe$andThen = F2(
+	function (callback, maybeValue) {
+		if (maybeValue.$ === 'Just') {
+			var value = maybeValue.a;
+			return callback(value);
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
+var $elm$core$List$any = F2(
+	function (isOkay, list) {
+		any:
+		while (true) {
+			if (!list.b) {
+				return false;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				if (isOkay(x)) {
+					return true;
+				} else {
+					var $temp$isOkay = isOkay,
+						$temp$list = xs;
+					isOkay = $temp$isOkay;
+					list = $temp$list;
+					continue any;
+				}
+			}
+		}
+	});
+var $author$project$Application$TaskBoard$closePanel = function (model) {
+	return _Utils_update(
+		model,
+		{reviewDraft: '', selectedTaskId: $elm$core$Maybe$Nothing, submissionDraft: ''});
+};
+var $author$project$Application$TaskBoard$errorMessage = F2(
+	function (fallback, error) {
+		if (error.$ === 'Rejected') {
+			var message = error.a;
+			return message;
+		} else {
+			return fallback;
+		}
 	});
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
@@ -5388,6 +5444,16 @@ var $elm$core$List$head = function (list) {
 		return $elm$core$Maybe$Nothing;
 	}
 };
+var $author$project$Application$TaskBoard$findTask = F2(
+	function (taskId, model) {
+		return $elm$core$List$head(
+			A2(
+				$elm$core$List$filter,
+				function (task) {
+					return _Utils_eq(task.taskId, taskId);
+				},
+				model.tasks));
+	});
 var $author$project$Domain$Task$NotImportant = {$: 'NotImportant'};
 var $author$project$Domain$Task$importanceFromString = function (rawImportance) {
 	switch (rawImportance) {
@@ -5398,6 +5464,11 @@ var $author$project$Domain$Task$importanceFromString = function (rawImportance) 
 		default:
 			return $elm$core$Maybe$Nothing;
 	}
+};
+var $elm$core$String$trim = _String_trim;
+var $author$project$Application$TaskBoard$optionalText = function (raw) {
+	return ($elm$core$String$trim(raw) === '') ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(
+		$elm$core$String$trim(raw));
 };
 var $author$project$Application$TaskBoard$replaceTask = F2(
 	function (movedTask, currentTask) {
@@ -5478,9 +5549,30 @@ var $author$project$Domain$Task$urgencyFromString = function (rawUrgency) {
 	}
 };
 var $author$project$Domain$Task$TitleRequired = {$: 'TitleRequired'};
-var $elm$core$String$trim = _String_trim;
 var $author$project$Domain$Task$validateInput = function (input) {
 	return ($elm$core$String$trim(input.title) === '') ? $elm$core$Result$Err($author$project$Domain$Task$TitleRequired) : $elm$core$Result$Ok(input);
+};
+var $elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
+var $author$project$Application$TaskBoard$workflowNotice = function (task) {
+	var _v0 = task.status;
+	switch (_v0.$) {
+		case 'Submitted':
+			return '결과물을 제출했습니다.';
+		case 'Approved':
+			return '결과물을 승인했습니다.';
+		case 'Reviewed':
+			return '수정을 요청했습니다.';
+		default:
+			return '업무를 갱신했습니다.';
+	}
 };
 var $author$project$Application$TaskBoard$update = F2(
 	function (msg, model) {
@@ -5489,16 +5581,27 @@ var $author$project$Application$TaskBoard$update = F2(
 				var result = msg.a;
 				if (result.$ === 'Ok') {
 					var tasks = result.a;
+					var stillSelected = A2(
+						$elm$core$Maybe$andThen,
+						function (taskId) {
+							return A2(
+								$elm$core$List$any,
+								function (task) {
+									return _Utils_eq(task.taskId, taskId);
+								},
+								tasks) ? $elm$core$Maybe$Just(taskId) : $elm$core$Maybe$Nothing;
+						},
+						model.selectedTaskId);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{loading: false, tasks: tasks}),
+							{loading: false, selectedTaskId: stillSelected, tasks: tasks}),
 						_List_Nil);
 				} else {
-					var _v2 = result.a;
+					var error = result.a;
 					return A2(
 						$author$project$Application$TaskBoard$showNotice,
-						'업무 목록을 불러오지 못했습니다.',
+						A2($author$project$Application$TaskBoard$errorMessage, '업무 목록을 불러오지 못했습니다.', error),
 						_Utils_update(
 							model,
 							{loading: false}));
@@ -5529,9 +5632,9 @@ var $author$project$Application$TaskBoard$update = F2(
 					_List_Nil);
 			case 'EditStatus':
 				var rawStatus = msg.a;
-				var _v3 = $author$project$Domain$Task$statusFromString(rawStatus);
-				if (_v3.$ === 'Just') {
-					var taskStatus = _v3.a;
+				var _v2 = $author$project$Domain$Task$statusFromString(rawStatus);
+				if (_v2.$ === 'Just') {
+					var taskStatus = _v2.a;
 					return _Utils_Tuple2(
 						A2(
 							$author$project$Application$TaskBoard$updateForm,
@@ -5547,9 +5650,9 @@ var $author$project$Application$TaskBoard$update = F2(
 				}
 			case 'EditUrgency':
 				var rawUrgency = msg.a;
-				var _v4 = $author$project$Domain$Task$urgencyFromString(rawUrgency);
-				if (_v4.$ === 'Just') {
-					var taskUrgency = _v4.a;
+				var _v3 = $author$project$Domain$Task$urgencyFromString(rawUrgency);
+				if (_v3.$ === 'Just') {
+					var taskUrgency = _v3.a;
 					return _Utils_Tuple2(
 						A2(
 							$author$project$Application$TaskBoard$updateForm,
@@ -5565,9 +5668,9 @@ var $author$project$Application$TaskBoard$update = F2(
 				}
 			case 'EditImportance':
 				var rawImportance = msg.a;
-				var _v5 = $author$project$Domain$Task$importanceFromString(rawImportance);
-				if (_v5.$ === 'Just') {
-					var taskImportance = _v5.a;
+				var _v4 = $author$project$Domain$Task$importanceFromString(rawImportance);
+				if (_v4.$ === 'Just') {
+					var taskImportance = _v4.a;
 					return _Utils_Tuple2(
 						A2(
 							$author$project$Application$TaskBoard$updateForm,
@@ -5618,15 +5721,15 @@ var $author$project$Application$TaskBoard$update = F2(
 						model),
 					_List_Nil);
 			case 'SubmitTask':
-				var _v6 = $author$project$Domain$Task$validateInput(model.draft);
-				if (_v6.$ === 'Err') {
-					var _v7 = _v6.a;
+				var _v5 = $author$project$Domain$Task$validateInput(model.draft);
+				if (_v5.$ === 'Err') {
+					var _v6 = _v5.a;
 					return A2($author$project$Application$TaskBoard$showNotice, '업무 제목을 입력해 주세요.', model);
 				} else {
-					var input = _v6.a;
-					var _v8 = model.editing;
-					if (_v8.$ === 'Just') {
-						var task = _v8.a;
+					var input = _v5.a;
+					var _v7 = model.editing;
+					if (_v7.$ === 'Just') {
+						var task = _v7.a;
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -5652,13 +5755,14 @@ var $author$project$Application$TaskBoard$update = F2(
 			case 'StartEdit':
 				var task = msg.a;
 				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							draft: $author$project$Application$TaskBoard$toInput(task),
-							editing: $elm$core$Maybe$Just(task),
-							notice: $elm$core$Maybe$Nothing
-						}),
+					$author$project$Application$TaskBoard$closePanel(
+						_Utils_update(
+							model,
+							{
+								draft: $author$project$Application$TaskBoard$toInput(task),
+								editing: $elm$core$Maybe$Just(task),
+								notice: $elm$core$Maybe$Nothing
+							})),
 					_List_Nil);
 			case 'CancelEdit':
 				return _Utils_Tuple2(
@@ -5669,9 +5773,10 @@ var $author$project$Application$TaskBoard$update = F2(
 			case 'DeleteRequested':
 				var taskId = msg.a;
 				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{loading: true, notice: $elm$core$Maybe$Nothing}),
+					$author$project$Application$TaskBoard$closePanel(
+						_Utils_update(
+							model,
+							{loading: true, notice: $elm$core$Maybe$Nothing})),
 					_List_fromArray(
 						[
 							$author$project$Application$TaskBoard$DeleteTask(taskId)
@@ -5689,10 +5794,10 @@ var $author$project$Application$TaskBoard$update = F2(
 								model,
 								{draft: $author$project$Domain$Task$emptyInput, editing: $elm$core$Maybe$Nothing})));
 				} else {
-					var _v10 = result.a;
+					var error = result.a;
 					return A2(
 						$author$project$Application$TaskBoard$showNotice,
-						'저장하지 못했습니다. 다시 시도해 주세요.',
+						A2($author$project$Application$TaskBoard$errorMessage, '저장하지 못했습니다. 다시 시도해 주세요.', error),
 						_Utils_update(
 							model,
 							{loading: false}));
@@ -5705,10 +5810,10 @@ var $author$project$Application$TaskBoard$update = F2(
 						$author$project$Application$TaskBoard$LoadTasks,
 						A2($author$project$Application$TaskBoard$showNotice, '업무를 삭제했습니다.', model));
 				} else {
-					var _v12 = result.a;
+					var error = result.a;
 					return A2(
 						$author$project$Application$TaskBoard$showNotice,
-						'업무를 삭제하지 못했습니다.',
+						A2($author$project$Application$TaskBoard$errorMessage, '업무를 삭제하지 못했습니다.', error),
 						_Utils_update(
 							model,
 							{loading: false}));
@@ -5726,8 +5831,8 @@ var $author$project$Application$TaskBoard$update = F2(
 					_List_Nil);
 			case 'DragOver':
 				var taskStatus = msg.a;
-				var _v13 = model.draggedTaskId;
-				if (_v13.$ === 'Just') {
+				var _v10 = model.draggedTaskId;
+				if (_v10.$ === 'Just') {
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -5746,18 +5851,12 @@ var $author$project$Application$TaskBoard$update = F2(
 					_List_Nil);
 			case 'DroppedOn':
 				var targetStatus = msg.a;
-				var _v14 = _Utils_Tuple2(model.loading, model.draggedTaskId);
-				if ((!_v14.a) && (_v14.b.$ === 'Just')) {
-					var taskId = _v14.b.a;
-					var _v15 = $elm$core$List$head(
-						A2(
-							$elm$core$List$filter,
-							function (task) {
-								return _Utils_eq(task.taskId, taskId);
-							},
-							model.tasks));
-					if (_v15.$ === 'Just') {
-						var task = _v15.a;
+				var _v11 = _Utils_Tuple2(model.loading, model.draggedTaskId);
+				if ((!_v11.a) && (_v11.b.$ === 'Just')) {
+					var taskId = _v11.b.a;
+					var _v12 = A2($author$project$Application$TaskBoard$findTask, taskId, model);
+					if (_v12.$ === 'Just') {
+						var task = _v12.a;
 						return _Utils_eq(task.status, targetStatus) ? _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -5800,10 +5899,132 @@ var $author$project$Application$TaskBoard$update = F2(
 									model.tasks)
 							}));
 				} else {
-					var _v17 = result.a;
+					var error = result.a;
 					return A2(
 						$author$project$Application$TaskBoard$showNotice,
-						'상태를 변경하지 못했습니다. 다시 시도해 주세요.',
+						A2($author$project$Application$TaskBoard$errorMessage, '상태를 변경하지 못했습니다. 다시 시도해 주세요.', error),
+						_Utils_update(
+							model,
+							{loading: false}));
+				}
+			case 'OpenTask':
+				var taskId = msg.a;
+				var _v14 = A2($author$project$Application$TaskBoard$findTask, taskId, model);
+				if (_v14.$ === 'Just') {
+					var task = _v14.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								reviewDraft: '',
+								selectedTaskId: $elm$core$Maybe$Just(taskId),
+								submissionDraft: A2($elm$core$Maybe$withDefault, '', task.submittedResult)
+							}),
+						_List_Nil);
+				} else {
+					return _Utils_Tuple2(model, _List_Nil);
+				}
+			case 'CloseTask':
+				return _Utils_Tuple2(
+					$author$project$Application$TaskBoard$closePanel(model),
+					_List_Nil);
+			case 'EditSubmission':
+				var submission = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{submissionDraft: submission}),
+					_List_Nil);
+			case 'EditReviewComment':
+				var comment = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{reviewDraft: comment}),
+					_List_Nil);
+			case 'SubmitResult':
+				var taskId = msg.a;
+				var _v15 = A2($author$project$Application$TaskBoard$findTask, taskId, model);
+				if (_v15.$ === 'Just') {
+					var task = _v15.a;
+					return ($elm$core$String$trim(model.submissionDraft) === '') ? A2($author$project$Application$TaskBoard$showNotice, '제출 결과물을 입력해 주세요.', model) : _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{loading: true, notice: $elm$core$Maybe$Nothing}),
+						_List_fromArray(
+							[
+								A3(
+								$author$project$Application$TaskBoard$SubmitTaskResult,
+								taskId,
+								task.taskOwner,
+								$elm$core$String$trim(model.submissionDraft))
+							]));
+				} else {
+					return _Utils_Tuple2(model, _List_Nil);
+				}
+			case 'ApproveResult':
+				var taskId = msg.a;
+				var _v16 = A2($author$project$Application$TaskBoard$findTask, taskId, model);
+				if (_v16.$ === 'Just') {
+					var task = _v16.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{loading: true, notice: $elm$core$Maybe$Nothing}),
+						_List_fromArray(
+							[
+								A3(
+								$author$project$Application$TaskBoard$ApproveTaskResult,
+								taskId,
+								task.outcomeOwner,
+								$author$project$Application$TaskBoard$optionalText(model.reviewDraft))
+							]));
+				} else {
+					return _Utils_Tuple2(model, _List_Nil);
+				}
+			case 'RequestRevision':
+				var taskId = msg.a;
+				var _v17 = A2($author$project$Application$TaskBoard$findTask, taskId, model);
+				if (_v17.$ === 'Just') {
+					var task = _v17.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{loading: true, notice: $elm$core$Maybe$Nothing}),
+						_List_fromArray(
+							[
+								A3(
+								$author$project$Application$TaskBoard$RequestTaskRevision,
+								taskId,
+								task.outcomeOwner,
+								$author$project$Application$TaskBoard$optionalText(model.reviewDraft))
+							]));
+				} else {
+					return _Utils_Tuple2(model, _List_Nil);
+				}
+			case 'WorkflowSaved':
+				var result = msg.a;
+				if (result.$ === 'Ok') {
+					var task = result.a;
+					return A2(
+						$author$project$Application$TaskBoard$showNotice,
+						$author$project$Application$TaskBoard$workflowNotice(task),
+						_Utils_update(
+							model,
+							{
+								loading: false,
+								reviewDraft: '',
+								submissionDraft: A2($elm$core$Maybe$withDefault, '', task.submittedResult),
+								tasks: A2(
+									$elm$core$List$map,
+									$author$project$Application$TaskBoard$replaceTask(task),
+									model.tasks)
+							}));
+				} else {
+					var error = result.a;
+					return A2(
+						$author$project$Application$TaskBoard$showNotice,
+						A2($author$project$Application$TaskBoard$errorMessage, '처리하지 못했습니다. 다시 시도해 주세요.', error),
 						_Utils_update(
 							model,
 							{loading: false}));
@@ -5826,36 +6047,58 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 			$elm$json$Json$Encode$string(string));
 	});
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
-var $elm$html$Html$div = _VirtualDom_node('div');
-var $author$project$Application$TaskBoard$CancelEdit = {$: 'CancelEdit'};
-var $author$project$Application$TaskBoard$EditDescription = function (a) {
-	return {$: 'EditDescription', a: a};
+var $author$project$Application$TaskBoard$CloseTask = {$: 'CloseTask'};
+var $author$project$Application$TaskBoard$DeleteRequested = function (a) {
+	return {$: 'DeleteRequested', a: a};
 };
-var $author$project$Application$TaskBoard$EditExpectedResult = function (a) {
-	return {$: 'EditExpectedResult', a: a};
+var $author$project$Application$TaskBoard$StartEdit = function (a) {
+	return {$: 'StartEdit', a: a};
 };
-var $author$project$Application$TaskBoard$EditImportance = function (a) {
-	return {$: 'EditImportance', a: a};
-};
-var $author$project$Application$TaskBoard$EditOutcomeOwner = function (a) {
-	return {$: 'EditOutcomeOwner', a: a};
-};
-var $author$project$Application$TaskBoard$EditStatus = function (a) {
-	return {$: 'EditStatus', a: a};
-};
-var $author$project$Application$TaskBoard$EditTaskOwner = function (a) {
-	return {$: 'EditTaskOwner', a: a};
-};
-var $author$project$Application$TaskBoard$EditTitle = function (a) {
-	return {$: 'EditTitle', a: a};
-};
-var $author$project$Application$TaskBoard$EditUrgency = function (a) {
-	return {$: 'EditUrgency', a: a};
-};
-var $author$project$Application$TaskBoard$SubmitTask = {$: 'SubmitTask'};
-var $author$project$Domain$Task$allStatuses = _List_fromArray(
-	[$author$project$Domain$Task$Draft, $author$project$Domain$Task$Reviewed, $author$project$Domain$Task$Submitted, $author$project$Domain$Task$Approved, $author$project$Domain$Task$Effective]);
+var $elm$html$Html$aside = _VirtualDom_node('aside');
+var $elm$virtual_dom$VirtualDom$attribute = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_attribute,
+			_VirtualDom_noOnOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
 var $elm$html$Html$button = _VirtualDom_node('button');
+var $elm$html$Html$dd = _VirtualDom_node('dd');
+var $elm$html$Html$div = _VirtualDom_node('div');
+var $elm$html$Html$h3 = _VirtualDom_node('h3');
+var $elm$html$Html$p = _VirtualDom_node('p');
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $author$project$Presentation$TaskBoard$detailSection = F2(
+	function (heading, body) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('detail-section')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$h3,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text(heading)
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('detail-text')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(body)
+						]))
+				]));
+	});
 var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$html$Html$Attributes$boolProperty = F2(
 	function (key, bool) {
@@ -5865,19 +6108,20 @@ var $elm$html$Html$Attributes$boolProperty = F2(
 			$elm$json$Json$Encode$bool(bool));
 	});
 var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
-var $elm$html$Html$Attributes$for = $elm$html$Html$Attributes$stringProperty('htmlFor');
+var $elm$html$Html$dl = _VirtualDom_node('dl');
+var $elm$html$Html$dt = _VirtualDom_node('dt');
 var $elm$html$Html$h2 = _VirtualDom_node('h2');
-var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
-var $author$project$Domain$Task$importanceString = function (taskImportance) {
+var $author$project$Domain$Task$importanceLabel = function (taskImportance) {
 	if (taskImportance.$ === 'Important') {
-		return 'Important';
+		return '중요';
 	} else {
-		return 'NotImportant';
+		return '중요하지 않음';
 	}
 };
-var $elm$html$Html$input = _VirtualDom_node('input');
-var $elm$html$Html$label = _VirtualDom_node('label');
-var $elm$core$Basics$neq = _Utils_notEqual;
+var $author$project$Presentation$TaskBoard$nonEmpty = F2(
+	function (fallback, raw) {
+		return ($elm$core$String$trim(raw) === '') ? fallback : raw;
+	});
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -5895,6 +6139,177 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
+var $author$project$Domain$Task$quadrantClass = function (quadrant) {
+	switch (quadrant.$) {
+		case 'DoFirst':
+			return 'quadrant-do-first';
+		case 'Schedule':
+			return 'quadrant-schedule';
+		case 'Delegate':
+			return 'quadrant-delegate';
+		default:
+			return 'quadrant-eliminate';
+	}
+};
+var $author$project$Domain$Task$quadrantLabel = function (quadrant) {
+	switch (quadrant.$) {
+		case 'DoFirst':
+			return '즉시 실행';
+		case 'Schedule':
+			return '계획 수립';
+		case 'Delegate':
+			return '위임';
+		default:
+			return '제거';
+	}
+};
+var $author$project$Domain$Task$Delegate = {$: 'Delegate'};
+var $author$project$Domain$Task$DoFirst = {$: 'DoFirst'};
+var $author$project$Domain$Task$Eliminate = {$: 'Eliminate'};
+var $author$project$Domain$Task$Schedule = {$: 'Schedule'};
+var $author$project$Domain$Task$quadrantOf = F2(
+	function (taskUrgency, taskImportance) {
+		var _v0 = _Utils_Tuple2(taskUrgency, taskImportance);
+		if (_v0.a.$ === 'Urgent') {
+			if (_v0.b.$ === 'Important') {
+				var _v1 = _v0.a;
+				var _v2 = _v0.b;
+				return $author$project$Domain$Task$DoFirst;
+			} else {
+				var _v5 = _v0.a;
+				var _v6 = _v0.b;
+				return $author$project$Domain$Task$Delegate;
+			}
+		} else {
+			if (_v0.b.$ === 'Important') {
+				var _v3 = _v0.a;
+				var _v4 = _v0.b;
+				return $author$project$Domain$Task$Schedule;
+			} else {
+				var _v7 = _v0.a;
+				var _v8 = _v0.b;
+				return $author$project$Domain$Task$Eliminate;
+			}
+		}
+	});
+var $author$project$Domain$Task$resultStateLabel = function (task) {
+	var _v0 = _Utils_Tuple3(task.status, task.submittedResult, task.reviewComment);
+	_v0$0:
+	while (true) {
+		_v0$1:
+		while (true) {
+			_v0$6:
+			while (true) {
+				if (_v0.b.$ === 'Nothing') {
+					switch (_v0.a.$) {
+						case 'Effective':
+							break _v0$0;
+						case 'Approved':
+							break _v0$1;
+						case 'Submitted':
+							var _v3 = _v0.a;
+							var _v4 = _v0.b;
+							return '결과물 없음';
+						default:
+							var _v6 = _v0.b;
+							return '결과물 미제출';
+					}
+				} else {
+					switch (_v0.a.$) {
+						case 'Effective':
+							break _v0$0;
+						case 'Approved':
+							break _v0$1;
+						case 'Submitted':
+							var _v5 = _v0.a;
+							return '리뷰 대기';
+						case 'Reviewed':
+							if (_v0.c.$ === 'Just') {
+								var _v7 = _v0.a;
+								return '수정 요청됨';
+							} else {
+								break _v0$6;
+							}
+						default:
+							break _v0$6;
+					}
+				}
+			}
+			return '재제출 가능';
+		}
+		var _v2 = _v0.a;
+		return '승인 완료';
+	}
+	var _v1 = _v0.a;
+	return '효력 발생';
+};
+var $author$project$Application$TaskBoard$selectedTask = function (model) {
+	return A2(
+		$elm$core$Maybe$andThen,
+		function (taskId) {
+			return A2($author$project$Application$TaskBoard$findTask, taskId, model);
+		},
+		model.selectedTaskId);
+};
+var $elm$html$Html$span = _VirtualDom_node('span');
+var $author$project$Domain$Task$statusString = function (taskStatus) {
+	switch (taskStatus.$) {
+		case 'Draft':
+			return 'Draft';
+		case 'Reviewed':
+			return 'Reviewed';
+		case 'Submitted':
+			return 'Submitted';
+		case 'Approved':
+			return 'Approved';
+		default:
+			return 'Effective';
+	}
+};
+var $elm$core$String$toLower = _String_toLower;
+var $author$project$Domain$Task$statusClass = function (taskStatus) {
+	return 'status-' + $elm$core$String$toLower(
+		$author$project$Domain$Task$statusString(taskStatus));
+};
+var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
+var $author$project$Domain$Task$urgencyLabel = function (taskUrgency) {
+	if (taskUrgency.$ === 'Urgent') {
+		return '긴급';
+	} else {
+		return '긴급하지 않음';
+	}
+};
+var $author$project$Application$TaskBoard$ApproveResult = function (a) {
+	return {$: 'ApproveResult', a: a};
+};
+var $author$project$Application$TaskBoard$EditReviewComment = function (a) {
+	return {$: 'EditReviewComment', a: a};
+};
+var $author$project$Application$TaskBoard$EditSubmission = function (a) {
+	return {$: 'EditSubmission', a: a};
+};
+var $author$project$Application$TaskBoard$RequestRevision = function (a) {
+	return {$: 'RequestRevision', a: a};
+};
+var $author$project$Application$TaskBoard$SubmitResult = function (a) {
+	return {$: 'SubmitResult', a: a};
+};
+var $elm$core$Basics$neq = _Utils_notEqual;
+var $author$project$Domain$Task$canReviewResult = function (task) {
+	return _Utils_eq(task.status, $author$project$Domain$Task$Submitted) && (!_Utils_eq(task.submittedResult, $elm$core$Maybe$Nothing));
+};
+var $author$project$Domain$Task$canSubmitResult = function (task) {
+	var _v0 = task.status;
+	switch (_v0.$) {
+		case 'Draft':
+			return true;
+		case 'Reviewed':
+			return true;
+		default:
+			return false;
+	}
+};
+var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
 var $elm$html$Html$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
 };
@@ -5929,21 +6344,482 @@ var $elm$html$Html$Events$onInput = function (tagger) {
 			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
 };
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
-var $elm$virtual_dom$VirtualDom$attribute = F2(
-	function (key, value) {
-		return A2(
-			_VirtualDom_attribute,
-			_VirtualDom_noOnOrFormAction(key),
-			_VirtualDom_noJavaScriptOrHtmlUri(value));
+var $elm$html$Html$textarea = _VirtualDom_node('textarea');
+var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
+var $author$project$Presentation$TaskBoard$workflowSection = F2(
+	function (model, task) {
+		return $author$project$Domain$Task$canSubmitResult(task) ? A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('detail-section workflow-section')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$h3,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('결과물 제출')
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('workflow-hint')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Task Owner ' + (task.taskOwner + ' 명의로 제출합니다. 제출하면 업무가 제출됨 상태로 이동합니다.'))
+						])),
+					A2(
+					$elm$html$Html$textarea,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$id('submission'),
+							$elm$html$Html$Attributes$value(model.submissionDraft),
+							$elm$html$Html$Attributes$placeholder('기대 결과물에 맞춰 완료한 결과물을 적어 주세요.'),
+							$elm$html$Html$Events$onInput($author$project$Application$TaskBoard$EditSubmission)
+						]),
+					_List_Nil),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('workflow-actions')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('button primary'),
+									$elm$html$Html$Attributes$type_('button'),
+									$elm$html$Html$Attributes$disabled(model.loading),
+									$elm$html$Html$Events$onClick(
+									$author$project$Application$TaskBoard$SubmitResult(task.taskId))
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('결과물 제출')
+								]))
+						]))
+				])) : ($author$project$Domain$Task$canReviewResult(task) ? A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('detail-section workflow-section')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$h3,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('결과물 리뷰')
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('workflow-hint')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Outcome Owner ' + (task.outcomeOwner + ' 명의로 처리합니다. 승인하면 승인됨, 수정 요청하면 검토 완료 상태로 이동합니다.'))
+						])),
+					A2(
+					$elm$html$Html$textarea,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$id('review-comment'),
+							$elm$html$Html$Attributes$value(model.reviewDraft),
+							$elm$html$Html$Attributes$placeholder('리뷰 코멘트 (선택)'),
+							$elm$html$Html$Events$onInput($author$project$Application$TaskBoard$EditReviewComment)
+						]),
+					_List_Nil),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('workflow-actions')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('button secondary'),
+									$elm$html$Html$Attributes$type_('button'),
+									$elm$html$Html$Attributes$disabled(model.loading),
+									$elm$html$Html$Events$onClick(
+									$author$project$Application$TaskBoard$RequestRevision(task.taskId))
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('수정 요청')
+								])),
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('button primary'),
+									$elm$html$Html$Attributes$type_('button'),
+									$elm$html$Html$Attributes$disabled(model.loading),
+									$elm$html$Html$Events$onClick(
+									$author$project$Application$TaskBoard$ApproveResult(task.taskId))
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('승인')
+								]))
+						]))
+				])) : A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('detail-section workflow-section')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$h3,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('다음 단계')
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('workflow-hint')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							function () {
+								var _v0 = task.status;
+								switch (_v0.$) {
+									case 'Submitted':
+										return '제출된 결과물이 없어 리뷰할 수 없습니다. 초안 또는 검토 완료 컬럼으로 되돌린 뒤 결과물을 제출해 주세요.';
+									case 'Approved':
+										return '승인이 완료되었습니다. 이 결과물은 Outcome에 반영할 수 있습니다.';
+									case 'Effective':
+										return '효력이 발생한 업무입니다.';
+									default:
+										return '진행할 수 있는 동작이 없습니다.';
+								}
+							}())
+						]))
+				])));
 	});
-var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
+var $author$project$Presentation$TaskBoard$detailView = function (model) {
+	var _v0 = $author$project$Application$TaskBoard$selectedTask(model);
+	if (_v0.$ === 'Nothing') {
+		return $elm$html$Html$text('');
+	} else {
+		var task = _v0.a;
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('detail-layer')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('detail-backdrop'),
+							$elm$html$Html$Events$onClick($author$project$Application$TaskBoard$CloseTask)
+						]),
+					_List_Nil),
+					A2(
+					$elm$html$Html$aside,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('detail-panel'),
+							A2($elm$html$Html$Attributes$attribute, 'role', 'dialog'),
+							A2($elm$html$Html$Attributes$attribute, 'aria-modal', 'true'),
+							A2($elm$html$Html$Attributes$attribute, 'aria-label', '업무 상세: ' + task.title)
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('detail-heading')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$div,
+									_List_Nil,
+									_List_fromArray(
+										[
+											A2(
+											$elm$html$Html$span,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$class(
+													'status-chip ' + $author$project$Domain$Task$statusClass(task.status))
+												]),
+											_List_fromArray(
+												[
+													$elm$html$Html$text(
+													$author$project$Domain$Task$statusLabel(task.status))
+												])),
+											A2(
+											$elm$html$Html$h2,
+											_List_Nil,
+											_List_fromArray(
+												[
+													$elm$html$Html$text(task.title)
+												])),
+											A2(
+											$elm$html$Html$span,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$class('task-id')
+												]),
+											_List_fromArray(
+												[
+													$elm$html$Html$text(
+													'업무 #' + $elm$core$String$fromInt(task.taskId))
+												]))
+										])),
+									A2(
+									$elm$html$Html$button,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('icon-button'),
+											$elm$html$Html$Attributes$type_('button'),
+											A2($elm$html$Html$Attributes$attribute, 'aria-label', '닫기'),
+											$elm$html$Html$Events$onClick($author$project$Application$TaskBoard$CloseTask)
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('×')
+										]))
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('badge-row')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$span,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class(
+											'priority-badge ' + $author$project$Domain$Task$quadrantClass(
+												A2($author$project$Domain$Task$quadrantOf, task.urgency, task.importance)))
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text(
+											$author$project$Domain$Task$quadrantLabel(
+												A2($author$project$Domain$Task$quadrantOf, task.urgency, task.importance)))
+										])),
+									A2(
+									$elm$html$Html$span,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('result-chip')
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text(
+											$author$project$Domain$Task$resultStateLabel(task))
+										]))
+								])),
+							A2(
+							$elm$html$Html$dl,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('detail-grid')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$dt,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text('긴급도')
+										])),
+									A2(
+									$elm$html$Html$dd,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text(
+											$author$project$Domain$Task$urgencyLabel(task.urgency))
+										])),
+									A2(
+									$elm$html$Html$dt,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text('중요도')
+										])),
+									A2(
+									$elm$html$Html$dd,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text(
+											$author$project$Domain$Task$importanceLabel(task.importance))
+										])),
+									A2(
+									$elm$html$Html$dt,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Task Owner')
+										])),
+									A2(
+									$elm$html$Html$dd,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text(task.taskOwner)
+										])),
+									A2(
+									$elm$html$Html$dt,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Outcome Owner')
+										])),
+									A2(
+									$elm$html$Html$dd,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text(task.outcomeOwner)
+										]))
+								])),
+							A2(
+							$author$project$Presentation$TaskBoard$detailSection,
+							'설명',
+							A2($author$project$Presentation$TaskBoard$nonEmpty, '등록된 설명이 없습니다.', task.description)),
+							A2(
+							$author$project$Presentation$TaskBoard$detailSection,
+							'기대 결과물',
+							A2($author$project$Presentation$TaskBoard$nonEmpty, '기대 결과물이 정의되지 않았습니다.', task.expectedResult)),
+							A2(
+							$author$project$Presentation$TaskBoard$detailSection,
+							'제출 결과물',
+							A2($elm$core$Maybe$withDefault, '아직 제출되지 않았습니다.', task.submittedResult)),
+							A2(
+							$author$project$Presentation$TaskBoard$detailSection,
+							'리뷰 코멘트',
+							A2($elm$core$Maybe$withDefault, '아직 리뷰 코멘트가 없습니다.', task.reviewComment)),
+							A2($author$project$Presentation$TaskBoard$workflowSection, model, task),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('detail-actions')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$button,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('button secondary'),
+											$elm$html$Html$Attributes$type_('button'),
+											$elm$html$Html$Attributes$disabled(model.loading),
+											$elm$html$Html$Events$onClick(
+											$author$project$Application$TaskBoard$StartEdit(task))
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('수정')
+										])),
+									A2(
+									$elm$html$Html$button,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('button danger'),
+											$elm$html$Html$Attributes$type_('button'),
+											$elm$html$Html$Attributes$disabled(model.loading),
+											$elm$html$Html$Events$onClick(
+											$author$project$Application$TaskBoard$DeleteRequested(task.taskId))
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('삭제')
+										])),
+									A2(
+									$elm$html$Html$button,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('button primary'),
+											$elm$html$Html$Attributes$type_('button'),
+											$elm$html$Html$Events$onClick($author$project$Application$TaskBoard$CloseTask)
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('닫기')
+										]))
+								]))
+						]))
+				]));
+	}
+};
+var $author$project$Application$TaskBoard$CancelEdit = {$: 'CancelEdit'};
+var $author$project$Application$TaskBoard$EditDescription = function (a) {
+	return {$: 'EditDescription', a: a};
+};
+var $author$project$Application$TaskBoard$EditExpectedResult = function (a) {
+	return {$: 'EditExpectedResult', a: a};
+};
+var $author$project$Application$TaskBoard$EditImportance = function (a) {
+	return {$: 'EditImportance', a: a};
+};
+var $author$project$Application$TaskBoard$EditOutcomeOwner = function (a) {
+	return {$: 'EditOutcomeOwner', a: a};
+};
+var $author$project$Application$TaskBoard$EditStatus = function (a) {
+	return {$: 'EditStatus', a: a};
+};
+var $author$project$Application$TaskBoard$EditTaskOwner = function (a) {
+	return {$: 'EditTaskOwner', a: a};
+};
+var $author$project$Application$TaskBoard$EditTitle = function (a) {
+	return {$: 'EditTitle', a: a};
+};
+var $author$project$Application$TaskBoard$EditUrgency = function (a) {
+	return {$: 'EditUrgency', a: a};
+};
+var $author$project$Application$TaskBoard$SubmitTask = {$: 'SubmitTask'};
+var $author$project$Domain$Task$allStatuses = _List_fromArray(
+	[$author$project$Domain$Task$Draft, $author$project$Domain$Task$Reviewed, $author$project$Domain$Task$Submitted, $author$project$Domain$Task$Approved, $author$project$Domain$Task$Effective]);
+var $elm$html$Html$Attributes$for = $elm$html$Html$Attributes$stringProperty('htmlFor');
+var $author$project$Domain$Task$importanceString = function (taskImportance) {
+	if (taskImportance.$ === 'Important') {
+		return 'Important';
+	} else {
+		return 'NotImportant';
+	}
+};
+var $elm$html$Html$input = _VirtualDom_node('input');
+var $elm$html$Html$label = _VirtualDom_node('label');
 var $elm$html$Html$Attributes$checked = $elm$html$Html$Attributes$boolProperty('checked');
 var $elm$html$Html$Attributes$name = $elm$html$Html$Attributes$stringProperty('name');
-var $elm$html$Html$span = _VirtualDom_node('span');
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
-var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
 var $author$project$Presentation$TaskBoard$radioField = F6(
 	function (fieldName, fieldLabel, selectedValue, choices, toString, toMessage) {
 		return A2(
@@ -6015,20 +6891,6 @@ var $author$project$Presentation$TaskBoard$radioField = F6(
 var $elm$html$Html$select = _VirtualDom_node('select');
 var $elm$html$Html$option = _VirtualDom_node('option');
 var $elm$html$Html$Attributes$selected = $elm$html$Html$Attributes$boolProperty('selected');
-var $author$project$Domain$Task$statusString = function (taskStatus) {
-	switch (taskStatus.$) {
-		case 'Draft':
-			return 'Draft';
-		case 'Reviewed':
-			return 'Reviewed';
-		case 'Submitted':
-			return 'Submitted';
-		case 'Approved':
-			return 'Approved';
-		default:
-			return 'Effective';
-	}
-};
 var $author$project$Presentation$TaskBoard$statusOption = F2(
 	function (selectedStatus, current) {
 		return A2(
@@ -6046,7 +6908,6 @@ var $author$project$Presentation$TaskBoard$statusOption = F2(
 					$author$project$Domain$Task$statusLabel(current))
 				]));
 	});
-var $elm$html$Html$textarea = _VirtualDom_node('textarea');
 var $author$project$Domain$Task$urgencyString = function (taskUrgency) {
 	if (taskUrgency.$ === 'Urgent') {
 		return 'Urgent';
@@ -6097,6 +6958,30 @@ var $author$project$Presentation$TaskBoard$formView = function (model) {
 					]),
 				_List_fromArray(
 					[
+						A6(
+						$author$project$Presentation$TaskBoard$radioField,
+						'urgency',
+						'긴급도',
+						model.draft.urgency,
+						_List_fromArray(
+							[
+								_Utils_Tuple2($author$project$Domain$Task$Urgent, '긴급'),
+								_Utils_Tuple2($author$project$Domain$Task$NotUrgent, '긴급하지 않음')
+							]),
+						$author$project$Domain$Task$urgencyString,
+						$author$project$Application$TaskBoard$EditUrgency),
+						A6(
+						$author$project$Presentation$TaskBoard$radioField,
+						'importance',
+						'중요도',
+						model.draft.importance,
+						_List_fromArray(
+							[
+								_Utils_Tuple2($author$project$Domain$Task$Important, '중요'),
+								_Utils_Tuple2($author$project$Domain$Task$NotImportant, '중요하지 않음')
+							]),
+						$author$project$Domain$Task$importanceString,
+						$author$project$Application$TaskBoard$EditImportance),
 						A2(
 						$elm$html$Html$div,
 						_List_fromArray(
@@ -6157,88 +7042,6 @@ var $author$project$Presentation$TaskBoard$formView = function (model) {
 									$author$project$Presentation$TaskBoard$statusOption(model.draft.status),
 									$author$project$Domain$Task$allStatuses))
 							])) : $elm$html$Html$text(''),
-						A6(
-						$author$project$Presentation$TaskBoard$radioField,
-						'urgency',
-						'긴급도',
-						model.draft.urgency,
-						_List_fromArray(
-							[
-								_Utils_Tuple2($author$project$Domain$Task$Urgent, '긴급'),
-								_Utils_Tuple2($author$project$Domain$Task$NotUrgent, '긴급하지 않음')
-							]),
-						$author$project$Domain$Task$urgencyString,
-						$author$project$Application$TaskBoard$EditUrgency),
-						A6(
-						$author$project$Presentation$TaskBoard$radioField,
-						'importance',
-						'중요도',
-						model.draft.importance,
-						_List_fromArray(
-							[
-								_Utils_Tuple2($author$project$Domain$Task$Important, '중요'),
-								_Utils_Tuple2($author$project$Domain$Task$NotImportant, '중요하지 않음')
-							]),
-						$author$project$Domain$Task$importanceString,
-						$author$project$Application$TaskBoard$EditImportance),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('field')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$label,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$for('task-owner')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Task Owner')
-									])),
-								A2(
-								$elm$html$Html$input,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$id('task-owner'),
-										$elm$html$Html$Attributes$value(model.draft.taskOwner),
-										$elm$html$Html$Attributes$placeholder('결과물을 제출할 담당자'),
-										$elm$html$Html$Events$onInput($author$project$Application$TaskBoard$EditTaskOwner)
-									]),
-								_List_Nil)
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('field')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$label,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$for('outcome-owner')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Outcome Owner')
-									])),
-								A2(
-								$elm$html$Html$input,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$id('outcome-owner'),
-										$elm$html$Html$Attributes$value(model.draft.outcomeOwner),
-										$elm$html$Html$Attributes$placeholder('결과물을 리뷰·승인할 담당자'),
-										$elm$html$Html$Events$onInput($author$project$Application$TaskBoard$EditOutcomeOwner)
-									]),
-								_List_Nil)
-							])),
 						A2(
 						$elm$html$Html$div,
 						_List_fromArray(
@@ -6296,6 +7099,64 @@ var $author$project$Presentation$TaskBoard$formView = function (model) {
 										$elm$html$Html$Events$onInput($author$project$Application$TaskBoard$EditDescription)
 									]),
 								_List_Nil)
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('field')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$label,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$for('task-owner')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Task Owner')
+									])),
+								A2(
+								$elm$html$Html$input,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$id('task-owner'),
+										$elm$html$Html$Attributes$value(model.draft.taskOwner),
+										$elm$html$Html$Attributes$placeholder('결과물을 제출할 담당자'),
+										$elm$html$Html$Events$onInput($author$project$Application$TaskBoard$EditTaskOwner)
+									]),
+								_List_Nil)
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('field')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$label,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$for('outcome-owner')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Outcome Owner')
+									])),
+								A2(
+								$elm$html$Html$input,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$id('outcome-owner'),
+										$elm$html$Html$Attributes$value(model.draft.outcomeOwner),
+										$elm$html$Html$Attributes$placeholder('결과물을 리뷰·승인할 담당자'),
+										$elm$html$Html$Events$onInput($author$project$Application$TaskBoard$EditOutcomeOwner)
+									]),
+								_List_Nil)
 							]))
 					])),
 				A2(
@@ -6334,7 +7195,6 @@ var $author$project$Presentation$TaskBoard$formView = function (model) {
 			]));
 };
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
-var $elm$html$Html$p = _VirtualDom_node('p');
 var $author$project$Presentation$TaskBoard$headerView = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -6431,83 +7291,32 @@ var $elm$html$Html$Events$preventDefaultOn = F2(
 			event,
 			$elm$virtual_dom$VirtualDom$MayPreventDefault(decoder));
 	});
-var $elm$core$String$toLower = _String_toLower;
-var $author$project$Domain$Task$statusClass = function (taskStatus) {
-	return 'status-' + $elm$core$String$toLower(
-		$author$project$Domain$Task$statusString(taskStatus));
-};
-var $author$project$Application$TaskBoard$DeleteRequested = function (a) {
-	return {$: 'DeleteRequested', a: a};
-};
 var $author$project$Application$TaskBoard$DragEnded = {$: 'DragEnded'};
 var $author$project$Application$TaskBoard$DragStarted = function (a) {
 	return {$: 'DragStarted', a: a};
 };
-var $author$project$Application$TaskBoard$StartEdit = function (a) {
-	return {$: 'StartEdit', a: a};
+var $author$project$Application$TaskBoard$OpenTask = function (a) {
+	return {$: 'OpenTask', a: a};
 };
-var $author$project$Domain$Task$quadrantClass = function (quadrant) {
-	switch (quadrant.$) {
-		case 'DoFirst':
-			return 'quadrant-do-first';
-		case 'Schedule':
-			return 'quadrant-schedule';
-		case 'Delegate':
-			return 'quadrant-delegate';
-		default:
-			return 'quadrant-eliminate';
-	}
+var $elm$json$Json$Decode$andThen = _Json_andThen;
+var $elm$json$Json$Decode$fail = _Json_fail;
+var $author$project$Presentation$TaskBoard$onEnterKey = function (message) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'keydown',
+		A2(
+			$elm$json$Json$Decode$andThen,
+			function (key) {
+				return ((key === 'Enter') || (key === ' ')) ? $elm$json$Json$Decode$succeed(message) : $elm$json$Json$Decode$fail('ignored');
+			},
+			A2($elm$json$Json$Decode$field, 'key', $elm$json$Json$Decode$string)));
 };
-var $author$project$Domain$Task$quadrantLabel = function (quadrant) {
-	switch (quadrant.$) {
-		case 'DoFirst':
-			return '즉시 실행';
-		case 'Schedule':
-			return '계획 수립';
-		case 'Delegate':
-			return '위임';
-		default:
-			return '제거';
-	}
+var $elm$html$Html$Attributes$tabindex = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'tabIndex',
+		$elm$core$String$fromInt(n));
 };
-var $author$project$Domain$Task$Delegate = {$: 'Delegate'};
-var $author$project$Domain$Task$DoFirst = {$: 'DoFirst'};
-var $author$project$Domain$Task$Eliminate = {$: 'Eliminate'};
-var $author$project$Domain$Task$Schedule = {$: 'Schedule'};
-var $author$project$Domain$Task$quadrantOf = F2(
-	function (taskUrgency, taskImportance) {
-		var _v0 = _Utils_Tuple2(taskUrgency, taskImportance);
-		if (_v0.a.$ === 'Urgent') {
-			if (_v0.b.$ === 'Important') {
-				var _v1 = _v0.a;
-				var _v2 = _v0.b;
-				return $author$project$Domain$Task$DoFirst;
-			} else {
-				var _v5 = _v0.a;
-				var _v6 = _v0.b;
-				return $author$project$Domain$Task$Delegate;
-			}
-		} else {
-			if (_v0.b.$ === 'Important') {
-				var _v3 = _v0.a;
-				var _v4 = _v0.b;
-				return $author$project$Domain$Task$Schedule;
-			} else {
-				var _v7 = _v0.a;
-				var _v8 = _v0.b;
-				return $author$project$Domain$Task$Eliminate;
-			}
-		}
-	});
-var $elm$core$Maybe$withDefault = F2(
-	function (_default, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return value;
-		} else {
-			return _default;
-		}
-	});
 var $author$project$Presentation$TaskBoard$taskCard = F2(
 	function (model, task) {
 		return A2(
@@ -6515,9 +7324,11 @@ var $author$project$Presentation$TaskBoard$taskCard = F2(
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class(
-					'task-card' + (_Utils_eq(
+					'task-card' + ((_Utils_eq(
 						model.draggedTaskId,
-						$elm$core$Maybe$Just(task.taskId)) ? ' is-dragging' : '')),
+						$elm$core$Maybe$Just(task.taskId)) ? ' is-dragging' : '') + (_Utils_eq(
+						model.selectedTaskId,
+						$elm$core$Maybe$Just(task.taskId)) ? ' is-selected' : ''))),
 					A2(
 					$elm$html$Html$Attributes$attribute,
 					'draggable',
@@ -6536,30 +7347,59 @@ var $author$project$Presentation$TaskBoard$taskCard = F2(
 				[
 					A2(
 					$elm$html$Html$h2,
-					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('card-title'),
+							A2($elm$html$Html$Attributes$attribute, 'role', 'button'),
+							$elm$html$Html$Attributes$tabindex(0),
+							$elm$html$Html$Events$onClick(
+							$author$project$Application$TaskBoard$OpenTask(task.taskId)),
+							$author$project$Presentation$TaskBoard$onEnterKey(
+							$author$project$Application$TaskBoard$OpenTask(task.taskId))
+						]),
 					_List_fromArray(
 						[
 							$elm$html$Html$text(task.title)
 						])),
 					A2(
-					$elm$html$Html$span,
+					$elm$html$Html$div,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class(
-							'priority-badge ' + $author$project$Domain$Task$quadrantClass(
-								A2($author$project$Domain$Task$quadrantOf, task.urgency, task.importance)))
+							$elm$html$Html$Attributes$class('badge-row')
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text(
-							$author$project$Domain$Task$quadrantLabel(
-								A2($author$project$Domain$Task$quadrantOf, task.urgency, task.importance)))
+							A2(
+							$elm$html$Html$span,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class(
+									'priority-badge ' + $author$project$Domain$Task$quadrantClass(
+										A2($author$project$Domain$Task$quadrantOf, task.urgency, task.importance)))
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text(
+									$author$project$Domain$Task$quadrantLabel(
+										A2($author$project$Domain$Task$quadrantOf, task.urgency, task.importance)))
+								])),
+							A2(
+							$elm$html$Html$span,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('result-chip')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text(
+									$author$project$Domain$Task$resultStateLabel(task))
+								]))
 						])),
 					A2(
 					$elm$html$Html$p,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('task-description')
+							$elm$html$Html$Attributes$class('task-summary')
 						]),
 					_List_fromArray(
 						[
@@ -6567,50 +7407,24 @@ var $author$project$Presentation$TaskBoard$taskCard = F2(
 							(task.description === '') ? '등록된 설명이 없습니다.' : task.description)
 						])),
 					A2(
-					$elm$html$Html$div,
+					$elm$html$Html$p,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('result-flow')
+							$elm$html$Html$Attributes$class('card-owner')
 						]),
 					_List_fromArray(
 						[
 							A2(
-							$elm$html$Html$p,
-							_List_Nil,
+							$elm$html$Html$span,
 							_List_fromArray(
 								[
-									$elm$html$Html$text('Task Owner: ' + task.taskOwner)
+									$elm$html$Html$Attributes$class('card-owner-label')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Task Owner')
 								])),
-							A2(
-							$elm$html$Html$p,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Outcome Owner: ' + task.outcomeOwner)
-								])),
-							A2(
-							$elm$html$Html$p,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text('기대 결과물: ' + task.expectedResult)
-								])),
-							A2(
-							$elm$html$Html$p,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text(
-									'제출 결과물: ' + A2($elm$core$Maybe$withDefault, '아직 제출되지 않았습니다.', task.submittedResult))
-								])),
-							A2(
-							$elm$html$Html$p,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text(
-									'리뷰: ' + A2($elm$core$Maybe$withDefault, '리뷰 대기', task.reviewComment))
-								]))
+							$elm$html$Html$text(task.taskOwner)
 						])),
 					A2(
 					$elm$html$Html$div,
@@ -6644,26 +7458,13 @@ var $author$project$Presentation$TaskBoard$taskCard = F2(
 									_List_fromArray(
 										[
 											$elm$html$Html$Attributes$class('text-button'),
-											$elm$html$Html$Attributes$disabled(model.loading),
+											$elm$html$Html$Attributes$type_('button'),
 											$elm$html$Html$Events$onClick(
-											$author$project$Application$TaskBoard$StartEdit(task))
+											$author$project$Application$TaskBoard$OpenTask(task.taskId))
 										]),
 									_List_fromArray(
 										[
-											$elm$html$Html$text('수정')
-										])),
-									A2(
-									$elm$html$Html$button,
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$class('text-button danger'),
-											$elm$html$Html$Attributes$disabled(model.loading),
-											$elm$html$Html$Events$onClick(
-											$author$project$Application$TaskBoard$DeleteRequested(task.taskId))
-										]),
-									_List_fromArray(
-										[
-											$elm$html$Html$text('삭제')
+											$elm$html$Html$text('상세 보기')
 										]))
 								]))
 						]))
@@ -6931,7 +7732,8 @@ var $author$project$Presentation$TaskBoard$view = function (model) {
 					[
 						$author$project$Presentation$TaskBoard$formView(model),
 						$author$project$Presentation$TaskBoard$kanbanBoard(model)
-					]))
+					])),
+				$author$project$Presentation$TaskBoard$detailView(model)
 			]));
 };
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
@@ -6949,6 +7751,9 @@ var $author$project$Application$TaskBoard$MoveSaved = function (a) {
 };
 var $author$project$Application$TaskBoard$Saved = function (a) {
 	return {$: 'Saved', a: a};
+};
+var $author$project$Application$TaskBoard$WorkflowSaved = function (a) {
+	return {$: 'WorkflowSaved', a: a};
 };
 var $elm$core$Basics$composeL = F3(
 	function (g, f, x) {
@@ -7570,6 +8375,172 @@ var $elm$http$Http$expectJson = F2(
 						A2($elm$json$Json$Decode$decodeString, decoder, string));
 				}));
 	});
+var $author$project$Application$TaskBoard$Rejected = function (a) {
+	return {$: 'Rejected', a: a};
+};
+var $author$project$Application$TaskBoard$RequestFailed = {$: 'RequestFailed'};
+var $elm$core$Result$map = F2(
+	function (func, ra) {
+		if (ra.$ === 'Ok') {
+			var a = ra.a;
+			return $elm$core$Result$Ok(
+				func(a));
+		} else {
+			var e = ra.a;
+			return $elm$core$Result$Err(e);
+		}
+	});
+var $author$project$Domain$Task$Task = function (taskId) {
+	return function (title) {
+		return function (description) {
+			return function (status) {
+				return function (urgency) {
+					return function (importance) {
+						return function (taskOwner) {
+							return function (outcomeOwner) {
+								return function (expectedResult) {
+									return function (submittedResult) {
+										return function (reviewComment) {
+											return {description: description, expectedResult: expectedResult, importance: importance, outcomeOwner: outcomeOwner, reviewComment: reviewComment, status: status, submittedResult: submittedResult, taskId: taskId, taskOwner: taskOwner, title: title, urgency: urgency};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
+var $author$project$Infrastructure$TaskApi$importanceDecoder = A2(
+	$elm$json$Json$Decode$andThen,
+	function (rawImportance) {
+		var _v0 = $author$project$Domain$Task$importanceFromString(rawImportance);
+		if (_v0.$ === 'Just') {
+			var taskImportance = _v0.a;
+			return $elm$json$Json$Decode$succeed(taskImportance);
+		} else {
+			return $elm$json$Json$Decode$fail('Unknown task importance');
+		}
+	},
+	$elm$json$Json$Decode$string);
+var $elm$json$Json$Decode$int = _Json_decodeInt;
+var $elm$json$Json$Decode$map3 = _Json_map3;
+var $elm$json$Json$Decode$map8 = _Json_map8;
+var $elm$json$Json$Decode$null = _Json_decodeNull;
+var $elm$json$Json$Decode$oneOf = _Json_oneOf;
+var $elm$json$Json$Decode$nullable = function (decoder) {
+	return $elm$json$Json$Decode$oneOf(
+		_List_fromArray(
+			[
+				$elm$json$Json$Decode$null($elm$core$Maybe$Nothing),
+				A2($elm$json$Json$Decode$map, $elm$core$Maybe$Just, decoder)
+			]));
+};
+var $author$project$Infrastructure$TaskApi$statusDecoder = A2(
+	$elm$json$Json$Decode$andThen,
+	function (rawStatus) {
+		var _v0 = $author$project$Domain$Task$statusFromString(rawStatus);
+		if (_v0.$ === 'Just') {
+			var taskStatus = _v0.a;
+			return $elm$json$Json$Decode$succeed(taskStatus);
+		} else {
+			return $elm$json$Json$Decode$fail('Unknown task status');
+		}
+	},
+	$elm$json$Json$Decode$string);
+var $author$project$Infrastructure$TaskApi$urgencyDecoder = A2(
+	$elm$json$Json$Decode$andThen,
+	function (rawUrgency) {
+		var _v0 = $author$project$Domain$Task$urgencyFromString(rawUrgency);
+		if (_v0.$ === 'Just') {
+			var taskUrgency = _v0.a;
+			return $elm$json$Json$Decode$succeed(taskUrgency);
+		} else {
+			return $elm$json$Json$Decode$fail('Unknown task urgency');
+		}
+	},
+	$elm$json$Json$Decode$string);
+var $author$project$Infrastructure$TaskApi$taskDecoder = A3(
+	$elm$json$Json$Decode$map2,
+	F2(
+		function (base, _v0) {
+			var expected = _v0.a;
+			var submitted = _v0.b;
+			var review = _v0.c;
+			return $author$project$Domain$Task$Task(base.identifier)(base.title)(base.description)(base.status)(base.urgency)(base.importance)(base.taskOwner)(base.outcomeOwner)(expected)(submitted)(review);
+		}),
+	A9(
+		$elm$json$Json$Decode$map8,
+		F8(
+			function (identifier, title, description, status, urgency, importance, taskOwner, outcomeOwner) {
+				return {description: description, identifier: identifier, importance: importance, outcomeOwner: outcomeOwner, status: status, taskOwner: taskOwner, title: title, urgency: urgency};
+			}),
+		A2($elm$json$Json$Decode$field, 'taskId', $elm$json$Json$Decode$int),
+		A2($elm$json$Json$Decode$field, 'title', $elm$json$Json$Decode$string),
+		A2($elm$json$Json$Decode$field, 'description', $elm$json$Json$Decode$string),
+		A2($elm$json$Json$Decode$field, 'status', $author$project$Infrastructure$TaskApi$statusDecoder),
+		A2($elm$json$Json$Decode$field, 'urgency', $author$project$Infrastructure$TaskApi$urgencyDecoder),
+		A2($elm$json$Json$Decode$field, 'importance', $author$project$Infrastructure$TaskApi$importanceDecoder),
+		A2($elm$json$Json$Decode$field, 'taskOwner', $elm$json$Json$Decode$string),
+		A2($elm$json$Json$Decode$field, 'outcomeOwner', $elm$json$Json$Decode$string)),
+	A4(
+		$elm$json$Json$Decode$map3,
+		F3(
+			function (expected, submitted, review) {
+				return _Utils_Tuple3(expected, submitted, review);
+			}),
+		A2($elm$json$Json$Decode$field, 'expectedResult', $elm$json$Json$Decode$string),
+		A2(
+			$elm$json$Json$Decode$field,
+			'submittedResult',
+			$elm$json$Json$Decode$nullable($elm$json$Json$Decode$string)),
+		A2(
+			$elm$json$Json$Decode$field,
+			'reviewComment',
+			$elm$json$Json$Decode$nullable($elm$json$Json$Decode$string))));
+var $elm$core$Result$withDefault = F2(
+	function (def, result) {
+		if (result.$ === 'Ok') {
+			var a = result.a;
+			return a;
+		} else {
+			return def;
+		}
+	});
+var $author$project$Infrastructure$TaskApi$expectTask = function (toMsg) {
+	return A2(
+		$elm$http$Http$expectStringResponse,
+		toMsg,
+		function (response) {
+			switch (response.$) {
+				case 'GoodStatus_':
+					var body = response.b;
+					return A2(
+						$elm$core$Result$mapError,
+						function (_v1) {
+							return $author$project$Application$TaskBoard$RequestFailed;
+						},
+						A2($elm$json$Json$Decode$decodeString, $author$project$Infrastructure$TaskApi$taskDecoder, body));
+				case 'BadStatus_':
+					var body = response.b;
+					return $elm$core$Result$Err(
+						A2(
+							$elm$core$Result$withDefault,
+							$author$project$Application$TaskBoard$RequestFailed,
+							A2(
+								$elm$core$Result$map,
+								$author$project$Application$TaskBoard$Rejected,
+								A2(
+									$elm$json$Json$Decode$decodeString,
+									A2($elm$json$Json$Decode$field, 'error', $elm$json$Json$Decode$string),
+									body))));
+				default:
+					return $elm$core$Result$Err($author$project$Application$TaskBoard$RequestFailed);
+			}
+		});
+};
 var $elm$http$Http$expectBytesResponse = F2(
 	function (toMsg, toResult) {
 		return A3(
@@ -7771,118 +8742,6 @@ var $elm$http$Http$post = function (r) {
 	return $elm$http$Http$request(
 		{body: r.body, expect: r.expect, headers: _List_Nil, method: 'POST', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
 };
-var $author$project$Domain$Task$Task = function (taskId) {
-	return function (title) {
-		return function (description) {
-			return function (status) {
-				return function (urgency) {
-					return function (importance) {
-						return function (taskOwner) {
-							return function (outcomeOwner) {
-								return function (expectedResult) {
-									return function (submittedResult) {
-										return function (reviewComment) {
-											return {description: description, expectedResult: expectedResult, importance: importance, outcomeOwner: outcomeOwner, reviewComment: reviewComment, status: status, submittedResult: submittedResult, taskId: taskId, taskOwner: taskOwner, title: title, urgency: urgency};
-										};
-									};
-								};
-							};
-						};
-					};
-				};
-			};
-		};
-	};
-};
-var $elm$json$Json$Decode$andThen = _Json_andThen;
-var $elm$json$Json$Decode$fail = _Json_fail;
-var $author$project$Infrastructure$TaskApi$importanceDecoder = A2(
-	$elm$json$Json$Decode$andThen,
-	function (rawImportance) {
-		var _v0 = $author$project$Domain$Task$importanceFromString(rawImportance);
-		if (_v0.$ === 'Just') {
-			var taskImportance = _v0.a;
-			return $elm$json$Json$Decode$succeed(taskImportance);
-		} else {
-			return $elm$json$Json$Decode$fail('Unknown task importance');
-		}
-	},
-	$elm$json$Json$Decode$string);
-var $elm$json$Json$Decode$int = _Json_decodeInt;
-var $elm$json$Json$Decode$map3 = _Json_map3;
-var $elm$json$Json$Decode$map8 = _Json_map8;
-var $elm$json$Json$Decode$null = _Json_decodeNull;
-var $elm$json$Json$Decode$oneOf = _Json_oneOf;
-var $elm$json$Json$Decode$nullable = function (decoder) {
-	return $elm$json$Json$Decode$oneOf(
-		_List_fromArray(
-			[
-				$elm$json$Json$Decode$null($elm$core$Maybe$Nothing),
-				A2($elm$json$Json$Decode$map, $elm$core$Maybe$Just, decoder)
-			]));
-};
-var $author$project$Infrastructure$TaskApi$statusDecoder = A2(
-	$elm$json$Json$Decode$andThen,
-	function (rawStatus) {
-		var _v0 = $author$project$Domain$Task$statusFromString(rawStatus);
-		if (_v0.$ === 'Just') {
-			var taskStatus = _v0.a;
-			return $elm$json$Json$Decode$succeed(taskStatus);
-		} else {
-			return $elm$json$Json$Decode$fail('Unknown task status');
-		}
-	},
-	$elm$json$Json$Decode$string);
-var $author$project$Infrastructure$TaskApi$urgencyDecoder = A2(
-	$elm$json$Json$Decode$andThen,
-	function (rawUrgency) {
-		var _v0 = $author$project$Domain$Task$urgencyFromString(rawUrgency);
-		if (_v0.$ === 'Just') {
-			var taskUrgency = _v0.a;
-			return $elm$json$Json$Decode$succeed(taskUrgency);
-		} else {
-			return $elm$json$Json$Decode$fail('Unknown task urgency');
-		}
-	},
-	$elm$json$Json$Decode$string);
-var $author$project$Infrastructure$TaskApi$taskDecoder = A3(
-	$elm$json$Json$Decode$map2,
-	F2(
-		function (base, _v0) {
-			var expected = _v0.a;
-			var submitted = _v0.b;
-			var review = _v0.c;
-			return $author$project$Domain$Task$Task(base.identifier)(base.title)(base.description)(base.status)(base.urgency)(base.importance)(base.taskOwner)(base.outcomeOwner)(expected)(submitted)(review);
-		}),
-	A9(
-		$elm$json$Json$Decode$map8,
-		F8(
-			function (identifier, title, description, status, urgency, importance, taskOwner, outcomeOwner) {
-				return {description: description, identifier: identifier, importance: importance, outcomeOwner: outcomeOwner, status: status, taskOwner: taskOwner, title: title, urgency: urgency};
-			}),
-		A2($elm$json$Json$Decode$field, 'taskId', $elm$json$Json$Decode$int),
-		A2($elm$json$Json$Decode$field, 'title', $elm$json$Json$Decode$string),
-		A2($elm$json$Json$Decode$field, 'description', $elm$json$Json$Decode$string),
-		A2($elm$json$Json$Decode$field, 'status', $author$project$Infrastructure$TaskApi$statusDecoder),
-		A2($elm$json$Json$Decode$field, 'urgency', $author$project$Infrastructure$TaskApi$urgencyDecoder),
-		A2($elm$json$Json$Decode$field, 'importance', $author$project$Infrastructure$TaskApi$importanceDecoder),
-		A2($elm$json$Json$Decode$field, 'taskOwner', $elm$json$Json$Decode$string),
-		A2($elm$json$Json$Decode$field, 'outcomeOwner', $elm$json$Json$Decode$string)),
-	A4(
-		$elm$json$Json$Decode$map3,
-		F3(
-			function (expected, submitted, review) {
-				return _Utils_Tuple3(expected, submitted, review);
-			}),
-		A2($elm$json$Json$Decode$field, 'expectedResult', $elm$json$Json$Decode$string),
-		A2(
-			$elm$json$Json$Decode$field,
-			'submittedResult',
-			$elm$json$Json$Decode$nullable($elm$json$Json$Decode$string)),
-		A2(
-			$elm$json$Json$Decode$field,
-			'reviewComment',
-			$elm$json$Json$Decode$nullable($elm$json$Json$Decode$string))));
 var $elm$json$Json$Encode$object = function (pairs) {
 	return _Json_wrap(
 		A3(
@@ -7896,6 +8755,41 @@ var $elm$json$Json$Encode$object = function (pairs) {
 			_Json_emptyObject(_Utils_Tuple0),
 			pairs));
 };
+var $author$project$Infrastructure$TaskApi$reviewEncoder = F2(
+	function (owner, comment) {
+		return $elm$json$Json$Encode$object(
+			A2(
+				$elm$core$List$cons,
+				_Utils_Tuple2(
+					'outcomeOwner',
+					$elm$json$Json$Encode$string(owner)),
+				function () {
+					if (comment.$ === 'Just') {
+						var text = comment.a;
+						return _List_fromArray(
+							[
+								_Utils_Tuple2(
+								'reviewComment',
+								$elm$json$Json$Encode$string(text))
+							]);
+					} else {
+						return _List_Nil;
+					}
+				}()));
+	});
+var $author$project$Infrastructure$TaskApi$submissionEncoder = F2(
+	function (owner, submittedResult) {
+		return $elm$json$Json$Encode$object(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'taskOwner',
+					$elm$json$Json$Encode$string(owner)),
+					_Utils_Tuple2(
+					'submittedResult',
+					$elm$json$Json$Encode$string(submittedResult))
+				]));
+	});
 var $author$project$Infrastructure$TaskApi$taskInputEncoder = function (input) {
 	return $elm$json$Json$Encode$object(
 		_List_fromArray(
@@ -7929,7 +8823,6 @@ var $author$project$Infrastructure$TaskApi$taskInputEncoder = function (input) {
 				$elm$json$Json$Encode$string(input.expectedResult))
 			]));
 };
-var $author$project$Application$TaskBoard$RequestFailed = {$: 'RequestFailed'};
 var $author$project$Infrastructure$TaskApi$toApiError = function (_v0) {
 	return $author$project$Application$TaskBoard$RequestFailed;
 };
@@ -7953,13 +8846,7 @@ var $author$project$Infrastructure$TaskApi$perform = function (effect) {
 				{
 					body: $elm$http$Http$jsonBody(
 						$author$project$Infrastructure$TaskApi$taskInputEncoder(input)),
-					expect: A2(
-						$elm$http$Http$expectJson,
-						A2(
-							$elm$core$Basics$composeL,
-							$author$project$Application$TaskBoard$Saved,
-							$elm$core$Result$mapError($author$project$Infrastructure$TaskApi$toApiError)),
-						$author$project$Infrastructure$TaskApi$taskDecoder),
+					expect: $author$project$Infrastructure$TaskApi$expectTask($author$project$Application$TaskBoard$Saved),
 					url: '/api/task'
 				});
 		case 'UpdateTask':
@@ -7969,13 +8856,7 @@ var $author$project$Infrastructure$TaskApi$perform = function (effect) {
 				{
 					body: $elm$http$Http$jsonBody(
 						$author$project$Infrastructure$TaskApi$taskInputEncoder(input)),
-					expect: A2(
-						$elm$http$Http$expectJson,
-						A2(
-							$elm$core$Basics$composeL,
-							$author$project$Application$TaskBoard$Saved,
-							$elm$core$Result$mapError($author$project$Infrastructure$TaskApi$toApiError)),
-						$author$project$Infrastructure$TaskApi$taskDecoder),
+					expect: $author$project$Infrastructure$TaskApi$expectTask($author$project$Application$TaskBoard$Saved),
 					headers: _List_Nil,
 					method: 'PUT',
 					timeout: $elm$core$Maybe$Nothing,
@@ -7989,13 +8870,7 @@ var $author$project$Infrastructure$TaskApi$perform = function (effect) {
 				{
 					body: $elm$http$Http$jsonBody(
 						$author$project$Infrastructure$TaskApi$taskInputEncoder(input)),
-					expect: A2(
-						$elm$http$Http$expectJson,
-						A2(
-							$elm$core$Basics$composeL,
-							$author$project$Application$TaskBoard$MoveSaved,
-							$elm$core$Result$mapError($author$project$Infrastructure$TaskApi$toApiError)),
-						$author$project$Infrastructure$TaskApi$taskDecoder),
+					expect: $author$project$Infrastructure$TaskApi$expectTask($author$project$Application$TaskBoard$MoveSaved),
 					headers: _List_Nil,
 					method: 'PUT',
 					timeout: $elm$core$Maybe$Nothing,
@@ -8017,6 +8892,39 @@ var $author$project$Infrastructure$TaskApi$perform = function (effect) {
 					timeout: $elm$core$Maybe$Nothing,
 					tracker: $elm$core$Maybe$Nothing,
 					url: '/api/task/' + $elm$core$String$fromInt(taskId)
+				});
+		case 'SubmitTaskResult':
+			var taskId = effect.a;
+			var owner = effect.b;
+			var submittedResult = effect.c;
+			return $elm$http$Http$post(
+				{
+					body: $elm$http$Http$jsonBody(
+						A2($author$project$Infrastructure$TaskApi$submissionEncoder, owner, submittedResult)),
+					expect: $author$project$Infrastructure$TaskApi$expectTask($author$project$Application$TaskBoard$WorkflowSaved),
+					url: '/api/task/' + ($elm$core$String$fromInt(taskId) + '/submit')
+				});
+		case 'ApproveTaskResult':
+			var taskId = effect.a;
+			var owner = effect.b;
+			var comment = effect.c;
+			return $elm$http$Http$post(
+				{
+					body: $elm$http$Http$jsonBody(
+						A2($author$project$Infrastructure$TaskApi$reviewEncoder, owner, comment)),
+					expect: $author$project$Infrastructure$TaskApi$expectTask($author$project$Application$TaskBoard$WorkflowSaved),
+					url: '/api/task/' + ($elm$core$String$fromInt(taskId) + '/approve')
+				});
+		case 'RequestTaskRevision':
+			var taskId = effect.a;
+			var owner = effect.b;
+			var comment = effect.c;
+			return $elm$http$Http$post(
+				{
+					body: $elm$http$Http$jsonBody(
+						A2($author$project$Infrastructure$TaskApi$reviewEncoder, owner, comment)),
+					expect: $author$project$Infrastructure$TaskApi$expectTask($author$project$Application$TaskBoard$WorkflowSaved),
+					url: '/api/task/' + ($elm$core$String$fromInt(taskId) + '/revision')
 				});
 		default:
 			return $elm$core$Platform$Cmd$none;

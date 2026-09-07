@@ -15,9 +15,14 @@
 | T-2026-0908-011 | DONE | orchestrator/coder | 긴급도·중요도 선택을 라디오 버튼으로 전환 |
 | T-2026-0908-012 | DONE | orchestrator/coder | Work 도메인 명칭을 Task로 전면 전환 |
 | T-2026-0908-013 | IN_PROGRESS | orchestrator/coder | Task 결과물 리뷰·승인 및 Outcome 조립 서비스 구현 |
+| T-2026-0908-014 | DONE | orchestrator | TaskRoutes 경고 제거 및 run.sh Elm 테스트 의존성 자동 설치 (서브에이전트 정의 부재로 reviewer 검토 생략) |
+| T-2026-0908-015 | DONE | orchestrator | 새 업무 등록 폼 필드 순서 변경: 긴급도, 중요도, 제목, 기대 결과물, 설명, Task Owner, Outcome Owner (reviewer 검토 생략) |
+| T-2026-0908-016 | DONE | orchestrator | 칸반 카드 요약화, 업무 상세 패널, 결과물 제출/승인/수정 요청 UI 연결 (reviewer 검토 생략) |
+| T-2026-0908-017 | DONE | orchestrator | 화면 전체 폭 사용 및 반응형 레이아웃(1400px 이상 사이드바, 700px 이하 세로 배치) (reviewer 검토 생략) |
 
 ## 가정
 
 - 초기 버전은 서버 프로세스 동안 유지되는 메모리 저장소를 사용한다.
 - Elm 0.19.2(사용자 표기 1.9.2의 현행 배포 버전)를 사용한다.
 - 새 업무의 기본 우선순위는 `NotUrgent` + `Important`(계획 수립)으로 설정한다.
+- 인증이 없는 관리자 화면이므로 결과물 제출은 해당 업무의 Task Owner 명의로, 승인과 수정 요청은 Outcome Owner 명의로 서버에 전달한다.

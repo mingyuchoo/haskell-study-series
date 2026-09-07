@@ -20,7 +20,7 @@ perform effect =
             Http.post
                 { url = "/api/task"
                 , body = Http.jsonBody (taskInputEncoder input)
-                , expect = Http.expectJson (Saved << Result.mapError toApiError) taskDecoder
+                , expect = expectTask Saved
                 }
 
         UpdateTask taskId input ->
@@ -29,7 +29,7 @@ perform effect =
                 , headers = []
                 , url = "/api/task/" ++ String.fromInt taskId
                 , body = Http.jsonBody (taskInputEncoder input)
-                , expect = Http.expectJson (Saved << Result.mapError toApiError) taskDecoder
+                , expect = expectTask Saved
                 , timeout = Nothing
                 , tracker = Nothing
                 }
@@ -40,7 +40,7 @@ perform effect =
                 , headers = []
                 , url = "/api/task/" ++ String.fromInt taskId
                 , body = Http.jsonBody (taskInputEncoder input)
-                , expect = Http.expectJson (MoveSaved << Result.mapError toApiError) taskDecoder
+                , expect = expectTask MoveSaved
                 , timeout = Nothing
                 , tracker = Nothing
                 }
@@ -56,6 +56,27 @@ perform effect =
                 , tracker = Nothing
                 }
 
+        SubmitTaskResult taskId owner submittedResult ->
+            Http.post
+                { url = "/api/task/" ++ String.fromInt taskId ++ "/submit"
+                , body = Http.jsonBody (submissionEncoder owner submittedResult)
+                , expect = expectTask WorkflowSaved
+                }
+
+        ApproveTaskResult taskId owner comment ->
+            Http.post
+                { url = "/api/task/" ++ String.fromInt taskId ++ "/approve"
+                , body = Http.jsonBody (reviewEncoder owner comment)
+                , expect = expectTask WorkflowSaved
+                }
+
+        RequestTaskRevision taskId owner comment ->
+            Http.post
+                { url = "/api/task/" ++ String.fromInt taskId ++ "/revision"
+                , body = Http.jsonBody (reviewEncoder owner comment)
+                , expect = expectTask WorkflowSaved
+                }
+
         ClearNoticeAfter _ ->
             Cmd.none
 
@@ -63,6 +84,28 @@ perform effect =
 toApiError : Http.Error -> ApiError
 toApiError _ =
     RequestFailed
+
+
+{-| 업무 응답을 기대하되, 4xx/5xx 응답의 `error` 필드는 사용자에게 보여 줄 메시지로 보존한다.
+-}
+expectTask : (Result ApiError Task -> Msg) -> Http.Expect Msg
+expectTask toMsg =
+    Http.expectStringResponse toMsg
+        (\response ->
+            case response of
+                Http.GoodStatus_ _ body ->
+                    Decode.decodeString taskDecoder body
+                        |> Result.mapError (\_ -> RequestFailed)
+
+                Http.BadStatus_ _ body ->
+                    Decode.decodeString (Decode.field "error" Decode.string) body
+                        |> Result.map Rejected
+                        |> Result.withDefault RequestFailed
+                        |> Err
+
+                _ ->
+                    Err RequestFailed
+        )
 
 
 taskDecoder : Decoder Task
@@ -141,3 +184,25 @@ taskInputEncoder input =
         , ( "outcomeOwner", Encode.string input.outcomeOwner )
         , ( "expectedResult", Encode.string input.expectedResult )
         ]
+
+
+submissionEncoder : String -> String -> Encode.Value
+submissionEncoder owner submittedResult =
+    Encode.object
+        [ ( "taskOwner", Encode.string owner )
+        , ( "submittedResult", Encode.string submittedResult )
+        ]
+
+
+reviewEncoder : String -> Maybe String -> Encode.Value
+reviewEncoder owner comment =
+    Encode.object
+        (( "outcomeOwner", Encode.string owner )
+            :: (case comment of
+                    Just text ->
+                        [ ( "reviewComment", Encode.string text ) ]
+
+                    Nothing ->
+                        []
+               )
+        )

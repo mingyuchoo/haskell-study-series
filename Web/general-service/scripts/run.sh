@@ -20,6 +20,7 @@ require_command fourmolu
 require_command elm-format
 require_command elm
 require_command stack
+require_command npm
 require_command npx
 require_command lsof
 
@@ -93,6 +94,18 @@ stack build
 echo "Running Elm frontend tests..."
 (
   cd web
+
+  # node_modules is git-ignored, so a fresh checkout has no elm-test binary.
+  # Install the pinned dev dependencies before running the tests.
+  if [ ! -x node_modules/.bin/elm-test ]; then
+    echo "Installing Elm test dependencies..."
+    if [ -f package-lock.json ]; then
+      npm ci
+    else
+      npm install
+    fi
+  fi
+
   npx --no-install elm-test
 )
 

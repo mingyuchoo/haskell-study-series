@@ -7,6 +7,8 @@ module Domain.Task exposing
     , TaskInput
     , Urgency(..)
     , allStatuses
+    , canReviewResult
+    , canSubmitResult
     , emptyInput
     , importanceFromString
     , importanceLabel
@@ -14,6 +16,7 @@ module Domain.Task exposing
     , quadrantClass
     , quadrantLabel
     , quadrantOf
+    , resultStateLabel
     , statusClass
     , statusFromString
     , statusLabel
@@ -277,3 +280,52 @@ quadrantClass quadrant =
 
         Eliminate ->
             "quadrant-eliminate"
+
+
+{-| Task Owner가 결과물을 제출(또는 재제출)할 수 있는 상태인지 판단한다.
+-}
+canSubmitResult : Task -> Bool
+canSubmitResult task =
+    case task.status of
+        Draft ->
+            True
+
+        Reviewed ->
+            True
+
+        _ ->
+            False
+
+
+{-| Outcome Owner가 제출된 결과물을 승인하거나 수정 요청할 수 있는지 판단한다.
+-}
+canReviewResult : Task -> Bool
+canReviewResult task =
+    task.status == Submitted && task.submittedResult /= Nothing
+
+
+{-| 카드에 짧게 표시할 결과물 진행 상태 레이블.
+-}
+resultStateLabel : Task -> String
+resultStateLabel task =
+    case ( task.status, task.submittedResult, task.reviewComment ) of
+        ( Effective, _, _ ) ->
+            "효력 발생"
+
+        ( Approved, _, _ ) ->
+            "승인 완료"
+
+        ( Submitted, Nothing, _ ) ->
+            "결과물 없음"
+
+        ( Submitted, Just _, _ ) ->
+            "리뷰 대기"
+
+        ( _, Nothing, _ ) ->
+            "결과물 미제출"
+
+        ( Reviewed, Just _, Just _ ) ->
+            "수정 요청됨"
+
+        ( _, Just _, _ ) ->
+            "재제출 가능"

@@ -5,6 +5,7 @@ module Application.TaskBoard exposing
     , Msg(..)
     , init
     , initialModel
+    , selectedTask
     , update
     )
 
@@ -17,6 +18,9 @@ type alias Model =
     , editing : Maybe Task
     , draggedTaskId : Maybe Int
     , dropTarget : Maybe Task.Status
+    , selectedTaskId : Maybe Int
+    , submissionDraft : String
+    , reviewDraft : String
     , loading : Bool
     , notice : Maybe String
     , noticeVersion : Int
@@ -25,6 +29,7 @@ type alias Model =
 
 type ApiError
     = RequestFailed
+    | Rejected String
 
 
 type Effect
@@ -33,6 +38,9 @@ type Effect
     | UpdateTask Int TaskInput
     | MoveTask Int TaskInput
     | DeleteTask Int
+    | SubmitTaskResult Int String String
+    | ApproveTaskResult Int String (Maybe String)
+    | RequestTaskRevision Int String (Maybe String)
     | ClearNoticeAfter Int
 
 
@@ -57,6 +65,14 @@ type Msg
     | DragEnded
     | DroppedOn Task.Status
     | MoveSaved (Result ApiError Task)
+    | OpenTask Int
+    | CloseTask
+    | EditSubmission String
+    | EditReviewComment String
+    | SubmitResult Int
+    | ApproveResult Int
+    | RequestRevision Int
+    | WorkflowSaved (Result ApiError Task)
     | DismissNotice Int
 
 
@@ -67,6 +83,9 @@ initialModel =
     , editing = Nothing
     , draggedTaskId = Nothing
     , dropTarget = Nothing
+    , selectedTaskId = Nothing
+    , submissionDraft = ""
+    , reviewDraft = ""
     , loading = True
     , notice = Nothing
     , noticeVersion = 0
@@ -78,16 +97,35 @@ init =
     ( initialModel, [ LoadTasks ] )
 
 
+{-| 상세 패널에 표시할 업무. 선택된 ID가 목록에 없으면 Nothing이다.
+-}
+selectedTask : Model -> Maybe Task
+selectedTask model =
+    model.selectedTaskId |> Maybe.andThen (\taskId -> findTask taskId model)
+
+
 update : Msg -> Model -> ( Model, List Effect )
 update msg model =
     case msg of
         GotTasks result ->
             case result of
                 Ok tasks ->
-                    ( { model | tasks = tasks, loading = False }, [] )
+                    let
+                        stillSelected =
+                            model.selectedTaskId
+                                |> Maybe.andThen
+                                    (\taskId ->
+                                        if List.any (\task -> task.taskId == taskId) tasks then
+                                            Just taskId
 
-                Err RequestFailed ->
-                    showNotice "업무 목록을 불러오지 못했습니다." { model | loading = False }
+                                        else
+                                            Nothing
+                                    )
+                    in
+                    ( { model | tasks = tasks, loading = False, selectedTaskId = stillSelected }, [] )
+
+                Err error ->
+                    showNotice (errorMessage "업무 목록을 불러오지 못했습니다." error) { model | loading = False }
 
         EditTitle title ->
             ( updateForm (\form -> { form | title = title }) model, [] )
@@ -144,13 +182,13 @@ update msg model =
                             )
 
         StartEdit task ->
-            ( { model | editing = Just task, draft = toInput task, notice = Nothing }, [] )
+            ( { model | editing = Just task, draft = toInput task, notice = Nothing } |> closePanel, [] )
 
         CancelEdit ->
             ( { model | editing = Nothing, draft = Task.emptyInput }, [] )
 
         DeleteRequested taskId ->
-            ( { model | loading = True, notice = Nothing }, [ DeleteTask taskId ] )
+            ( { model | loading = True, notice = Nothing } |> closePanel, [ DeleteTask taskId ] )
 
         Saved result ->
             case result of
@@ -158,8 +196,8 @@ update msg model =
                     showNotice "업무가 저장되었습니다." { model | draft = Task.emptyInput, editing = Nothing }
                         |> addEffect LoadTasks
 
-                Err RequestFailed ->
-                    showNotice "저장하지 못했습니다. 다시 시도해 주세요." { model | loading = False }
+                Err error ->
+                    showNotice (errorMessage "저장하지 못했습니다. 다시 시도해 주세요." error) { model | loading = False }
 
         Deleted result ->
             case result of
@@ -167,8 +205,8 @@ update msg model =
                     showNotice "업무를 삭제했습니다." model
                         |> addEffect LoadTasks
 
-                Err RequestFailed ->
-                    showNotice "업무를 삭제하지 못했습니다." { model | loading = False }
+                Err error ->
+                    showNotice (errorMessage "업무를 삭제하지 못했습니다." error) { model | loading = False }
 
         DragStarted taskId ->
             if model.loading then
@@ -191,7 +229,7 @@ update msg model =
         DroppedOn targetStatus ->
             case ( model.loading, model.draggedTaskId ) of
                 ( False, Just taskId ) ->
-                    case List.filter (\task -> task.taskId == taskId) model.tasks |> List.head of
+                    case findTask taskId model of
                         Just task ->
                             if task.status == targetStatus then
                                 ( { model | draggedTaskId = Nothing, dropTarget = Nothing }, [] )
@@ -214,8 +252,79 @@ update msg model =
                         ("업무 상태를 " ++ Task.statusLabel movedTask.status ++ " 상태로 변경했습니다.")
                         { model | tasks = List.map (replaceTask movedTask) model.tasks, loading = False }
 
-                Err RequestFailed ->
-                    showNotice "상태를 변경하지 못했습니다. 다시 시도해 주세요." { model | loading = False }
+                Err error ->
+                    showNotice (errorMessage "상태를 변경하지 못했습니다. 다시 시도해 주세요." error) { model | loading = False }
+
+        OpenTask taskId ->
+            case findTask taskId model of
+                Just task ->
+                    ( { model
+                        | selectedTaskId = Just taskId
+                        , submissionDraft = Maybe.withDefault "" task.submittedResult
+                        , reviewDraft = ""
+                      }
+                    , []
+                    )
+
+                Nothing ->
+                    ( model, [] )
+
+        CloseTask ->
+            ( closePanel model, [] )
+
+        EditSubmission submission ->
+            ( { model | submissionDraft = submission }, [] )
+
+        EditReviewComment comment ->
+            ( { model | reviewDraft = comment }, [] )
+
+        SubmitResult taskId ->
+            case findTask taskId model of
+                Just task ->
+                    if String.trim model.submissionDraft == "" then
+                        showNotice "제출 결과물을 입력해 주세요." model
+
+                    else
+                        ( { model | loading = True, notice = Nothing }
+                        , [ SubmitTaskResult taskId task.taskOwner (String.trim model.submissionDraft) ]
+                        )
+
+                Nothing ->
+                    ( model, [] )
+
+        ApproveResult taskId ->
+            case findTask taskId model of
+                Just task ->
+                    ( { model | loading = True, notice = Nothing }
+                    , [ ApproveTaskResult taskId task.outcomeOwner (optionalText model.reviewDraft) ]
+                    )
+
+                Nothing ->
+                    ( model, [] )
+
+        RequestRevision taskId ->
+            case findTask taskId model of
+                Just task ->
+                    ( { model | loading = True, notice = Nothing }
+                    , [ RequestTaskRevision taskId task.outcomeOwner (optionalText model.reviewDraft) ]
+                    )
+
+                Nothing ->
+                    ( model, [] )
+
+        WorkflowSaved result ->
+            case result of
+                Ok task ->
+                    showNotice (workflowNotice task)
+                        { model
+                            | tasks = List.map (replaceTask task) model.tasks
+                            , loading = False
+                            , submissionDraft = Maybe.withDefault "" task.submittedResult
+                            , reviewDraft = ""
+                        }
+
+                Err error ->
+                    showNotice (errorMessage "처리하지 못했습니다. 다시 시도해 주세요." error) { model | loading = False }
 
         DismissNotice version ->
             if model.noticeVersion == version then
@@ -228,6 +337,51 @@ update msg model =
 updateForm : (TaskInput -> TaskInput) -> Model -> Model
 updateForm transform model =
     { model | draft = transform model.draft }
+
+
+closePanel : Model -> Model
+closePanel model =
+    { model | selectedTaskId = Nothing, submissionDraft = "", reviewDraft = "" }
+
+
+findTask : Int -> Model -> Maybe Task
+findTask taskId model =
+    List.filter (\task -> task.taskId == taskId) model.tasks |> List.head
+
+
+optionalText : String -> Maybe String
+optionalText raw =
+    if String.trim raw == "" then
+        Nothing
+
+    else
+        Just (String.trim raw)
+
+
+workflowNotice : Task -> String
+workflowNotice task =
+    case task.status of
+        Task.Submitted ->
+            "결과물을 제출했습니다."
+
+        Task.Approved ->
+            "결과물을 승인했습니다."
+
+        Task.Reviewed ->
+            "수정을 요청했습니다."
+
+        _ ->
+            "업무를 갱신했습니다."
+
+
+errorMessage : String -> ApiError -> String
+errorMessage fallback error =
+    case error of
+        Rejected message ->
+            message
+
+        RequestFailed ->
+            fallback
 
 
 toInput : Task -> TaskInput

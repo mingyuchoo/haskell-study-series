@@ -141,15 +141,23 @@ instance ToJSON TaskResponse where
         ]
 
 instance ToJSON OutcomeResponse where
-  toJSON (OutcomeResponse identifier description (OutcomeOwner owner) taskIds results finalStatus) =
-    object
-      [ "outcomeId" .= identifier
-      , "outcomeDescription" .= description
-      , "outcomeOwner" .= owner
-      , "taskIds" .= taskIds
-      , "results" .= results
-      , "status" .= statusText finalStatus
-      ]
+  toJSON
+    ( OutcomeResponse
+        identifier
+        descriptionText
+        (OutcomeOwner owner)
+        taskIds
+        results
+        finalStatus
+      ) =
+      object
+        [ "outcomeId" .= identifier
+        , "outcomeDescription" .= descriptionText
+        , "outcomeOwner" .= owner
+        , "taskIds" .= taskIds
+        , "results" .= results
+        , "status" .= statusText finalStatus
+        ]
 
 application :: TaskRepository IO -> Application
 application repository request respond =
@@ -201,8 +209,9 @@ application repository request respond =
       outcomes <- TaskService.listOutcomes repository
       respond (json status200 (map outcomeToResponse outcomes))
     ["api", "outcome"] | requestMethod request == methodPost ->
-      withOutcomeInput request respond $ \(OutcomeInputRequest description owner taskIds) -> do
-        result <- TaskService.createOutcome repository (OutcomeInput description owner taskIds)
+      withOutcomeInput request respond $ \(OutcomeInputRequest descriptionText owner taskIds) -> do
+        result <-
+          TaskService.createOutcome repository (OutcomeInput descriptionText owner taskIds)
         case result of
           Left err -> respond (domainError err)
           Right outcome -> respond (json status201 (outcomeToResponse outcome))
@@ -253,6 +262,11 @@ withTaskInput request respond action = do
               expected
           )
 
+withSubmission
+  :: Request
+  -> (Response -> IO ResponseReceived)
+  -> (SubmissionRequest -> IO ResponseReceived)
+  -> IO ResponseReceived
 withSubmission request respond action = do
   body <- strictRequestBody request
   case eitherDecode body of
@@ -261,6 +275,11 @@ withSubmission request respond action = do
         (responseLBS status400 [jsonContentType] "{\"error\":\"Invalid result submission\"}")
     Right submission -> action submission
 
+withReview
+  :: Request
+  -> (Response -> IO ResponseReceived)
+  -> (ReviewRequest -> IO ResponseReceived)
+  -> IO ResponseReceived
 withReview request respond action = do
   body <- strictRequestBody request
   case eitherDecode body of
@@ -268,6 +287,11 @@ withReview request respond action = do
       respond (responseLBS status400 [jsonContentType] "{\"error\":\"Invalid result review\"}")
     Right review -> action review
 
+withOutcomeInput
+  :: Request
+  -> (Response -> IO ResponseReceived)
+  -> (OutcomeInputRequest -> IO ResponseReceived)
+  -> IO ResponseReceived
 withOutcomeInput request respond action = do
   body <- strictRequestBody request
   case eitherDecode body of
