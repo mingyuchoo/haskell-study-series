@@ -1,7 +1,10 @@
 module Main exposing (main)
 
+import Api.Discovery
 import Api.Http as Api
+import Api.Path
 import App.Config exposing (Flags)
+import App.Discovery as DiscoveryState
 import App.Drafts exposing (get, goalDraft, reviewDraft)
 import App.Effect exposing (Effect(..))
 import App.Model exposing (Model)
@@ -10,12 +13,15 @@ import App.Session as Session exposing (SaveState(..))
 import App.Update as Update exposing (Msg(..))
 import Browser
 import Browser.Dom
+import Domain.Discovery
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
+import Json.Encode as E
 import Page exposing (Page(..), pageName)
 import Page.Activity
 import Page.Authorities
+import Page.Discovery
 import Page.Goals
 import Page.Learning
 import Page.Organizations
@@ -52,6 +58,12 @@ perform effect =
         SaveCommand token action method path body ->
             Api.send (Saved token action) method path body
 
+        LoadDiscovery token org ->
+            Api.discovery org (Result.mapError Api.errorText >> GotDiscovery token org)
+
+        SaveDiscovery token org snapshot ->
+            Api.send (SavedDiscovery token org) "POST" (Api.Path.orgPath org "discovery") (E.object [ ( "expectedVersion", E.int snapshot.version ), ( "discovery", Api.Discovery.encode snapshot.discovery ) ])
+
         FocusElement target ->
             Task.attempt (always NoOp) (Browser.Dom.focus target)
 
@@ -71,7 +83,7 @@ view model =
     div []
         [ a [ href "#main-content", class "skip-link" ] [ text "본문으로 이동" ]
         , aside []
-            [ a [ class "brand", href "/" ] [ text "◈ ", strong [] [ text "my org" ], span [] [ text "CLARITY → ACTION → LEARNING" ] ]
+            [ a [ class "brand", href "/" ] [ text "◈ ", strong [] [ text "my org" ], span [] [ text "ORGANIZATION → AGENT ROLES" ] ]
             , div [ class "workspace" ]
                 [ text
                     (case model.session.workspace of
@@ -108,13 +120,13 @@ view model =
                             ]
                             [ text (pageName page) ]
                     )
-                    [ Organizations, People, Dashboard, Responsibility, Authorities, Results, Reviews, ActivityLog ]
+                    [ Organizations, Discovery, People, Workflows, AgentDrafts, Dashboard, Responsibility, Authorities, Results, Reviews, ActivityLog ]
                 )
-            , div [ class "aside-foot" ] [ span [ class "dot" ] [], text "명확한 상태, 예측 가능한 변화", p [] [ text "결과를 정의하고", br [] [], text "함께 배우는 조직." ], small [] [ text "Elm UI · Haskell API" ] ]
+            , div [ class "aside-foot" ] [ span [ class "dot" ] [], text "현재 조직에서 에이전트 역할까지", p [] [ text "사실과 미확인을 나누고", br [] [], text "근거로 역할을 설계합니다." ], small [] [ text "현황 기록 · 업무 연결 · 사람의 검토" ] ]
             ]
         , main_ [ id "main-content", tabindex -1 ]
             [ header []
-                [ div [] [ span [ class "eyebrow" ] [ text "WORKSPACE / MY ORG" ], h1 [] [ text (pageName model.pageState.page) ], p [] [ text "목표 → 책임 → 권한 → 결과 → 학습. 다음 행동을 명확하게." ] ]
+                [ div [] [ span [ class "eyebrow" ] [ text "WORKSPACE / MY ORG" ], h1 [] [ text (pageName model.pageState.page) ], p [] [ text "현재 조직의 역할과 업무를 기록하고, 근거를 검토하며 멀티 AI 에이전트 구조를 설계합니다." ] ]
                 , div [ class "header-actions" ]
                     [ if model.session.org /= Nothing then
                         button [ class "secondary", disabled (busy model), onClick (Navigate Settings model.session.org) ] [ text "조직 설정" ]
@@ -153,13 +165,13 @@ view model =
                         "최신 상태 확인 실패 · 새로고침해 주세요"
                     )
                 ]
-            , if model.pageState.page /= Settings then
+            , if not (List.member model.pageState.page [ Settings, Discovery, Workflows, AgentDrafts ]) then
                 ListView.controls (listMode model) (SetListMode model.pageState.page)
 
               else
                 text ""
             , if model.pageState.page == Organizations then
-                Page.Organizations.viewWith (listMode model) { forms = formConfig model, organizations = model.session.organizations, open = \org -> Navigate Dashboard (Just org), settings = \org -> Navigate Settings (Just org) }
+                Page.Organizations.viewWith (listMode model) { forms = formConfig model, organizations = model.session.organizations, open = \org -> Navigate Discovery (Just org), settings = \org -> Navigate Settings (Just org) }
 
               else
                 workspaceView model
@@ -178,7 +190,21 @@ workspaceView model =
 
                   else
                     text ""
+                , if not w.demo && model.pageState.page /= Settings then
+                    Page.Discovery.guide model.pageState.guideOpen ToggleGuide (\page -> Navigate page model.session.org) (DiscoveryState.saved w.organization.id model.discovery |> Maybe.map .discovery |> Maybe.withDefault Domain.Discovery.empty)
+
+                  else
+                    text ""
                 , case model.pageState.page of
+                    Discovery ->
+                        discoveryPage Discovery model w
+
+                    Workflows ->
+                        discoveryPage Workflows model w
+
+                    AgentDrafts ->
+                        discoveryPage AgentDrafts model w
+
                     People ->
                         Page.People.viewWith (listMode model) { forms = formConfig model, query = model.pageState.peopleQuery, status = model.pageState.peopleStatus, selected = model.pageState.selectedPerson, search = SearchPeople, filter = FilterPeople, open = OpenPerson, reset = ResetPerson, goals = Navigate Dashboard model.session.org } w
 
@@ -224,3 +250,7 @@ formConfig model =
     , edit = Edit
     , submit = Submit
     }
+
+
+discoveryPage page model w =
+    Page.Discovery.view page { state = model.discovery, org = w.organization.id, busy = busy model, edit = EditDiscovery, addObservation = AddObservation, addWorkflow = AddWorkflow, save = SubmitDiscovery, rebase = RebaseDiscovery, reset = ResetDiscovery, go = \target -> Navigate target model.session.org } w

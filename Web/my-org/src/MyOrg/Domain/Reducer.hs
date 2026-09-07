@@ -33,6 +33,7 @@ applyEvent st StoredEvent {storedSeq, storedAt, storedEvent} =
           }
       OrganizationDeleted _ -> emptyState
       DemoSeeded _ -> st
+      DiscoverySaved document -> st {stateDiscovery = document}
       PersonAdded p -> st {statePeople = Map.insert (personId p) p (statePeople st)}
       EmployeeAdded p profile ->
         st

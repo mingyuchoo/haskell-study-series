@@ -105,6 +105,15 @@ pageHtml mode page w =
         Settings ->
             Html.text ""
 
+        Discovery ->
+            Html.text ""
+
+        Workflows ->
+            Html.text ""
+
+        AgentDrafts ->
+            Html.text ""
+
 
 pages : List Page
 pages =
@@ -130,7 +139,7 @@ tests =
         , describe "빈 목록에서 빈 상태를 유지한다"
             (List.map
                 (\( page, message ) -> test (pageName page) (\_ -> pageHtml Table page workspace |> Query.fromHtml |> Query.has [ text message ]))
-                [ ( People, "표시할 구성원이 없습니다" ), ( Dashboard, "어떤 결과를 만들고 싶나요?" ), ( Authorities, "구성원을 먼저 추가하세요" ), ( Results, "아직 측정할 목표가 없습니다" ) ]
+                [ ( People, "표시할 구성원이 없습니다" ), ( Dashboard, "현재 관리 중인 목표가 있나요?" ), ( Authorities, "구성원을 먼저 추가하세요" ), ( Results, "아직 측정할 목표가 없습니다" ) ]
             )
         , test "표 컨테이너는 키보드 접근과 열 제목을 제공한다" <|
             \_ -> Ui.ListView.tableView "테스트" [ "이름" ] [] |> Query.fromHtml |> Query.has [ attribute (Attr.tabindex 0), attribute (Attr.attribute "role" "region") ]
@@ -189,11 +198,11 @@ tests =
                 in
                 Page.Authorities.viewWith Table { forms = editing } saved |> Query.fromHtml |> Query.findAll [ tag "tbody" ] |> Query.first |> Query.has [ text "300", text "채용" ]
         , test "권한 표에서 예산 입력을 전달한다" <|
-            \_ -> pageHtml Table Authorities sample |> Query.fromHtml |> Query.find [ tag "input", attribute (Attr.name "budget") ] |> Event.simulate (Event.input "100") |> Event.expect (Edit (Grant "p") "budget" "100")
+            \_ -> pageHtml Table Authorities sample |> Query.fromHtml |> Query.find [ tag "input", attribute (Attr.id "authority-p-budget") ] |> Event.simulate (Event.input "100") |> Event.expect (Edit (Grant "p") "budget" "100")
         , test "결과 표에서 평가 기록 액션을 전달한다" <|
             \_ -> pageHtml Table Results sample |> clickButton "평가 기록" (Submit (Evaluate "g"))
         , test "결과 표에서 결과 보고 입력을 전달한다" <|
-            \_ -> pageHtml Table Results sample |> Query.fromHtml |> Query.find [ tag "input", attribute (Attr.name "value") ] |> Event.simulate (Event.input "42") |> Event.expect (Edit (Report "g") "value" "42")
+            \_ -> pageHtml Table Results sample |> Query.fromHtml |> Query.find [ tag "input", attribute (Attr.id "result-g-value") ] |> Event.simulate (Event.input "42") |> Event.expect (Edit (Report "g") "value" "42")
         , test "학습 표는 학습 결정 담당자를 보존하고 전체 활동 기록은 분리한다" <|
             \_ ->
                 Expect.all

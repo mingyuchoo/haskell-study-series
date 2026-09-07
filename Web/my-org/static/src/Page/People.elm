@@ -37,7 +37,7 @@ viewWith mode model w =
     in
     div []
         [ panel "구성원 관리"
-            [ note "구성원의 기본정보와 보고 관계를 관리합니다. 비활성화하면 새 업무 배정에서 제외되며 과거 기록은 보존됩니다."
+            [ note "현재 조직에서 실제로 일하는 구성원의 역할과 보고 관계를 기록합니다. 직함만 적기보다 무엇을 책임지는지 설명하세요. 비활성화한 구성원의 과거 기록은 보존됩니다."
             , div [ class "fields" ]
                 [ inputValue "people-search" model.query model.search "이름 · 역할 · 부서 · 이메일 검색" "search" False
                 , selectValue "people-status" model.status model.filter "재직 상태" True [ ( "active", "재직" ), ( "inactive", "비활성" ), ( "all", "전체" ) ]
@@ -60,6 +60,7 @@ viewWith mode model w =
                 note "목록에서 ‘상세 · 수정’을 눌러 구성원 정보와 담당 목표를 확인하세요."
         , section [ class "panel", id "new-person", tabindex -1 ]
             [ h2 [] [ text "구성원 등록" ]
+            , note "예: 김민서 / 고객 문의 운영 책임 / 고객지원팀. 보고 대상이 아직 없다면 먼저 구성원을 등록한 뒤 연결하세요. 다음으로 업무 흐름에서 이 역할이 맡는 일을 기록합니다."
             , formView model.forms AddPerson "구성원 등록" (profileFields model.forms w AddPerson Nothing)
             ]
         ]

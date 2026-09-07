@@ -28,6 +28,7 @@ encodeQueryResult = \case
   GraphResult graph -> toWire graph
   EventsResult events -> toWire events
   ReviewsResult reviews -> toWire reviews
+  DiscoveryResult version document -> object ["version" .= version, "discovery" .= document]
 
 summaryJSON :: OrganizationSummary -> Value
 summaryJSON OrganizationSummary {..} =

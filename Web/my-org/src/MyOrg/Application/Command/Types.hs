@@ -4,6 +4,7 @@ module MyOrg.Application.Command.Types
 
 import Data.Text (Text)
 import MyOrg.Domain.Authority
+import MyOrg.Domain.Discovery
 import MyOrg.Domain.Goal.Types
 import MyOrg.Domain.Identity
 import MyOrg.Domain.Organization
@@ -26,4 +27,5 @@ data Command = CreateOrganization OrgId Text
              | EvaluateGoal GoalId
              | HoldReview ReviewId GoalId [Learning] [Decision] Text
              | ChangeStrategy GoalId Text
+             | SaveDiscovery Discovery Int
   deriving (Show, Eq)

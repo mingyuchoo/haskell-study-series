@@ -36,6 +36,7 @@ readRoute path = case path of
       "graph" -> Just GraphResource
       "events" -> Just EventsResource
       "reviews" -> Just ReviewsResource
+      "discovery" -> Just DiscoveryResource
       _ -> Nothing
 
 writeRoute
@@ -67,7 +68,7 @@ writeRoute method path = case (method, path) of
 
 knownCommand :: [Text] -> Bool
 knownCommand path = case path of
-  ["api", name] -> name `elem` ["people", "goals", "evaluations", "reviews"]
+  ["api", name] -> name `elem` ["people", "goals", "evaluations", "reviews", "discovery"]
   ["api", "goals", _, action] -> action `elem` ["owner", "authority", "activate", "results", "strategy"]
   ["api", "people", _, action] -> action `elem` ["authority", "deactivate"]
   _ -> False
@@ -77,6 +78,7 @@ parseCommand path = withObject "command" $ \o -> do
   actor <- optionalField o "actor"
   command <- case path of
     ["api", "organizations"] -> CreateOrganization <$> field o "id" <*> field o "name"
+    ["api", "discovery"] -> SaveDiscovery <$> field o "discovery" <*> field o "expectedVersion"
     ["api", "people"] -> AddEmployee <$> parseWire (Object o) <*> parseWire (Object o)
     ["api", "people", uid, "deactivate"] ->
       DeactivatePerson (UserId uid)

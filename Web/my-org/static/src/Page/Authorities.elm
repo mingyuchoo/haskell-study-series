@@ -24,7 +24,7 @@ view =
 viewWith : Mode -> Controls msg -> { a | goals : List GoalView, people : List Person, authorities : List Authority, decisionShare : Dict.Dict String Float, compiler : Compiler } -> Html msg
 viewWith mode model w =
     div []
-        [ panel "책임을 실행할 수 있는 권한" [ note "권한을 줄여 활성 목표의 요건이 깨지면 해당 목표는 자동으로 초안으로 돌아갑니다.", note "집중도 = 보유 권한 종류 수 + 예산 보유 1점 / 조직 전체 점수. 실제 의사결정 빈도나 권력의 측정값은 아닙니다." ]
+        [ panel "책임을 실행할 수 있는 권한" [ note "현재 실제로 행사할 수 있는 결정 권한과 예산 한도를 기록하세요. 예: 환불 승인 가능 / 채용 승인 불가. 모르는 권한은 조직 현황에 미확인으로 남깁니다. 권한을 줄여 활성 목표의 요건이 깨지면 초안으로 돌아갑니다.", note "집중도 = 보유 권한 종류 수 + 예산 보유 1점 / 조직 전체 점수. 실제 의사결정 빈도나 권력의 측정값은 아닙니다." ]
         , if List.isEmpty (List.filter .active w.people) then
             emptyState "구성원을 먼저 추가하세요" "구성원 메뉴에서 재직 구성원을 추가한 뒤 권한을 부여할 수 있습니다."
 
@@ -54,7 +54,7 @@ viewWith mode model w =
 
 
 authorityForm model person =
-    formView model.forms (Grant person.id) "권한 저장" [ inputField model.forms (Grant person.id) "집행 가능한 예산 한도 (KRW)" "budget" "number" True, checks model.forms (Grant person.id) ]
+    formView model.forms (Grant person.id) "권한 저장" [ inputField model.forms (Grant person.id) "현재 집행 가능한 예산 한도 (KRW)" "budget" "number" True, checks model.forms (Grant person.id) ]
 
 
 authorityShare w person =

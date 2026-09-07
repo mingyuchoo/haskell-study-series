@@ -29,7 +29,8 @@ viewWith =
 viewWithActivity : Maybe (String -> msg) -> Mode -> Controls msg -> { a | goals : List GoalView, people : List Person, reviews : List Review, reviewWarnings : List ReviewWarning, events : List Audit } -> Html msg
 viewWithActivity activity mode model w =
     div []
-        [ section [ class "panel", id "review-form", tabindex -1 ] [ h2 [] [ text "회고와 다음 결정 기록" ], formView model.forms AddReview "회고 기록" [ formSelect model "회고할 목표" Review.Goal True (goalOptions w), formInput model "회고 요약" Review.Note "text" True, label [] [ text "새롭게 배운 점 (선택)", textarea [ value (Review.value model.draft Review.Learning), onInput (model.edit Review.Learning) ] [] ], formInput model "다음 결정 (선택)" Review.Decision "text" False, div [ class "fields" ] [ formSelect model "결정 담당자" Review.DecisionOwner False (peopleOptions w), formInput model "결정 기한 (UTC, 선택)" Review.DecisionDeadline "date" False ], note "현재 최신 결과와 평가가 함께 보존됩니다. 결정과 학습이 모두 없으면 구조 검사가 경고합니다." ] ]
+        [ panel "관찰한 결과를 다음 결정으로 연결하세요" [ note "조직과 에이전트 역할을 검토한 뒤 사용하는 운영 단계입니다. 관찰한 사실, 새롭게 배운 점, 바꿀 결정을 나누어 기록하세요.", note "예: 긴급 문의 응답 지연(사실) → 승인 대기 원인 확인(학습) → 승인 담당과 시간 기준을 명시(다음 결정)" ]
+        , section [ class "panel", id "review-form", tabindex -1 ] [ h2 [] [ text "회고와 다음 결정 기록" ], formView model.forms AddReview "회고 기록" [ formSelect model "회고할 목표" Review.Goal True (goalOptions w), formInput model "회고 요약" Review.Note "text" True, label [] [ text "새롭게 배운 점 (선택)", textarea [ value (Review.value model.draft Review.Learning), onInput (model.edit Review.Learning) ] [] ], formInput model "다음 결정 (선택)" Review.Decision "text" False, div [ class "fields" ] [ formSelect model "결정 담당자" Review.DecisionOwner False (peopleOptions w), formInput model "결정 기한 (UTC, 선택)" Review.DecisionDeadline "date" False ], note "현재 최신 결과와 평가가 함께 보존됩니다. 결정과 학습이 모두 없으면 구조 검사가 경고합니다." ] ]
         , if List.isEmpty w.reviews then
             emptyState "아직 회고 기록이 없습니다" "위에서 회고를 기록해 학습과 다음 결정을 남기세요."
 

@@ -1,12 +1,15 @@
 module App.Update exposing (Model, Msg(..), get, init, payload, update)
 
 import App.Config exposing (Flags)
+import App.Discovery as DiscoveryState
 import App.Drafts as Drafts
 import App.Effect exposing (Effect(..))
 import App.Model
 import App.PageState as PageState
 import App.Session as Session
+import Dict
 import Domain exposing (..)
+import Domain.Discovery as Discovery
 import Form.Action exposing (..)
 import Form.Goal
 import Form.Review
@@ -46,6 +49,14 @@ type Msg
     | FilterPeople String
     | ResetPerson String
     | OpenPerson String
+    | GotDiscovery Int String (Result String Discovery.Snapshot)
+    | EditDiscovery Discovery.Change
+    | AddObservation
+    | AddWorkflow
+    | SubmitDiscovery
+    | SavedDiscovery Int String (Result String ())
+    | ResetDiscovery
+    | RebaseDiscovery
     | NoOp
 
 
@@ -63,7 +74,9 @@ refresh model =
         forms =
             model.forms
     in
-    ( { model | session = session, forms = { forms | deletion = Nothing } }, effects )
+    ( { model | session = session, forms = { forms | deletion = Nothing }, discovery = setDiscoveryLoading (session.org /= Nothing) model.discovery }
+    , effects ++ (session.org |> Maybe.map (\org -> [ LoadDiscovery session.request org ]) |> Maybe.withDefault [])
+    )
 
 
 busy : Model -> Bool
@@ -98,6 +111,55 @@ payload =
 update : Msg -> Model -> ( Model, List Effect )
 update msg model =
     case msg of
+        GotDiscovery token org response ->
+            if token /= model.session.request || Just org /= model.session.org then
+                ( model, [] )
+
+            else
+                ( { model | discovery = DiscoveryState.receive org response model.discovery }, [] )
+
+        EditDiscovery change ->
+            if busy model || model.discovery.loading || (model.session.org |> Maybe.map (\org -> Dict.member org model.discovery.errors) |> Maybe.withDefault False) then
+                ( model, [] )
+
+            else
+                ( { model | discovery = model.session.org |> Maybe.map (\org -> DiscoveryState.edit org change model.discovery) |> Maybe.withDefault model.discovery }, [] )
+
+        AddObservation ->
+            update (EditDiscovery (Discovery.AddObservation ("observation-" ++ model.flags.seed ++ "-" ++ String.fromInt model.forms.serial))) { model | forms = Drafts.advanceSerial model.forms }
+
+        AddWorkflow ->
+            update (EditDiscovery (Discovery.AddWorkflow ("workflow-" ++ model.flags.seed ++ "-" ++ String.fromInt model.forms.serial))) { model | forms = Drafts.advanceSerial model.forms }
+
+        ResetDiscovery ->
+            if busy model then
+                ( model, [] )
+
+            else
+                ( { model | discovery = model.session.org |> Maybe.map (\org -> DiscoveryState.clearDraft org model.discovery) |> Maybe.withDefault model.discovery }, [] )
+
+        RebaseDiscovery ->
+            if busy model then
+                ( model, [] )
+
+            else
+                ( { model | discovery = model.session.org |> Maybe.map (\org -> DiscoveryState.rebase org model.discovery) |> Maybe.withDefault model.discovery, notice = "최신 버전에 입력을 다시 적용했습니다. 내용을 검토한 뒤 저장하세요." }, [] )
+
+        SubmitDiscovery ->
+            submitDiscovery model
+
+        SavedDiscovery token org response ->
+            if token /= model.session.request || Just org /= model.session.org then
+                ( model, [] )
+
+            else
+                case response of
+                    Ok _ ->
+                        refresh { model | discovery = DiscoveryState.clearDraft org model.discovery, session = Session.finishSave model.session, notice = "현황을 저장했습니다. 저장된 근거로 에이전트 초안을 다시 확인하세요.", error = False }
+
+                    Err message ->
+                        refresh { model | session = Session.finishSave model.session, notice = message ++ " 입력은 보존했습니다. 최신 저장 내용과 비교한 뒤 다시 적용하세요.", error = True }
+
         ActivityChange state ->
             ( { model | pageState = PageState.setActivity state model.pageState }, [] )
 
@@ -178,7 +240,28 @@ update msg model =
                 ( model, [] )
 
             else
-                ( { model | forms = Drafts.editGoal field val model }, [] )
+                let
+                    metric =
+                        case model.session.workspace of
+                            Loaded workspace ->
+                                workspace.goals |> List.map (.goal >> .metric) |> List.map (\metric_ -> ( metric_.id, metric_ )) |> Dict.fromList |> Dict.get val
+
+                            _ ->
+                                Nothing
+
+                    next =
+                        if field == Form.Goal.MetricId then
+                            case metric of
+                                Just selected ->
+                                    List.foldl (\( key, content ) current -> { current | forms = Drafts.editGoal key content current }) model [ ( Form.Goal.MetricId, selected.id ), ( Form.Goal.MetricName, selected.name ), ( Form.Goal.Unit, selected.unit ), ( Form.Goal.Direction, selected.direction ) ]
+
+                                Nothing ->
+                                    List.foldl (\( key, content ) current -> { current | forms = Drafts.editGoal key content current }) { model | forms = Drafts.advanceSerial model.forms } [ ( Form.Goal.MetricId, "metric-" ++ model.flags.seed ++ "-new-" ++ String.fromInt model.forms.serial ), ( Form.Goal.MetricName, "" ), ( Form.Goal.Unit, "" ), ( Form.Goal.Direction, "HigherIsBetter" ) ]
+
+                        else
+                            { model | forms = Drafts.editGoal field val model }
+                in
+                ( next, [] )
 
         EditReview field val ->
             if busy model then
@@ -324,8 +407,39 @@ saved action response model =
                         | pageState = PageState.setPage Organizations next.pageState
                         , session = Session.organizationDeleted next.session
                         , forms = Drafts.removeOrganization model.session.org next.forms
+                        , discovery = model.session.org |> Maybe.map (\org -> DiscoveryState.remove org next.discovery) |> Maybe.withDefault next.discovery
                         , notice = "조직을 논리 삭제했습니다. 원본 감사 기록과 다른 조직은 보존됩니다."
                     }
 
             else
                 refresh next
+
+
+setDiscoveryLoading : Bool -> DiscoveryState.State -> DiscoveryState.State
+setDiscoveryLoading loading state =
+    { state | loading = loading }
+
+
+submitDiscovery : Model -> ( Model, List Effect )
+submitDiscovery model =
+    case model.session.org of
+        Nothing ->
+            ( model, [] )
+
+        Just org ->
+            case DiscoveryState.current org model.discovery of
+                Nothing ->
+                    ( model, [] )
+
+                Just snapshot ->
+                    if busy model || model.discovery.loading || not model.session.fresh || Dict.member org model.discovery.errors then
+                        ( { model | notice = "최신 현황을 불러온 뒤 저장하세요. 입력은 보존됩니다.", error = True }, [] )
+
+                    else if DiscoveryState.conflicted org model.discovery then
+                        ( { model | notice = "입력 중 저장된 조직이 변경되었습니다. 최신 저장 내용과 비교한 뒤 다시 적용하세요.", error = True }, [] )
+
+                    else if not (List.isEmpty (Discovery.problems snapshot.discovery)) then
+                        ( { model | notice = String.join " " (Discovery.problems snapshot.discovery), error = True }, [] )
+
+                    else
+                        ( { model | session = Session.beginSave "discovery" model.session, notice = "현황 저장 중…", error = False }, [ SaveDiscovery model.session.request org snapshot ] )

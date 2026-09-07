@@ -3,6 +3,9 @@ module Page exposing (Page(..), pageName)
 
 type Page
     = Organizations
+    | Discovery
+    | Workflows
+    | AgentDrafts
     | People
     | Dashboard
     | Responsibility
@@ -18,6 +21,15 @@ pageName page =
     case page of
         Organizations ->
             "조직 목록"
+
+        Discovery ->
+            "조직 현황"
+
+        Workflows ->
+            "업무 흐름"
+
+        AgentDrafts ->
+            "에이전트 초안"
 
         People ->
             "구성원"

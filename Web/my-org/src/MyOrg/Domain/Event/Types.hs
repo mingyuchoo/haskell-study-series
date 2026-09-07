@@ -7,6 +7,7 @@ import Data.Text (Text)
 import Data.Time (UTCTime)
 import GHC.Generics (Generic)
 import MyOrg.Domain.Authority
+import MyOrg.Domain.Discovery
 import MyOrg.Domain.Goal.Types
 import MyOrg.Domain.Identity
 import MyOrg.Domain.Organization
@@ -31,6 +32,7 @@ data OrganizationEvent = OrganizationCreated Organization
                        | GoalEvaluated GoalId Evaluation
                        | ReviewHeld Review
                        | StrategyChanged GoalId Text
+                       | DiscoverySaved Discovery
   deriving stock (Show, Eq, Generic)
 
 -- | 저장소에 기록된 이벤트. 순번과 시각, 행위자를 함께 남긴다.

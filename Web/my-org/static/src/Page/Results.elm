@@ -24,7 +24,7 @@ viewWith : Mode -> Controls msg -> { a | goals : List GoalView, people : List Pe
 viewWith mode model w =
     div []
         [ div [ class "section-head" ] [ h2 [] [ text "목표별 결과와 평가" ] ]
-        , note "실측값을 보고하고 현재 성과를 평가하세요. 결과 이력은 다음 학습의 근거가 됩니다."
+        , note "조직 구조를 정리한 뒤 성과를 추적하는 운영 단계입니다. 실제로 측정한 값과 근거를 보고하면 결과 이력이 다음 학습의 근거가 됩니다."
         , if List.isEmpty w.goals then
             emptyState "아직 측정할 목표가 없습니다" "목표 메뉴에서 목표를 만든 뒤 결과를 기록하세요."
 
@@ -43,7 +43,8 @@ resultCard model w g =
 
 
 resultContent model w g =
-    [ note g.analysis.possibleCause
+    [ note ("입력할 지표: " ++ g.goal.metric.name ++ " / 단위: " ++ g.goal.metric.unit ++ ". 목표값이나 예상값 대신 실제 측정값을 입력하세요.")
+    , note g.analysis.possibleCause
     , h3 [ class "form-heading" ] [ text "결과 보고" ]
     , formView model.forms (Report g.goal.id) "결과 보고" [ div [ class "fields" ] [ inputField model.forms (Report g.goal.id) "실측값" "value" "number" True, selectField model.forms (Report g.goal.id) "보고자" "reportedBy" True (peopleOptions w) ], inputField model.forms (Report g.goal.id) "결과 설명" "note" "text" True ]
     , if List.isEmpty g.results then
@@ -51,6 +52,7 @@ resultContent model w g =
 
       else
         div [ class "table-wrap" ] [ h3 [ class "form-heading" ] [ text "결과 추이 · 최근 순" ], table [] [ thead [] [ tr [] [ th [] [ text "기록 시각" ], th [] [ text "측정값" ], th [] [ text "보고자" ], th [] [ text "설명" ] ] ], tbody [] (List.map (\r -> tr [] [ td [] [ text r.reportedAt ], td [] [ text (formatNumber r.value) ], td [] [ text (r.reportedBy |> Maybe.map (personName w) |> Maybe.withDefault "미기록") ], td [] [ text r.note ] ]) g.results) ] ]
+    , note "평가 기록은 현재 실측값·목표값·기간을 기준으로 계산한 평가를 저장합니다. 이 기록을 바탕으로 학습 화면에서 다음 결정을 남기세요."
     , div [ class "actions" ]
         [ button [ class "secondary", disabled (model.forms.busy || not model.forms.fresh), onClick (model.forms.submit (Evaluate g.goal.id)) ] [ text "평가 기록" ]
         , button [ class "secondary", disabled model.forms.busy, onClick (model.goals ("goal-" ++ g.goal.id)) ] [ text "목표 관리 →" ]

@@ -29,7 +29,7 @@ viewWith mode model w =
 viewInteractive mode graphState graphMsg go model w =
     div []
         [ panel "누가 어떤 결과를 책임지는가"
-            [ note "각 목표에는 최종 책임자가 한 명 있습니다."
+            [ note "현재 목표에 대해 최종 설명과 판단을 맡는 한 사람을 기록하세요. 함께 일하는 모든 수행자를 뜻하지 않습니다. 책임자가 불명확하면 임의로 지정하지 말고 조직 현황에 미확인으로 남기세요."
             , if List.isEmpty w.goals then
                 emptyState "아직 책임을 배정할 목표가 없습니다" "목표 메뉴에서 목표를 만든 뒤 책임자를 지정하세요."
 
@@ -41,7 +41,7 @@ viewInteractive mode graphState graphMsg go model w =
             ]
         , section [ class "panel", id "responsibility-graph", tabindex -1 ]
             [ h2 [] [ text "책임 관계 그래프" ]
-            , note "사람 → 목표 → 지표. 목표 간 의존 관계와 자원 통제를 연결합니다."
+            , note "목표 중심 책임 관계입니다. 사람 → 목표 → 지표와 자원 통제를 연결하며 보고 계층 전체를 보여주는 조직도와는 범위가 다릅니다. 책임 공백과 권한 부족은 확인할 조직 현황입니다."
             , Graph.view graphState graphMsg go w
             ]
         , diagnosticView w

@@ -61,9 +61,9 @@ goalSummary w g =
 diagnosticView : { a | compiler : Compiler } -> Html msg
 diagnosticView w =
     panel "조직 구조 검사"
-        [ div [ class "section-head" ] [ text "다음 행동을 위한 피드백", span [ class "tag warn" ] [ text (String.fromInt w.compiler.errors ++ " 오류 · " ++ String.fromInt w.compiler.warnings ++ " 경고") ] ]
+        [ div [ class "section-head" ] [ text "기록된 목표·권한에서 확인할 사항", span [ class "tag warn" ] [ text (String.fromInt w.compiler.errors ++ " 오류 · " ++ String.fromInt w.compiler.warnings ++ " 경고") ] ]
         , if List.isEmpty w.compiler.diagnostics then
-            note "구조 검사를 통과했습니다. 결과를 보고하고 학습을 이어가세요."
+            note "현재 입력에 적용한 규칙에서 추가 확인 사항이 발견되지 않았습니다. 미입력 정보나 실제 업무까지 검증한 것은 아닙니다."
 
           else
             div [] (List.map (\d -> div [ classList [ ( "diagnostic", True ), ( "error", d.severity == "Error" ) ] ] [ code [] [ text d.code ], strong [] [ text d.message ], p [] [ text d.subject ], div [] (List.map (\line -> p [] [ text line ]) d.details) ]) w.compiler.diagnostics)

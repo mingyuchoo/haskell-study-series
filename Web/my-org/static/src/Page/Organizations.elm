@@ -20,8 +20,13 @@ view =
 viewWith : Mode -> { a | forms : Config msg, organizations : Remote.Remote (List Summary), open : String -> msg, settings : String -> msg } -> Html msg
 viewWith mode model =
     div []
-        [ panel "새 조직 등록"
-            [ note "각 조직의 구성원, 목표와 학습은 독립적으로 관리됩니다."
+        [ panel "현재 조직을 이해하고 멀티 AI 에이전트 구조를 설계하세요"
+            [ note "현재 조직의 역할·책임·업무 흐름을 기록하면, 저장된 근거로 에이전트 역할과 인계 구조의 초안을 검토할 수 있습니다."
+            , note "1. 현재 사실과 미확인 내용을 기록 → 2. 업무의 입력·산출물·인계를 연결 → 3. 규칙 기반 에이전트 제안을 사람이 검토"
+            , note "지금 확인할 수 있는 정보부터 시작하세요. 실제 AI 에이전트를 실행하거나 외부 도구의 권한을 부여하는 기능은 아닙니다."
+            ]
+        , panel "새 조직 등록"
+            [ note "정리할 실제 조직이나 팀의 이름을 입력하세요. 예: 고객지원팀. 현황·업무·검토와 운영 기록은 조직별로 분리됩니다."
             , formView model.forms CreateOrg "조직 등록" [ inputField model.forms CreateOrg "조직 이름" "name" "text" True ]
             , button
                 [ class "secondary"
@@ -45,7 +50,7 @@ viewWith mode model =
                 div []
                     [ div [ class "section-head" ] [ h2 [] [ text "등록된 조직" ], span [ class "tag" ] [ text (String.fromInt (List.length items) ++ "개") ] ]
                     , if List.isEmpty items then
-                        emptyState "첫 조직을 시작하세요" "조직 이름을 입력하거나 가상 데이터로 운영 흐름을 체험하세요."
+                        emptyState "첫 조직을 시작하세요" "조직 이름을 등록한 뒤 조직 열기로 현황을 입력하세요. 데모 조직에서는 기존 목표·책임·권한 운영 흐름을 체험할 수 있습니다."
 
                       else if mode == Table then
                         organizationTable model items

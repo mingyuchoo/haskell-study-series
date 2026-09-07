@@ -1,5 +1,6 @@
 module Page.Goals exposing (view, viewWith)
 
+import Dict
 import Domain exposing (..)
 import Form.Action exposing (..)
 import Form.Goal as Goal
@@ -28,7 +29,7 @@ viewWith mode model w =
         [ div [ class "metrics" ] (List.map (\( label_, amount, desc ) -> div [ class "metric" ] [ span [] [ text label_ ], strong [] [ text (String.fromInt amount) ], small [] [ text desc ] ]) [ ( "전체 목표", List.length w.goals, "측정 가능한 결과" ), ( "활성 목표", List.length (List.filter .active w.goals), "책임과 권한 검증 완료" ), ( "구조 진단", w.compiler.errors + w.compiler.warnings, "확인이 필요한 항목" ), ( "누적 학습", List.sum (List.map (.learnings >> List.length) w.reviews), "다음 결정의 근거" ) ])
         , div [ class "section-head" ] [ h2 [] [ text "목표 포트폴리오" ], a [ href "#new-goal" ] [ text "+ 목표 만들기" ] ]
         , if List.isEmpty w.goals then
-            emptyState "어떤 결과를 만들고 싶나요?" "아래에서 측정 가능한 목표를 정의하고 책임자를 연결하세요."
+            emptyState "현재 관리 중인 목표가 있나요?" "확인된 측정 기준이 있다면 아래에서 목표 초안을 만드세요. 모르는 내용은 조직 현황에 미확인으로 남길 수 있습니다."
 
           else if mode == Table then
             goalTable model w
@@ -45,10 +46,23 @@ goalForm model w =
     formView model.forms
         AddGoal
         "목표 초안 생성"
-        [ note "초안 → 책임자 지정 → 권한 확인 → 활성화. 필요한 조건을 갖춘 뒤 실행합니다."
-        , formInput model "어떤 결과를 만들고 싶나요?" Goal.Description "text" True
-        , div [ class "fields" ] [ formInput model "KPI 이름" Goal.MetricName "text" True, formInput model "단위" Goal.Unit "text" True, formInput model "지표 식별자 · 같은 지표는 같은 ID" Goal.MetricId "text" True, formSelect model "좋은 결과의 방향" Goal.Direction True [ ( "HigherIsBetter", "높을수록 좋음" ), ( "LowerIsBetter", "낮을수록 좋음" ) ], formInput model "기준값" Goal.Baseline "number" True, formInput model "목표값" Goal.Target "number" True, formInput model "시작일 (UTC)" Goal.StartsAt "date" True, formInput model "마감일 (UTC)" Goal.Deadline "date" True, formInput model "필요 예산 (KRW)" Goal.Budget "number" True, formSelect model "상위 목표 (선택)" Goal.Parent False (( "", "없음" ) :: List.drop 1 (goalOptions w)) ]
-        , checkValues (\key -> Goal.value model.draft (Goal.Permission key)) (\key -> model.edit (Goal.Permission key))
+        [ note "현재 관리 중인 목표를 정리하는 운영 화면입니다. 아직 목표나 측정 기준을 모른다면 조직 현황에 미확인으로 남기고 나중에 입력하세요. 초안 생성 후 책임·권한을 확인하여 활성화합니다."
+        , fieldset [ class "form-section" ]
+            [ legend [] [ text "1 · 책임져야 하는 결과" ]
+            , formInput model "현재 관리 중인 목표 / 결과" Goal.Description "text" True
+            , formSelect model "상위 목표 (선택)" Goal.Parent False (( "", "없음" ) :: List.drop 1 (goalOptions w))
+            ]
+        , fieldset [ class "form-section" ]
+            [ legend [] [ text "2 · 결과를 확인하는 측정 기준" ]
+            , metricPicker model w
+            , div [ class "fields" ] [ formInput model "기준값" Goal.Baseline "number" True, formInput model "목표값" Goal.Target "number" True, formInput model "시작일 (UTC)" Goal.StartsAt "date" True, formInput model "마감일 (UTC)" Goal.Deadline "date" True ]
+            ]
+        , fieldset [ class "form-section" ]
+            [ legend [] [ text "3 · 목표 실행에 필요한 조건" ]
+            , note "이 목표에 필요한 권한과 예산입니다. 현재 책임자가 보유한 권한은 권한 화면에서 별도로 기록합니다. 확인되지 않은 조건을 0이나 권한 없음으로 대신 입력하지 마세요."
+            , formInput model "필요 예산 (KRW)" Goal.Budget "number" True
+            , checkValues (\key -> Goal.value model.draft (Goal.Permission key)) (\key -> model.edit (Goal.Permission key))
+            ]
         ]
 
 
@@ -132,3 +146,35 @@ goalTable model w =
             )
             w.goals
         )
+
+
+metricPicker model w =
+    let
+        metrics =
+            w.goals |> List.map (.goal >> .metric) |> List.map (\metric -> ( metric.id, metric )) |> Dict.fromList
+
+        selected =
+            Dict.get model.draft.metricId metrics
+    in
+    div []
+        [ selectValue "goal-metric-choice" (selected |> Maybe.map .id |> Maybe.withDefault "") (model.edit Goal.MetricId) "사용할 지표" False (( "", "새 지표 만들기 · ID 자동 생성" ) :: (Dict.values metrics |> List.map (\metric -> ( metric.id, metric.name ++ " · " ++ metric.unit ))))
+        , note "같은 지표를 공유하는 목표는 기존 지표를 선택하세요. 동일 지표의 책임 관계를 연결하는 데 사용합니다. 이름이 같아도 정의가 다르면 새 지표를 만드세요."
+        , case selected of
+            Just metric ->
+                note
+                    ("선택한 지표: "
+                        ++ metric.name
+                        ++ " / "
+                        ++ metric.unit
+                        ++ " / "
+                        ++ (if metric.direction == "HigherIsBetter" then
+                                "높을수록 좋음"
+
+                            else
+                                "낮을수록 좋음"
+                           )
+                    )
+
+            Nothing ->
+                div [ class "fields" ] [ formInput model "KPI 이름" Goal.MetricName "text" True, formInput model "단위" Goal.Unit "text" True, formSelect model "좋은 결과의 방향" Goal.Direction True [ ( "HigherIsBetter", "높을수록 좋음" ), ( "LowerIsBetter", "낮을수록 좋음" ) ] ]
+        ]

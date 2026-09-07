@@ -16,6 +16,7 @@ import Data.Text (Text)
 import Data.Time (UTCTime, addUTCTime)
 import DeleteSmokeSpec qualified
 import DemoSmokeSpec qualified
+import DiscoverySmokeSpec qualified
 import EmployeeSmokeSpec qualified
 import EmployeeSpec qualified
 import Lib qualified
@@ -67,6 +68,7 @@ tests = do
   DemoSmokeSpec.spec
   DeleteSmokeSpec.spec
   OrganizationsSmokeSpec.spec
+  DiscoverySmokeSpec.spec
   StartupSmokeSpec.spec
   SQLiteStoreSpec.spec
   registrySpec

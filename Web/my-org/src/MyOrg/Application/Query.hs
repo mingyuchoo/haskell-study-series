@@ -30,7 +30,7 @@ import MyOrg.Registry
 data Selection = SoleOrganization
                | SelectedOrganization OrgId
   deriving (Show, Eq)
-data Resource = DashboardResource | OrganizationResource | PeopleResource | GoalsResource | CompilerResource | GraphResource | EventsResource | ReviewsResource
+data Resource = DashboardResource | OrganizationResource | PeopleResource | GoalsResource | CompilerResource | GraphResource | EventsResource | ReviewsResource | DiscoveryResource
   deriving (Show, Eq)
 data Query = ListOrganizations
            | OrganizationSummaryQuery OrgId
@@ -118,3 +118,4 @@ executeQuery now registry query = case query of
       GraphResource -> GraphResult (buildGraph st)
       EventsResource -> EventsResult (currentEpoch (history st))
       ReviewsResource -> ReviewsResult (stateReviews st)
+      DiscoveryResource -> DiscoveryResult (stateLastSeq st) (stateDiscovery st)

@@ -28,6 +28,7 @@ import Data.Text (Text)
 import Data.Time (UTCTime)
 import MyOrg.Domain.Authority
 import MyOrg.Domain.Compiler
+import MyOrg.Domain.Discovery
 import MyOrg.Domain.Error
 import MyOrg.Domain.Event.Types
 import MyOrg.Domain.Goal.Types
@@ -47,6 +48,7 @@ import MyOrg.Http.Codec.Error
 import MyOrg.Http.Codec.Graph
 import MyOrg.Http.Codec.Review
 import MyOrg.Serialization.Authority
+import MyOrg.Serialization.Discovery
 import MyOrg.Serialization.Event
 import MyOrg.Serialization.Goal
 import MyOrg.Serialization.Identity
@@ -229,6 +231,10 @@ instance Wire Decision where
 instance Wire Review where
   toWire = encodeValue reviewCodec
   parseWire = decodeValue reviewCodec
+
+instance Wire Discovery where
+  toWire = encodeValue discoveryCodec
+  parseWire = decodeValue discoveryCodec
 
 instance Wire OrganizationEvent where
   toWire = encodeValue organizationEventCodec

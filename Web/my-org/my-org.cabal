@@ -32,15 +32,18 @@ extra-source-files:
     static/src/Api/Activity.elm
     static/src/Api/Command.elm
     static/src/Api/Decode.elm
+    static/src/Api/Discovery.elm
     static/src/Api/Http.elm
     static/src/Api/Path.elm
     static/src/App/Config.elm
+    static/src/App/Discovery.elm
     static/src/App/Drafts.elm
     static/src/App/Effect.elm
     static/src/App/Model.elm
     static/src/App/PageState.elm
     static/src/App/Session.elm
     static/src/App/Update.elm
+    static/src/Domain/Discovery.elm
     static/src/Domain/Permission.elm
     static/src/Form/Action.elm
     static/src/Form/Defaults.elm
@@ -49,6 +52,7 @@ extra-source-files:
     static/src/Form/Snapshot.elm
     static/src/Page/Activity.elm
     static/src/Page/Authorities.elm
+    static/src/Page/Discovery.elm
     static/src/Page/Goals.elm
     static/src/Page/Learning.elm
     static/src/Page/Organizations.elm
@@ -66,6 +70,8 @@ extra-source-files:
     static/tests/ActivityTest.elm
     static/tests/AppFixture.elm
     static/tests/DecoderTest.elm
+    static/tests/DiscoveryPageTest.elm
+    static/tests/DiscoveryTest.elm
     static/tests/FormTest.elm
     static/tests/GraphFixture.elm
     static/tests/ListViewTest.elm
@@ -92,6 +98,7 @@ library
       Lib
       MyOrg.Application
       MyOrg.Application.Command.Authority
+      MyOrg.Application.Command.Discovery
       MyOrg.Application.Command.Goals
       MyOrg.Application.Command.Organization
       MyOrg.Application.Command.People
@@ -107,6 +114,7 @@ library
       MyOrg.Domain.Analysis
       MyOrg.Domain.Authority
       MyOrg.Domain.Compiler
+      MyOrg.Domain.Discovery
       MyOrg.Domain.Error
       MyOrg.Domain.Evaluation
       MyOrg.Domain.Event
@@ -141,6 +149,7 @@ library
       MyOrg.Registry
       MyOrg.Serialization.Authority
       MyOrg.Serialization.Codec
+      MyOrg.Serialization.Discovery
       MyOrg.Serialization.Event
       MyOrg.Serialization.Goal
       MyOrg.Serialization.Identity
@@ -228,6 +237,7 @@ test-suite my-org-test
       ContractSpec
       DeleteSmokeSpec
       DemoSmokeSpec
+      DiscoverySmokeSpec
       EmployeeSmokeSpec
       EmployeeSpec
       OrganizationsSmokeSpec

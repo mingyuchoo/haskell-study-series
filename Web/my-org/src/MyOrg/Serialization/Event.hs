@@ -9,6 +9,7 @@ import Data.Text qualified as T
 import MyOrg.Domain.Event.Types
 import MyOrg.Serialization.Authority
 import MyOrg.Serialization.Codec
+import MyOrg.Serialization.Discovery
 import MyOrg.Serialization.Goal
 import MyOrg.Serialization.Identity
 import MyOrg.Serialization.Organization
@@ -53,6 +54,7 @@ organizationEventCodec = Codec encode decode
               (encodeValue (listCodec valueCodec) [encodeValue orgIdCodec a, encodeValue textCodec b])
           )
       OrganizationDeleted a -> tagged "OrganizationDeleted" (Just (encodeValue orgIdCodec a))
+      DiscoverySaved a -> tagged "DiscoverySaved" (Just (encodeValue discoveryCodec a))
       DemoSeeded a -> tagged "DemoSeeded" (Just (encodeValue orgIdCodec a))
       PersonAdded a -> tagged "PersonAdded" (Just (encodeValue personCodec a))
       EmployeeAdded a b ->
@@ -146,6 +148,7 @@ organizationEventCodec = Codec encode decode
             [a, b] -> OrganizationRenamed <$> decodeValue orgIdCodec a <*> decodeValue textCodec b
             _ -> fail "Expected 2 constructor arguments"
         "OrganizationDeleted" -> OrganizationDeleted <$> field orgIdCodec obj "contents"
+        "DiscoverySaved" -> DiscoverySaved <$> field discoveryCodec obj "contents"
         "DemoSeeded" -> DemoSeeded <$> field orgIdCodec obj "contents"
         "PersonAdded" -> PersonAdded <$> field personCodec obj "contents"
         "EmployeeAdded" -> do

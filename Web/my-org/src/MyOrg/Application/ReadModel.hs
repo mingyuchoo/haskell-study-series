@@ -13,6 +13,7 @@ import Data.Time (UTCTime)
 import MyOrg.Domain.Analysis (Analysis)
 import MyOrg.Domain.Authority
 import MyOrg.Domain.Compiler (CompileReport)
+import MyOrg.Domain.Discovery
 import MyOrg.Domain.Event.Types
 import MyOrg.Domain.Goal.Types
 import MyOrg.Domain.Graph (ResponsibilityGraph)
@@ -76,4 +77,5 @@ data QueryResult = OrganizationsResult [OrganizationSummary]
                  | GraphResult ResponsibilityGraph
                  | EventsResult [StoredEvent]
                  | ReviewsResult [Review]
+                 | DiscoveryResult Int Discovery
   deriving (Show, Eq)

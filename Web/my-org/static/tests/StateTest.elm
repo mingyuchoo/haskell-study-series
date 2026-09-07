@@ -1,15 +1,18 @@
 module StateTest exposing (tests)
 
+import App.Discovery as DiscoveryState
 import App.Effect exposing (Effect(..))
 import App.Session exposing (SaveState(..))
 import App.Update exposing (..)
 import AppFixture exposing (mapPage, mapSession)
 import Dict
 import Domain exposing (Workspace)
+import Domain.Discovery as Discovery
 import Expect
 import Form.Action exposing (..)
 import Form.Goal
 import Form.Review
+import GraphFixture
 import Json.Decode as D
 import Page exposing (Page(..))
 import Remote exposing (Remote(..))
@@ -97,7 +100,7 @@ tests =
                     ( failed, effects ) =
                         update (Saved saving.session.request AddPerson (Err "conflict")) saving
                 in
-                Expect.equal ( "Alice", [ LoadWorkspace (saving.session.request + 1) "org-a" ], Idle ) ( get failed AddPerson "name", effects, failed.session.saving )
+                Expect.equal ( "Alice", [ LoadWorkspace (saving.session.request + 1) "org-a", LoadDiscovery (saving.session.request + 1) "org-a" ], Idle ) ( get failed AddPerson "name", effects, failed.session.saving )
         , test "organization navigation emits the new scope and generation while same scope stays local" <|
             \_ ->
                 let
@@ -105,7 +108,7 @@ tests =
                         update (Navigate Dashboard (Just "org-b")) ready
                 in
                 Expect.all
-                    [ \_ -> Expect.equal ( Just "org-b", ready.session.request + 1, [ LoadWorkspace (ready.session.request + 1) "org-b" ] ) ( changed.session.org, changed.session.request, effects )
+                    [ \_ -> Expect.equal ( Just "org-b", ready.session.request + 1, [ LoadWorkspace (ready.session.request + 1) "org-b", LoadDiscovery (ready.session.request + 1) "org-b" ] ) ( changed.session.org, changed.session.request, effects )
                     , \_ -> update (Navigate Reviews (Just "org-a")) ready |> Tuple.second |> Expect.equal []
                     , \_ -> update (Navigate Organizations Nothing) changed |> Tuple.second |> Expect.equal [ LoadOrganizations (changed.session.request + 1) ]
                     , \_ -> init { seed = "test", today = "2026-01-01", deadline = "2026-12-31" } |> Tuple.second |> Expect.equal [ LoadOrganizations 1 ]
@@ -220,4 +223,67 @@ tests =
             \_ -> ready |> step (EditReview Form.Review.Goal "other-goal") |> step (Guide Reviews "review-form") |> (\m -> get m AddReview "goal") |> Expect.equal "other-goal"
         , test "review decision requires an owner" <|
             \_ -> ready |> step (EditReview Form.Review.Goal "g") |> step (EditReview Form.Review.Note "review") |> step (EditReview Form.Review.Decision "change") |> (\m -> payload m AddReview) |> Expect.err
+        , test "discovery ignores another organization and an older request generation" <|
+            \_ ->
+                let
+                    snapshot =
+                        { version = 9, discovery = Discovery.empty }
+                in
+                Expect.equal ready (ready |> step (GotDiscovery 0 "org-a" (Ok snapshot)) |> step (GotDiscovery ready.session.request "org-b" (Ok snapshot)))
+        , test "discovery saves using its own response version rather than dashboard version" <|
+            \_ ->
+                let
+                    loaded =
+                        ready |> step (GotDiscovery ready.session.request "org-a" (Ok { version = 11, discovery = Discovery.empty }))
+
+                    edited =
+                        loaded |> step (EditDiscovery (Discovery.Scope "Investigation"))
+                in
+                case update SubmitDiscovery edited |> Tuple.second of
+                    [ SaveDiscovery _ "org-a" snapshot ] ->
+                        Expect.equal ( 11, "Investigation" ) ( snapshot.version, snapshot.discovery.scope )
+
+                    _ ->
+                        Expect.fail "Expected a scoped discovery save"
+        , test "successful save blocks discovery edits until the saved document is reloaded" <|
+            \_ ->
+                let
+                    loaded =
+                        ready |> step (GotDiscovery ready.session.request "org-a" (Ok { version = 11, discovery = Discovery.empty }))
+
+                    saved =
+                        loaded |> step (SavedDiscovery loaded.session.request "org-a" (Ok ()))
+
+                    edited =
+                        saved |> step (EditDiscovery (Discovery.Scope "Stale edit"))
+                in
+                Expect.equal saved edited
+        , test "organization deletion removes both saved discovery and local drafts" <|
+            \_ ->
+                let
+                    loaded =
+                        ready |> step (GotDiscovery ready.session.request "org-a" (Ok { version = 11, discovery = Discovery.empty })) |> step (EditDiscovery (Discovery.Scope "Draft"))
+
+                    deleted =
+                        loaded |> step (Saved loaded.session.request DeleteOrg (Ok ()))
+                in
+                Expect.equal ( Nothing, Nothing ) ( DiscoveryState.current "org-a" deleted.discovery, DiscoveryState.saved "org-a" deleted.discovery )
+        , test "choosing a shared metric copies its definition and choosing new creates a distinct identity" <|
+            \_ ->
+                let
+                    loaded =
+                        ready |> mapSession (\s -> { s | workspace = Loaded { workspace | goals = [ GraphFixture.goal ] } })
+
+                    selected =
+                        loaded |> step (EditGoal Form.Goal.MetricId "m")
+
+                    fresh =
+                        selected |> step (EditGoal Form.Goal.MetricId "")
+                in
+                Expect.all
+                    [ \_ -> Expect.equal [ "m", "신규 고객 수", "명", "HigherIsBetter" ] (List.map (get selected AddGoal) [ "metricId", "metricName", "unit", "direction" ])
+                    , \_ -> Expect.notEqual "m" (get fresh AddGoal "metricId")
+                    , \_ -> Expect.equal "" (get fresh AddGoal "metricName")
+                    ]
+                    ()
         ]
