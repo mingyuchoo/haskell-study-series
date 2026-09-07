@@ -1,0 +1,23 @@
+const {chromium}=require('/Users/a81720/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const assert=require('node:assert/strict');
+(async()=>{
+const browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
+const page=await browser.newPage({viewport:{width:1440,height:1100}});const errors=[];const orgName='QA 가상 고객지원팀 '+Date.now();const secondName='QA 가상 별도팀 '+Date.now();page.on('pageerror',e=>errors.push(e.message));
+const nav=async(name)=>{await page.getByRole('navigation',{name:'주요 화면'}).getByRole('button',{name,exact:true}).click();await page.getByRole('heading',{name,exact:true,level:1}).waitFor();};
+const save=async(name='현황 저장')=>{const response=page.waitForResponse(r=>r.url().endsWith('/discovery')&&r.request().method()==='POST');await page.getByRole('button',{name,exact:true}).click();assert.equal((await response).status(),201);await page.getByRole('button',{name,exact:true}).waitFor();await page.waitForFunction(()=>!document.querySelector('form fieldset')?.disabled);};
+await page.goto('http://127.0.0.1:18087');
+await page.getByRole('textbox',{name:'조직 이름'}).fill(orgName);
+await page.getByRole('button',{name:'조직 등록',exact:true}).click();await page.locator('.organization-card, tbody tr').filter({hasText:orgName}).getByRole('button',{name:'조직 열기 →'}).click();
+await page.getByLabel('분석 범위').fill('고객지원팀 문의 접수부터 환불 검토까지');await page.getByLabel('현황 기준일').fill('2026-09-07');
+await page.getByRole('button',{name:'+ 현황 항목 추가'}).click();await page.getByRole('textbox',{name:'현황 항목',exact:false}).fill('환불 승인 책임');await page.locator('textarea[id$="-detail"]').fill('승인 책임자는 아직 미확인');await save();
+await nav('업무 흐름');await page.getByRole('button',{name:'+ 업무 흐름 추가'}).click();
+await page.getByLabel('업무 이름').fill('고객 문의 분류');await page.getByLabel('현재 담당 역할 / 구성원').fill('고객지원 담당');await page.getByLabel('시작 조건').fill('새 문의 접수');await page.getByLabel('입력 정보').fill('문의 내용');await page.getByLabel('현재 사용하는 도구').fill('CRM');await page.getByLabel('산출물').fill('답변 초안');await page.getByLabel('전달 대상 / 인계 조건').fill('환불 건은 재무팀에 인계');await page.getByLabel('사람의 승인 조건').fill('환불 집행 전 팀장 승인');await page.getByLabel('입력 근거 / 확인할 곳').fill('가상 운영 매뉴얼 3항');await save();
+await nav('에이전트 초안');assert.ok((await page.locator('body').innerText()).includes('규칙 기반 제안 / 추론'));assert.ok((await page.locator('body').innerText()).includes('환불 집행 전 팀장 승인'));
+await page.getByLabel('검토 의견 / 수정할 제안').fill('재무팀 인계와 승인 조건 확인');await page.getByRole('checkbox',{name:'저장된 근거와 미확인 사항을 검토했습니다'}).check();await save('검토 의견과 상태 저장');assert.ok((await page.locator('body').innerText()).includes('저장 상태: 검토 완료'));
+await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:'runs/T-ORG-UX-002/agent-drafts-desktop.png',fullPage:true});
+await nav('업무 흐름');await page.getByLabel('산출물').fill('검토된 답변 초안');await save();await nav('에이전트 초안');assert.ok((await page.locator('body').innerText()).includes('저장 상태: 검토 대기'));
+await page.reload();await page.locator('.organization-card, tbody tr').filter({hasText:orgName}).getByRole('button',{name:'조직 열기 →'}).click();await nav('업무 흐름');assert.equal(await page.getByLabel('산출물').inputValue(),'검토된 답변 초안');
+await page.setViewportSize({width:390,height:844});await page.screenshot({path:'runs/T-ORG-UX-002/workflows-mobile.png',fullPage:true});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),'mobile overflow');
+await page.setViewportSize({width:1440,height:1100});await nav('조직 목록');await page.getByRole('textbox',{name:'조직 이름'}).fill(secondName);await page.getByRole('button',{name:'조직 등록',exact:true}).click();await page.locator('.organization-card, tbody tr').filter({hasText:secondName}).getByRole('button',{name:'조직 열기 →'}).click();assert.equal(await page.getByLabel('분석 범위').inputValue(),'');await nav('업무 흐름');assert.equal(await page.getByLabel('업무 이름').count(),0);
+assert.deepEqual(errors,[]);console.log('PASS: organization → discovery → workflow → grounded proposal → review → invalidate → reload → isolated organization; 390px overflow; no page errors');await browser.close();
+})().catch(e=>{console.error(e);process.exit(1)});
