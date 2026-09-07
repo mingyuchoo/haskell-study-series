@@ -29,7 +29,7 @@ viewWith mode model w =
         [ div [ class "metrics" ] (List.map (\( label_, amount, desc ) -> div [ class "metric" ] [ span [] [ text label_ ], strong [] [ text (String.fromInt amount) ], small [] [ text desc ] ]) [ ( "전체 목표", List.length w.goals, "측정 가능한 결과" ), ( "활성 목표", List.length (List.filter .active w.goals), "책임과 권한 검증 완료" ), ( "구조 진단", w.compiler.errors + w.compiler.warnings, "확인이 필요한 항목" ), ( "누적 학습", List.sum (List.map (.learnings >> List.length) w.reviews), "다음 결정의 근거" ) ])
         , div [ class "section-head" ] [ h2 [] [ text "목표 포트폴리오" ], a [ href "#new-goal" ] [ text "+ 목표 만들기" ] ]
         , if List.isEmpty w.goals then
-            emptyState "현재 관리 중인 목표가 있나요?" "확인된 측정 기준이 있다면 아래에서 목표 초안을 만드세요. 모르는 내용은 조직 현황에 미확인으로 남길 수 있습니다."
+            emptyState "현재 관리 중인 목표가 있나요?" "확인된 측정 기준이 있다면 아래에서 목표 초안을 만드세요. 모르는 내용은 조직 진단에 미확인으로 남길 수 있습니다."
 
           else if mode == Table then
             goalTable model w
@@ -46,7 +46,7 @@ goalForm model w =
     formView model.forms
         AddGoal
         "목표 초안 생성"
-        [ note "현재 관리 중인 목표를 정리하는 운영 화면입니다. 아직 목표나 측정 기준을 모른다면 조직 현황에 미확인으로 남기고 나중에 입력하세요. 초안 생성 후 책임·권한을 확인하여 활성화합니다."
+        [ note "현재 관리 중인 목표를 정리하는 운영 화면입니다. 아직 목표나 측정 기준을 모른다면 조직 진단에 미확인으로 남기고 나중에 입력하세요. 초안 생성 후 책임·권한을 확인하여 활성화합니다."
         , fieldset [ class "form-section" ]
             [ legend [] [ text "1 · 책임져야 하는 결과" ]
             , formInput model "현재 관리 중인 목표 / 결과" Goal.Description "text" True

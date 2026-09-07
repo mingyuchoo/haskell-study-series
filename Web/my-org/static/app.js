@@ -9128,7 +9128,7 @@ var $author$project$Page$pageName = function (page) {
 		case 0:
 			return '조직 목록';
 		case 1:
-			return '조직 현황';
+			return '조직 진단';
 		case 2:
 			return '업무 흐름';
 		case 3:
@@ -10438,7 +10438,6 @@ var $elm$virtual_dom$VirtualDom$attribute = F2(
 			_VirtualDom_noJavaScriptOrHtmlUri(value));
 	});
 var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
-var $elm$html$Html$br = _VirtualDom_node('br');
 var $author$project$Main$busy = function (model) {
 	return $author$project$App$Session$busy(model.ab);
 };
@@ -10583,6 +10582,7 @@ var $author$project$Main$formConfig = function (model) {
 	};
 };
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
+var $elm$html$Html$h2 = _VirtualDom_node('h2');
 var $elm$html$Html$header = _VirtualDom_node('header');
 var $elm$html$Html$Attributes$href = function (url) {
 	return A2(
@@ -10605,11 +10605,40 @@ var $author$project$Main$listMode = function (model) {
 };
 var $elm$html$Html$main_ = _VirtualDom_node('main');
 var $elm$html$Html$nav = _VirtualDom_node('nav');
+var $author$project$Main$navigationButton = F2(
+	function (model, page) {
+		return A2(
+			$elm$html$Html$button,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$type_('button'),
+					$elm$html$Html$Attributes$classList(
+					_List_fromArray(
+						[
+							_Utils_Tuple2(
+							'selected',
+							_Utils_eq(model.bR.aa, page))
+						])),
+					A2(
+					$elm$html$Html$Attributes$attribute,
+					'aria-current',
+					_Utils_eq(model.bR.aa, page) ? 'page' : 'false'),
+					$elm$html$Html$Attributes$disabled(
+					$author$project$Main$busy(model) || _Utils_eq(model.ab.aI, $elm$core$Maybe$Nothing)),
+					$elm$html$Html$Events$onClick(
+					A2($author$project$App$Update$Navigate, page, model.ab.aI))
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(
+					$author$project$Page$pageName(page))
+				]));
+	});
 var $elm$core$Basics$negate = function (n) {
 	return -n;
 };
 var $elm$html$Html$p = _VirtualDom_node('p');
-var $elm$html$Html$small = _VirtualDom_node('small');
+var $elm$html$Html$section = _VirtualDom_node('section');
 var $elm$html$Html$strong = _VirtualDom_node('strong');
 var $elm$html$Html$Attributes$tabindex = function (n) {
 	return A2(
@@ -10619,8 +10648,6 @@ var $elm$html$Html$Attributes$tabindex = function (n) {
 };
 var $author$project$Form$Action$CreateOrg = {$: 0};
 var $author$project$Form$Action$ImportDemo = {$: 1};
-var $elm$html$Html$h2 = _VirtualDom_node('h2');
-var $elm$html$Html$section = _VirtualDom_node('section');
 var $author$project$Ui$Common$emptyState = F2(
 	function (title, content) {
 		return A2(
@@ -10754,6 +10781,7 @@ var $elm$html$Html$Events$onInput = function (tagger) {
 			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
 };
 var $elm$html$Html$Attributes$required = $elm$html$Html$Attributes$boolProperty('required');
+var $elm$html$Html$small = _VirtualDom_node('small');
 var $elm$html$Html$Attributes$step = function (n) {
 	return A2($elm$html$Html$Attributes$stringProperty, 'step', n);
 };
@@ -13175,7 +13203,7 @@ var $author$project$Page$Settings$view = F2(
 							_List_Nil,
 							_List_fromArray(
 								[
-									$elm$html$Html$text('조직 현황, 업무 흐름, 에이전트 검토, 구성원, 목표, 책임, 권한, 결과, 평가, 회고와 전략이 현재 워크스페이스에서 제거됩니다.')
+									$elm$html$Html$text('조직 진단 기록, 업무 흐름, 에이전트 검토, 구성원, 목표, 책임, 권한, 결과, 평가, 회고와 전략이 현재 워크스페이스에서 제거됩니다.')
 								])),
 							$author$project$Ui$Common$note('논리 삭제입니다. 원본 감사 이벤트는 파일·DB에 보존되며 완전히 지워지지 않습니다. 다른 조직은 삭제되지 않습니다.'),
 							function () {
@@ -15420,7 +15448,7 @@ var $author$project$Page$Responsibility$viewInteractive = F6(
 					'누가 어떤 결과를 책임지는가',
 					_List_fromArray(
 						[
-							$author$project$Ui$Common$note('현재 목표에 대해 최종 설명과 판단을 맡는 한 사람을 기록하세요. 함께 일하는 모든 수행자를 뜻하지 않습니다. 책임자가 불명확하면 임의로 지정하지 말고 조직 현황에 미확인으로 남기세요.'),
+							$author$project$Ui$Common$note('현재 목표에 대해 최종 설명과 판단을 맡는 한 사람을 기록하세요. 함께 일하는 모든 수행자를 뜻하지 않습니다. 책임자가 불명확하면 임의로 지정하지 말고 조직 진단에 미확인으로 남기세요.'),
 							$elm$core$List$isEmpty(w.dh) ? A2($author$project$Ui$Common$emptyState, '아직 책임을 배정할 목표가 없습니다', '목표 메뉴에서 목표를 만든 뒤 책임자를 지정하세요.') : ((mode === 1) ? A3(
 							$author$project$Ui$ListView$tableView,
 							'목표별 책임',
@@ -15674,7 +15702,7 @@ var $author$project$Page$Authorities$viewWith = F3(
 					'책임을 실행할 수 있는 권한',
 					_List_fromArray(
 						[
-							$author$project$Ui$Common$note('현재 실제로 행사할 수 있는 결정 권한과 예산 한도를 기록하세요. 예: 환불 승인 가능 / 채용 승인 불가. 모르는 권한은 조직 현황에 미확인으로 남깁니다. 권한을 줄여 활성 목표의 요건이 깨지면 초안으로 돌아갑니다.'),
+							$author$project$Ui$Common$note('현재 실제로 행사할 수 있는 결정 권한과 예산 한도를 기록하세요. 예: 환불 승인 가능 / 채용 승인 불가. 모르는 권한은 조직 진단에 미확인으로 남깁니다. 권한을 줄여 활성 목표의 요건이 깨지면 초안으로 돌아갑니다.'),
 							$author$project$Ui$Common$note('집중도 = 보유 권한 종류 수 + 예산 보유 1점 / 조직 전체 점수. 실제 의사결정 빈도나 권력의 측정값은 아닙니다.')
 						])),
 					$elm$core$List$isEmpty(
@@ -16315,7 +16343,7 @@ var $author$project$Page$Goals$goalForm = F2(
 			'목표 초안 생성',
 			_List_fromArray(
 				[
-					$author$project$Ui$Common$note('현재 관리 중인 목표를 정리하는 운영 화면입니다. 아직 목표나 측정 기준을 모른다면 조직 현황에 미확인으로 남기고 나중에 입력하세요. 초안 생성 후 책임·권한을 확인하여 활성화합니다.'),
+					$author$project$Ui$Common$note('현재 관리 중인 목표를 정리하는 운영 화면입니다. 아직 목표나 측정 기준을 모른다면 조직 진단에 미확인으로 남기고 나중에 입력하세요. 초안 생성 후 책임·권한을 확인하여 활성화합니다.'),
 					A2(
 					$elm$html$Html$fieldset,
 					_List_fromArray(
@@ -16644,7 +16672,7 @@ var $author$project$Page$Goals$viewWith = F3(
 									$elm$html$Html$text('+ 목표 만들기')
 								]))
 						])),
-					$elm$core$List$isEmpty(w.dh) ? A2($author$project$Ui$Common$emptyState, '현재 관리 중인 목표가 있나요?', '확인된 측정 기준이 있다면 아래에서 목표 초안을 만드세요. 모르는 내용은 조직 현황에 미확인으로 남길 수 있습니다.') : ((mode === 1) ? A2($author$project$Page$Goals$goalTable, model, w) : A2(
+					$elm$core$List$isEmpty(w.dh) ? A2($author$project$Ui$Common$emptyState, '현재 관리 중인 목표가 있나요?', '확인된 측정 기준이 있다면 아래에서 목표 초안을 만드세요. 모르는 내용은 조직 진단에 미확인으로 남길 수 있습니다.') : ((mode === 1) ? A2($author$project$Page$Goals$goalTable, model, w) : A2(
 					$elm$html$Html$div,
 					_List_fromArray(
 						[
@@ -17631,6 +17659,7 @@ var $author$project$Page$Learning$activityLink = F2(
 				},
 				activity));
 	});
+var $elm$html$Html$br = _VirtualDom_node('br');
 var $author$project$Page$Learning$reviewCard = F3(
 	function (activity, w, r) {
 		return A2(
@@ -18204,7 +18233,32 @@ var $author$project$Main$view = function (model) {
 									} else {
 										return '조직 워크스페이스';
 									}
-								}())
+								}()),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$type_('button'),
+										$elm$html$Html$Attributes$classList(
+										_List_fromArray(
+											[
+												_Utils_Tuple2('workspace-switch', true),
+												_Utils_Tuple2('selected', !model.bR.aa)
+											])),
+										A2(
+										$elm$html$Html$Attributes$attribute,
+										'aria-current',
+										(!model.bR.aa) ? 'page' : 'false'),
+										$elm$html$Html$Attributes$disabled(
+										$author$project$Main$busy(model)),
+										$elm$html$Html$Events$onClick(
+										A2($author$project$App$Update$Navigate, 0, $elm$core$Maybe$Nothing))
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(
+										_Utils_eq(model.ab.aI, $elm$core$Maybe$Nothing) ? '조직 선택 →' : '조직 전환 →')
+									]))
 							])),
 						A2(
 						$elm$html$Html$nav,
@@ -18214,72 +18268,59 @@ var $author$project$Main$view = function (model) {
 							]),
 						A2(
 							$elm$core$List$map,
-							function (page) {
+							function (_v1) {
+								var title = _v1.a;
+								var pages = _v1.b;
 								return A2(
-									$elm$html$Html$button,
+									$elm$html$Html$section,
 									_List_fromArray(
 										[
-											$elm$html$Html$Attributes$type_('button'),
-											$elm$html$Html$Attributes$classList(
-											_List_fromArray(
-												[
-													_Utils_Tuple2(
-													'selected',
-													_Utils_eq(model.bR.aa, page))
-												])),
-											A2(
-											$elm$html$Html$Attributes$attribute,
-											'aria-current',
-											_Utils_eq(model.bR.aa, page) ? 'page' : 'false'),
-											$elm$html$Html$Attributes$disabled(
-											$author$project$Main$busy(model) || ((!(!page)) && _Utils_eq(model.ab.aI, $elm$core$Maybe$Nothing))),
-											$elm$html$Html$Events$onClick(
-											A2(
-												$author$project$App$Update$Navigate,
-												page,
-												(!page) ? $elm$core$Maybe$Nothing : model.ab.aI))
+											$elm$html$Html$Attributes$class('nav-group'),
+											A2($elm$html$Html$Attributes$attribute, 'aria-label', title)
 										]),
 									_List_fromArray(
 										[
-											$elm$html$Html$text(
-											$author$project$Page$pageName(page))
+											A2(
+											$elm$html$Html$h2,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$class('nav-group-title')
+												]),
+											_List_fromArray(
+												[
+													$elm$html$Html$text(title)
+												])),
+											A2(
+											$elm$html$Html$div,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$class('nav-group-items')
+												]),
+											A2(
+												$elm$core$List$map,
+												$author$project$Main$navigationButton(model),
+												pages))
 										]));
 							},
 							_List_fromArray(
-								[0, 1, 4, 2, 3, 5, 6, 7, 8, 9, 10]))),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('aside-foot')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$span,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('dot')
-									]),
-								_List_Nil),
-								$elm$html$Html$text('현재 조직에서 에이전트 역할까지'),
-								A2(
-								$elm$html$Html$p,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text('사실과 미확인을 나누고'),
-										A2($elm$html$Html$br, _List_Nil, _List_Nil),
-										$elm$html$Html$text('근거로 역할을 설계합니다.')
-									])),
-								A2(
-								$elm$html$Html$small,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text('현황 기록 · 업무 연결 · 사람의 검토')
-									]))
-							]))
+								[
+									_Utils_Tuple2(
+									'조직 분석',
+									_List_fromArray(
+										[1, 2])),
+									_Utils_Tuple2(
+									'조직 운영',
+									_List_fromArray(
+										[4, 5, 6, 7])),
+									_Utils_Tuple2(
+									'에이전트 설계',
+									_List_fromArray(
+										[3])),
+									_Utils_Tuple2(
+									'운영과 개선',
+									_List_fromArray(
+										[8, 9, 10]))
+								])))
 					])),
 				A2(
 				$elm$html$Html$main_,

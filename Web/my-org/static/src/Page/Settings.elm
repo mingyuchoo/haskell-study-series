@@ -23,7 +23,7 @@ view model w =
         , panel "조직 이름 수정" [ formView model.forms Rename "이름 저장" [ inputField model.forms Rename "조직 이름" "name" "text" True, note "구성원과 목표, 기존 기록을 유지합니다. 다른 변경과 충돌하면 최신 상태를 확인한 뒤 다시 저장하세요." ] ]
         , section [ class "panel danger-zone" ]
             [ h2 [] [ text "조직 삭제" ]
-            , p [] [ text "조직 현황, 업무 흐름, 에이전트 검토, 구성원, 목표, 책임, 권한, 결과, 평가, 회고와 전략이 현재 워크스페이스에서 제거됩니다." ]
+            , p [] [ text "조직 진단 기록, 업무 흐름, 에이전트 검토, 구성원, 목표, 책임, 권한, 결과, 평가, 회고와 전략이 현재 워크스페이스에서 제거됩니다." ]
             , note "논리 삭제입니다. 원본 감사 이벤트는 파일·DB에 보존되며 완전히 지워지지 않습니다. 다른 조직은 삭제되지 않습니다."
             , case model.deletion of
                 Nothing ->

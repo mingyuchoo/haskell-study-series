@@ -29,7 +29,7 @@ viewWith mode model w =
 viewInteractive mode graphState graphMsg go model w =
     div []
         [ panel "누가 어떤 결과를 책임지는가"
-            [ note "현재 목표에 대해 최종 설명과 판단을 맡는 한 사람을 기록하세요. 함께 일하는 모든 수행자를 뜻하지 않습니다. 책임자가 불명확하면 임의로 지정하지 말고 조직 현황에 미확인으로 남기세요."
+            [ note "현재 목표에 대해 최종 설명과 판단을 맡는 한 사람을 기록하세요. 함께 일하는 모든 수행자를 뜻하지 않습니다. 책임자가 불명확하면 임의로 지정하지 말고 조직 진단에 미확인으로 남기세요."
             , if List.isEmpty w.goals then
                 emptyState "아직 책임을 배정할 목표가 없습니다" "목표 메뉴에서 목표를 만든 뒤 책임자를 지정하세요."
 

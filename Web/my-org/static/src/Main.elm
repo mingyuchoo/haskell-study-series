@@ -78,6 +78,24 @@ listMode model =
     PageState.listMode model.pageState
 
 
+navigationButton : Model -> Page -> Html Msg
+navigationButton model page =
+    button
+        [ type_ "button"
+        , classList [ ( "selected", model.pageState.page == page ) ]
+        , attribute "aria-current"
+            (if model.pageState.page == page then
+                "page"
+
+             else
+                "false"
+            )
+        , disabled (busy model || model.session.org == Nothing)
+        , onClick (Navigate page model.session.org)
+        ]
+        [ text (pageName page) ]
+
+
 view : Model -> Html Msg
 view model =
     div []
@@ -93,36 +111,42 @@ view model =
                         _ ->
                             "조직 워크스페이스"
                     )
+                , button
+                    [ type_ "button"
+                    , classList [ ( "workspace-switch", True ), ( "selected", model.pageState.page == Organizations ) ]
+                    , attribute "aria-current"
+                        (if model.pageState.page == Organizations then
+                            "page"
+
+                         else
+                            "false"
+                        )
+                    , disabled (busy model)
+                    , onClick (Navigate Organizations Nothing)
+                    ]
+                    [ text
+                        (if model.session.org == Nothing then
+                            "조직 선택 →"
+
+                         else
+                            "조직 전환 →"
+                        )
+                    ]
                 ]
             , nav [ attribute "aria-label" "주요 화면" ]
                 (List.map
-                    (\page ->
-                        button
-                            [ type_ "button"
-                            , classList [ ( "selected", model.pageState.page == page ) ]
-                            , attribute "aria-current"
-                                (if model.pageState.page == page then
-                                    "page"
-
-                                 else
-                                    "false"
-                                )
-                            , disabled (busy model || (page /= Organizations && model.session.org == Nothing))
-                            , onClick
-                                (Navigate page
-                                    (if page == Organizations then
-                                        Nothing
-
-                                     else
-                                        model.session.org
-                                    )
-                                )
+                    (\( title, pages ) ->
+                        section [ class "nav-group", attribute "aria-label" title ]
+                            [ h2 [ class "nav-group-title" ] [ text title ]
+                            , div [ class "nav-group-items" ] (List.map (navigationButton model) pages)
                             ]
-                            [ text (pageName page) ]
                     )
-                    [ Organizations, Discovery, People, Workflows, AgentDrafts, Dashboard, Responsibility, Authorities, Results, Reviews, ActivityLog ]
+                    [ ( "조직 분석", [ Discovery, Workflows ] )
+                    , ( "조직 운영", [ People, Dashboard, Responsibility, Authorities ] )
+                    , ( "에이전트 설계", [ AgentDrafts ] )
+                    , ( "운영과 개선", [ Results, Reviews, ActivityLog ] )
+                    ]
                 )
-            , div [ class "aside-foot" ] [ span [ class "dot" ] [], text "현재 조직에서 에이전트 역할까지", p [] [ text "사실과 미확인을 나누고", br [] [], text "근거로 역할을 설계합니다." ], small [] [ text "현황 기록 · 업무 연결 · 사람의 검토" ] ]
             ]
         , main_ [ id "main-content", tabindex -1 ]
             [ header []

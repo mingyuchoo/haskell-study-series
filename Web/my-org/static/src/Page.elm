@@ -23,7 +23,7 @@ pageName page =
             "조직 목록"
 
         Discovery ->
-            "조직 현황"
+            "조직 진단"
 
         Workflows ->
             "업무 흐름"
