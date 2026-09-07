@@ -1,4 +1,6 @@
-module DiscoverySmokeSpec (spec) where
+module DiscoverySmokeSpec
+  ( spec
+  ) where
 
 import Control.Exception (bracket)
 import Control.Monad (forM_, void)
@@ -139,7 +141,7 @@ review status = object ["status" .= status, "note" .= String "검토 의견"]
 
 merge :: Value -> Value -> Value
 merge (Object original) (Object additions) = Object (KM.union additions original)
-merge _ _ = error "Expected objects"
+merge _ _                                  = error "Expected objects"
 
 toArray :: [Value] -> Value
 toArray values = field (object ["values" .= values]) "values"
