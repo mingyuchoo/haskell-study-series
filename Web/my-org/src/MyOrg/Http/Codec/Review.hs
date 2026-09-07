@@ -12,7 +12,7 @@ reviewWarningCodec :: Codec ReviewWarning
 reviewWarningCodec = Codec encode decode
   where
     encode = \case
-      NoDecisionProduced  -> tagged "NoDecisionProduced" Nothing
+      NoDecisionProduced -> tagged "NoDecisionProduced" Nothing
       DecisionWithoutDeadline a -> tagged "DecisionWithoutDeadline" (Just (encodeValue textCodec a))
     decode = withObject "ReviewWarning" $ \obj -> do
       tag <- field textCodec obj "tag"

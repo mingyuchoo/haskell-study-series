@@ -18,12 +18,13 @@ import MyOrg.Serialization.Review
 storedEventCodec :: Codec StoredEvent
 storedEventCodec = Codec encode decode
   where
-    encode StoredEvent {..} = record
-      [ ("seq", Just (encodeValue intCodec storedSeq))
-      , ("at", Just (encodeValue timeCodec storedAt))
-      , ("actor", encodeValue userIdCodec <$> storedActor)
-      , ("event", Just (encodeValue organizationEventCodec storedEvent))
-      ]
+    encode StoredEvent {..} =
+      record
+        [ ("seq", Just (encodeValue intCodec storedSeq))
+        , ("at", Just (encodeValue timeCodec storedAt))
+        , ("actor", encodeValue userIdCodec <$> storedActor)
+        , ("event", Just (encodeValue organizationEventCodec storedEvent))
+        ]
     decode = withObject "StoredEvent" $ \obj ->
       StoredEvent
         <$> field intCodec obj "seq"
@@ -36,23 +37,99 @@ organizationEventCodec = Codec encode decode
   where
     encode = \case
       OrganizationCreated a -> tagged "OrganizationCreated" (Just (encodeValue organizationCodec a))
-      OrganizationScoped a b -> tagged "OrganizationScoped" (Just (encodeValue (listCodec valueCodec) [encodeValue orgIdCodec a, encodeValue organizationEventCodec b]))
-      OrganizationRenamed a b -> tagged "OrganizationRenamed" (Just (encodeValue (listCodec valueCodec) [encodeValue orgIdCodec a, encodeValue textCodec b]))
+      OrganizationScoped a b ->
+        tagged
+          "OrganizationScoped"
+          ( Just
+              ( encodeValue
+                  (listCodec valueCodec)
+                  [encodeValue orgIdCodec a, encodeValue organizationEventCodec b]
+              )
+          )
+      OrganizationRenamed a b ->
+        tagged
+          "OrganizationRenamed"
+          ( Just
+              (encodeValue (listCodec valueCodec) [encodeValue orgIdCodec a, encodeValue textCodec b])
+          )
       OrganizationDeleted a -> tagged "OrganizationDeleted" (Just (encodeValue orgIdCodec a))
       DemoSeeded a -> tagged "DemoSeeded" (Just (encodeValue orgIdCodec a))
       PersonAdded a -> tagged "PersonAdded" (Just (encodeValue personCodec a))
-      EmployeeAdded a b -> tagged "EmployeeAdded" (Just (encodeValue (listCodec valueCodec) [encodeValue personCodec a, encodeValue employeeProfileCodec b]))
-      PersonUpdated a b -> tagged "PersonUpdated" (Just (encodeValue (listCodec valueCodec) [encodeValue personCodec a, encodeValue employeeProfileCodec b]))
-      PersonDeactivated a b -> tagged "PersonDeactivated" (Just (encodeValue (listCodec valueCodec) [encodeValue userIdCodec a, encodeValue (maybeCodec userIdCodec) b]))
+      EmployeeAdded a b ->
+        tagged
+          "EmployeeAdded"
+          ( Just
+              ( encodeValue
+                  (listCodec valueCodec)
+                  [encodeValue personCodec a, encodeValue employeeProfileCodec b]
+              )
+          )
+      PersonUpdated a b ->
+        tagged
+          "PersonUpdated"
+          ( Just
+              ( encodeValue
+                  (listCodec valueCodec)
+                  [encodeValue personCodec a, encodeValue employeeProfileCodec b]
+              )
+          )
+      PersonDeactivated a b ->
+        tagged
+          "PersonDeactivated"
+          ( Just
+              ( encodeValue
+                  (listCodec valueCodec)
+                  [encodeValue userIdCodec a, encodeValue (maybeCodec userIdCodec) b]
+              )
+          )
       GoalCreated a -> tagged "GoalCreated" (Just (encodeValue goalCodec a))
-      OwnerAssigned a b -> tagged "OwnerAssigned" (Just (encodeValue (listCodec valueCodec) [encodeValue goalIdCodec a, encodeValue userIdCodec b]))
-      AuthorityGranted a b -> tagged "AuthorityGranted" (Just (encodeValue (listCodec valueCodec) [encodeValue userIdCodec a, encodeValue authorityCodec b]))
-      AuthorityRevoked a b -> tagged "AuthorityRevoked" (Just (encodeValue (listCodec valueCodec) [encodeValue userIdCodec a, encodeValue permissionCodec b]))
+      OwnerAssigned a b ->
+        tagged
+          "OwnerAssigned"
+          ( Just
+              (encodeValue (listCodec valueCodec) [encodeValue goalIdCodec a, encodeValue userIdCodec b])
+          )
+      AuthorityGranted a b ->
+        tagged
+          "AuthorityGranted"
+          ( Just
+              ( encodeValue
+                  (listCodec valueCodec)
+                  [encodeValue userIdCodec a, encodeValue authorityCodec b]
+              )
+          )
+      AuthorityRevoked a b ->
+        tagged
+          "AuthorityRevoked"
+          ( Just
+              ( encodeValue
+                  (listCodec valueCodec)
+                  [encodeValue userIdCodec a, encodeValue permissionCodec b]
+              )
+          )
       GoalActivated a -> tagged "GoalActivated" (Just (encodeValue goalIdCodec a))
-      ResultReported a b -> tagged "ResultReported" (Just (encodeValue (listCodec valueCodec) [encodeValue goalIdCodec a, encodeValue resultCodec b]))
-      GoalEvaluated a b -> tagged "GoalEvaluated" (Just (encodeValue (listCodec valueCodec) [encodeValue goalIdCodec a, encodeValue evaluationCodec b]))
+      ResultReported a b ->
+        tagged
+          "ResultReported"
+          ( Just
+              (encodeValue (listCodec valueCodec) [encodeValue goalIdCodec a, encodeValue resultCodec b])
+          )
+      GoalEvaluated a b ->
+        tagged
+          "GoalEvaluated"
+          ( Just
+              ( encodeValue
+                  (listCodec valueCodec)
+                  [encodeValue goalIdCodec a, encodeValue evaluationCodec b]
+              )
+          )
       ReviewHeld a -> tagged "ReviewHeld" (Just (encodeValue reviewCodec a))
-      StrategyChanged a b -> tagged "StrategyChanged" (Just (encodeValue (listCodec valueCodec) [encodeValue goalIdCodec a, encodeValue textCodec b]))
+      StrategyChanged a b ->
+        tagged
+          "StrategyChanged"
+          ( Just
+              (encodeValue (listCodec valueCodec) [encodeValue goalIdCodec a, encodeValue textCodec b])
+          )
     decode = withObject "OrganizationEvent" $ \obj -> do
       tag <- field textCodec obj "tag"
       case tag of
@@ -60,7 +137,8 @@ organizationEventCodec = Codec encode decode
         "OrganizationScoped" -> do
           values <- field (listCodec valueCodec) obj "contents"
           case values of
-            [a, b] -> OrganizationScoped <$> decodeValue orgIdCodec a <*> decodeValue organizationEventCodec b
+            [a, b] ->
+              OrganizationScoped <$> decodeValue orgIdCodec a <*> decodeValue organizationEventCodec b
             _ -> fail "Expected 2 constructor arguments"
         "OrganizationRenamed" -> do
           values <- field (listCodec valueCodec) obj "contents"
@@ -83,7 +161,8 @@ organizationEventCodec = Codec encode decode
         "PersonDeactivated" -> do
           values <- field (listCodec valueCodec) obj "contents"
           case values of
-            [a, b] -> PersonDeactivated <$> decodeValue userIdCodec a <*> decodeValue (maybeCodec userIdCodec) b
+            [a, b] ->
+              PersonDeactivated <$> decodeValue userIdCodec a <*> decodeValue (maybeCodec userIdCodec) b
             _ -> fail "Expected 2 constructor arguments"
         "GoalCreated" -> GoalCreated <$> field goalCodec obj "contents"
         "OwnerAssigned" -> do

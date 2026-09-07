@@ -513,7 +513,7 @@ tests = do
 
 withDemo :: UTCTime -> (OrgState -> [StoredEvent] -> IO ()) -> IO ()
 withDemo now action = case demoEvents now of
-  Left err -> expectationFailure (show err)
+  Left err    -> expectationFailure (show err)
   Right saved -> action (replay saved) saved
 
 demoStatuses :: UTCTime -> OrgState -> [GoalStatus]

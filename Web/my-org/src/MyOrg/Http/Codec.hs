@@ -285,4 +285,3 @@ instance Wire Severity where
 instance Wire ReviewWarning where
   toWire = encodeValue reviewWarningCodec
   parseWire = decodeValue reviewWarningCodec
-
