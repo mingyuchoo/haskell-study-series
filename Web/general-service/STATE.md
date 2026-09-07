@@ -19,6 +19,7 @@
 | T-2026-0908-015 | DONE | orchestrator | 새 업무 등록 폼 필드 순서 변경: 긴급도, 중요도, 제목, 기대 결과물, 설명, Task Owner, Outcome Owner (reviewer 검토 생략) |
 | T-2026-0908-016 | DONE | orchestrator | 칸반 카드 요약화, 업무 상세 패널, 결과물 제출/승인/수정 요청 UI 연결 (reviewer 검토 생략) |
 | T-2026-0908-017 | DONE | orchestrator | 화면 전체 폭 사용 및 반응형 레이아웃(1400px 이상 사이드바, 700px 이하 세로 배치) (reviewer 검토 생략) |
+| T-2026-0908-018 | DONE | orchestrator | run.sh 기존 서버 종료 로직을 macOS bash 3.2에서도 동작하도록 수정(mapfile, /proc 제거) (reviewer 검토 생략) |
 
 ## 가정
 

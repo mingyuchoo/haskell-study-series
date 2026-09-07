@@ -34,9 +34,12 @@ stop_existing_server() {
   local live_process_ids=()
 
   if listener_output="$(lsof -t -nP -iTCP:"$port" -sTCP:LISTEN 2>&1)"; then
-    if [ -n "$listener_output" ]; then
-      mapfile -t process_ids <<<"$listener_output"
-    fi
+    # `mapfile` needs bash 4; macOS ships bash 3.2, so read line by line instead.
+    while IFS= read -r process_id; do
+      if [ -n "$process_id" ]; then
+        process_ids+=("$process_id")
+      fi
+    done <<<"$listener_output"
   elif [ -z "$listener_output" ]; then
     return
   else
@@ -45,12 +48,21 @@ stop_existing_server() {
     exit 1
   fi
 
-  for process_id in "${process_ids[@]}"; do
-    if [ ! -e "/proc/$process_id/exe" ]; then
-      continue
-    fi
+  if [ "${#process_ids[@]}" -eq 0 ]; then
+    return
+  fi
 
-    process_executable="$(basename "$(readlink -f "/proc/$process_id/exe")")"
+  for process_id in "${process_ids[@]}"; do
+    # Linux exposes the executable via /proc; macOS has no /proc, so fall back to ps.
+    if [ -e "/proc/$process_id/exe" ]; then
+      process_executable="$(basename "$(readlink -f "/proc/$process_id/exe")")"
+    else
+      process_executable="$(ps -o comm= -p "$process_id" 2>/dev/null || true)"
+      if [ -z "$process_executable" ]; then
+        continue
+      fi
+      process_executable="$(basename "$process_executable")"
+    fi
 
     if [ "$process_executable" != "GeneralService-exe" ]; then
       echo "Port $port is in use by a non-GeneralService process (PID $process_id): $process_executable" >&2
