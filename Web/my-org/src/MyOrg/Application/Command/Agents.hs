@@ -46,7 +46,9 @@ validateAgent st ids AgentRole {..} = do
   case agentApprovalBy of
     Just (ApprovalPerson uid) -> requireActivePerson st uid
     _                         -> pure ()
-  when (agentStatus == Confirmed && T.null (T.strip agentEvidence)) (Left (InvalidInput "확인된 사실에는 근거가 필요합니다."))
+  when
+    (agentStatus == Confirmed && T.null (T.strip agentEvidence))
+    (Left (InvalidInput "확인된 사실에는 근거가 필요합니다."))
 
 bounded :: Text -> Either OrganizationError ()
 bounded value = when (T.length value > 10000) (Left (InvalidInput "입력은 항목당 10000자 이하여야 합니다."))

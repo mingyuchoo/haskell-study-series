@@ -45,9 +45,24 @@ demoDiscovery =
   Discovery
     "북극성 스튜디오 고객 성공과 영업 운영 현황 (체험용 가상 자료)"
     ""
-    [ Observation "demo-o-refund" "환불 승인 권한" "환불은 고객 성공 책임자가 검토하고 CEO가 최종 승인한다." Confirmed "체험용 가상 운영 절차 문서 3항"
-    , Observation "demo-o-legal" "엔터프라이즈 계약 검토 담당" "법무 검토를 누가 맡는지 확인되지 않았다." Unknown "파트너십 책임자 한유진에게 확인 예정"
-    , Observation "demo-o-onboarding" "온보딩 안내 자동화" "온보딩 이메일 초안을 자동으로 만들고 사람이 검토한 뒤 발송한다." Proposed ""
+    [ Observation
+        "demo-o-refund"
+        "환불 승인 권한"
+        "환불은 고객 성공 책임자가 검토하고 CEO가 최종 승인한다."
+        Confirmed
+        "체험용 가상 운영 절차 문서 3항"
+    , Observation
+        "demo-o-legal"
+        "엔터프라이즈 계약 검토 담당"
+        "법무 검토를 누가 맡는지 확인되지 않았다."
+        Unknown
+        "파트너십 책임자 한유진에게 확인 예정"
+    , Observation
+        "demo-o-onboarding"
+        "온보딩 안내 자동화"
+        "온보딩 이메일 초안을 자동으로 만들고 사람이 검토한 뒤 발송한다."
+        Proposed
+        ""
     ]
     [ (emptyWorkflow "demo-w-inquiry" "고객 문의 분류와 답변 초안")
         { workflowRole = "고객 성공 담당"

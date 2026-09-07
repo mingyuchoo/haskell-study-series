@@ -150,10 +150,10 @@ view model =
                             , div [ class "nav-group-items" ] (List.map (navigationButton model) pages)
                             ]
                     )
-                    [ ( "조직 분석", [ Discovery, Workflows ] )
-                    , ( "조직 운영", [ People, Dashboard, Responsibility, Authorities ] )
-                    , ( "에이전트 설계", [ AgentDrafts, AgentGraph ] )
+                    [ ( "조직 운영", [ People, Dashboard, Responsibility, Authorities ] )
                     , ( "운영과 개선", [ Results, Reviews, ActivityLog ] )
+                    , ( "조직 분석", [ Discovery, Workflows ] )
+                    , ( "에이전트 설계", [ AgentDrafts, AgentGraph ] )
                     ]
                 )
             ]

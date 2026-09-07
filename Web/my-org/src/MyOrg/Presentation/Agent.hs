@@ -29,7 +29,12 @@ statusLabel = \case
 
 presentAgentDiagnostic :: AgentDiagnostic -> DiagnosticView
 presentAgentDiagnostic AgentDiagnostic {..} =
-  DiagnosticView agentDiagnosticCode agentDiagnosticSeverity agentDiagnosticAgent message details
+  DiagnosticView
+    agentDiagnosticCode
+    agentDiagnosticSeverity
+    agentDiagnosticAgent
+    message
+    details
   where
     (message, details) = case agentDiagnosticIssue of
       HandoffUnresolved target -> ("인계 대상 에이전트가 설계에 없습니다.", ["대상: " <> target])

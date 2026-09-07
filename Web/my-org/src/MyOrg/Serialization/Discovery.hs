@@ -67,7 +67,12 @@ workflowCodec = Codec encode decode
         , ("tools", Just (encodeValue textCodec workflowTools))
         , ("outputs", Just (encodeValue textCodec workflowOutputs))
         , ("handoff", Just (encodeValue textCodec workflowHandoff))
-        , ("handoffWorkflows", if null workflowHandoffWorkflows then Nothing else Just (encodeValue (listCodec textCodec) workflowHandoffWorkflows))
+        ,
+          ( "handoffWorkflows"
+          , if null workflowHandoffWorkflows
+              then Nothing
+              else Just (encodeValue (listCodec textCodec) workflowHandoffWorkflows)
+          )
         , ("approval", Just (encodeValue textCodec workflowApproval))
         , ("approvalPerson", encodeValue userIdCodec <$> workflowApprovalPerson)
         , ("approvalPermission", encodeValue permissionCodec <$> workflowApprovalPermission)

@@ -29,21 +29,68 @@ spec = describe "HTTP agent design" $ do
     field (first drafts) "handoffTo" `shouldBe` toArray [String "agent-w-refund"]
     field (first drafts) "permissionLevel" `shouldBe` String "L1"
     field (drafts !! 1) "approvalBy" `shouldBe` object ["person" .= String "lead"]
-    map (`field` "code") (items (field report "draftDiagnostics")) `shouldContain` [String "A009"]
+    map (`field` "code") (items (field report "draftDiagnostics"))
+      `shouldContain` [String "A009"]
     items (field report "agents") `shouldBe` []
     other <- get client "organizations/b/agents"
     items (field other "drafts") `shouldBe` []
     -- Save the drafts with a human edit: lower the refund agent to L1 and confirm evidence.
-    let reviewed = map (\draft -> merge draft (object ["permissionLevel" .= String "L1", "approvalBy" .= Null])) drafts
-    void (post client route (object ["expectedVersion" .= field report "version", "agents" .= reviewed]) 201)
+    let reviewed =
+          map
+            (\draft -> merge draft (object ["permissionLevel" .= String "L1", "approvalBy" .= Null]))
+            drafts
+    void
+      ( post
+          client
+          route
+          (object ["expectedVersion" .= field report "version", "agents" .= reviewed])
+          201
+      )
     saved <- get client route
-    map (`field` "permissionLevel") (items (field saved "agents")) `shouldBe` [String "L1", String "L1"]
+    map (`field` "permissionLevel") (items (field saved "agents"))
+      `shouldBe` [String "L1", String "L1"]
     field saved "version" `shouldSatisfy` (/= field report "version")
-    void (post client route (object ["expectedVersion" .= field report "version", "agents" .= reviewed]) 409)
+    void
+      ( post
+          client
+          route
+          (object ["expectedVersion" .= field report "version", "agents" .= reviewed])
+          409
+      )
     let alone patch = [merge (first drafts) (merge (object ["handoffTo" .= ([] :: [Value])]) patch)]
-    void (post client route (object ["expectedVersion" .= field saved "version", "agents" .= alone (object ["approvalBy" .= object ["person" .= String "ghost"]])]) 404)
-    void (post client route (object ["expectedVersion" .= field saved "version", "agents" .= alone (object ["handoffTo" .= [String "agent-missing"]])]) 400)
-    void (post client route (object ["expectedVersion" .= field saved "version", "agents" .= alone (object ["permissionLevel" .= String "L9"])]) 400)
+    void
+      ( post
+          client
+          route
+          ( object
+              [ "expectedVersion" .= field saved "version"
+              , "agents" .= alone (object ["approvalBy" .= object ["person" .= String "ghost"]])
+              ]
+          )
+          404
+      )
+    void
+      ( post
+          client
+          route
+          ( object
+              [ "expectedVersion" .= field saved "version"
+              , "agents" .= alone (object ["handoffTo" .= [String "agent-missing"]])
+              ]
+          )
+          400
+      )
+    void
+      ( post
+          client
+          route
+          ( object
+              [ "expectedVersion" .= field saved "version"
+              , "agents" .= alone (object ["permissionLevel" .= String "L9"])
+              ]
+          )
+          400
+      )
     get client route `shouldReturn` saved
     (status, contentType, body) <- raw client "organizations/a/agents/export"
     status `shouldBe` 200
@@ -59,18 +106,39 @@ spec = describe "HTTP agent design" $ do
       withServer $ \client -> do
         setup client
         report <- get client route
-        void (post client route (object ["expectedVersion" .= field report "version", "agents" .= field report "drafts"]) 201)
+        void
+          ( post
+              client
+              route
+              (object ["expectedVersion" .= field report "version", "agents" .= field report "drafts"])
+              201
+          )
       withServer $ \client -> do
         report <- get client route
-        map (`field` "id") (items (field report "agents")) `shouldBe` map String ["agent-w-intake", "agent-w-refund"]
+        map (`field` "id") (items (field report "agents"))
+          `shouldBe` map String ["agent-w-intake", "agent-w-refund"]
         survey <- get client "organizations/a/discovery"
-        map (`field` "handoffWorkflows") (take 1 (items (field (field survey "discovery") "workflows"))) `shouldBe` [toArray [String "w-refund"]]
-  it "rejects workflow references to unknown people, inactive people, itself and missing workflows" $ withFreshServer $ \client -> do
+        map
+          (`field` "handoffWorkflows")
+          (take 1 (items (field (field survey "discovery") "workflows")))
+          `shouldBe` [toArray [String "w-refund"]]
+  it
+    "rejects workflow references to unknown people, inactive people, itself and missing workflows" $ withFreshServer $ \client -> do
     setup client
     survey <- get client "organizations/a/discovery"
     let workflows = items (field (field survey "discovery") "workflows")
-        withFirst patch = merge (field survey "discovery") (object ["workflows" .= (merge (first workflows) patch : drop 1 workflows)])
-        save value status = void (post client "organizations/a/discovery" (object ["expectedVersion" .= field survey "version", "discovery" .= value]) status)
+        withFirst patch =
+          merge
+            (field survey "discovery")
+            (object ["workflows" .= (merge (first workflows) patch : drop 1 workflows)])
+        save value status =
+          void
+            ( post
+                client
+                "organizations/a/discovery"
+                (object ["expectedVersion" .= field survey "version", "discovery" .= value])
+                status
+            )
     save (withFirst (object ["rolePerson" .= String "ghost"])) 404
     save (withFirst (object ["approvalPerson" .= String "ghost"])) 404
     save (withFirst (object ["handoffWorkflows" .= [String "w-intake"]])) 400
@@ -83,9 +151,17 @@ route = "organizations/a/agents"
 
 setup :: Client -> IO ()
 setup client = do
-  void (post client "organizations" (object ["id" .= String "a", "name" .= String "가상 조직 A"]) 201)
-  void (post client "organizations" (object ["id" .= String "b", "name" .= String "가상 조직 B"]) 201)
-  void (post client "organizations/a/people" (object ["id" .= String "lead", "name" .= String "팀장", "role" .= String "고객지원 팀장"]) 201)
+  void
+    (post client "organizations" (object ["id" .= String "a", "name" .= String "가상 조직 A"]) 201)
+  void
+    (post client "organizations" (object ["id" .= String "b", "name" .= String "가상 조직 B"]) 201)
+  void
+    ( post
+        client
+        "organizations/a/people"
+        (object ["id" .= String "lead", "name" .= String "팀장", "role" .= String "고객지원 팀장"])
+        201
+    )
   survey <- get client "organizations/a/discovery"
   void
     ( post
@@ -109,7 +185,16 @@ setup client = do
         201
     )
 
-workflow :: String -> String -> String -> String -> String -> [Value] -> String -> Maybe String -> Value
+workflow
+  :: String
+  -> String
+  -> String
+  -> String
+  -> String
+  -> [Value]
+  -> String
+  -> Maybe String
+  -> Value
 workflow ident name tools outputs handoff handoffWorkflows approval approver =
   object
     ( [ "id" .= ident

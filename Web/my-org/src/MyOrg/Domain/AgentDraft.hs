@@ -61,7 +61,10 @@ mentioned needle hay = not (blank needle) && T.strip needle `T.isInfixOf` hay
 
 activePeople :: OrgState -> [Person]
 activePeople st =
-  [p | p <- Map.elems (statePeople st), not (Set.member (personId p) (stateInactivePeople st))]
+  [ p
+  | p <- Map.elems (statePeople st)
+  , not (Set.member (personId p) (stateInactivePeople st))
+  ]
 
 -- | 저장된 업무 흐름마다 하나의 역할 후보를 만든다.
 --
@@ -80,7 +83,8 @@ deriveAgents st = map derive workflows
     derive w =
       AgentRole
         { agentId = agentKey (workflowId w)
-        , agentName = if blank (workflowRole w) then workflowName w <> " 담당" else T.strip (workflowRole w)
+        , agentName =
+            if blank (workflowRole w) then workflowName w <> " 담당" else T.strip (workflowRole w)
         , agentSourceWorkflow = Just (workflowId w)
         , agentTask = workflowName w
         , agentInputs = workflowInputs w
@@ -103,7 +107,9 @@ deriveAgents st = map derive workflows
     approval w = case (workflowApprovalPerson w, workflowApprovalPermission w) of
       (Just uid, _) -> Just (ApprovalPerson uid)
       (_, Just p) -> Just (ApprovalPermission p)
-      _ -> ApprovalPerson . personId <$> find (\p -> mentioned (personName p) (workflowApproval w)) people
+      _ ->
+        ApprovalPerson . personId
+          <$> find (\p -> mentioned (personName p) (workflowApproval w)) people
     handoffs w
       | not (null (workflowHandoffWorkflows w)) = map agentKey (workflowHandoffWorkflows w)
       | otherwise =
@@ -118,7 +124,11 @@ deriveAgents st = map derive workflows
 -- 설계 모두에 같은 규칙을 적용한다.
 diagnoseAgents :: OrgState -> [AgentRole] -> [AgentDiagnostic]
 diagnoseAgents st agents =
-  [d | severity <- [Error, Warning, Info], d <- concatMap check agents, agentDiagnosticSeverity d == severity]
+  [ d
+  | severity <- [Error, Warning, Info]
+  , d <- concatMap check agents
+  , agentDiagnosticSeverity d == severity
+  ]
   where
     ids = Set.fromList (map agentId agents)
     workflowIds = Set.fromList (map workflowId (discoveryWorkflows (stateDiscovery st)))
@@ -132,7 +142,10 @@ diagnoseAgents st agents =
       let this = agentId agent
           diag code severity issue = AgentDiagnostic code severity this issue
        in concat
-            [ [diag "A001" Error (HandoffUnresolved target) | target <- agentHandoffTo agent, not (Set.member target ids)]
+            [ [ diag "A001" Error (HandoffUnresolved target)
+              | target <- agentHandoffTo agent
+              , not (Set.member target ids)
+              ]
             , case agentApprovalBy agent of
                 Just (ApprovalPerson uid)
                   | not (Map.member uid (statePeople st)) -> [diag "A002" Error (ApproverUnknown uid)]
@@ -145,7 +158,10 @@ diagnoseAgents st agents =
               , isNothing (agentApprovalBy agent)
               ]
             , [diag "A005" Error ForbiddenLevel | agentPermissionLevel agent == L3Forbidden]
-            , [diag "A006" Info ToolsUnknown | null (agentTools agent), agentPermissionLevel agent /= L0Read]
+            , [ diag "A006" Info ToolsUnknown
+              | null (agentTools agent)
+              , agentPermissionLevel agent /= L0Read
+              ]
             , [ diag "A007" Warning (SourceWorkflowMissing wid)
               | Just wid <- [agentSourceWorkflow agent]
               , not (Set.member wid workflowIds)

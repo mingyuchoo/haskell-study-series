@@ -46,6 +46,7 @@ data Workflow = Workflow
   , workflowEvidence           :: Text
   }
   deriving (Show, Eq)
+
 data DiscoveryReviewStatus = Pending | Reviewed
   deriving (Show, Eq)
 data DiscoveryReview = DiscoveryReview

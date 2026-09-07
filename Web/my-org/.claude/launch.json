@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "my-org-local",
+      "runtimeExecutable": "env",
+      "runtimeArgs": ["-u", "MY_ORG_SQLITE_FILE", "-u", "MY_ORG_DEMO", "MY_ORG_PORT=8099", "stack", "run", "my-org-exe"],
+      "port": 8099
+    }
+  ]
+}

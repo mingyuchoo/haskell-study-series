@@ -20613,21 +20613,21 @@ var $author$project$Main$view = function (model) {
 							_List_fromArray(
 								[
 									_Utils_Tuple2(
-									'조직 분석',
-									_List_fromArray(
-										[1, 2])),
-									_Utils_Tuple2(
 									'조직 운영',
 									_List_fromArray(
 										[5, 6, 7, 8])),
 									_Utils_Tuple2(
-									'에이전트 설계',
-									_List_fromArray(
-										[3, 4])),
-									_Utils_Tuple2(
 									'운영과 개선',
 									_List_fromArray(
-										[9, 10, 11]))
+										[9, 10, 11])),
+									_Utils_Tuple2(
+									'조직 분석',
+									_List_fromArray(
+										[1, 2])),
+									_Utils_Tuple2(
+									'에이전트 설계',
+									_List_fromArray(
+										[3, 4]))
 								])))
 					])),
 				A2(

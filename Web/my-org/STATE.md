@@ -104,3 +104,19 @@
 - 결과: Domain.Agent, Domain.AgentDraft(deriveAgents, A001~A009), Command.Agents, Serialization.Agent, Presentation.Agent(진단 문구, Markdown 내보내기), agents API 3종, Workflow 참조 필드 4종과 검증, Elm 설계 화면(Page.Agents)과 구조 SVG(Ui.AgentGraph), 데모 업무 흐름 4건과 가이드 5단계, Lib SIGINT/SIGTERM 처리, StartupSmokeSpec 잠금 정리, README/CHANGELOG 갱신. 상세 계획은 docs/plans/T-20260907-agents.md
 - 검증: stack test 129 examples, 0 failures. make lint(-Werror) 통과. npm test 141 passed. npm run check(경계, 포맷, 타입) 통과. git diff --check 통과. 임시 저장소 서버에서 데모 추가 → 초안 도출 → 설계 저장(201, version 54, 역할 4개) → 내보내기(text/markdown) API 확인. 브라우저 창이 숨김 상태라 그래프 화면의 시각 확인은 Elm 렌더링 테스트로 대체.
 - 제약: 도출 규칙은 문자열 포함 검사 기반이며 LLM 추론이 아님. 설계 저장 전 로컬 편집은 서버 진단을 받지 않음(저장 후 진단). runs/demo/events.json.lock 잔존은 사용자 확인 후 수동 정리 필요.
+
+## T-20260907-nav-order
+- 요청: 사이드바 그룹 순서를 조직 운영, 운영과 개선, 조직 분석, 에이전트 설계로 변경
+- 상태: DONE
+- 담당: orchestrator (직접 구현). reviewer 검토 생략 (.claude/agents/ 미정의)
+- 근거: 업무 흐름이 구성원과 권한 목록을 참조하고 에이전트 초안이 업무 흐름에서 파생됨. 시작 안내 5단계(책임, 권한, 결과, 학습, 에이전트 설계)와 방향 일치
+- 변경: static/src/Main.elm 그룹 배열, static/app.js 재빌드, README.md 화면 안내, docs/plans/T-20260907-nav-purpose.md 승인 순서 개정 기록
+- 검증: npm run build 성공, npm run check(경계, 포맷, 타입) 통과, npm test 141 passed, git diff --check 통과
+
+## T-20260907-nav-font
+- 요청: 사이드바 메뉴 글꼴 크기 통일
+- 상태: DONE
+- 담당: orchestrator (직접 구현). reviewer 검토 생략 (.claude/agents/ 미정의)
+- 확인: 브라우저 계산값 기준 메뉴 항목 11개는 이미 14px(글자 높이 16.5px)로 동일. 그룹 제목(.nav-group-title) 4개만 11px로 달랐음
+- 변경: static/style.css의 .nav-group-title font-size 11px → 14px. 굵기 600과 색상 #9db5a8은 유지해 항목과 구분
+- 검증: 임시 저장소로 서버를 띄워 항목과 제목 15개 모두 14px, 글자 높이 16.5px로 측정. .claude/launch.json(로컬 실행 설정) 추가
