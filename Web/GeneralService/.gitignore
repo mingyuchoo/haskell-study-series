@@ -1,0 +1,20 @@
+# Haskell / Stack build artifacts
+.stack-work/
+dist-newstyle/
+*.hi
+*.o
+*.dyn_hi
+*.dyn_o
+
+# Elm / Node.js generated dependencies and compiler cache
+web/node_modules/
+web/elm-stuff/
+
+# Editor, operating system, and local environment files
+*~
+.DS_Store
+.idea/
+.vscode/
+.env
+.env.*
+!.env.example
