@@ -11,7 +11,7 @@ import Data.Text.Encoding qualified as TE
 import Database.SQLite.Simple
 import MyOrg.Application.Persistence
 import MyOrg.Domain.Event.Types
-import MyOrg.Serialization.JSON (eitherDecodeWire, encodeWire)
+import MyOrg.Serialization.Persistence (decodeStoredEvent, encodeStoredEvent)
 import System.Directory (createDirectoryIfMissing)
 import System.FilePath (takeDirectory)
 
@@ -49,7 +49,7 @@ decodeEvent :: (Int, Text) -> IO StoredEvent
 decodeEvent (sequenceNumber, payload) = do
   event <-
     either (ioError . userError . ("Corrupt SQLite event: " <>)) pure $
-      eitherDecodeWire (BL.fromStrict (TE.encodeUtf8 payload))
+      decodeStoredEvent (BL.fromStrict (TE.encodeUtf8 payload))
   unless (storedSeq event == sequenceNumber) $
     ioError (userError "Corrupt SQLite event sequence; store was not changed")
   pure event
@@ -63,6 +63,6 @@ persist connection events = withTransaction connection $ do
   executeMany
     connection
     "INSERT INTO my_org_events(sequence,payload) VALUES (?,?)"
-    [ (storedSeq event, TE.decodeUtf8 (BL.toStrict (encodeWire event)))
+    [ (storedSeq event, TE.decodeUtf8 (BL.toStrict (encodeStoredEvent event)))
     | event <- drop count events
     ]

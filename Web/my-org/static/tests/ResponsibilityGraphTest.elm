@@ -1,12 +1,13 @@
 module ResponsibilityGraphTest exposing (tests)
 
+import App.Update as Main
+import AppFixture exposing (mapPage, mapSession)
 import Domain exposing (..)
 import Expect
 import Form.Action exposing (Action(..))
 import GraphFixture exposing (..)
 import Html.Attributes as Attr
 import Json.Encode as Encode
-import Main
 import Page exposing (Page(..))
 import Remote exposing (Remote(..))
 import Test exposing (..)
@@ -46,7 +47,7 @@ tests =
                         Main.init { seed = "graph", today = "2026-01-01", deadline = "2026-12-31" } |> Tuple.first
 
                     ready =
-                        { initial | org = Just "org-a", workspace = Loaded sample, fresh = True, syncing = False }
+                        initial |> mapSession (\s -> { s | org = Just "org-a", workspace = Loaded sample, fresh = True, syncing = False })
 
                     step msg m =
                         Main.update msg m |> Tuple.first
@@ -57,7 +58,7 @@ tests =
                     graphChanged =
                         drafted |> step (Main.GraphMsg (Graph.Select "GoalNode:g")) |> step (Main.GraphMsg (Graph.Search "고객"))
                 in
-                { graphChanged | graph = drafted.graph } |> Expect.equal drafted
+                mapPage (\p -> { p | graph = drafted.pageState.graph }) graphChanged |> Expect.equal drafted
         , test "같은 조직 메뉴 왕복은 그래프 상태를 보존하고 조직 변경은 초기화한다" <|
             \_ ->
                 let
@@ -65,7 +66,7 @@ tests =
                         Main.init { seed = "graph", today = "2026-01-01", deadline = "2026-12-31" } |> Tuple.first
 
                     ready =
-                        { initial | org = Just "org-a", workspace = Loaded sample, fresh = True, syncing = False }
+                        initial |> mapSession (\s -> { s | org = Just "org-a", workspace = Loaded sample, fresh = True, syncing = False })
 
                     step msg m =
                         Main.update msg m |> Tuple.first
@@ -79,7 +80,7 @@ tests =
                     other =
                         returned |> step (Main.Navigate Responsibility (Just "org-b"))
                 in
-                Expect.equal ( changed.graph, Graph.init ) ( returned.graph, other.graph )
+                Expect.equal ( changed.pageState.graph, Graph.init ) ( returned.pageState.graph, other.pageState.graph )
         , test "같은 노드는 중복 연결에도 한 번만 생성하고 같은 이름의 서로 다른 ID는 보존한다" <|
             \_ -> Graph.nodes sample |> List.map Graph.nodeKey |> Expect.equal [ "GoalNode:g", "GoalNode:isolated", "MetricNode:m", "PersonNode:p", "PersonNode:p2", "ResourceNode:Budget", "ResourceNode:Pricing" ]
         , test "연결이 전혀 없는 목표도 노드로 포함한다" <|

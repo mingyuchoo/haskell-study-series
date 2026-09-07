@@ -19,6 +19,32 @@ import Test.Hspec
 
 spec :: Spec
 spec = describe "직원 명령과 저장 재생" $ do
+  it "빈 프로필은 기존 사람 이벤트를 유지하고 유효한 프로필만 정규화한다" $ do
+    let employee = Person (UserId "new") "새 직원" "개발" Nothing
+    executeCommand now baseState (AddEmployee employee emptyProfile)
+      `shouldBe` Right [PersonAdded employee]
+    executeCommand
+      now
+      baseState
+      (AddEmployee employee (EmployeeProfile (Just "  ") (Just "\t")))
+      `shouldBe` Right [PersonAdded employee]
+    executeCommand
+      now
+      baseState
+      (AddEmployee employee (EmployeeProfile (Just " 개발 ") (Just " staff@example.com ")))
+      `shouldBe` Right [EmployeeAdded employee (EmployeeProfile (Just "개발") (Just "staff@example.com"))]
+  it "직원 프로필 오류보다 조직과 기본정보 및 보고 대상 검증을 우선한다" $ do
+    let employee = Person (UserId "new") "새 직원" "개발" Nothing
+        invalidProfile = EmployeeProfile Nothing (Just "invalid-email")
+        add st p = executeCommand now st (AddEmployee p invalidProfile)
+        missing = UserId "missing"
+    add emptyState employee `shouldBe` Left NoOrganization
+    add baseState employee {personName = " "}
+      `shouldBe` Left (InvalidInput "텍스트는 1~10000자여야 합니다.")
+    add baseState employee {personId = boss} `shouldBe` Left (DuplicateId "boss")
+    add baseState employee {personReportsTo = Just missing}
+      `shouldBe` Left (PersonNotFound missing)
+    add baseState employee `shouldBe` Left (InvalidInput "이메일 형식을 확인해주세요.")
   it "직속 후임을 승격해 자기 보고를 방지하고 모든 변경을 한 이벤트로 적용한다" $ do
     let st = baseState
         result = executeCommand now st (DeactivatePerson boss (Just junior) (stateLastSeq st))

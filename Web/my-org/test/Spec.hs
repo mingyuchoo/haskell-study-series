@@ -21,12 +21,16 @@ import EmployeeSpec qualified
 import Lib qualified
 import MyOrg.Application
 import MyOrg.Demo
+import MyOrg.Domain.Analysis qualified as Analysis
 import MyOrg.Domain.Compiler
 import MyOrg.Domain.Evaluation
 import MyOrg.Domain.Event
 import MyOrg.Domain.Goal
 import MyOrg.Domain.Graph
 import MyOrg.Domain.Review
+import MyOrg.Presentation.Analysis qualified as AnalysisView
+import MyOrg.Presentation.Diagnostic qualified as DiagnosticView
+import MyOrg.Presentation.Review (describeReviewWarning)
 import MyOrg.Registry
 import MyOrg.Serialization.JSON (eitherDecodeWire, encodeWire)
 import MyOrg.Store
@@ -156,7 +160,75 @@ tests = do
       checkReview review {reviewLearnings = [Learning "학습"]} `shouldBe` []
       checkReview review {reviewDecisions = [Decision "가격 실험" uid Nothing]}
         `shouldBe` [DecisionWithoutDeadline "가격 실험"]
+  describe "구조화된 분석과 표시 계약" $ do
+    it "책임자 없음과 충분한 자원은 서로 다른 판단과 권고이다" $ do
+      unowned <-
+        either (fail . show) pure (Analysis.analyzeGoal ready {stateOwnership = Map.empty} gid)
+      Analysis.analysisCause unowned `shouldBe` Analysis.OwnerMissing
+      Analysis.analysisRecommendations unowned `shouldBe` [Analysis.AssignOwner]
+      AnalysisView.possibleCause (AnalysisView.presentAnalysis unowned)
+        `shouldBe` "이 목표에는 최종 책임자가 없습니다. 누구도 지연에 대해 답할 위치에 있지 않습니다."
+      complete <- either (fail . show) pure (Analysis.analyzeGoal ready gid)
+      Analysis.analysisCause complete `shouldBe` Analysis.ResourcesControlled uid
+      Analysis.analysisCoverage complete `shouldBe` 1
+      Analysis.analysisRecommendations complete `shouldBe` [Analysis.NoStructuralIssue]
+      AnalysisView.possibleCause (AnalysisView.presentAnalysis complete)
+        `shouldBe` "owner이(가) 목표 달성에 필요한 자원을 모두 통제하고 있습니다. 구조적 병목은 발견되지 않았으며, 실행 자체를 점검해야 합니다."
+    it "부족 권한과 예산의 원자료를 보존하고 기존 분석 문구를 출력한다" $ do
+      let lacking = ready {stateAuthorities = Map.singleton uid (emptyAuthority uid)}
+      analysis <- either (fail . show) pure (Analysis.analyzeGoal lacking gid)
+      Analysis.analysisCause analysis `shouldBe` Analysis.InsufficientAuthority uid "매출 성장" 0
+      Analysis.analysisResources analysis
+        `shouldBe` [ Analysis.ResourceHolder (Analysis.PermissionRequired Pricing) True False []
+                   , Analysis.ResourceHolder (Analysis.BudgetRequired 100) True False []
+                   ]
+      Analysis.analysisRecommendations analysis
+        `shouldBe` [ Analysis.IncreaseOwnerAuthority
+                       uid
+                       [Analysis.PermissionRequired Pricing, Analysis.BudgetRequired 100]
+                   , Analysis.MoveAccountabilityUpward uid
+                   ]
+      AnalysisView.renderAnalysis analysis
+        `shouldBe` "Possible cause\nowner owns 매출 성장. However, owner controls only 0% of the resources required to achieve the assigned goal.\n\nPricing authority -> (nobody)\nBudget 100 authority -> (nobody)\n\nRecommendation:\n1. increase owner authority (Pricing, Budget)\n2. move accountability for this goal upward from owner\n"
+    it "모든 컴파일러 진단의 원인과 표시 계약을 보존한다" $
+      mapM_
+        ( \(st, expected, view) -> do
+            reportDiagnostics (compileOrganization (addUTCTime 1 end) st) `shouldContain` [expected]
+            DiagnosticView.presentDiagnostic expected `shouldBe` view
+        )
+        diagnosticCases
+    it "회고 판단과 두 경고 문구를 각각 보존한다" $ do
+      checkReview review `shouldBe` [NoDecisionProduced]
+      describeReviewWarning NoDecisionProduced `shouldBe` "This review produced no decision."
+      checkReview review {reviewDecisions = [Decision "다음 실험" uid Nothing]}
+        `shouldBe` [DecisionWithoutDeadline "다음 실험"]
+      describeReviewWarning (DecisionWithoutDeadline "다음 실험")
+        `shouldBe` "결정에 기한이 없습니다: 다음 실험"
   describe "명령 처리 경계" $ do
+    it "목표 권한은 일반 권한과 같은 단일 이벤트를 반환한다" $ do
+      executeCommand start ready (GrantGoalAuthority gid authority)
+        `shouldBe` Right [AuthorityGranted uid authority]
+      executeCommand start ready (GrantGoalAuthority gid authority)
+        `shouldBe` executeCommand start ready (GrantAuthority authority)
+    it "권한 예산 검증보다 목표와 책임자 일치 및 사람 존재를 우선한다" $ do
+      let missing = UserId "missing"
+          invalidAuthority = authority {authorityOwner = missing, authorityBudgetLimit = -1}
+      executeCommand start ready (GrantGoalAuthority (GoalId "missing") invalidAuthority)
+        `shouldBe` Left (GoalNotFound (GoalId "missing"))
+      executeCommand
+        start
+        ready {stateOwnership = Map.empty}
+        (GrantGoalAuthority gid invalidAuthority)
+        `shouldBe` Left (NoOwner gid)
+      executeCommand start ready (GrantGoalAuthority gid invalidAuthority)
+        `shouldBe` Left (OwnerMismatch gid uid missing)
+      executeCommand
+        start
+        ready {statePeople = Map.empty}
+        (GrantGoalAuthority gid authority {authorityBudgetLimit = -1})
+        `shouldBe` Left (PersonNotFound uid)
+      executeCommand start ready (GrantGoalAuthority gid authority {authorityBudgetLimit = -1})
+        `shouldBe` Left (InvalidInput "예산은 음수일 수 없습니다.")
     it "없는 조직과 중복 ID를 거부한다" $ do
       executeCommand start emptyState (AddPerson person) `shouldSatisfy` isLeft
       executeCommand start ready (CreateGoal goal) `shouldSatisfy` isLeft
@@ -441,7 +513,7 @@ tests = do
 
 withDemo :: UTCTime -> (OrgState -> [StoredEvent] -> IO ()) -> IO ()
 withDemo now action = case demoEvents now of
-  Left err    -> expectationFailure (show err)
+  Left err -> expectationFailure (show err)
   Right saved -> action (replay saved) saved
 
 demoStatuses :: UTCTime -> OrgState -> [GoalStatus]
@@ -516,3 +588,159 @@ ready :: OrgState
 ready = replay events
 codes :: OrgState -> [Text]
 codes = map diagnosticCode . reportDiagnostics . compileOrganization start
+
+diagnosticCases :: [(OrgState, Diagnostic, DiagnosticView.DiagnosticView)]
+diagnosticCases =
+  [ entry
+      emptyState
+      "O000"
+      Error
+      OrganizationSubject
+      OrganizationMissing
+      "organization"
+      "조직이 정의되지 않았습니다."
+      []
+  , entry
+      (changed goal {goalTarget = 100})
+      "O002"
+      Error
+      goalSubject
+      TargetEqualsBaseline
+      goalText
+      "목표값이 기준값과 같아 성공과 실패를 판단할 수 없습니다."
+      []
+  , entry
+      (changed goal {goalDeadline = start})
+      "O003"
+      Error
+      goalSubject
+      DeadlinePrecedesStart
+      goalText
+      "마감이 시작일보다 앞섭니다."
+      []
+  , entry
+      (changed goal {goalRequiredBudget = -1})
+      "O009"
+      Error
+      goalSubject
+      (InvalidDraft (InvalidInput "예산은 음수일 수 없습니다."))
+      goalText
+      "예산은 음수일 수 없습니다."
+      []
+  , entry
+      ready {stateOwnership = Map.empty}
+      "O001"
+      Error
+      goalSubject
+      FinalOwnerMissing
+      goalText
+      "Final Owner가 존재하지 않습니다."
+      []
+  , entry
+      ready {statePeople = Map.empty}
+      "O010"
+      Error
+      (GoalIdSubject gid)
+      (UnknownOwner uid)
+      "g1"
+      "책임자 owner이(가) 구성원 명단에 없습니다."
+      []
+  , entry
+      ready {stateAuthorities = Map.empty}
+      "O018"
+      Error
+      (PersonSubject uid)
+      (AuthorityMissing gid "매출 성장")
+      "owner"
+      "목표 g1 \"매출 성장\"의 책임자이지만 권한 기록이 전혀 없습니다."
+      []
+  , entry
+      ready {stateAuthorities = Map.singleton uid (emptyAuthority uid)}
+      "O017"
+      Warning
+      (PersonSubject uid)
+      (AuthorityInsufficient "매출 성장" 200 "KRW" 0 [Pricing] 0 100)
+      "owner"
+      "책임에 비해 권한이 부족합니다."
+      [ "Responsibility: 매출 성장 = 200.0 KRW"
+      , "Controls 0% of required resources"
+      , "Pricing = False"
+      , "Budget = 0 (required 100)"
+      ]
+  , entry
+      shared
+      "O020"
+      Warning
+      (MetricSubject (MetricId "revenue"))
+      (SharedMetricOwnership [(gid2, other), (gid, uid)])
+      "revenue"
+      "두 명 이상이 동일한 결과를 최종 책임지고 있습니다."
+      ["g2 -> other", "g1 -> owner"]
+  , entry
+      ready
+        { stateOwnership =
+            Map.fromList
+              [(GoalId name, Ownership (GoalId name) uid start) | name <- ["g1", "g2", "g3", "g4"]]
+        }
+      "O021"
+      Warning
+      (PersonSubject uid)
+      (OwnerOverloaded 4)
+      "owner"
+      "한 사람이 4개의 목표를 최종 책임지고 있습니다."
+      []
+  , entry
+      ready
+        { stateAuthorities = Map.insert other (emptyAuthority other) (stateAuthorities ready)
+        }
+      "O031"
+      Warning
+      (PersonSubject uid)
+      (DecisionConcentration uid 1)
+      "owner"
+      "owner이(가) 전체 조직 의사결정 권한의 100%를 가지고 있습니다."
+      ["Possible bottleneck detected."]
+  , entry
+      ready {stateReviews = [review]}
+      "O040"
+      Warning
+      (ReviewSubject (ReviewId "r1"))
+      (ReviewWithoutOutcome gid)
+      "r1"
+      "This review produced no decision."
+      ["Goal: g1"]
+  , entry
+      ready
+      "O050"
+      Info
+      goalSubject
+      ActiveGoalWithoutResult
+      goalText
+      "활성화된 뒤 보고된 결과가 없습니다."
+      []
+  , entry
+      ready
+      "O051"
+      Warning
+      goalSubject
+      GoalPastDeadline
+      goalText
+      "마감이 지났지만 목표가 달성되지 않았습니다."
+      []
+  ]
+  where
+    entry st code severity subject cause text message details =
+      ( st
+      , Diagnostic code severity subject cause
+      , DiagnosticView.DiagnosticView code severity text message details
+      )
+    goalSubject = GoalSubject gid "매출 성장"
+    goalText = "g1 \"매출 성장\""
+    changed g = ready {stateGoals = Map.singleton gid g}
+    gid2 = GoalId "g2"
+    other = UserId "other"
+    shared =
+      ready
+        { stateGoals = Map.insert gid2 goal {goalId = gid2} (stateGoals ready)
+        , stateOwnership = Map.insert gid2 (Ownership gid2 other start) (stateOwnership ready)
+        }

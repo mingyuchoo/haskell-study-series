@@ -9,12 +9,16 @@ function files(dir, suffix) {
   });
 }
 const violations = [];
+const elmGraph = new Map();
+const haskellGraph = new Map();
 for (const file of files(path.join(root, 'static/src'), '.elm')) {
   const source = fs.readFileSync(file, 'utf8');
   const name = source.match(/^module\s+([\w.]+)/m)?.[1];
   const imports = [...source.matchAll(/^import\s+([\w.]+)/gm)].map(match => match[1]);
+  elmGraph.set(name, imports);
   let forbidden;
-  if (/^(Domain|Form)(\.|$)/.test(name)) forbidden = /^(Main|Api|Page|Ui|Http|Browser|Task)(\.|$)/;
+  if (/^App(\.|$)/.test(name)) forbidden = /^(Main|Api\.Http|Http|Browser|Task)(\.|$)/;
+  else if (/^(Domain|Form)(\.|$)/.test(name)) forbidden = /^(Main|Api|Page|Ui|Http|Browser|Task)(\.|$)/;
   else if (/^Api(\.|$)/.test(name)) forbidden = /^(Main|Page|Ui)(\.|$)/;
   else if (/^(Page|Ui)(\.|$)/.test(name)) forbidden = /^(Main|Api\.Http|Http|Browser|Task)(\.|$)/;
   if (forbidden) {
@@ -28,7 +32,8 @@ for (const file of files(path.join(root, 'src'), '.hs')) {
   const source = fs.readFileSync(file, 'utf8');
   const name = source.match(/^module\s+([\w.]+)/m)?.[1];
   const imports = [...source.matchAll(/^import\s+(?:qualified\s+)?([\w.]+)/gm)].map(match => match[1]);
-  const pureCore = /^MyOrg\.(Domain(\.|$)|Application$|Application\.(Plan|Query|ReadModel)$|Registry$|Demo$)/.test(name);
+  haskellGraph.set(name, imports);
+  const pureCore = /^MyOrg\.(Domain(\.|$)|Application$|Application\.(Command(\.|$)|Plan$|Query$|ReadModel$)|Registry$|Demo$)/.test(name);
   if (pureCore) {
     const forbidden = /^(Data\.Aeson|Network|Database|System|Control\.Concurrent|MyOrg\.(Server|Store|Http|Infrastructure|Transport|Serialization)|MyOrg\.Application\.(Runtime|Persistence))(\.|$)/;
     for (const imported of imports.filter(value => forbidden.test(value))) {
@@ -59,6 +64,40 @@ for (const file of files(path.join(root, 'src'), '.hs')) {
     }
   }
 }
+// Follow local imports as well as direct ones so a compatibility facade cannot
+// silently reconnect storage to presentation or a pure transition to effects.
+function checkReachable(graph, starts, forbidden) {
+  for (const start of [...graph.keys()].filter(name => starts.test(name))) {
+    const seen = new Set([start]);
+    const pending = (graph.get(start) || []).map(name => [name, start]);
+    while (pending.length) {
+      const [name, through] = pending.pop();
+      if (seen.has(name)) continue;
+      seen.add(name);
+      if (forbidden.test(name)) {
+        violations.push(`${start} must not depend on ${name} (via ${through})`);
+      } else {
+        for (const dependency of graph.get(name) || []) pending.push([dependency, name]);
+      }
+    }
+  }
+}
+checkReachable(elmGraph, /^App(\.|$)/, /^(Main|Api\.Http|Http|Browser|Task)(\.|$)/);
+checkReachable(haskellGraph,
+  /^MyOrg\.Serialization\.(?!JSON$)/,
+  /^MyOrg\.(Http|Presentation|Server|Store|Infrastructure|Application)(\.|$)|^MyOrg\.Serialization\.JSON$/);
+checkReachable(haskellGraph,
+  /^MyOrg\.Infrastructure\.(FileStore|SQLiteStore)$/,
+  /^MyOrg\.(Http|Presentation)(\.|$)|^MyOrg\.Serialization\.JSON$/);
+checkReachable(haskellGraph,
+  /^MyOrg\.Http(\.|$)/,
+  /^MyOrg\.Serialization\.(Persistence|JSON)$|^MyOrg\.Infrastructure(\.|$)/);
+for (const name of ['MyOrg.Server', 'MyOrg.Http.Route', 'MyOrg.Http.Encode']) {
+  if ((haskellGraph.get(name) || []).includes('MyOrg.Serialization.JSON')) {
+    violations.push(`${name} must select the HTTP codec directly`);
+  }
+}
+
 if (violations.length) {
   console.error(violations.join('\n'));
   process.exitCode = 1;

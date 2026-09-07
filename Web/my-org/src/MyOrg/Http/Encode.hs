@@ -9,9 +9,11 @@ import Data.Text (Text)
 import MyOrg.Application.ReadModel
 import MyOrg.Domain.Event.Types
 import MyOrg.Domain.Organization
-import MyOrg.Domain.Review (describeReviewWarning)
+import MyOrg.Http.Codec (toWire, (.=))
+import MyOrg.Presentation.Analysis (presentAnalysis)
+import MyOrg.Presentation.Diagnostic (presentCompileReport)
 import MyOrg.Presentation.Event
-import MyOrg.Serialization.JSON (toWire, (.=))
+import MyOrg.Presentation.Review (describeReviewWarning)
 
 encodeQueryResult :: QueryResult -> Value
 encodeQueryResult = \case
@@ -22,7 +24,7 @@ encodeQueryResult = \case
   PeopleResult people -> toWire (map personJSON people)
   PersonResult person version goals -> object ["person" .= personJSON person, "version" .= version, "ownedGoals" .= goals]
   GoalsResult goals -> toWire (map goalJSON goals)
-  CompilerResult report -> toWire report
+  CompilerResult report -> toWire (presentCompileReport report)
   GraphResult graph -> toWire graph
   EventsResult events -> toWire events
   ReviewsResult reviews -> toWire reviews
@@ -44,7 +46,7 @@ goalJSON GoalView {..} =
     , "owner" .= viewOwner
     , "active" .= viewActive
     , "evaluation" .= viewEvaluation
-    , "analysis" .= viewAnalysis
+    , "analysis" .= fmap presentAnalysis viewAnalysis
     , "results" .= viewResults
     , "strategies" .= viewStrategies
     ]
@@ -58,7 +60,7 @@ dashboardJSON Dashboard {..} =
     , "people" .= map personJSON dashboardPeople
     , "goals" .= map goalJSON dashboardGoals
     , "authorities" .= dashboardAuthorities
-    , "compiler" .= dashboardCompiler
+    , "compiler" .= presentCompileReport dashboardCompiler
     , "graph" .= dashboardGraph
     , "decisionShare" .= dashboardDecisionShare
     , "reviews" .= dashboardReviews

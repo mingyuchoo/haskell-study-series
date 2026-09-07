@@ -1,12 +1,13 @@
 module ActivityTest exposing (tests)
 
 import Api.Decode exposing (auditDecoder)
+import App.Update as Main
+import AppFixture exposing (mapPage, mapSession)
 import Domain exposing (..)
 import Expect
 import Html.Attributes as Attr
 import Json.Decode as D
 import ListViewTest exposing (ready, sample, step)
-import Main
 import Page exposing (Page(..))
 import Page.Activity
 import Test exposing (..)
@@ -49,12 +50,12 @@ tests =
                 Activity.filtered { query = "", kind = "", from = "", until = "", review = Just "r-a" } reviews |> List.map .seq |> Expect.equal [ 4 ]
         , test "회고에서 활동 기록을 열면 이전 검색 필터를 초기화한다" <|
             \_ ->
-                ready |> step (Main.ActivityChange { query = "none", kind = "권한", from = "2030-01-01", until = "2030-01-02", review = Nothing }) |> step (Main.OpenReviewActivity "r") |> (\m -> ( m.page, m.activity )) |> Expect.equal ( ActivityLog, { query = "", kind = "", from = "", until = "", review = Just "r" } )
+                ready |> step (Main.ActivityChange { query = "none", kind = "권한", from = "2030-01-01", until = "2030-01-02", review = Nothing }) |> step (Main.OpenReviewActivity "r") |> (\m -> ( m.pageState.page, m.pageState.activity )) |> Expect.equal ( ActivityLog, { query = "", kind = "", from = "", until = "", review = Just "r" } )
         , test "조직 변경은 활동 필터를 격리한다" <|
             \_ ->
-                ready |> step (Main.ActivityChange { query = "secret", kind = "책임", from = "", until = "", review = Just "r" }) |> step (Main.Navigate Dashboard (Just "org-b")) |> .activity |> Expect.equal Activity.init
+                ready |> step (Main.ActivityChange { query = "secret", kind = "책임", from = "", until = "", review = Just "r" }) |> step (Main.Navigate Dashboard (Just "org-b")) |> .pageState |> .activity |> Expect.equal Activity.init
         , test "활동 표는 원본과 기록 순번을 확인할 상세를 제공한다" <| \_ -> Page.Activity.view Table Activity.init (always ()) workspace |> Query.fromHtml |> Query.has [ tag "details", text event.activity.raw ]
         , test "가이드 전체 활동 기록 링크는 회고와 검색 필터를 초기화한다" <|
             \_ ->
-                ready |> step (Main.OpenReviewActivity "r") |> step (Main.Guide ActivityLog "audit-history") |> .activity |> Expect.equal Activity.init
+                ready |> step (Main.OpenReviewActivity "r") |> step (Main.Guide ActivityLog "audit-history") |> .pageState |> .activity |> Expect.equal Activity.init
         ]

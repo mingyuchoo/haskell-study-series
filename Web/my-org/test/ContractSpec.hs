@@ -16,8 +16,9 @@ import Data.Set qualified as Set
 import Data.Time (UTCTime)
 import MyOrg.Demo (demoEvents, demoOrganizationId)
 import MyOrg.Domain.Event
+import MyOrg.Http.Codec (Wire, eitherDecodeWire, toWire)
 import MyOrg.Registry
-import MyOrg.Serialization.JSON (Wire, eitherDecodeWire, toWire)
+import MyOrg.Serialization.Persistence qualified as Persistence
 import MyOrg.Server (application)
 import MyOrg.Store (closeStore, openFileStore)
 import MyOrg.Types (OrgId (..), Permission (..), UserId (..))
@@ -43,6 +44,16 @@ spec = describe "persisted event and Elm HTTP contracts" $ do
           bytes <- BL.readFile (fixturePath name)
           decoded <- decodeFixture bytes
           decoded `shouldBe` expected
+          Persistence.decodeStoredEvents bytes `shouldBe` Right expected
+          (eitherDecode (Persistence.encodeStoredEvents expected) :: Either String Value)
+            `shouldBe` eitherDecode bytes
+          mapM_
+            ( \event -> do
+                Persistence.decodeStoredEvent (Persistence.encodeStoredEvent event) `shouldBe` Right event
+                (eitherDecode (Persistence.encodeStoredEvent event) :: Either String Value)
+                  `shouldBe` Right (toWire event)
+            )
+            expected
           raw <- decodeFixture bytes
           toWire (decoded :: [StoredEvent]) `shouldBe` (raw :: Value)
           registry <- either (fail . show) pure (replayRegistry decoded)
@@ -67,6 +78,9 @@ spec = describe "persisted event and Elm HTTP contracts" $ do
           , StoredEvent 3 fixtureTime Nothing (OrganizationDeleted (OrgId "org"))
           ]
     decodeFixture raw `shouldReturn` expected
+    Persistence.decodeStoredEvents raw `shouldBe` Right expected
+    (eitherDecode (Persistence.encodeStoredEvents expected) :: Either String Value)
+      `shouldBe` eitherDecode raw
     decodedValue <- decodeFixture raw
     toWire expected `shouldBe` (decodedValue :: Value)
   it "serves the fixed dashboard contract from either historical storage format" $ do

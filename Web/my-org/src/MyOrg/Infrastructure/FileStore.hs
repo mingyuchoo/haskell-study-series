@@ -7,7 +7,7 @@ import Control.Exception (bracketOnError, onException)
 import Data.ByteString.Lazy qualified as BL
 import MyOrg.Application.Persistence
 import MyOrg.Domain.Event.Types
-import MyOrg.Serialization.JSON (eitherDecodeWire, encodeWire)
+import MyOrg.Serialization.Persistence (decodeStoredEvents, encodeStoredEvents)
 import System.Directory
 import System.IO (hClose, openBinaryTempFile)
 
@@ -24,7 +24,7 @@ openFilePersistence path = do
             (openBinaryTempFile dir ".my-org-events.tmp")
             (\(tmp, h) -> hClose h >> removeFile tmp)
             $ \(tmp, h) -> do
-              BL.hPut h (encodeWire xs)
+              BL.hPut h (encodeStoredEvents xs)
               hClose h
               renameFile tmp path
       pure (Persistence events persist (removeDirectory lock))
@@ -33,4 +33,4 @@ openFilePersistence path = do
 
 decodeEvents :: BL.ByteString -> IO [StoredEvent]
 decodeEvents bytes =
-  either (ioError . userError . ("Corrupt event file: " <>)) pure (eitherDecodeWire bytes)
+  either (ioError . userError . ("Corrupt event file: " <>)) pure (decodeStoredEvents bytes)

@@ -1,5 +1,7 @@
 module ListViewTest exposing (ready, sample, step, tests)
 
+import App.Update as Main
+import AppFixture exposing (mapPage, mapSession)
 import Dict
 import Domain exposing (..)
 import Expect
@@ -8,7 +10,6 @@ import Form.Goal as Goal
 import Form.Review as Review
 import Html exposing (Html)
 import Html.Attributes as Attr
-import Main
 import Page exposing (Page(..), pageName)
 import Page.Activity
 import Page.Authorities
@@ -51,7 +52,7 @@ ready =
         initial =
             Main.init { seed = "test", today = "2026-01-01", deadline = "2026-12-31" } |> Tuple.first
     in
-    { initial | org = Just "org-a", workspace = Loaded workspace, fresh = True, syncing = False }
+    initial |> mapSession (\s -> { s | org = Just "org-a", workspace = Loaded workspace, fresh = True, syncing = False })
 
 
 step : Main.Msg -> Main.Model -> Main.Model
@@ -123,7 +124,7 @@ tests =
         , test "카드 버튼은 현재 선택됨을 알린다" <|
             \_ -> Ui.ListView.controls Cards Change |> Query.fromHtml |> Query.has [ tag "button", text "카드", attribute (Attr.attribute "aria-pressed" "true") ]
         , test "각 메뉴의 선택 값은 서로 덮어쓰지 않는다" <|
-            \_ -> ready |> step (Main.SetListMode People Table) |> step (Main.SetListMode Dashboard Cards) |> step (Main.SetListMode Results Table) |> (\m -> List.map (\page -> Dict.get (pageName page) m.listModes) [ People, Dashboard, Results ]) |> Expect.equal [ Just Table, Just Cards, Just Table ]
+            \_ -> ready |> step (Main.SetListMode People Table) |> step (Main.SetListMode Dashboard Cards) |> step (Main.SetListMode Results Table) |> (\m -> List.map (\page -> Dict.get (pageName page) m.pageState.listModes) [ People, Dashboard, Results ]) |> Expect.equal [ Just Table, Just Cards, Just Table ]
         , describe "각 메뉴가 실제 표를 렌더링한다"
             (List.map (\page -> test (pageName page) (\_ -> pageHtml Table page sample |> Query.fromHtml |> Query.findAll [ tag "table" ] |> Query.count (Expect.atLeast 1))) pages)
         , describe "빈 목록에서 빈 상태를 유지한다"
@@ -146,7 +147,7 @@ tests =
                     switched =
                         step (Main.SetListMode People Table) drafted
                 in
-                { switched | listModes = drafted.listModes } |> Expect.equal drafted
+                mapPage (\p -> { p | listModes = drafted.pageState.listModes }) switched |> Expect.equal drafted
         , test "각 메뉴 선택은 독립적이며 왕복 탐색 후 유지된다" <|
             \_ ->
                 let
@@ -156,7 +157,7 @@ tests =
                     navigated =
                         selected |> step (Main.Navigate Results (Just "org-a")) |> step (Main.Navigate People (Just "org-a"))
                 in
-                Expect.all [ \_ -> Expect.equal selected.listModes navigated.listModes, \_ -> Expect.equal 3 (Dict.size selected.listModes) ] ()
+                Expect.all [ \_ -> Expect.equal selected.pageState.listModes navigated.pageState.listModes, \_ -> Expect.equal 3 (Dict.size selected.pageState.listModes) ] ()
         , test "조직 표에서 조직을 열 수 있다" <|
             \_ -> pageHtml Table Organizations sample |> clickButton "조직 열기 →" (Open "org-a")
         , test "조직 표에서 설정으로 이동한다" <|

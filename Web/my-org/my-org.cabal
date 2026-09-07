@@ -34,6 +34,13 @@ extra-source-files:
     static/src/Api/Decode.elm
     static/src/Api/Http.elm
     static/src/Api/Path.elm
+    static/src/App/Config.elm
+    static/src/App/Drafts.elm
+    static/src/App/Effect.elm
+    static/src/App/Model.elm
+    static/src/App/PageState.elm
+    static/src/App/Session.elm
+    static/src/App/Update.elm
     static/src/Domain/Permission.elm
     static/src/Form/Action.elm
     static/src/Form/Defaults.elm
@@ -57,6 +64,7 @@ extra-source-files:
     static/src/Ui/ListView.elm
     static/src/Ui/ResponsibilityGraph.elm
     static/tests/ActivityTest.elm
+    static/tests/AppFixture.elm
     static/tests/DecoderTest.elm
     static/tests/FormTest.elm
     static/tests/GraphFixture.elm
@@ -83,6 +91,13 @@ library
   exposed-modules:
       Lib
       MyOrg.Application
+      MyOrg.Application.Command.Authority
+      MyOrg.Application.Command.Goals
+      MyOrg.Application.Command.Organization
+      MyOrg.Application.Command.People
+      MyOrg.Application.Command.Review
+      MyOrg.Application.Command.Types
+      MyOrg.Application.Command.Validation
       MyOrg.Application.Persistence
       MyOrg.Application.Plan
       MyOrg.Application.Query
@@ -108,15 +123,32 @@ library
       MyOrg.Domain.Review.Types
       MyOrg.Domain.State
       MyOrg.Domain.Validation
+      MyOrg.Http.Codec
+      MyOrg.Http.Codec.Analysis
+      MyOrg.Http.Codec.Diagnostic
+      MyOrg.Http.Codec.Error
+      MyOrg.Http.Codec.Graph
+      MyOrg.Http.Codec.Review
       MyOrg.Http.Encode
       MyOrg.Http.Route
       MyOrg.Infrastructure.FileStore
       MyOrg.Infrastructure.SQLiteStore
+      MyOrg.Presentation.Analysis
       MyOrg.Presentation.Diagnostic
       MyOrg.Presentation.Error
       MyOrg.Presentation.Event
+      MyOrg.Presentation.Review
       MyOrg.Registry
+      MyOrg.Serialization.Authority
+      MyOrg.Serialization.Codec
+      MyOrg.Serialization.Event
+      MyOrg.Serialization.Goal
+      MyOrg.Serialization.Identity
       MyOrg.Serialization.JSON
+      MyOrg.Serialization.Organization
+      MyOrg.Serialization.Persistence
+      MyOrg.Serialization.Result
+      MyOrg.Serialization.Review
       MyOrg.Server
       MyOrg.Store
       MyOrg.Types

@@ -14,7 +14,7 @@ import MyOrg.Domain.Authority
 import MyOrg.Domain.Error
 import MyOrg.Domain.Identity
 import MyOrg.Domain.Organization
-import MyOrg.Serialization.JSON (field, optionalField, parseWire)
+import MyOrg.Http.Codec (field, optionalField, parseWire)
 import Network.HTTP.Types hiding (Query)
 
 readRoute :: [Text] -> Maybe Query

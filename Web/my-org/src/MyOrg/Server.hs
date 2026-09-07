@@ -10,10 +10,10 @@ import Data.Text (Text)
 import Data.Text qualified as T
 import Data.Time (getCurrentTime)
 import MyOrg.Application.Query (executeQuery)
+import MyOrg.Http.Codec (toWire)
 import MyOrg.Http.Encode
 import MyOrg.Http.Route
 import MyOrg.Presentation.Error
-import MyOrg.Serialization.JSON (toWire)
 import MyOrg.Store
 import Network.HTTP.Types
 import Network.Wai
