@@ -1,6 +1,6 @@
 module Api.Discovery exposing (decoder, encode)
 
-import Api.Decode exposing (field)
+import Api.Decode exposing (andMap, field, optional)
 import Domain.Discovery exposing (..)
 import Json.Decode as D
 import Json.Encode as E
@@ -32,11 +32,43 @@ observationDecoder =
 
 
 workflowDecoder =
-    D.succeed Workflow |> field "id" D.string |> field "name" D.string |> field "role" D.string |> field "trigger" D.string |> field "inputs" D.string |> field "tools" D.string |> field "outputs" D.string |> field "handoff" D.string |> field "approval" D.string |> field "status" statusDecoder |> field "evidence" D.string
+    D.succeed Workflow
+        |> field "id" D.string
+        |> field "name" D.string
+        |> field "role" D.string
+        |> andMap (optional "rolePerson" D.string)
+        |> field "trigger" D.string
+        |> field "inputs" D.string
+        |> field "tools" D.string
+        |> field "outputs" D.string
+        |> field "handoff" D.string
+        |> andMap (optional "handoffWorkflows" (D.list D.string) |> D.map (Maybe.withDefault []))
+        |> field "approval" D.string
+        |> andMap (optional "approvalPerson" D.string)
+        |> andMap (optional "approvalPermission" D.string)
+        |> field "status" statusDecoder
+        |> field "evidence" D.string
 
 
 strings pairs =
     E.object (List.map (Tuple.mapSecond E.string) pairs)
+
+
+encodeWorkflow : Workflow -> E.Value
+encodeWorkflow w =
+    E.object
+        (List.map (Tuple.mapSecond E.string) [ ( "id", w.id ), ( "name", w.name ), ( "role", w.role ), ( "trigger", w.trigger ), ( "inputs", w.inputs ), ( "tools", w.tools ), ( "outputs", w.outputs ), ( "handoff", w.handoff ), ( "approval", w.approval ), ( "status", w.status ), ( "evidence", w.evidence ) ]
+            ++ List.filterMap identity
+                [ Maybe.map (\v -> ( "rolePerson", E.string v )) w.rolePerson
+                , Maybe.map (\v -> ( "approvalPerson", E.string v )) w.approvalPerson
+                , Maybe.map (\v -> ( "approvalPermission", E.string v )) w.approvalPermission
+                , if List.isEmpty w.handoffWorkflows then
+                    Nothing
+
+                  else
+                    Just ( "handoffWorkflows", E.list E.string w.handoffWorkflows )
+                ]
+        )
 
 
 encode : Document -> E.Value
@@ -45,7 +77,7 @@ encode doc =
         [ ( "scope", E.string doc.scope )
         , ( "asOf", E.string doc.asOf )
         , ( "observations", E.list (\o -> strings [ ( "id", o.id ), ( "subject", o.subject ), ( "detail", o.detail ), ( "status", o.status ), ( "evidence", o.evidence ) ]) doc.observations )
-        , ( "workflows", E.list (\w -> strings [ ( "id", w.id ), ( "name", w.name ), ( "role", w.role ), ( "trigger", w.trigger ), ( "inputs", w.inputs ), ( "tools", w.tools ), ( "outputs", w.outputs ), ( "handoff", w.handoff ), ( "approval", w.approval ), ( "status", w.status ), ( "evidence", w.evidence ) ]) doc.workflows )
+        , ( "workflows", E.list encodeWorkflow doc.workflows )
         , ( "review", strings [ ( "status", doc.review.status ), ( "note", doc.review.note ) ] )
         ]
 

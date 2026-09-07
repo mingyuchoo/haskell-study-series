@@ -1,6 +1,7 @@
 -- | The public HTTP response shape; query logic never builds JSON.
 module MyOrg.Http.Encode
   ( encodeQueryResult
+  , encodeQueryText
   ) where
 
 import Data.Aeson (Value, object)
@@ -10,6 +11,7 @@ import MyOrg.Application.ReadModel
 import MyOrg.Domain.Event.Types
 import MyOrg.Domain.Organization
 import MyOrg.Http.Codec (toWire, (.=))
+import MyOrg.Presentation.Agent (presentAgentDiagnostic, renderAgentExport)
 import MyOrg.Presentation.Analysis (presentAnalysis)
 import MyOrg.Presentation.Diagnostic (presentCompileReport)
 import MyOrg.Presentation.Event
@@ -29,6 +31,21 @@ encodeQueryResult = \case
   EventsResult events -> toWire events
   ReviewsResult reviews -> toWire reviews
   DiscoveryResult version document -> object ["version" .= version, "discovery" .= document]
+  AgentsResult AgentReport {..} ->
+    object
+      [ "version" .= agentReportVersion
+      , "agents" .= agentReportSaved
+      , "drafts" .= agentReportDrafts
+      , "diagnostics" .= map presentAgentDiagnostic agentReportDiagnostics
+      , "draftDiagnostics" .= map presentAgentDiagnostic agentReportDraftDiagnostics
+      ]
+  AgentExportResult organization saved agents -> toWire (renderAgentExport organization saved agents)
+
+-- | Text documents served outside JSON. Nothing for ordinary JSON results.
+encodeQueryText :: QueryResult -> Maybe Text
+encodeQueryText = \case
+  AgentExportResult organization saved agents -> Just (renderAgentExport organization saved agents)
+  _ -> Nothing
 
 summaryJSON :: OrganizationSummary -> Value
 summaryJSON OrganizationSummary {..} =

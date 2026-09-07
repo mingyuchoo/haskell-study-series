@@ -86,3 +86,21 @@
 - 문서: README 실행·저장·테스트·아키텍처 안내 및 CHANGELOG 갱신.
 - 검증: make test 통과 (Haskell 99개, Elm 31개), make lint 및 git diff --check 통과. 기존 JSON fixture 변경 없음. 경고 수정 후 SQLite 관련 8개 테스트를 -Werror로 실행하여 통과.
 - 검토: reviewer 최종 APPROVE, 추가 수정 요구 없음.
+
+## T-20260907-001
+- 요청: 코드베이스가 "조직 정보 입력 후 멀티 AI 에이전트 시스템 모델링" 의도에 맞게 구현되었는지 분석
+- 상태: DONE
+- 담당: orchestrator (직접 분석). reviewer 검토 생략 (.claude/agents/ 미정의)
+- 가정: 구현 변경 없이 소스 정적 분석과 로컬 빌드/테스트 실행에 근거한다. 사용자 저장소(runs/)는 변경하지 않는다.
+- 결과: 조직 운영 모델과 근거 검토 흐름은 의도대로 견고함. 에이전트는 도메인 개념으로 존재하지 않고 화면 표현(Workflow 카드)에 그침. 상세는 outputs/T-20260907-001/analysis.md
+- 검증: stack test 119개(1회차 StartupSmokeSpec 1건 간헐 실패, 2회차 0 failures), Elm 132개 통과, make lint 및 npm run check 통과
+- 발견: runs/demo/events.json.lock 잔존, README 화면 목록 드리프트, STATE.md 미기록 작업 9건
+
+## T-20260907-002
+- 요청: T-20260907-001 권고안 1~6 순차 구현 (에이전트 도메인, 도출 규칙과 진단, 업무 참조 필드, 구조 그래프, 데모 시드와 내보내기, 간헐 테스트 보강과 문서 현행화)
+- 상태: DONE
+- 담당: orchestrator (직접 구현·검증). reviewer 검토 생략 (.claude/agents/ 미정의)
+- 가정: 기존 HTTP 계약, 저장 이벤트 형식, 고정 fixture와 구형 데모 인식을 유지한다. 사용자 저장소(runs/)는 변경하지 않는다.
+- 결과: Domain.Agent, Domain.AgentDraft(deriveAgents, A001~A009), Command.Agents, Serialization.Agent, Presentation.Agent(진단 문구, Markdown 내보내기), agents API 3종, Workflow 참조 필드 4종과 검증, Elm 설계 화면(Page.Agents)과 구조 SVG(Ui.AgentGraph), 데모 업무 흐름 4건과 가이드 5단계, Lib SIGINT/SIGTERM 처리, StartupSmokeSpec 잠금 정리, README/CHANGELOG 갱신. 상세 계획은 docs/plans/T-20260907-agents.md
+- 검증: stack test 129 examples, 0 failures. make lint(-Werror) 통과. npm test 141 passed. npm run check(경계, 포맷, 타입) 통과. git diff --check 통과. 임시 저장소 서버에서 데모 추가 → 초안 도출 → 설계 저장(201, version 54, 역할 4개) → 내보내기(text/markdown) API 확인. 브라우저 창이 숨김 상태라 그래프 화면의 시각 확인은 Elm 렌더링 테스트로 대체.
+- 제약: 도출 규칙은 문자열 포함 검사 기반이며 LLM 추론이 아님. 설계 저장 전 로컬 편집은 서버 진단을 받지 않음(저장 후 진단). runs/demo/events.json.lock 잔존은 사용자 확인 후 수동 정리 필요.

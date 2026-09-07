@@ -1,8 +1,10 @@
 module Main exposing (main)
 
+import Api.Agents
 import Api.Discovery
 import Api.Http as Api
 import Api.Path
+import App.Agents as AgentsState
 import App.Config exposing (Flags)
 import App.Discovery as DiscoveryState
 import App.Drafts exposing (get, goalDraft, reviewDraft)
@@ -20,6 +22,7 @@ import Html.Events exposing (onClick)
 import Json.Encode as E
 import Page exposing (Page(..), pageName)
 import Page.Activity
+import Page.Agents
 import Page.Authorities
 import Page.Discovery
 import Page.Goals
@@ -63,6 +66,12 @@ perform effect =
 
         SaveDiscovery token org snapshot ->
             Api.send (SavedDiscovery token org) "POST" (Api.Path.orgPath org "discovery") (E.object [ ( "expectedVersion", E.int snapshot.version ), ( "discovery", Api.Discovery.encode snapshot.discovery ) ])
+
+        LoadAgents token org ->
+            Api.agents org (Result.mapError Api.errorText >> GotAgents token org)
+
+        SaveAgents token org version agents ->
+            Api.send (SavedAgents token org) "POST" (Api.Path.orgPath org "agents") (E.object [ ( "expectedVersion", E.int version ), ( "agents", Api.Agents.encode agents ) ])
 
         FocusElement target ->
             Task.attempt (always NoOp) (Browser.Dom.focus target)
@@ -143,7 +152,7 @@ view model =
                     )
                     [ ( "조직 분석", [ Discovery, Workflows ] )
                     , ( "조직 운영", [ People, Dashboard, Responsibility, Authorities ] )
-                    , ( "에이전트 설계", [ AgentDrafts ] )
+                    , ( "에이전트 설계", [ AgentDrafts, AgentGraph ] )
                     , ( "운영과 개선", [ Results, Reviews, ActivityLog ] )
                     ]
                 )
@@ -189,7 +198,7 @@ view model =
                         "최신 상태 확인 실패 · 새로고침해 주세요"
                     )
                 ]
-            , if not (List.member model.pageState.page [ Settings, Discovery, Workflows, AgentDrafts ]) then
+            , if not (List.member model.pageState.page [ Settings, Discovery, Workflows, AgentDrafts, AgentGraph ]) then
                 ListView.controls (listMode model) (SetListMode model.pageState.page)
 
               else
@@ -227,7 +236,23 @@ workspaceView model =
                         discoveryPage Workflows model w
 
                     AgentDrafts ->
-                        discoveryPage AgentDrafts model w
+                        Page.Agents.view
+                            { state = model.agents
+                            , org = w.organization.id
+                            , busy = busy model
+                            , edit = EditAgents
+                            , importDrafts = ImportAgentDrafts
+                            , save = SubmitAgents
+                            , rebase = RebaseAgents
+                            , reset = ResetAgents
+                            , go = \target -> Navigate target model.session.org
+                            , exportHref = Api.Path.orgPath w.organization.id "agents/export"
+                            , review = discoveryPage AgentDrafts model w
+                            }
+                            w
+
+                    AgentGraph ->
+                        Page.Agents.graph model.agents w.organization.id w
 
                     People ->
                         Page.People.viewWith (listMode model) { forms = formConfig model, query = model.pageState.peopleQuery, status = model.pageState.peopleStatus, selected = model.pageState.selectedPerson, search = SearchPeople, filter = FilterPeople, open = OpenPerson, reset = ResetPerson, goals = Navigate Dashboard model.session.org } w

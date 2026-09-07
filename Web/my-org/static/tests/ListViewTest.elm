@@ -114,6 +114,9 @@ pageHtml mode page w =
         AgentDrafts ->
             Html.text ""
 
+        AgentGraph ->
+            Html.text ""
+
 
 pages : List Page
 pages =

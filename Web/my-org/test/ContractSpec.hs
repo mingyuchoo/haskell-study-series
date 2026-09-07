@@ -14,7 +14,7 @@ import Data.ByteString.Lazy qualified as BL
 import Data.Map.Strict qualified as Map
 import Data.Set qualified as Set
 import Data.Time (UTCTime)
-import MyOrg.Demo (demoEvents, demoOrganizationId)
+import MyOrg.Demo (demoOrganizationId, legacyDemoEvents)
 import MyOrg.Domain.Event
 import MyOrg.Http.Codec (Wire, eitherDecodeWire, toWire)
 import MyOrg.Registry
@@ -34,7 +34,7 @@ fixtureTime = read "2000-01-01 00:00:00 UTC"
 spec :: Spec
 spec = describe "persisted event and Elm HTTP contracts" $ do
   it "decodes historical legacy and scoped logs and preserves their exact JSON shapes" $ do
-    baseline <- either (fail . show) pure (demoEvents fixtureTime)
+    baseline <- either (fail . show) pure (legacyDemoEvents fixtureTime)
     let scoped =
           map
             (\event -> event {storedEvent = OrganizationScoped demoOrganizationId (storedEvent event)})

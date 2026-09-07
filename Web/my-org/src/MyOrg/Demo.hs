@@ -3,7 +3,10 @@
 module MyOrg.Demo
   ( demoOrganizationId
   , demoCommands
+  , demoCoreCommands
+  , demoDiscovery
   , demoEvents
+  , legacyDemoEvents
   , isDemoEpoch
   , isDemoStore
   ) where
@@ -14,6 +17,7 @@ import Data.Set qualified as Set
 import Data.Time (UTCTime, addUTCTime)
 import MyOrg.Application
 import MyOrg.Domain.Authority
+import MyOrg.Domain.Discovery
 import MyOrg.Domain.Error
 import MyOrg.Domain.Event.Types
 import MyOrg.Domain.Goal.Types
@@ -26,8 +30,81 @@ import MyOrg.Domain.State
 demoOrganizationId :: OrgId
 demoOrganizationId = OrgId "demo-northstar-v2"
 
+-- | The full seed: the frozen operating scenario plus the surveyed workflows
+-- that feed the agent design pages. The survey is appended last so the
+-- original 51-event scenario keeps its historical shape.
 demoCommands :: UTCTime -> [Command]
-demoCommands now =
+demoCommands now = core <> [SaveDiscovery demoDiscovery (length core)]
+  where
+    core = demoCoreCommands now
+
+-- | 현황 조사 시드. 확인된 사실, 미확인, 개선안과 참조 필드를 모두 담아
+-- 규칙 기반 도출과 진단을 체험할 수 있게 한다. 기준일은 미확인으로 둔다.
+demoDiscovery :: Discovery
+demoDiscovery =
+  Discovery
+    "북극성 스튜디오 고객 성공과 영업 운영 현황 (체험용 가상 자료)"
+    ""
+    [ Observation "demo-o-refund" "환불 승인 권한" "환불은 고객 성공 책임자가 검토하고 CEO가 최종 승인한다." Confirmed "체험용 가상 운영 절차 문서 3항"
+    , Observation "demo-o-legal" "엔터프라이즈 계약 검토 담당" "법무 검토를 누가 맡는지 확인되지 않았다." Unknown "파트너십 책임자 한유진에게 확인 예정"
+    , Observation "demo-o-onboarding" "온보딩 안내 자동화" "온보딩 이메일 초안을 자동으로 만들고 사람이 검토한 뒤 발송한다." Proposed ""
+    ]
+    [ (emptyWorkflow "demo-w-inquiry" "고객 문의 분류와 답변 초안")
+        { workflowRole = "고객 성공 담당"
+        , workflowRolePerson = Just success
+        , workflowTrigger = "새 문의 접수"
+        , workflowInputs = "문의 내용, 고객 계약 정보"
+        , workflowTools = "CRM, 고객지원 문서"
+        , workflowOutputs = "문의 분류, 답변 초안"
+        , workflowHandoff = "환불 문의는 환불 검토와 집행으로 전달"
+        , workflowHandoffWorkflows = ["demo-w-refund"]
+        , workflowStatus = Confirmed
+        , workflowEvidence = "체험용 가상 인터뷰 메모 (정하린)"
+        }
+    , (emptyWorkflow "demo-w-refund" "환불 검토와 집행")
+        { workflowRole = "고객 성공 책임자"
+        , workflowRolePerson = Just success
+        , workflowTrigger = "환불 문의 인계"
+        , workflowInputs = "환불 사유, 결제 내역"
+        , workflowTools = "결제 관리자 콘솔"
+        , workflowOutputs = "환불 승인 요청, 환불 처리 기록"
+        , workflowApproval = "집행 전 CEO 승인"
+        , workflowApprovalPerson = Just ceo
+        , workflowStatus = Confirmed
+        , workflowEvidence = "체험용 가상 운영 절차 문서 3항"
+        }
+    , (emptyWorkflow "demo-w-proposal" "엔터프라이즈 제안서 작성")
+        { workflowRole = "영업 담당"
+        , workflowRolePerson = Just sales
+        , workflowTrigger = "영업 기회 등록"
+        , workflowInputs = "고객 요구사항, 가격표"
+        , workflowTools = "CRM, 제안서 템플릿"
+        , workflowOutputs = "제안서 초안, 견적"
+        , workflowHandoff = "계약 조건은 파트너십 계약 검토로 전달"
+        , workflowHandoffWorkflows = ["demo-w-contract"]
+        , workflowApproval = "할인율 10% 초과 시 가격 결정 권한자 승인"
+        , workflowApprovalPermission = Just Pricing
+        , workflowStatus = Confirmed
+        , workflowEvidence = "체험용 가상 영업 플레이북"
+        }
+    , (emptyWorkflow "demo-w-contract" "파트너십 계약 검토")
+        { workflowTrigger = "계약 초안 접수"
+        , workflowInputs = "계약 초안"
+        , workflowOutputs = "검토 의견"
+        , workflowStatus = Unknown
+        , workflowEvidence = "법무 검토 절차 미확인. 한유진에게 확인 예정"
+        }
+    ]
+    (DiscoveryReview Pending "")
+  where
+    ceo = UserId "demo-ceo"
+    sales = UserId "demo-sales"
+    success = UserId "demo-success"
+
+-- | The original operating scenario. Its event shape is frozen because
+-- historical demo stores are recognized by matching this exact prefix.
+demoCoreCommands :: UTCTime -> [Command]
+demoCoreCommands now =
   [ CreateOrganization demoOrganizationId "북극성 스튜디오 · 체험 조직"
   , AddPerson (Person ceo "박서준" "CEO" Nothing)
   , AddPerson (Person sales "김민서" "영업·그로스 책임자" (Just ceo))
@@ -197,8 +274,16 @@ demoCommands now =
       ]
 
 demoEvents :: UTCTime -> Either OrganizationError [StoredEvent]
-demoEvents now = do
-  (_, events) <- foldM step (emptyState, []) (demoCommands now)
+demoEvents = seedEvents demoCommands
+
+-- | The historical 52-event seed (51 scenario events plus the marker) that
+-- existing demo stores and the fixed fixtures contain.
+legacyDemoEvents :: UTCTime -> Either OrganizationError [StoredEvent]
+legacyDemoEvents = seedEvents demoCoreCommands
+
+seedEvents :: (UTCTime -> [Command]) -> UTCTime -> Either OrganizationError [StoredEvent]
+seedEvents commands now = do
+  (_, events) <- foldM step (emptyState, []) (commands now)
   pure
     ( events
         <> [ StoredEvent
@@ -234,7 +319,7 @@ marked =
 
 legacySeed :: [StoredEvent] -> Bool
 legacySeed [] = False
-legacySeed events@(first : _) = case demoEvents (storedAt first) of
+legacySeed events@(first : _) = case legacyDemoEvents (storedAt first) of
   Left _ -> False
   Right expected ->
     let original = filter (\event -> case storedEvent event of DemoSeeded _ -> False; _ -> True) expected

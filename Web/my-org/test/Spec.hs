@@ -2,6 +2,8 @@ module Main
   ( main
   ) where
 
+import AgentSpec qualified
+import AgentsSmokeSpec qualified
 import ApiSmokeSpec qualified
 import ContractSpec qualified
 import Control.Concurrent (forkIO, newEmptyMVar, putMVar, takeMVar)
@@ -69,6 +71,8 @@ tests = do
   DeleteSmokeSpec.spec
   OrganizationsSmokeSpec.spec
   DiscoverySmokeSpec.spec
+  AgentSpec.spec
+  AgentsSmokeSpec.spec
   StartupSmokeSpec.spec
   SQLiteStoreSpec.spec
   registrySpec

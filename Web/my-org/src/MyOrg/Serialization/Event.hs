@@ -7,6 +7,7 @@ module MyOrg.Serialization.Event
 import Data.Aeson (withObject)
 import Data.Text qualified as T
 import MyOrg.Domain.Event.Types
+import MyOrg.Serialization.Agent (agentRoleCodec)
 import MyOrg.Serialization.Authority
 import MyOrg.Serialization.Codec
 import MyOrg.Serialization.Discovery
@@ -55,6 +56,7 @@ organizationEventCodec = Codec encode decode
           )
       OrganizationDeleted a -> tagged "OrganizationDeleted" (Just (encodeValue orgIdCodec a))
       DiscoverySaved a -> tagged "DiscoverySaved" (Just (encodeValue discoveryCodec a))
+      AgentRolesSaved a -> tagged "AgentRolesSaved" (Just (encodeValue (listCodec agentRoleCodec) a))
       DemoSeeded a -> tagged "DemoSeeded" (Just (encodeValue orgIdCodec a))
       PersonAdded a -> tagged "PersonAdded" (Just (encodeValue personCodec a))
       EmployeeAdded a b ->
@@ -149,6 +151,7 @@ organizationEventCodec = Codec encode decode
             _ -> fail "Expected 2 constructor arguments"
         "OrganizationDeleted" -> OrganizationDeleted <$> field orgIdCodec obj "contents"
         "DiscoverySaved" -> DiscoverySaved <$> field discoveryCodec obj "contents"
+        "AgentRolesSaved" -> AgentRolesSaved <$> field (listCodec agentRoleCodec) obj "contents"
         "DemoSeeded" -> DemoSeeded <$> field orgIdCodec obj "contents"
         "PersonAdded" -> PersonAdded <$> field personCodec obj "contents"
         "EmployeeAdded" -> do

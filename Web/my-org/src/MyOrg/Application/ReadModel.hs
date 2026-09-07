@@ -4,12 +4,15 @@ module MyOrg.Application.ReadModel
   , OrganizationSummary (..)
   , GoalView (..)
   , Dashboard (..)
+  , AgentReport (..)
   , QueryResult (..)
   ) where
 
 import Data.Map.Strict (Map)
 import Data.Text (Text)
 import Data.Time (UTCTime)
+import MyOrg.Domain.Agent (AgentRole)
+import MyOrg.Domain.AgentDraft (AgentDiagnostic)
 import MyOrg.Domain.Analysis (Analysis)
 import MyOrg.Domain.Authority
 import MyOrg.Domain.Compiler (CompileReport)
@@ -66,6 +69,16 @@ data Dashboard = Dashboard
   }
   deriving (Show, Eq)
 
+-- | 저장된 설계와 현재 업무 흐름에서 도출한 초안을 같은 규칙으로 진단한 결과.
+data AgentReport = AgentReport
+  { agentReportVersion          :: Int
+  , agentReportSaved            :: [AgentRole]
+  , agentReportDrafts           :: [AgentRole]
+  , agentReportDiagnostics      :: [AgentDiagnostic]
+  , agentReportDraftDiagnostics :: [AgentDiagnostic]
+  }
+  deriving (Show, Eq)
+
 data QueryResult = OrganizationsResult [OrganizationSummary]
                  | SummaryResult OrganizationSummary
                  | DashboardResult Dashboard
@@ -78,4 +91,6 @@ data QueryResult = OrganizationsResult [OrganizationSummary]
                  | EventsResult [StoredEvent]
                  | ReviewsResult [Review]
                  | DiscoveryResult Int Discovery
+                 | AgentsResult AgentReport
+                 | AgentExportResult (Maybe Organization) Bool [AgentRole]
   deriving (Show, Eq)

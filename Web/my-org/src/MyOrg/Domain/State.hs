@@ -10,6 +10,7 @@ import Data.Set qualified as Set
 import Data.Text (Text)
 import Data.Time (UTCTime)
 import GHC.Generics (Generic)
+import MyOrg.Domain.Agent
 import MyOrg.Domain.Authority
 import MyOrg.Domain.Discovery
 import MyOrg.Domain.Goal.Types
@@ -35,6 +36,7 @@ data OrgState = OrgState
     -- ^ 최신 리뷰가 앞에 온다
   , stateStrategies     :: Map GoalId [(UTCTime, Text)]
   , stateDiscovery      :: Discovery
+  , stateAgents         :: [AgentRole]
   , stateLastSeq        :: Int
   }
   deriving stock (Show, Eq, Generic)
@@ -55,5 +57,6 @@ emptyState =
     , stateReviews = []
     , stateStrategies = Map.empty
     , stateDiscovery = emptyDiscovery
+    , stateAgents = []
     , stateLastSeq = 0
     }

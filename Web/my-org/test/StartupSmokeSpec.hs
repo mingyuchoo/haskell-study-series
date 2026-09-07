@@ -18,6 +18,7 @@ import System.Directory
   ( createDirectoryLink
   , doesFileExist
   , getCurrentDirectory
+  , removePathForcibly
   , renameFile
   )
 import System.Environment (getEnvironment, getExecutablePath)
@@ -233,6 +234,9 @@ runBootstrap directory config = do
       stop
       $ \(_, _, _, process) ->
         timeout 1500000 (waitForProcess process)
+  -- The disposable server is stopped by now. A lock it could not release
+  -- (for example after SIGKILL) must not fail the next startup in this test.
+  removePathForcibly (directory </> "runs" </> "demo" </> "events.json.lock")
   output <- readFile logFile
   -- Force lazy IO before the next startup overwrites this log.
   length output `seq` pure (code, output)

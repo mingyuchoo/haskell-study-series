@@ -56,6 +56,30 @@ tests =
                     , \_ -> doc |> Discovery.apply (WorkflowField "w" "status" "confirmed") |> Discovery.problems |> List.isEmpty |> Expect.equal False
                     ]
                     ()
+        , test "removing a workflow drops references to it and blanks clear references" <|
+            \_ ->
+                let
+                    doc =
+                        Discovery.empty
+                            |> Discovery.apply (AddWorkflow "a")
+                            |> Discovery.apply (AddWorkflow "b")
+                            |> Discovery.apply (WorkflowHandoff "a" "b" True)
+                            |> Discovery.apply (WorkflowHandoff "a" "a" True)
+                            |> Discovery.apply (WorkflowRolePerson "a" "lead")
+                            |> Discovery.apply (WorkflowApprovalPermission "a" "Pricing")
+
+                    first d =
+                        List.head d.workflows
+
+                    cleared =
+                        doc |> Discovery.apply (WorkflowRolePerson "a" "") |> Discovery.apply (RemoveWorkflow "b")
+                in
+                Expect.all
+                    [ \_ -> Expect.equal (Just ( [ "b" ], Just "lead", Just "Pricing" )) (first doc |> Maybe.map (\w -> ( w.handoffWorkflows, w.rolePerson, w.approvalPermission )))
+                    , \_ -> Expect.equal (Just ( [], Nothing )) (first cleared |> Maybe.map (\w -> ( w.handoffWorkflows, w.rolePerson )))
+                    , \_ -> Expect.equal 1 (List.length cleared.workflows)
+                    ]
+                    ()
         , test "source edits invalidate review while retaining review notes" <|
             \_ ->
                 let

@@ -1,5 +1,6 @@
 module App.Update exposing (Model, Msg(..), get, init, payload, update)
 
+import App.Agents as AgentsState
 import App.Config exposing (Flags)
 import App.Discovery as DiscoveryState
 import App.Drafts as Drafts
@@ -9,6 +10,7 @@ import App.PageState as PageState
 import App.Session as Session
 import Dict
 import Domain exposing (..)
+import Domain.Agent as Agent
 import Domain.Discovery as Discovery
 import Form.Action exposing (..)
 import Form.Goal
@@ -57,6 +59,13 @@ type Msg
     | SavedDiscovery Int String (Result String ())
     | ResetDiscovery
     | RebaseDiscovery
+    | GotAgents Int String (Result String Agent.Snapshot)
+    | EditAgents Agent.Change
+    | ImportAgentDrafts
+    | SubmitAgents
+    | SavedAgents Int String (Result String ())
+    | ResetAgents
+    | RebaseAgents
     | NoOp
 
 
@@ -74,8 +83,8 @@ refresh model =
         forms =
             model.forms
     in
-    ( { model | session = session, forms = { forms | deletion = Nothing }, discovery = setDiscoveryLoading (session.org /= Nothing) model.discovery }
-    , effects ++ (session.org |> Maybe.map (\org -> [ LoadDiscovery session.request org ]) |> Maybe.withDefault [])
+    ( { model | session = session, forms = { forms | deletion = Nothing }, discovery = setDiscoveryLoading (session.org /= Nothing) model.discovery, agents = setAgentsLoading (session.org /= Nothing) model.agents }
+    , effects ++ (session.org |> Maybe.map (\org -> [ LoadDiscovery session.request org, LoadAgents session.request org ]) |> Maybe.withDefault [])
     )
 
 
@@ -159,6 +168,57 @@ update msg model =
 
                     Err message ->
                         refresh { model | session = Session.finishSave model.session, notice = message ++ " 입력은 보존했습니다. 최신 저장 내용과 비교한 뒤 다시 적용하세요.", error = True }
+
+        GotAgents token org response ->
+            if token /= model.session.request || Just org /= model.session.org then
+                ( model, [] )
+
+            else
+                ( { model | agents = AgentsState.receive org response model.agents }, [] )
+
+        EditAgents change ->
+            if busy model || model.agents.loading || (model.session.org |> Maybe.map (\org -> Dict.member org model.agents.errors) |> Maybe.withDefault False) then
+                ( model, [] )
+
+            else
+                ( { model | agents = model.session.org |> Maybe.map (\org -> AgentsState.edit org change model.agents) |> Maybe.withDefault model.agents }, [] )
+
+        ImportAgentDrafts ->
+            case model.session.org |> Maybe.andThen (\org -> AgentsState.saved org model.agents) of
+                Just snapshot ->
+                    update (EditAgents (Agent.Import snapshot.drafts)) { model | notice = "규칙 기반 초안을 설계안으로 가져왔습니다. 등급, 승인 주체, 인계 대상을 검토한 뒤 저장하세요.", error = False }
+
+                Nothing ->
+                    ( model, [] )
+
+        ResetAgents ->
+            if busy model then
+                ( model, [] )
+
+            else
+                ( { model | agents = model.session.org |> Maybe.map (\org -> AgentsState.clearDraft org model.agents) |> Maybe.withDefault model.agents }, [] )
+
+        RebaseAgents ->
+            if busy model then
+                ( model, [] )
+
+            else
+                ( { model | agents = model.session.org |> Maybe.map (\org -> AgentsState.rebase org model.agents) |> Maybe.withDefault model.agents, notice = "최신 버전에 설계안 입력을 다시 적용했습니다. 내용을 검토한 뒤 저장하세요." }, [] )
+
+        SubmitAgents ->
+            submitAgents model
+
+        SavedAgents token org response ->
+            if token /= model.session.request || Just org /= model.session.org then
+                ( model, [] )
+
+            else
+                case response of
+                    Ok _ ->
+                        refresh { model | agents = AgentsState.clearDraft org model.agents, session = Session.finishSave model.session, notice = "에이전트 설계안을 저장했습니다. 저장된 설계의 진단과 구조 화면을 확인하세요.", error = False }
+
+                    Err message ->
+                        refresh { model | session = Session.finishSave model.session, notice = message ++ " 설계안 입력은 보존했습니다. 최신 저장 내용과 비교한 뒤 다시 적용하세요.", error = True }
 
         ActivityChange state ->
             ( { model | pageState = PageState.setActivity state model.pageState }, [] )
@@ -408,6 +468,7 @@ saved action response model =
                         , session = Session.organizationDeleted next.session
                         , forms = Drafts.removeOrganization model.session.org next.forms
                         , discovery = model.session.org |> Maybe.map (\org -> DiscoveryState.remove org next.discovery) |> Maybe.withDefault next.discovery
+                        , agents = model.session.org |> Maybe.map (\org -> AgentsState.remove org next.agents) |> Maybe.withDefault next.agents
                         , notice = "조직을 논리 삭제했습니다. 원본 감사 기록과 다른 조직은 보존됩니다."
                     }
 
@@ -443,3 +504,33 @@ submitDiscovery model =
 
                     else
                         ( { model | session = Session.beginSave "discovery" model.session, notice = "현황 저장 중…", error = False }, [ SaveDiscovery model.session.request org snapshot ] )
+
+
+setAgentsLoading : Bool -> AgentsState.State -> AgentsState.State
+setAgentsLoading loading state =
+    { state | loading = loading }
+
+
+submitAgents : Model -> ( Model, List Effect )
+submitAgents model =
+    case model.session.org of
+        Nothing ->
+            ( model, [] )
+
+        Just org ->
+            case AgentsState.current org model.agents of
+                Nothing ->
+                    ( model, [] )
+
+                Just design ->
+                    if busy model || model.agents.loading || not model.session.fresh || Dict.member org model.agents.errors then
+                        ( { model | notice = "최신 설계를 불러온 뒤 저장하세요. 입력은 보존됩니다.", error = True }, [] )
+
+                    else if AgentsState.conflicted org model.agents then
+                        ( { model | notice = "입력 중 저장된 조직이 변경되었습니다. 최신 저장 내용과 비교한 뒤 다시 적용하세요.", error = True }, [] )
+
+                    else if not (List.isEmpty (Agent.problems design.agents)) then
+                        ( { model | notice = String.join " " (Agent.problems design.agents), error = True }, [] )
+
+                    else
+                        ( { model | session = Session.beginSave "agents" model.session, notice = "설계안 저장 중…", error = False }, [ SaveAgents model.session.request org design.version design.agents ] )

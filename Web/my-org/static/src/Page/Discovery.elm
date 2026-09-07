@@ -1,4 +1,4 @@
-module Page.Discovery exposing (guide, view)
+module Page.Discovery exposing (Controls, guide, view)
 
 import App.Discovery as State
 import Dict
@@ -9,7 +9,8 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Page exposing (Page(..))
 import Ui.Common exposing (note, panel)
-import Ui.Form exposing (guidedArea, guidedInput, selectValue)
+import Ui.Form exposing (guidedArea, guidedInput, peopleOptions, selectValue)
+import Ui.Label exposing (permissions)
 
 
 type alias Controls msg =
@@ -75,7 +76,7 @@ view page controls workspace =
                                 workflows controls workspace doc
 
                             _ ->
-                                agents controls doc latest unsaved
+                                reviewForm doc latest controls
                         , if List.isEmpty (D.problems doc) then
                             text ""
 
@@ -176,12 +177,12 @@ workflows controls workspace doc =
                 )
             , note "예: 문의 접수 → 고객지원 담당 → CRM 고객 정보 확인 → 답변 초안 → 환불 건은 재무 담당자의 승인 후 처리"
             ]
-        , div [] (List.map (workflow controls) doc.workflows)
+        , div [] (List.map (workflow controls workspace doc) doc.workflows)
         , button [ type_ "button", class "secondary", onClick controls.addWorkflow ] [ text "+ 업무 흐름 추가" ]
         ]
 
 
-workflow controls item =
+workflow controls workspace doc item =
     section [ class "panel discovery-item" ]
         [ h2 []
             [ text
@@ -204,9 +205,55 @@ workflow controls item =
                 , ( "approval", "사람의 승인 조건", ( "예: 환불 집행 전 재무 책임자 승인. 없음과 미확인을 구분하세요.", item.approval ) )
                 ]
             )
+        , references controls workspace doc item
         , statusField (item.id ++ "-status") item.status (controls.edit << WorkflowField item.id "status")
         , guidedArea (item.id ++ "-evidence") "입력 근거 / 확인할 곳" (evidenceHint item.status) (item.status == "confirmed") item.evidence (controls.edit << WorkflowField item.id "evidence")
         , button [ type_ "button", class "secondary", onClick (controls.edit (RemoveWorkflow item.id)) ] [ text "이 업무 제외 · 저장 전 취소 가능" ]
+        ]
+
+
+{-| 텍스트 설명과 별도로 구성원, 결정 권한, 다른 업무를 참조로 연결한다.
+참조가 있으면 에이전트 초안이 텍스트 대신 참조를 사용한다.
+-}
+references controls workspace doc item =
+    let
+        others =
+            List.filter (\w -> w.id /= item.id) doc.workflows
+
+        permissionOptions =
+            ( "", "권한 선택 안 함" ) :: permissions
+    in
+    fieldset [ class "form-section" ]
+        [ legend [] [ text "참조 연결 · 조직 데이터와 이어지는 정보" ]
+        , note "텍스트로 적은 담당자, 승인 조건, 인계 대상을 등록된 구성원, 결정 권한, 다른 업무에 연결합니다. 모르면 비워 두세요."
+        , div [ class "fields" ]
+            [ selectValue (item.id ++ "-role-person") (Maybe.withDefault "" item.rolePerson) (controls.edit << WorkflowRolePerson item.id) "담당 구성원" False (peopleOptions workspace)
+            , selectValue (item.id ++ "-approval-person") (Maybe.withDefault "" item.approvalPerson) (controls.edit << WorkflowApprovalPerson item.id) "승인 구성원" False (peopleOptions workspace)
+            , selectValue (item.id ++ "-approval-permission") (Maybe.withDefault "" item.approvalPermission) (controls.edit << WorkflowApprovalPermission item.id) "승인에 필요한 결정 권한" False permissionOptions
+            ]
+        , if List.isEmpty others then
+            note "인계 대상으로 연결할 다른 업무가 아직 없습니다."
+
+          else
+            fieldset [ class "permission-fields" ]
+                [ legend [] [ text "인계 대상 업무" ]
+                , div [ class "checks" ]
+                    (List.map
+                        (\other ->
+                            label []
+                                [ input [ type_ "checkbox", checked (List.member other.id item.handoffWorkflows), onCheck (controls.edit << WorkflowHandoff item.id other.id) ] []
+                                , text
+                                    (if String.trim other.name == "" then
+                                        "이름 없는 업무 (" ++ other.id ++ ")"
+
+                                     else
+                                        other.name
+                                    )
+                                ]
+                        )
+                        others
+                    )
+                ]
         ]
 
 
@@ -222,19 +269,11 @@ evidenceHint status =
         "예: 9월 운영 매뉴얼, 담당자 인터뷰 또는 확인할 사람과 질문"
 
 
-agents controls doc latest unsaved =
+reviewForm doc latest controls =
     div []
-        [ panel "저장된 업무에서 도출한 역할 후보"
-            [ note "규칙 기반 제안 · 업무별로 하나의 에이전트 역할 후보를 구성합니다. 실제 AI 실행이나 도구 접근 권한 발급은 수행하지 않습니다. 여러 후보의 책임과 인계를 사람이 검토해 확정하세요."
-            , note "도출 규칙: 저장된 업무의 역할을 후보 이름으로 사용하고, 시작 조건·입력·도구·산출물·인계를 역할 경계로 제안합니다. 비어 있는 정보는 채우지 않고 미확인으로 표시합니다."
-            ]
-        , if List.isEmpty latest.workflows then
-            panel "아직 도출할 업무가 없습니다" [ note "업무 흐름 화면에서 업무 이름과 알고 있는 내용을 입력하고 저장하세요." ]
-
-          else
-            div [ class "grid" ] (List.map agentCard latest.workflows)
-        , panel "사람의 검토와 수정 의견"
-            [ note
+        [ panel "사람의 검토와 수정 의견"
+            [ note "초안과 설계안은 에이전트 초안 화면 위쪽에 있습니다. 여기서는 저장된 근거와 미확인 사항을 사람이 검토했는지 기록합니다."
+            , note
                 (if latest.review.status == "reviewed" then
                     "저장 상태: 검토 완료. 입력 근거가 바뀌면 다시 검토해야 합니다."
 
@@ -274,44 +313,6 @@ agents controls doc latest unsaved =
 
 sourceChanged doc latest =
     ( doc.scope, doc.asOf, doc.observations ) /= ( latest.scope, latest.asOf, latest.observations ) || doc.workflows /= latest.workflows
-
-
-agentCard workflow_ =
-    section [ class "panel agent-card" ]
-        [ span [ class "tag" ] [ text "규칙 기반 제안 / 추론" ]
-        , h2 []
-            [ text
-                ((if String.trim workflow_.role == "" then
-                    workflow_.name ++ " 담당"
-
-                  else
-                    workflow_.role
-                 )
-                    ++ " 에이전트 후보"
-                )
-            ]
-        , p [] [ text ("제안 이유: ‘" ++ workflow_.name ++ "’의 입력을 받아 산출물을 만드는 역할 경계가 필요하기 때문입니다.") ]
-        , h3 [] [ text "사용자가 저장한 근거" ]
-        , note ("정보 구분: " ++ D.statusLabel workflow_.status)
-        , note ("근거: " ++ known workflow_.evidence)
-        , dl [] (List.concatMap (\( title, value_ ) -> [ dt [] [ text title ], dd [] [ text (known value_) ] ]) [ ( "담당 업무", workflow_.name ), ( "시작 조건", workflow_.trigger ), ( "입력", workflow_.inputs ), ( "도구 후보", workflow_.tools ), ( "산출물", workflow_.outputs ), ( "인계 대상 / 조건", workflow_.handoff ), ( "사람 승인", workflow_.approval ) ])
-        , h3 [] [ text "확인할 사항" ]
-        , note
-            (if workflow_.status == "confirmed" then
-                "근거가 확인된 업무라도 에이전트의 수행 가능성·도구 권한·인계 상대는 별도 검토가 필요합니다."
-
-             else
-                "현재 업무의 사실 여부가 확정되지 않았습니다. 이 후보를 확정된 조직 구조로 사용하기 전에 근거를 확인하세요."
-            )
-        ]
-
-
-known value_ =
-    if String.trim value_ == "" then
-        "미확인 · 확인 후 입력"
-
-    else
-        value_
 
 
 documentSummary doc =

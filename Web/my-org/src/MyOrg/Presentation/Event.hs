@@ -20,6 +20,7 @@ describeEvent = \case
   OrganizationRenamed oid name -> "조직 이름 변경: " <> unOrgId oid <> " → " <> name
   OrganizationDeleted oid -> "조직 논리 삭제: " <> unOrgId oid
   DiscoverySaved _ -> "조직 현황·업무 흐름과 에이전트 초안 검토 저장"
+  AgentRolesSaved agents -> "에이전트 역할 설계 저장: " <> T.pack (show (length agents)) <> "개 역할"
   DemoSeeded _ -> "체험용 데모 시드 생성 완료"
   OrganizationCreated o -> "조직 생성: " <> organizationName o
   PersonAdded p -> "구성원 추가: " <> personName p <> " (" <> personRole p <> ")"

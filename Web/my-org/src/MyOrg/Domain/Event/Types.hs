@@ -6,6 +6,7 @@ module MyOrg.Domain.Event.Types
 import Data.Text (Text)
 import Data.Time (UTCTime)
 import GHC.Generics (Generic)
+import MyOrg.Domain.Agent
 import MyOrg.Domain.Authority
 import MyOrg.Domain.Discovery
 import MyOrg.Domain.Goal.Types
@@ -33,6 +34,7 @@ data OrganizationEvent = OrganizationCreated Organization
                        | ReviewHeld Review
                        | StrategyChanged GoalId Text
                        | DiscoverySaved Discovery
+                       | AgentRolesSaved [AgentRole]
   deriving stock (Show, Eq, Generic)
 
 -- | 저장소에 기록된 이벤트. 순번과 시각, 행위자를 함께 남긴다.

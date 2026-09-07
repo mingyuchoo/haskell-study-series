@@ -37,6 +37,12 @@ category event =
         "StrategyChanged" ->
             "학습"
 
+        "DiscoverySaved" ->
+            "진단"
+
+        "AgentRolesSaved" ->
+            "에이전트"
+
         _ ->
             case event.activity.targetKind of
                 "person" ->
@@ -67,6 +73,12 @@ targetName w event =
 
             else
                 event.activity.targetId
+
+        "survey" ->
+            "조직 진단"
+
+        "agents" ->
+            "에이전트 설계"
 
         _ ->
             "—"

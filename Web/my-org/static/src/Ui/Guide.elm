@@ -72,13 +72,17 @@ view model w =
                 )
             , GuideStep (achieved && evaluated) "03 · 결과에서 평가까지" "매출 실측값 50 (단위: 억원)과 보고자, 설명을 보고한 뒤 평가 기록을 누르세요." Results "goal-demo-revenue"
             , GuideStep reviewed "04 · 배움을 다음 결정으로" "매출 목표의 학습과 다음 결정, 담당자, 미래 기한을 기록하세요. 달성 결과와 평가가 함께 보존됩니다." Reviews "review-form"
+            , GuideStep designed "05 · 업무에서 에이전트 설계로" "저장된 업무 흐름 4건에서 도출한 역할 후보를 설계안으로 가져오고, 등급과 승인 주체, 인계 대상을 검토해 저장하세요. 저장하면 구조 화면과 내보내기를 사용할 수 있습니다." AgentDrafts "agent-import"
             ]
+
+        designed =
+            List.any (\e -> e.activity.tag == "AgentRolesSaved") w.events
 
         count =
             List.length (List.filter .done steps)
     in
     section [ class "demo-guide" ]
-        [ div [ class "demo-heading" ] [ div [] [ span [ class "tag" ] [ text "DEMO · 가상 데이터" ], h2 [] [ text "조직의 운영 흐름, 네 단계로 체험하세요" ], p [] [ text "6명 · 7개 목표 · 5가지 성과 상태. 실제 저장 상태로 진행률을 계산합니다." ] ], span [ class "guide-count" ] [ text (String.fromInt count ++ " / 4 완료") ] ]
+        [ div [ class "demo-heading" ] [ div [] [ span [ class "tag" ] [ text "DEMO · 가상 데이터" ], h2 [] [ text "조직의 운영 흐름, 다섯 단계로 체험하세요" ], p [] [ text "6명 · 7개 목표 · 5가지 성과 상태 · 업무 흐름 4건. 실제 저장 상태로 진행률을 계산합니다." ] ], span [ class "guide-count" ] [ text (String.fromInt count ++ " / 5 완료") ] ]
         , button
             [ class "guide-toggle secondary"
             , onClick model.toggle

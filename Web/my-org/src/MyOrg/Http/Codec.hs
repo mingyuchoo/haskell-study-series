@@ -26,6 +26,7 @@ import Data.Set (Set)
 import Data.Set qualified as Set
 import Data.Text (Text)
 import Data.Time (UTCTime)
+import MyOrg.Domain.Agent
 import MyOrg.Domain.Authority
 import MyOrg.Domain.Compiler
 import MyOrg.Domain.Discovery
@@ -47,6 +48,7 @@ import MyOrg.Http.Codec.Diagnostic
 import MyOrg.Http.Codec.Error
 import MyOrg.Http.Codec.Graph
 import MyOrg.Http.Codec.Review
+import MyOrg.Serialization.Agent
 import MyOrg.Serialization.Authority
 import MyOrg.Serialization.Discovery
 import MyOrg.Serialization.Event
@@ -235,6 +237,18 @@ instance Wire Review where
 instance Wire Discovery where
   toWire = encodeValue discoveryCodec
   parseWire = decodeValue discoveryCodec
+
+instance Wire AgentRole where
+  toWire = encodeValue agentRoleCodec
+  parseWire = decodeValue agentRoleCodec
+
+instance Wire PermissionLevel where
+  toWire = encodeValue permissionLevelCodec
+  parseWire = decodeValue permissionLevelCodec
+
+instance Wire ApprovalBy where
+  toWire = encodeValue approvalByCodec
+  parseWire = decodeValue approvalByCodec
 
 instance Wire OrganizationEvent where
   toWire = encodeValue organizationEventCodec

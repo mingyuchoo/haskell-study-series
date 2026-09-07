@@ -1,11 +1,15 @@
 -- | Stable survey wire and persistence contract.
 module MyOrg.Serialization.Discovery
   ( discoveryCodec
+  , knowledgeCodec
   ) where
 
 import Data.Aeson (withObject)
+import Data.Maybe (fromMaybe)
 import MyOrg.Domain.Discovery
+import MyOrg.Serialization.Authority (permissionCodec)
 import MyOrg.Serialization.Codec
+import MyOrg.Serialization.Identity (userIdCodec)
 
 knowledgeCodec :: Codec KnowledgeStatus
 knowledgeCodec = Codec encode decode
@@ -57,12 +61,16 @@ workflowCodec = Codec encode decode
         [ ("id", Just (encodeValue textCodec workflowId))
         , ("name", Just (encodeValue textCodec workflowName))
         , ("role", Just (encodeValue textCodec workflowRole))
+        , ("rolePerson", encodeValue userIdCodec <$> workflowRolePerson)
         , ("trigger", Just (encodeValue textCodec workflowTrigger))
         , ("inputs", Just (encodeValue textCodec workflowInputs))
         , ("tools", Just (encodeValue textCodec workflowTools))
         , ("outputs", Just (encodeValue textCodec workflowOutputs))
         , ("handoff", Just (encodeValue textCodec workflowHandoff))
+        , ("handoffWorkflows", if null workflowHandoffWorkflows then Nothing else Just (encodeValue (listCodec textCodec) workflowHandoffWorkflows))
         , ("approval", Just (encodeValue textCodec workflowApproval))
+        , ("approvalPerson", encodeValue userIdCodec <$> workflowApprovalPerson)
+        , ("approvalPermission", encodeValue permissionCodec <$> workflowApprovalPermission)
         , ("status", Just (encodeValue knowledgeCodec workflowStatus))
         , ("evidence", Just (encodeValue textCodec workflowEvidence))
         ]
@@ -71,12 +79,16 @@ workflowCodec = Codec encode decode
         <$> field textCodec o "id"
         <*> field textCodec o "name"
         <*> field textCodec o "role"
+        <*> optionalField userIdCodec o "rolePerson"
         <*> field textCodec o "trigger"
         <*> field textCodec o "inputs"
         <*> field textCodec o "tools"
         <*> field textCodec o "outputs"
         <*> field textCodec o "handoff"
+        <*> (fromMaybe [] <$> optionalField (listCodec textCodec) o "handoffWorkflows")
         <*> field textCodec o "approval"
+        <*> optionalField userIdCodec o "approvalPerson"
+        <*> optionalField permissionCodec o "approvalPermission"
         <*> field knowledgeCodec o "status"
         <*> field textCodec o "evidence"
 

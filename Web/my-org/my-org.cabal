@@ -30,11 +30,13 @@ extra-source-files:
     static/src/Page.elm
     static/src/Remote.elm
     static/src/Api/Activity.elm
+    static/src/Api/Agents.elm
     static/src/Api/Command.elm
     static/src/Api/Decode.elm
     static/src/Api/Discovery.elm
     static/src/Api/Http.elm
     static/src/Api/Path.elm
+    static/src/App/Agents.elm
     static/src/App/Config.elm
     static/src/App/Discovery.elm
     static/src/App/Drafts.elm
@@ -43,6 +45,7 @@ extra-source-files:
     static/src/App/PageState.elm
     static/src/App/Session.elm
     static/src/App/Update.elm
+    static/src/Domain/Agent.elm
     static/src/Domain/Discovery.elm
     static/src/Domain/Permission.elm
     static/src/Form/Action.elm
@@ -51,6 +54,7 @@ extra-source-files:
     static/src/Form/Review.elm
     static/src/Form/Snapshot.elm
     static/src/Page/Activity.elm
+    static/src/Page/Agents.elm
     static/src/Page/Authorities.elm
     static/src/Page/Discovery.elm
     static/src/Page/Goals.elm
@@ -61,6 +65,7 @@ extra-source-files:
     static/src/Page/Results.elm
     static/src/Page/Settings.elm
     static/src/Ui/Activity.elm
+    static/src/Ui/AgentGraph.elm
     static/src/Ui/Common.elm
     static/src/Ui/Form.elm
     static/src/Ui/Guide.elm
@@ -68,6 +73,7 @@ extra-source-files:
     static/src/Ui/ListView.elm
     static/src/Ui/ResponsibilityGraph.elm
     static/tests/ActivityTest.elm
+    static/tests/AgentTest.elm
     static/tests/AppFixture.elm
     static/tests/DecoderTest.elm
     static/tests/DiscoveryPageTest.elm
@@ -97,6 +103,7 @@ library
   exposed-modules:
       Lib
       MyOrg.Application
+      MyOrg.Application.Command.Agents
       MyOrg.Application.Command.Authority
       MyOrg.Application.Command.Discovery
       MyOrg.Application.Command.Goals
@@ -111,6 +118,8 @@ library
       MyOrg.Application.ReadModel
       MyOrg.Application.Runtime
       MyOrg.Demo
+      MyOrg.Domain.Agent
+      MyOrg.Domain.AgentDraft
       MyOrg.Domain.Analysis
       MyOrg.Domain.Authority
       MyOrg.Domain.Compiler
@@ -141,12 +150,14 @@ library
       MyOrg.Http.Route
       MyOrg.Infrastructure.FileStore
       MyOrg.Infrastructure.SQLiteStore
+      MyOrg.Presentation.Agent
       MyOrg.Presentation.Analysis
       MyOrg.Presentation.Diagnostic
       MyOrg.Presentation.Error
       MyOrg.Presentation.Event
       MyOrg.Presentation.Review
       MyOrg.Registry
+      MyOrg.Serialization.Agent
       MyOrg.Serialization.Authority
       MyOrg.Serialization.Codec
       MyOrg.Serialization.Discovery
@@ -193,6 +204,7 @@ library
     , stm
     , text
     , time
+    , unix
     , wai
     , warp
   default-language: GHC2021
@@ -233,6 +245,8 @@ test-suite my-org-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      AgentSpec
+      AgentsSmokeSpec
       ApiSmokeSpec
       ContractSpec
       DeleteSmokeSpec

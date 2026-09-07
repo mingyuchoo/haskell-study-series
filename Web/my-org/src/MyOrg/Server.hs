@@ -8,6 +8,7 @@ import Data.ByteString qualified as BS
 import Data.ByteString.Lazy qualified as BL
 import Data.Text (Text)
 import Data.Text qualified as T
+import Data.Text.Encoding qualified as TE
 import Data.Time (getCurrentTime)
 import MyOrg.Application.Query (executeQuery)
 import MyOrg.Http.Codec (toWire)
@@ -46,8 +47,10 @@ application store request respond
       case readRoute (pathInfo request) of
         Nothing -> failure status404 "경로를 찾을 수 없습니다."
         Just query -> case executeQuery now registry query of
-          Left err    -> failure (errorStatus err) (describeError err)
-          Right value -> json status200 (encodeQueryResult value)
+          Left err -> failure (errorStatus err) (describeError err)
+          Right value -> case encodeQueryText value of
+            Just document -> markdown document
+            Nothing       -> json status200 (encodeQueryResult value)
   | requestMethod request `elem` [methodPost, methodPatch, methodDelete] = do
       if lookup hContentType (requestHeaders request) /= Just "application/json"
         then failure status415 "Content-Type: application/json이 필요합니다."
@@ -78,6 +81,17 @@ application store request respond
             status
             [(hContentType, "application/json; charset=utf-8"), ("Cache-Control", "no-store")]
             (encode value)
+        )
+    markdown :: Text -> IO ResponseReceived
+    markdown document =
+      respond
+        ( responseLBS
+            status200
+            [ (hContentType, "text/markdown; charset=utf-8")
+            , ("Cache-Control", "no-store")
+            , ("Content-Disposition", "attachment; filename=\"agents.md\"")
+            ]
+            (BL.fromStrict (TE.encodeUtf8 document))
         )
     failure :: Status -> Text -> IO ResponseReceived
     failure status message = json status (object ["error" .= message])

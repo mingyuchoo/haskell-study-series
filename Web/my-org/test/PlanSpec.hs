@@ -11,6 +11,7 @@ import MyOrg.Application
 import MyOrg.Application.Persistence
 import MyOrg.Application.Plan
 import MyOrg.Application.Runtime qualified as Runtime
+import MyOrg.Demo (demoEvents)
 import MyOrg.Domain.Event
 import MyOrg.Registry
 import MyOrg.Types
@@ -39,7 +40,8 @@ spec = describe "pure command planning" $ do
       `shouldBe` Left (VersionConflict 1 2)
   it "plans a complete demo batch after unrelated events without changing their state" $ do
     additions <- either (fail . show) pure (planDemo later history)
-    map storedSeq additions `shouldBe` [4 .. 55]
+    generated <- either (fail . show) pure (demoEvents later)
+    map storedSeq additions `shouldBe` [4 .. 3 + length generated]
     old <- either (fail . show) pure (replayRegistry history)
     next <- either (fail . show) pure (replayRegistry (history <> additions))
     map (\oid -> Map.lookup oid (registryStates next)) [aid, bid]

@@ -201,6 +201,20 @@ interpret raw =
             in
             { event | detail = detail (at 1 D.string) }
 
+        "DiscoverySaved" ->
+            let
+                event =
+                    target "survey" ""
+            in
+            { event | detail = "범위: " ++ field "scope" ++ " · 업무 " ++ detail (D.field "workflows" (D.list D.value |> D.map (List.length >> String.fromInt))) ++ "건 · 검토 " ++ read (D.at [ "review", "status" ] D.string) contents }
+
+        "AgentRolesSaved" ->
+            let
+                event =
+                    target "agents" ""
+            in
+            { event | detail = "역할 " ++ detail (D.list D.value |> D.map (List.length >> String.fromInt)) ++ "개: " ++ (D.decodeValue (D.list (D.field "name" D.string)) contents |> Result.withDefault [] |> String.join ", ") }
+
         _ ->
             { empty | tag = tag }
 

@@ -100,7 +100,7 @@ tests =
                     ( failed, effects ) =
                         update (Saved saving.session.request AddPerson (Err "conflict")) saving
                 in
-                Expect.equal ( "Alice", [ LoadWorkspace (saving.session.request + 1) "org-a", LoadDiscovery (saving.session.request + 1) "org-a" ], Idle ) ( get failed AddPerson "name", effects, failed.session.saving )
+                Expect.equal ( "Alice", [ LoadWorkspace (saving.session.request + 1) "org-a", LoadDiscovery (saving.session.request + 1) "org-a", LoadAgents (saving.session.request + 1) "org-a" ], Idle ) ( get failed AddPerson "name", effects, failed.session.saving )
         , test "organization navigation emits the new scope and generation while same scope stays local" <|
             \_ ->
                 let
@@ -108,7 +108,7 @@ tests =
                         update (Navigate Dashboard (Just "org-b")) ready
                 in
                 Expect.all
-                    [ \_ -> Expect.equal ( Just "org-b", ready.session.request + 1, [ LoadWorkspace (ready.session.request + 1) "org-b", LoadDiscovery (ready.session.request + 1) "org-b" ] ) ( changed.session.org, changed.session.request, effects )
+                    [ \_ -> Expect.equal ( Just "org-b", ready.session.request + 1, [ LoadWorkspace (ready.session.request + 1) "org-b", LoadDiscovery (ready.session.request + 1) "org-b", LoadAgents (ready.session.request + 1) "org-b" ] ) ( changed.session.org, changed.session.request, effects )
                     , \_ -> update (Navigate Reviews (Just "org-a")) ready |> Tuple.second |> Expect.equal []
                     , \_ -> update (Navigate Organizations Nothing) changed |> Tuple.second |> Expect.equal [ LoadOrganizations (changed.session.request + 1) ]
                     , \_ -> init { seed = "test", today = "2026-01-01", deadline = "2026-12-31" } |> Tuple.second |> Expect.equal [ LoadOrganizations 1 ]

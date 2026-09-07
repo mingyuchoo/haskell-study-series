@@ -6,6 +6,7 @@ type Page
     | Discovery
     | Workflows
     | AgentDrafts
+    | AgentGraph
     | People
     | Dashboard
     | Responsibility
@@ -30,6 +31,9 @@ pageName page =
 
         AgentDrafts ->
             "에이전트 초안"
+
+        AgentGraph ->
+            "에이전트 구조"
 
         People ->
             "구성원"

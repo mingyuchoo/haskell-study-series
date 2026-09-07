@@ -1,9 +1,11 @@
-module Api.Http exposing (discovery, errorText, organizations, send, workspace)
+module Api.Http exposing (agents, discovery, errorText, organizations, send, workspace)
 
+import Api.Agents
 import Api.Decode exposing (..)
 import Api.Discovery
 import Api.Path exposing (orgPath)
 import Domain exposing (Summary, Workspace)
+import Domain.Agent
 import Domain.Discovery exposing (Snapshot)
 import Http
 import Json.Decode as D
@@ -73,3 +75,8 @@ send onResult method path body =
 discovery : String -> (Result Http.Error Snapshot -> msg) -> Cmd msg
 discovery org onResult =
     Http.get { url = orgPath org "discovery", expect = Http.expectJson onResult Api.Discovery.decoder }
+
+
+agents : String -> (Result Http.Error Domain.Agent.Snapshot -> msg) -> Cmd msg
+agents org onResult =
+    Http.get { url = orgPath org "agents", expect = Http.expectJson onResult Api.Agents.decoder }

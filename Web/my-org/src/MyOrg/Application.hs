@@ -4,6 +4,7 @@ module MyOrg.Application
   ) where
 
 import Data.Time (UTCTime)
+import MyOrg.Application.Command.Agents qualified as Agents
 import MyOrg.Application.Command.Authority qualified as Authority
 import MyOrg.Application.Command.Discovery qualified as Discovery
 import MyOrg.Application.Command.Goals qualified as Goals
@@ -36,3 +37,4 @@ executeCommand now st command = fmap pure $ case command of
   EvaluateGoal gid -> Review.evaluateGoalResult now st gid
   HoldReview rid gid learnings decisions note -> Review.holdReview now st rid gid learnings decisions note
   SaveDiscovery document version -> Discovery.saveDiscovery st document version
+  SaveAgentRoles agents version -> Agents.saveAgentRoles st agents version

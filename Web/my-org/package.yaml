@@ -70,6 +70,7 @@ library:
   source-dirs: src
   dependencies:
   - http-types
+  - unix
   - sqlite-simple
   - filepath
   - servant

@@ -21,6 +21,7 @@ readRoute :: [Text] -> Maybe Query
 readRoute path = case path of
   ["api", "organizations"] -> Just ListOrganizations
   ["api", "organizations", oid] -> Just (OrganizationSummaryQuery (OrgId oid))
+  ["api", "organizations", oid, "agents", "export"] -> Just (AgentExportQuery (OrgId oid))
   ["api", "organizations", oid, "people", uid] -> Just (PersonQuery (SelectedOrganization (OrgId oid)) (UserId uid))
   ["api", "people", uid] -> Just (PersonQuery SoleOrganization (UserId uid))
   ["api", "organizations", oid, resource] -> OrganizationQuery (SelectedOrganization (OrgId oid)) <$> resourceName resource
@@ -37,6 +38,7 @@ readRoute path = case path of
       "events" -> Just EventsResource
       "reviews" -> Just ReviewsResource
       "discovery" -> Just DiscoveryResource
+      "agents" -> Just AgentsResource
       _ -> Nothing
 
 writeRoute
@@ -68,7 +70,7 @@ writeRoute method path = case (method, path) of
 
 knownCommand :: [Text] -> Bool
 knownCommand path = case path of
-  ["api", name] -> name `elem` ["people", "goals", "evaluations", "reviews", "discovery"]
+  ["api", name] -> name `elem` ["people", "goals", "evaluations", "reviews", "discovery", "agents"]
   ["api", "goals", _, action] -> action `elem` ["owner", "authority", "activate", "results", "strategy"]
   ["api", "people", _, action] -> action `elem` ["authority", "deactivate"]
   _ -> False
@@ -79,6 +81,7 @@ parseCommand path = withObject "command" $ \o -> do
   command <- case path of
     ["api", "organizations"] -> CreateOrganization <$> field o "id" <*> field o "name"
     ["api", "discovery"] -> SaveDiscovery <$> field o "discovery" <*> field o "expectedVersion"
+    ["api", "agents"] -> SaveAgentRoles <$> field o "agents" <*> field o "expectedVersion"
     ["api", "people"] -> AddEmployee <$> parseWire (Object o) <*> parseWire (Object o)
     ["api", "people", uid, "deactivate"] ->
       DeactivatePerson (UserId uid)

@@ -519,11 +519,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.a4.ao === region.bq.ao)
+	if (region.a7.ar === region.bs.ar)
 	{
-		return 'on line ' + region.a4.ao;
+		return 'on line ' + region.a7.ar;
 	}
-	return 'on lines ' + region.a4.ao + ' through ' + region.bq.ao;
+	return 'on lines ' + region.a7.ar + ' through ' + region.bs.ar;
 }
 
 
@@ -1857,9 +1857,9 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.$7,
-		impl.eJ,
-		impl.eu,
+		impl.dy,
+		impl.eV,
+		impl.eF,
 		function() { return function() {} }
 	);
 });
@@ -2719,9 +2719,9 @@ var _VirtualDom_mapEventTuple = F2(function(func, tuple)
 var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
-		dw: func(record.dw),
-		a6: record.a6,
-		a2: record.a2
+		dH: func(record.dH),
+		a8: record.a8,
+		a4: record.a4
 	}
 });
 
@@ -2989,11 +2989,11 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 		// 3 = Custom
 
 		var value = result.a;
-		var message = !tag ? value : tag < 3 ? value.a : value.dw;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.a6;
+		var message = !tag ? value : tag < 3 ? value.a : value.dH;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.a8;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
-			(tag == 2 ? value.b : tag == 3 && value.a2) && event.preventDefault(),
+			(tag == 2 ? value.b : tag == 3 && value.a4) && event.preventDefault(),
 			eventNode
 		);
 		var tagger;
@@ -3943,11 +3943,11 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.$7,
-		impl.eJ,
-		impl.eu,
+		impl.dy,
+		impl.eV,
+		impl.eF,
 		function(sendToApp, initialModel) {
-			var view = impl.eK;
+			var view = impl.eW;
 			/**/
 			var domNode = args['node'];
 			//*/
@@ -3979,12 +3979,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.$7,
-		impl.eJ,
-		impl.eu,
+		impl.dy,
+		impl.eV,
+		impl.eF,
 		function(sendToApp, initialModel) {
-			var divertHrefToApp = impl.a3 && impl.a3(sendToApp)
-			var view = impl.eK;
+			var divertHrefToApp = impl.a6 && impl.a6(sendToApp)
+			var view = impl.eW;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
 			var currNode = _VirtualDom_virtualize(bodyNode);
@@ -3992,12 +3992,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 			{
 				_VirtualDom_divertHrefToApp = divertHrefToApp;
 				var doc = view(model);
-				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.cB);
+				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.cF);
 				var patches = _VirtualDom_diff(currNode, nextNode);
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.cg) && (_VirtualDom_doc.title = title = doc.cg);
+				(title !== doc.ci) && (_VirtualDom_doc.title = title = doc.ci);
 			});
 		}
 	);
@@ -4053,12 +4053,12 @@ function _Browser_makeAnimator(model, draw)
 
 function _Browser_application(impl)
 {
-	var onUrlChange = impl.dP;
-	var onUrlRequest = impl.dQ;
+	var onUrlChange = impl.d_;
+	var onUrlRequest = impl.d$;
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
-		a3: function(sendToApp)
+		a6: function(sendToApp)
 		{
 			key.a = sendToApp;
 			_Browser_window.addEventListener('popstate', key);
@@ -4075,7 +4075,7 @@ function _Browser_application(impl)
 					sendToApp(onUrlRequest(
 						(next
 							&& curr.bX === next.bX
-							&& curr.bB === next.bB
+							&& curr.bC === next.bC
 							&& curr.bU.a === next.bU.a
 						)
 							? $elm$browser$Browser$Internal(next)
@@ -4084,13 +4084,13 @@ function _Browser_application(impl)
 				}
 			});
 		},
-		$7: function(flags)
+		dy: function(flags)
 		{
-			return A3(impl.$7, flags, _Browser_getUrl(), key);
+			return A3(impl.dy, flags, _Browser_getUrl(), key);
 		},
-		eK: impl.eK,
-		eJ: impl.eJ,
-		eu: impl.eu
+		eW: impl.eW,
+		eV: impl.eV,
+		eF: impl.eF
 	});
 }
 
@@ -4156,17 +4156,17 @@ var _Browser_decodeEvent = F2(function(decoder, event)
 function _Browser_visibilityInfo()
 {
 	return (typeof _VirtualDom_doc.hidden !== 'undefined')
-		? { dl: 'hidden', cJ: 'visibilitychange' }
+		? { dt: 'hidden', cN: 'visibilitychange' }
 		:
 	(typeof _VirtualDom_doc.mozHidden !== 'undefined')
-		? { dl: 'mozHidden', cJ: 'mozvisibilitychange' }
+		? { dt: 'mozHidden', cN: 'mozvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.msHidden !== 'undefined')
-		? { dl: 'msHidden', cJ: 'msvisibilitychange' }
+		? { dt: 'msHidden', cN: 'msvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.webkitHidden !== 'undefined')
-		? { dl: 'webkitHidden', cJ: 'webkitvisibilitychange' }
-		: { dl: 'hidden', cJ: 'visibilitychange' };
+		? { dt: 'webkitHidden', cN: 'webkitvisibilitychange' }
+		: { dt: 'hidden', cN: 'visibilitychange' };
 }
 
 
@@ -4247,12 +4247,12 @@ var _Browser_call = F2(function(functionName, id)
 function _Browser_getViewport()
 {
 	return {
-		b4: _Browser_getScene(),
-		ci: {
-			az: _Browser_window.pageXOffset,
-			af: _Browser_window.pageYOffset,
-			cl: _Browser_doc.documentElement.clientWidth,
-			bA: _Browser_doc.documentElement.clientHeight
+		b5: _Browser_getScene(),
+		ck: {
+			aD: _Browser_window.pageXOffset,
+			ag: _Browser_window.pageYOffset,
+			cn: _Browser_doc.documentElement.clientWidth,
+			bB: _Browser_doc.documentElement.clientHeight
 		}
 	};
 }
@@ -4262,8 +4262,8 @@ function _Browser_getScene()
 	var body = _Browser_doc.body;
 	var elem = _Browser_doc.documentElement;
 	return {
-		cl: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
-		bA: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
+		cn: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
+		bB: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
 
@@ -4286,15 +4286,15 @@ function _Browser_getViewportOf(id)
 	return _Browser_withNode(id, function(node)
 	{
 		return {
-			b4: {
-				cl: node.scrollWidth,
-				bA: node.scrollHeight
+			b5: {
+				cn: node.scrollWidth,
+				bB: node.scrollHeight
 			},
-			ci: {
-				az: node.scrollLeft,
-				af: node.scrollTop,
-				cl: node.clientWidth,
-				bA: node.clientHeight
+			ck: {
+				aD: node.scrollLeft,
+				ag: node.scrollTop,
+				cn: node.clientWidth,
+				bB: node.clientHeight
 			}
 		};
 	});
@@ -4324,18 +4324,18 @@ function _Browser_getElement(id)
 		var x = _Browser_window.pageXOffset;
 		var y = _Browser_window.pageYOffset;
 		return {
-			b4: _Browser_getScene(),
-			ci: {
-				az: x,
-				af: y,
-				cl: _Browser_doc.documentElement.clientWidth,
-				bA: _Browser_doc.documentElement.clientHeight
+			b5: _Browser_getScene(),
+			ck: {
+				aD: x,
+				ag: y,
+				cn: _Browser_doc.documentElement.clientWidth,
+				bB: _Browser_doc.documentElement.clientHeight
 			},
-			c4: {
-				az: x + rect.left,
-				af: y + rect.top,
-				cl: rect.width,
-				bA: rect.height
+			c9: {
+				aD: x + rect.left,
+				ag: y + rect.top,
+				cn: rect.width,
+				bB: rect.height
 			}
 		};
 	});
@@ -4380,25 +4380,25 @@ var _Http_toTask = F3(function(router, toTask, request)
 	return _Scheduler_binding(function(callback)
 	{
 		function done(response) {
-			callback(toTask(request.aC.a(response)));
+			callback(toTask(request.an.a(response)));
 		}
 
 		var xhr = new XMLHttpRequest();
 		xhr.addEventListener('error', function() { done($elm$http$Http$NetworkError_); });
 		xhr.addEventListener('timeout', function() { done($elm$http$Http$Timeout_); });
-		xhr.addEventListener('load', function() { done(_Http_toResponse(request.aC.b, xhr)); });
-		$elm$core$Maybe$isJust(request.eE) && _Http_track(router, xhr, request.eE.a);
+		xhr.addEventListener('load', function() { done(_Http_toResponse(request.an.b, xhr)); });
+		$elm$core$Maybe$isJust(request.eQ) && _Http_track(router, xhr, request.eQ.a);
 
 		try {
-			xhr.open(request.dx, request.aU, true);
+			xhr.open(request.dI, request.aB, true);
 		} catch (e) {
-			return done($elm$http$Http$BadUrl_(request.aU));
+			return done($elm$http$Http$BadUrl_(request.aB));
 		}
 
 		_Http_configureRequest(xhr, request);
 
-		request.cB.a && xhr.setRequestHeader('Content-Type', request.cB.a);
-		xhr.send(request.cB.b);
+		request.cF.a && xhr.setRequestHeader('Content-Type', request.cF.a);
+		xhr.send(request.cF.b);
 
 		return function() { xhr.c = true; xhr.abort(); };
 	});
@@ -4409,13 +4409,13 @@ var _Http_toTask = F3(function(router, toTask, request)
 
 function _Http_configureRequest(xhr, request)
 {
-	for (var headers = request.dj; headers.b; headers = headers.b) // WHILE_CONS
+	for (var headers = request.dr; headers.b; headers = headers.b) // WHILE_CONS
 	{
 		xhr.setRequestHeader(headers.a.a, headers.a.b);
 	}
-	xhr.timeout = request.ez.a || 0;
-	xhr.responseType = request.aC.d;
-	xhr.withCredentials = request.cr;
+	xhr.timeout = request.eL.a || 0;
+	xhr.responseType = request.an.d;
+	xhr.withCredentials = request.ct;
 }
 
 
@@ -4436,10 +4436,10 @@ function _Http_toResponse(toBody, xhr)
 function _Http_toMetadata(xhr)
 {
 	return {
-		aU: xhr.responseURL,
-		ep: xhr.status,
-		eq: xhr.statusText,
-		dj: _Http_parseHeaders(xhr.getAllResponseHeaders())
+		aB: xhr.responseURL,
+		eA: xhr.status,
+		eB: xhr.statusText,
+		dr: _Http_parseHeaders(xhr.getAllResponseHeaders())
 	};
 }
 
@@ -4534,15 +4534,15 @@ function _Http_track(router, xhr, tracker)
 	xhr.upload.addEventListener('progress', function(event) {
 		if (xhr.c) { return; }
 		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Sending({
-			ej: event.loaded,
-			b8: event.total
+			et: event.loaded,
+			b9: event.total
 		}))));
 	});
 	xhr.addEventListener('progress', function(event) {
 		if (xhr.c) { return; }
 		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Receiving({
-			d0: event.loaded,
-			b8: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
+			ea: event.loaded,
+			b9: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
 		}))));
 	});
 }
@@ -5076,7 +5076,7 @@ var $elm$url$Url$Http = 0;
 var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {bv: fragment, bB: host, bS: path, bU: port_, bX: protocol, d_: query};
+		return {bw: fragment, bC: host, bS: path, bU: port_, bX: protocol, d9: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5358,18 +5358,23 @@ var $elm$browser$Browser$element = _Browser_element;
 var $elm$json$Json$Decode$field = _Json_decodeField;
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: -2};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
-var $author$project$App$Discovery$init = {O: $elm$core$Dict$empty, t: $elm$core$Dict$empty, I: $elm$core$Dict$empty, aG: false};
-var $author$project$App$Drafts$init = {bm: $elm$core$Maybe$Nothing, t: $elm$core$Dict$empty, z: $elm$core$Dict$empty, _: $elm$core$Dict$empty, D: $elm$core$Dict$empty, b6: 0};
+var $author$project$App$Agents$init = {q: $elm$core$Dict$empty, I: $elm$core$Dict$empty, aJ: false, U: $elm$core$Dict$empty};
+var $author$project$App$Discovery$init = {P: $elm$core$Dict$empty, q: $elm$core$Dict$empty, I: $elm$core$Dict$empty, aJ: false};
+var $author$project$App$Drafts$init = {bo: $elm$core$Maybe$Nothing, q: $elm$core$Dict$empty, z: $elm$core$Dict$empty, ab: $elm$core$Dict$empty, D: $elm$core$Dict$empty, b7: 0};
 var $author$project$Page$Organizations = 0;
-var $author$project$Ui$Activity$init = {de: '', dr: '', d_: '', b1: $elm$core$Maybe$Nothing, eI: ''};
-var $author$project$Ui$ResponsibilityGraph$init = {W: true, d_: '', ei: $elm$core$Maybe$Nothing, as: false, L: false, F: 1};
-var $author$project$App$PageState$init = {V: $author$project$Ui$Activity$init, aB: $elm$core$Maybe$Nothing, am: $author$project$Ui$ResponsibilityGraph$init, aF: false, ap: $elm$core$Dict$empty, aa: 0, aK: '', aL: 'active', aR: $elm$core$Maybe$Nothing};
+var $author$project$Ui$Activity$init = {dl: '', dB: '', d9: '', b1: $elm$core$Maybe$Nothing, eU: ''};
+var $author$project$Ui$ResponsibilityGraph$init = {Y: true, d9: '', es: $elm$core$Maybe$Nothing, av: false, L: false, F: 1};
+var $author$project$App$PageState$init = {X: $author$project$Ui$Activity$init, aF: $elm$core$Maybe$Nothing, ap: $author$project$Ui$ResponsibilityGraph$init, aI: false, as: $elm$core$Dict$empty, ac: 0, aN: '', aO: 'active', aU: $elm$core$Maybe$Nothing};
 var $author$project$App$Session$Idle = {$: 0};
 var $author$project$Remote$Loading = {$: 0};
-var $author$project$App$Session$init = {al: false, aI: $elm$core$Maybe$Nothing, aJ: $author$project$Remote$Loading, aN: 0, ar: $author$project$App$Session$Idle, at: true, a9: $author$project$Remote$Loading};
+var $author$project$App$Session$init = {ao: false, aL: $elm$core$Maybe$Nothing, aM: $author$project$Remote$Loading, aQ: 0, au: $author$project$App$Session$Idle, aw: true, bb: $author$project$Remote$Loading};
 var $author$project$App$Model$init = function (flags) {
-	return {X: $author$project$App$Discovery$init, br: false, aE: flags, w: $author$project$App$Drafts$init, bN: '', bR: $author$project$App$PageState$init, ab: $author$project$App$Session$init};
+	return {N: $author$project$App$Agents$init, Z: $author$project$App$Discovery$init, bt: false, aH: flags, w: $author$project$App$Drafts$init, bN: '', bR: $author$project$App$PageState$init, ad: $author$project$App$Session$init};
 };
+var $author$project$App$Effect$LoadAgents = F2(
+	function (a, b) {
+		return {$: 5, a: a, b: b};
+	});
 var $author$project$App$Effect$LoadDiscovery = F2(
 	function (a, b) {
 		return {$: 3, a: a, b: b};
@@ -5393,16 +5398,16 @@ var $author$project$App$Effect$LoadWorkspace = F2(
 		return {$: 1, a: a, b: b};
 	});
 var $author$project$App$Session$refresh = function (state) {
-	var token = state.aN + 1;
+	var token = state.aQ + 1;
 	var next = _Utils_update(
 		state,
-		{al: false, aN: token, at: true});
+		{ao: false, aQ: token, aw: true});
 	return _Utils_Tuple2(
 		next,
 		_List_fromArray(
 			[
 				function () {
-				var _v0 = state.aI;
+				var _v0 = state.aL;
 				if (_v0.$ === 1) {
 					return $author$project$App$Effect$LoadOrganizations(token);
 				} else {
@@ -5412,11 +5417,17 @@ var $author$project$App$Session$refresh = function (state) {
 			}()
 			]));
 };
+var $author$project$App$Update$setAgentsLoading = F2(
+	function (loading, state) {
+		return _Utils_update(
+			state,
+			{aJ: loading});
+	});
 var $author$project$App$Update$setDiscoveryLoading = F2(
 	function (loading, state) {
 		return _Utils_update(
 			state,
-			{aG: loading});
+			{aJ: loading});
 	});
 var $elm$core$Maybe$withDefault = F2(
 	function (_default, maybe) {
@@ -5429,21 +5440,25 @@ var $elm$core$Maybe$withDefault = F2(
 	});
 var $author$project$App$Update$refresh = function (model) {
 	var forms = model.w;
-	var _v0 = $author$project$App$Session$refresh(model.ab);
+	var _v0 = $author$project$App$Session$refresh(model.ad);
 	var session = _v0.a;
 	var effects = _v0.b;
 	return _Utils_Tuple2(
 		_Utils_update(
 			model,
 			{
-				X: A2(
+				N: A2(
+					$author$project$App$Update$setAgentsLoading,
+					!_Utils_eq(session.aL, $elm$core$Maybe$Nothing),
+					model.N),
+				Z: A2(
 					$author$project$App$Update$setDiscoveryLoading,
-					!_Utils_eq(session.aI, $elm$core$Maybe$Nothing),
-					model.X),
+					!_Utils_eq(session.aL, $elm$core$Maybe$Nothing),
+					model.Z),
 				w: _Utils_update(
 					forms,
-					{bm: $elm$core$Maybe$Nothing}),
-				ab: session
+					{bo: $elm$core$Maybe$Nothing}),
+				ad: session
 			}),
 		_Utils_ap(
 			effects,
@@ -5455,10 +5470,11 @@ var $author$project$App$Update$refresh = function (model) {
 					function (org) {
 						return _List_fromArray(
 							[
-								A2($author$project$App$Effect$LoadDiscovery, session.aN, org)
+								A2($author$project$App$Effect$LoadDiscovery, session.aQ, org),
+								A2($author$project$App$Effect$LoadAgents, session.aQ, org)
 							]);
 					},
-					session.aI))));
+					session.aL))));
 };
 var $author$project$App$Update$init = function (flags) {
 	return $author$project$App$Update$refresh(
@@ -5467,6 +5483,10 @@ var $author$project$App$Update$init = function (flags) {
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
+var $author$project$App$Update$GotAgents = F3(
+	function (a, b, c) {
+		return {$: 31, a: a, b: b, c: c};
+	});
 var $author$project$App$Update$GotDiscovery = F3(
 	function (a, b, c) {
 		return {$: 23, a: a, b: b, c: c};
@@ -5479,49 +5499,26 @@ var $author$project$App$Update$GotWorkspace = F2(
 	function (a, b) {
 		return {$: 8, a: a, b: b};
 	});
-var $author$project$App$Update$NoOp = {$: 31};
+var $author$project$App$Update$NoOp = {$: 38};
 var $author$project$App$Update$Saved = F3(
 	function (a, b, c) {
 		return {$: 13, a: a, b: b, c: c};
+	});
+var $author$project$App$Update$SavedAgents = F3(
+	function (a, b, c) {
+		return {$: 35, a: a, b: b, c: c};
 	});
 var $author$project$App$Update$SavedDiscovery = F3(
 	function (a, b, c) {
 		return {$: 28, a: a, b: b, c: c};
 	});
-var $elm$core$Basics$composeL = F3(
-	function (g, f, x) {
-		return g(
-			f(x));
+var $author$project$Domain$Agent$Snapshot = F5(
+	function (version, agents, drafts, diagnostics, draftDiagnostics) {
+		return {N: agents, c3: diagnostics, c7: draftDiagnostics, q: drafts, aC: version};
 	});
-var $elm$core$Task$onError = _Scheduler_onError;
-var $elm$core$Task$attempt = F2(
-	function (resultToMessage, task) {
-		return $elm$core$Task$command(
-			A2(
-				$elm$core$Task$onError,
-				A2(
-					$elm$core$Basics$composeL,
-					A2($elm$core$Basics$composeL, $elm$core$Task$succeed, resultToMessage),
-					$elm$core$Result$Err),
-				A2(
-					$elm$core$Task$andThen,
-					A2(
-						$elm$core$Basics$composeL,
-						A2($elm$core$Basics$composeL, $elm$core$Task$succeed, resultToMessage),
-						$elm$core$Result$Ok),
-					task)));
-	});
-var $author$project$Domain$Discovery$Snapshot = F2(
-	function (version, discovery) {
-		return {X: discovery, ay: version};
-	});
-var $author$project$Domain$Discovery$Document = F5(
-	function (scope, asOf, observations, workflows, review) {
-		return {cv: asOf, dO: observations, b1: review, eg: scope, eL: workflows};
-	});
-var $author$project$Domain$Discovery$Review = F2(
-	function (status, note) {
-		return {dN: note, a5: status};
+var $author$project$Domain$Diagnostic = F5(
+	function (severity, code, message, subject, details) {
+		return {cQ: code, c2: details, dH: message, ew: severity, eD: subject};
 	});
 var $author$project$Api$Decode$andMap = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
 var $author$project$Api$Decode$field = F2(
@@ -5530,10 +5527,73 @@ var $author$project$Api$Decode$field = F2(
 			A2($elm$json$Json$Decode$field, name, decoder));
 	});
 var $elm$json$Json$Decode$list = _Json_decodeList;
-var $author$project$Domain$Discovery$Observation = F5(
-	function (id, subject, detail, status, evidence) {
-		return {s: detail, bu: evidence, bC: id, a5: status, es: subject};
-	});
+var $elm$json$Json$Decode$string = _Json_decodeString;
+var $author$project$Api$Decode$diagnosticDecoder = A3(
+	$author$project$Api$Decode$field,
+	'details',
+	$elm$json$Json$Decode$list($elm$json$Json$Decode$string),
+	A3(
+		$author$project$Api$Decode$field,
+		'subject',
+		$elm$json$Json$Decode$string,
+		A3(
+			$author$project$Api$Decode$field,
+			'message',
+			$elm$json$Json$Decode$string,
+			A3(
+				$author$project$Api$Decode$field,
+				'code',
+				$elm$json$Json$Decode$string,
+				A3(
+					$author$project$Api$Decode$field,
+					'severity',
+					$elm$json$Json$Decode$string,
+					$elm$json$Json$Decode$succeed($author$project$Domain$Diagnostic))))));
+var $elm$json$Json$Decode$int = _Json_decodeInt;
+var $author$project$Domain$Agent$Role = function (id) {
+	return function (name) {
+		return function (sourceWorkflow) {
+			return function (task) {
+				return function (inputs) {
+					return function (outputs) {
+						return function (tools) {
+							return function (level) {
+								return function (approval) {
+									return function (handoffTo) {
+										return function (status) {
+											return function (evidence) {
+												return {cv: approval, de: evidence, dq: handoffTo, du: id, dz: inputs, dG: level, dO: name, d2: outputs, ex: sourceWorkflow, ez: status, eJ: task, eP: tools};
+											};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
+var $author$project$Domain$Agent$Permission = function (a) {
+	return {$: 1, a: a};
+};
+var $author$project$Domain$Agent$Person = function (a) {
+	return {$: 0, a: a};
+};
+var $elm$json$Json$Decode$oneOf = _Json_oneOf;
+var $author$project$Api$Agents$approvalDecoder = $elm$json$Json$Decode$oneOf(
+	_List_fromArray(
+		[
+			A2(
+			$elm$json$Json$Decode$map,
+			$author$project$Domain$Agent$Person,
+			A2($elm$json$Json$Decode$field, 'person', $elm$json$Json$Decode$string)),
+			A2(
+			$elm$json$Json$Decode$map,
+			$author$project$Domain$Agent$Permission,
+			A2($elm$json$Json$Decode$field, 'permission', $elm$json$Json$Decode$string))
+		]));
 var $elm$json$Json$Decode$fail = _Json_fail;
 var $elm$core$List$any = F2(
 	function (isOkay, list) {
@@ -5565,147 +5625,118 @@ var $elm$core$List$member = F2(
 			},
 			xs);
 	});
-var $elm$json$Json$Decode$string = _Json_decodeString;
-var $author$project$Api$Discovery$statusDecoder = A2(
+var $author$project$Api$Agents$levelDecoder = A2(
 	$elm$json$Json$Decode$andThen,
 	function (value) {
 		return A2(
 			$elm$core$List$member,
 			value,
 			_List_fromArray(
-				['confirmed', 'unknown', 'proposed'])) ? $elm$json$Json$Decode$succeed(value) : $elm$json$Json$Decode$fail('현황 확인 상태를 해석할 수 없습니다.');
+				['L0', 'L1', 'L2', 'L3'])) ? $elm$json$Json$Decode$succeed(value) : $elm$json$Json$Decode$fail('권한 등급을 해석할 수 없습니다.');
 	},
 	$elm$json$Json$Decode$string);
-var $author$project$Api$Discovery$observationDecoder = A3(
-	$author$project$Api$Decode$field,
-	'evidence',
-	$elm$json$Json$Decode$string,
-	A3(
-		$author$project$Api$Decode$field,
-		'status',
-		$author$project$Api$Discovery$statusDecoder,
-		A3(
-			$author$project$Api$Decode$field,
-			'detail',
-			$elm$json$Json$Decode$string,
-			A3(
-				$author$project$Api$Decode$field,
-				'subject',
-				$elm$json$Json$Decode$string,
-				A3(
-					$author$project$Api$Decode$field,
-					'id',
-					$elm$json$Json$Decode$string,
-					$elm$json$Json$Decode$succeed($author$project$Domain$Discovery$Observation))))));
-var $author$project$Api$Discovery$reviewStatusDecoder = A2(
-	$elm$json$Json$Decode$andThen,
-	function (value) {
-		return A2(
-			$elm$core$List$member,
-			value,
-			_List_fromArray(
-				['pending', 'reviewed'])) ? $elm$json$Json$Decode$succeed(value) : $elm$json$Json$Decode$fail('검토 상태를 해석할 수 없습니다.');
-	},
-	$elm$json$Json$Decode$string);
-var $author$project$Domain$Discovery$Workflow = function (id) {
-	return function (name) {
-		return function (role) {
-			return function (trigger) {
-				return function (inputs) {
-					return function (tools) {
-						return function (outputs) {
-							return function (handoff) {
-								return function (approval) {
-									return function (status) {
-										return function (evidence) {
-											return {ct: approval, bu: evidence, di: handoff, bC: id, dp: inputs, dD: name, dT: outputs, ee: role, a5: status, eD: tools, eF: trigger};
-										};
-									};
-								};
-							};
-						};
-					};
-				};
-			};
-		};
-	};
+var $elm$json$Json$Decode$keyValuePairs = _Json_decodeKeyValuePairs;
+var $elm$json$Json$Decode$null = _Json_decodeNull;
+var $elm$json$Json$Decode$nullable = function (decoder) {
+	return $elm$json$Json$Decode$oneOf(
+		_List_fromArray(
+			[
+				$elm$json$Json$Decode$null($elm$core$Maybe$Nothing),
+				A2($elm$json$Json$Decode$map, $elm$core$Maybe$Just, decoder)
+			]));
 };
-var $author$project$Api$Discovery$workflowDecoder = A3(
+var $elm$json$Json$Decode$value = _Json_decodeValue;
+var $author$project$Api$Decode$optional = F2(
+	function (name, decoder) {
+		return $elm$json$Json$Decode$oneOf(
+			_List_fromArray(
+				[
+					A2(
+					$elm$json$Json$Decode$field,
+					name,
+					$elm$json$Json$Decode$nullable(decoder)),
+					A2(
+					$elm$json$Json$Decode$andThen,
+					function (fields) {
+						return A2(
+							$elm$core$List$any,
+							A2(
+								$elm$core$Basics$composeR,
+								$elm$core$Tuple$first,
+								$elm$core$Basics$eq(name)),
+							fields) ? $elm$json$Json$Decode$fail('잘못된 필드 형식: ' + name) : $elm$json$Json$Decode$succeed($elm$core$Maybe$Nothing);
+					},
+					$elm$json$Json$Decode$keyValuePairs($elm$json$Json$Decode$value))
+				]));
+	});
+var $author$project$Api$Agents$roleDecoder = A3(
 	$author$project$Api$Decode$field,
 	'evidence',
 	$elm$json$Json$Decode$string,
 	A3(
 		$author$project$Api$Decode$field,
 		'status',
-		$author$project$Api$Discovery$statusDecoder,
+		$elm$json$Json$Decode$string,
 		A3(
 			$author$project$Api$Decode$field,
-			'approval',
-			$elm$json$Json$Decode$string,
-			A3(
-				$author$project$Api$Decode$field,
-				'handoff',
-				$elm$json$Json$Decode$string,
+			'handoffTo',
+			$elm$json$Json$Decode$list($elm$json$Json$Decode$string),
+			A2(
+				$author$project$Api$Decode$andMap,
+				A2($author$project$Api$Decode$optional, 'approvalBy', $author$project$Api$Agents$approvalDecoder),
 				A3(
 					$author$project$Api$Decode$field,
-					'outputs',
-					$elm$json$Json$Decode$string,
+					'permissionLevel',
+					$author$project$Api$Agents$levelDecoder,
 					A3(
 						$author$project$Api$Decode$field,
 						'tools',
-						$elm$json$Json$Decode$string,
+						$elm$json$Json$Decode$list($elm$json$Json$Decode$string),
 						A3(
 							$author$project$Api$Decode$field,
-							'inputs',
+							'outputs',
 							$elm$json$Json$Decode$string,
 							A3(
 								$author$project$Api$Decode$field,
-								'trigger',
+								'inputs',
 								$elm$json$Json$Decode$string,
 								A3(
 									$author$project$Api$Decode$field,
-									'role',
+									'task',
 									$elm$json$Json$Decode$string,
-									A3(
-										$author$project$Api$Decode$field,
-										'name',
-										$elm$json$Json$Decode$string,
+									A2(
+										$author$project$Api$Decode$andMap,
+										A2($author$project$Api$Decode$optional, 'sourceWorkflow', $elm$json$Json$Decode$string),
 										A3(
 											$author$project$Api$Decode$field,
-											'id',
+											'name',
 											$elm$json$Json$Decode$string,
-											$elm$json$Json$Decode$succeed($author$project$Domain$Discovery$Workflow))))))))))));
-var $author$project$Api$Discovery$documentDecoder = A3(
+											A3(
+												$author$project$Api$Decode$field,
+												'id',
+												$elm$json$Json$Decode$string,
+												$elm$json$Json$Decode$succeed($author$project$Domain$Agent$Role)))))))))))));
+var $author$project$Api$Agents$decoder = A3(
 	$author$project$Api$Decode$field,
-	'review',
-	A3(
-		$elm$json$Json$Decode$map2,
-		$author$project$Domain$Discovery$Review,
-		A2($elm$json$Json$Decode$field, 'status', $author$project$Api$Discovery$reviewStatusDecoder),
-		A2($elm$json$Json$Decode$field, 'note', $elm$json$Json$Decode$string)),
+	'draftDiagnostics',
+	$elm$json$Json$Decode$list($author$project$Api$Decode$diagnosticDecoder),
 	A3(
 		$author$project$Api$Decode$field,
-		'workflows',
-		$elm$json$Json$Decode$list($author$project$Api$Discovery$workflowDecoder),
+		'diagnostics',
+		$elm$json$Json$Decode$list($author$project$Api$Decode$diagnosticDecoder),
 		A3(
 			$author$project$Api$Decode$field,
-			'observations',
-			$elm$json$Json$Decode$list($author$project$Api$Discovery$observationDecoder),
+			'drafts',
+			$elm$json$Json$Decode$list($author$project$Api$Agents$roleDecoder),
 			A3(
 				$author$project$Api$Decode$field,
-				'asOf',
-				$elm$json$Json$Decode$string,
+				'agents',
+				$elm$json$Json$Decode$list($author$project$Api$Agents$roleDecoder),
 				A3(
 					$author$project$Api$Decode$field,
-					'scope',
-					$elm$json$Json$Decode$string,
-					$elm$json$Json$Decode$succeed($author$project$Domain$Discovery$Document))))));
-var $elm$json$Json$Decode$int = _Json_decodeInt;
-var $author$project$Api$Discovery$decoder = A3(
-	$elm$json$Json$Decode$map2,
-	$author$project$Domain$Discovery$Snapshot,
-	A2($elm$json$Json$Decode$field, 'version', $elm$json$Json$Decode$int),
-	A2($elm$json$Json$Decode$field, 'discovery', $author$project$Api$Discovery$documentDecoder));
+					'version',
+					$elm$json$Json$Decode$int,
+					$elm$json$Json$Decode$succeed($author$project$Domain$Agent$Snapshot))))));
 var $elm$json$Json$Decode$decodeString = _Json_runOnString;
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
@@ -6291,7 +6322,7 @@ var $elm$http$Http$resolve = F2(
 			case 3:
 				var metadata = response.a;
 				return $elm$core$Result$Err(
-					$elm$http$Http$BadStatus(metadata.ep));
+					$elm$http$Http$BadStatus(metadata.eA));
 			default:
 				var body = response.b;
 				return A2(
@@ -6319,7 +6350,7 @@ var $elm$http$Http$Request = function (a) {
 };
 var $elm$http$Http$State = F2(
 	function (reqs, subs) {
-		return {b_: reqs, cc: subs};
+		return {b$: reqs, ce: subs};
 	});
 var $elm$http$Http$init = $elm$core$Task$succeed(
 	A2($elm$http$Http$State, $elm$core$Dict$empty, _List_Nil));
@@ -6363,7 +6394,7 @@ var $elm$http$Http$updateReqs = F3(
 					return A2(
 						$elm$core$Task$andThen,
 						function (pid) {
-							var _v4 = req.eE;
+							var _v4 = req.eQ;
 							if (_v4.$ === 1) {
 								return A3($elm$http$Http$updateReqs, router, otherCmds, reqs);
 							} else {
@@ -6393,7 +6424,7 @@ var $elm$http$Http$onEffects = F4(
 				return $elm$core$Task$succeed(
 					A2($elm$http$Http$State, reqs, subs));
 			},
-			A3($elm$http$Http$updateReqs, router, cmds, state.b_));
+			A3($elm$http$Http$updateReqs, router, cmds, state.b$));
 	});
 var $elm$core$List$maybeCons = F3(
 	function (f, mx, xs) {
@@ -6436,7 +6467,7 @@ var $elm$http$Http$onSelfMsg = F3(
 				A2(
 					$elm$core$List$filterMap,
 					A3($elm$http$Http$maybeSend, router, tracker, progress),
-					state.cc)));
+					state.ce)));
 	});
 var $elm$http$Http$Cancel = function (a) {
 	return {$: 0, a: a};
@@ -6450,14 +6481,14 @@ var $elm$http$Http$cmdMap = F2(
 			var r = cmd.a;
 			return $elm$http$Http$Request(
 				{
-					cr: r.cr,
-					cB: r.cB,
-					aC: A2(_Http_mapExpect, func, r.aC),
-					dj: r.dj,
-					dx: r.dx,
-					ez: r.ez,
-					eE: r.eE,
-					aU: r.aU
+					ct: r.ct,
+					cF: r.cF,
+					an: A2(_Http_mapExpect, func, r.an),
+					dr: r.dr,
+					dI: r.dI,
+					eL: r.eL,
+					eQ: r.eQ,
+					aB: r.aB
 				});
 		}
 	});
@@ -6480,23 +6511,235 @@ var $elm$http$Http$subscription = _Platform_leaf('Http');
 var $elm$http$Http$request = function (r) {
 	return $elm$http$Http$command(
 		$elm$http$Http$Request(
-			{cr: false, cB: r.cB, aC: r.aC, dj: r.dj, dx: r.dx, ez: r.ez, eE: r.eE, aU: r.aU}));
+			{ct: false, cF: r.cF, an: r.an, dr: r.dr, dI: r.dI, eL: r.eL, eQ: r.eQ, aB: r.aB}));
 };
 var $elm$http$Http$get = function (r) {
 	return $elm$http$Http$request(
-		{cB: $elm$http$Http$emptyBody, aC: r.aC, dj: _List_Nil, dx: 'GET', ez: $elm$core$Maybe$Nothing, eE: $elm$core$Maybe$Nothing, aU: r.aU});
+		{cF: $elm$http$Http$emptyBody, an: r.an, dr: _List_Nil, dI: 'GET', eL: $elm$core$Maybe$Nothing, eQ: $elm$core$Maybe$Nothing, aB: r.aB});
 };
 var $elm$url$Url$percentEncode = _Url_percentEncode;
 var $author$project$Api$Path$orgPath = F2(
 	function (org, tail) {
 		return '/api/organizations/' + ($elm$url$Url$percentEncode(org) + ((tail === '') ? '' : ('/' + tail)));
 	});
+var $author$project$Api$Http$agents = F2(
+	function (org, onResult) {
+		return $elm$http$Http$get(
+			{
+				an: A2($elm$http$Http$expectJson, onResult, $author$project$Api$Agents$decoder),
+				aB: A2($author$project$Api$Path$orgPath, org, 'agents')
+			});
+	});
+var $elm$core$Basics$composeL = F3(
+	function (g, f, x) {
+		return g(
+			f(x));
+	});
+var $elm$core$Task$onError = _Scheduler_onError;
+var $elm$core$Task$attempt = F2(
+	function (resultToMessage, task) {
+		return $elm$core$Task$command(
+			A2(
+				$elm$core$Task$onError,
+				A2(
+					$elm$core$Basics$composeL,
+					A2($elm$core$Basics$composeL, $elm$core$Task$succeed, resultToMessage),
+					$elm$core$Result$Err),
+				A2(
+					$elm$core$Task$andThen,
+					A2(
+						$elm$core$Basics$composeL,
+						A2($elm$core$Basics$composeL, $elm$core$Task$succeed, resultToMessage),
+						$elm$core$Result$Ok),
+					task)));
+	});
+var $author$project$Domain$Discovery$Snapshot = F2(
+	function (version, discovery) {
+		return {Z: discovery, aC: version};
+	});
+var $author$project$Domain$Discovery$Document = F5(
+	function (scope, asOf, observations, workflows, review) {
+		return {cz: asOf, dZ: observations, b1: review, eq: scope, eX: workflows};
+	});
+var $author$project$Domain$Discovery$Review = F2(
+	function (status, note) {
+		return {dY: note, ez: status};
+	});
+var $author$project$Domain$Discovery$Observation = F5(
+	function (id, subject, detail, status, evidence) {
+		return {o: detail, de: evidence, du: id, ez: status, eD: subject};
+	});
+var $author$project$Api$Discovery$statusDecoder = A2(
+	$elm$json$Json$Decode$andThen,
+	function (value) {
+		return A2(
+			$elm$core$List$member,
+			value,
+			_List_fromArray(
+				['confirmed', 'unknown', 'proposed'])) ? $elm$json$Json$Decode$succeed(value) : $elm$json$Json$Decode$fail('현황 확인 상태를 해석할 수 없습니다.');
+	},
+	$elm$json$Json$Decode$string);
+var $author$project$Api$Discovery$observationDecoder = A3(
+	$author$project$Api$Decode$field,
+	'evidence',
+	$elm$json$Json$Decode$string,
+	A3(
+		$author$project$Api$Decode$field,
+		'status',
+		$author$project$Api$Discovery$statusDecoder,
+		A3(
+			$author$project$Api$Decode$field,
+			'detail',
+			$elm$json$Json$Decode$string,
+			A3(
+				$author$project$Api$Decode$field,
+				'subject',
+				$elm$json$Json$Decode$string,
+				A3(
+					$author$project$Api$Decode$field,
+					'id',
+					$elm$json$Json$Decode$string,
+					$elm$json$Json$Decode$succeed($author$project$Domain$Discovery$Observation))))));
+var $author$project$Api$Discovery$reviewStatusDecoder = A2(
+	$elm$json$Json$Decode$andThen,
+	function (value) {
+		return A2(
+			$elm$core$List$member,
+			value,
+			_List_fromArray(
+				['pending', 'reviewed'])) ? $elm$json$Json$Decode$succeed(value) : $elm$json$Json$Decode$fail('검토 상태를 해석할 수 없습니다.');
+	},
+	$elm$json$Json$Decode$string);
+var $author$project$Domain$Discovery$Workflow = function (id) {
+	return function (name) {
+		return function (role) {
+			return function (rolePerson) {
+				return function (trigger) {
+					return function (inputs) {
+						return function (tools) {
+							return function (outputs) {
+								return function (handoff) {
+									return function (handoffWorkflows) {
+										return function (approval) {
+											return function (approvalPerson) {
+												return function (approvalPermission) {
+													return function (status) {
+														return function (evidence) {
+															return {cv: approval, cw: approvalPermission, cx: approvalPerson, de: evidence, dp: handoff, bA: handoffWorkflows, du: id, dz: inputs, dO: name, d2: outputs, eo: role, ep: rolePerson, ez: status, eP: tools, eR: trigger};
+														};
+													};
+												};
+											};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
+var $author$project$Api$Discovery$workflowDecoder = A3(
+	$author$project$Api$Decode$field,
+	'evidence',
+	$elm$json$Json$Decode$string,
+	A3(
+		$author$project$Api$Decode$field,
+		'status',
+		$author$project$Api$Discovery$statusDecoder,
+		A2(
+			$author$project$Api$Decode$andMap,
+			A2($author$project$Api$Decode$optional, 'approvalPermission', $elm$json$Json$Decode$string),
+			A2(
+				$author$project$Api$Decode$andMap,
+				A2($author$project$Api$Decode$optional, 'approvalPerson', $elm$json$Json$Decode$string),
+				A3(
+					$author$project$Api$Decode$field,
+					'approval',
+					$elm$json$Json$Decode$string,
+					A2(
+						$author$project$Api$Decode$andMap,
+						A2(
+							$elm$json$Json$Decode$map,
+							$elm$core$Maybe$withDefault(_List_Nil),
+							A2(
+								$author$project$Api$Decode$optional,
+								'handoffWorkflows',
+								$elm$json$Json$Decode$list($elm$json$Json$Decode$string))),
+						A3(
+							$author$project$Api$Decode$field,
+							'handoff',
+							$elm$json$Json$Decode$string,
+							A3(
+								$author$project$Api$Decode$field,
+								'outputs',
+								$elm$json$Json$Decode$string,
+								A3(
+									$author$project$Api$Decode$field,
+									'tools',
+									$elm$json$Json$Decode$string,
+									A3(
+										$author$project$Api$Decode$field,
+										'inputs',
+										$elm$json$Json$Decode$string,
+										A3(
+											$author$project$Api$Decode$field,
+											'trigger',
+											$elm$json$Json$Decode$string,
+											A2(
+												$author$project$Api$Decode$andMap,
+												A2($author$project$Api$Decode$optional, 'rolePerson', $elm$json$Json$Decode$string),
+												A3(
+													$author$project$Api$Decode$field,
+													'role',
+													$elm$json$Json$Decode$string,
+													A3(
+														$author$project$Api$Decode$field,
+														'name',
+														$elm$json$Json$Decode$string,
+														A3(
+															$author$project$Api$Decode$field,
+															'id',
+															$elm$json$Json$Decode$string,
+															$elm$json$Json$Decode$succeed($author$project$Domain$Discovery$Workflow))))))))))))))));
+var $author$project$Api$Discovery$documentDecoder = A3(
+	$author$project$Api$Decode$field,
+	'review',
+	A3(
+		$elm$json$Json$Decode$map2,
+		$author$project$Domain$Discovery$Review,
+		A2($elm$json$Json$Decode$field, 'status', $author$project$Api$Discovery$reviewStatusDecoder),
+		A2($elm$json$Json$Decode$field, 'note', $elm$json$Json$Decode$string)),
+	A3(
+		$author$project$Api$Decode$field,
+		'workflows',
+		$elm$json$Json$Decode$list($author$project$Api$Discovery$workflowDecoder),
+		A3(
+			$author$project$Api$Decode$field,
+			'observations',
+			$elm$json$Json$Decode$list($author$project$Api$Discovery$observationDecoder),
+			A3(
+				$author$project$Api$Decode$field,
+				'asOf',
+				$elm$json$Json$Decode$string,
+				A3(
+					$author$project$Api$Decode$field,
+					'scope',
+					$elm$json$Json$Decode$string,
+					$elm$json$Json$Decode$succeed($author$project$Domain$Discovery$Document))))));
+var $author$project$Api$Discovery$decoder = A3(
+	$elm$json$Json$Decode$map2,
+	$author$project$Domain$Discovery$Snapshot,
+	A2($elm$json$Json$Decode$field, 'version', $elm$json$Json$Decode$int),
+	A2($elm$json$Json$Decode$field, 'discovery', $author$project$Api$Discovery$documentDecoder));
 var $author$project$Api$Http$discovery = F2(
 	function (org, onResult) {
 		return $elm$http$Http$get(
 			{
-				aC: A2($elm$http$Http$expectJson, onResult, $author$project$Api$Discovery$decoder),
-				aU: A2($author$project$Api$Path$orgPath, org, 'discovery')
+				an: A2($elm$http$Http$expectJson, onResult, $author$project$Api$Discovery$decoder),
+				aB: A2($author$project$Api$Path$orgPath, org, 'discovery')
 			});
 	});
 var $elm$json$Json$Encode$list = F2(
@@ -6522,6 +6765,93 @@ var $elm$json$Json$Encode$object = function (pairs) {
 			pairs));
 };
 var $elm$json$Json$Encode$string = _Json_wrap;
+var $author$project$Api$Agents$encodeRole = function (role) {
+	return $elm$json$Json$Encode$object(
+		_Utils_ap(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'id',
+					$elm$json$Json$Encode$string(role.du)),
+					_Utils_Tuple2(
+					'name',
+					$elm$json$Json$Encode$string(role.dO)),
+					_Utils_Tuple2(
+					'task',
+					$elm$json$Json$Encode$string(role.eJ)),
+					_Utils_Tuple2(
+					'inputs',
+					$elm$json$Json$Encode$string(role.dz)),
+					_Utils_Tuple2(
+					'outputs',
+					$elm$json$Json$Encode$string(role.d2)),
+					_Utils_Tuple2(
+					'tools',
+					A2($elm$json$Json$Encode$list, $elm$json$Json$Encode$string, role.eP)),
+					_Utils_Tuple2(
+					'permissionLevel',
+					$elm$json$Json$Encode$string(role.dG)),
+					_Utils_Tuple2(
+					'handoffTo',
+					A2($elm$json$Json$Encode$list, $elm$json$Json$Encode$string, role.dq)),
+					_Utils_Tuple2(
+					'status',
+					$elm$json$Json$Encode$string(role.ez)),
+					_Utils_Tuple2(
+					'evidence',
+					$elm$json$Json$Encode$string(role.de))
+				]),
+			A2(
+				$elm$core$List$filterMap,
+				$elm$core$Basics$identity,
+				_List_fromArray(
+					[
+						A2(
+						$elm$core$Maybe$map,
+						function (v) {
+							return _Utils_Tuple2(
+								'sourceWorkflow',
+								$elm$json$Json$Encode$string(v));
+						},
+						role.ex),
+						A2(
+						$elm$core$Maybe$map,
+						function (approval) {
+							return _Utils_Tuple2(
+								'approvalBy',
+								function () {
+									if (!approval.$) {
+										var uid = approval.a;
+										return $elm$json$Json$Encode$object(
+											_List_fromArray(
+												[
+													_Utils_Tuple2(
+													'person',
+													$elm$json$Json$Encode$string(uid))
+												]));
+									} else {
+										var permission = approval.a;
+										return $elm$json$Json$Encode$object(
+											_List_fromArray(
+												[
+													_Utils_Tuple2(
+													'permission',
+													$elm$json$Json$Encode$string(permission))
+												]));
+									}
+								}());
+						},
+						role.cv)
+					]))));
+};
+var $author$project$Api$Agents$encode = $elm$json$Json$Encode$list($author$project$Api$Agents$encodeRole);
+var $elm$core$List$isEmpty = function (xs) {
+	if (!xs.b) {
+		return true;
+	} else {
+		return false;
+	}
+};
 var $elm$core$Tuple$mapSecond = F2(
 	function (func, _v0) {
 		var x = _v0.a;
@@ -6530,6 +6860,61 @@ var $elm$core$Tuple$mapSecond = F2(
 			x,
 			func(y));
 	});
+var $author$project$Api$Discovery$encodeWorkflow = function (w) {
+	return $elm$json$Json$Encode$object(
+		_Utils_ap(
+			A2(
+				$elm$core$List$map,
+				$elm$core$Tuple$mapSecond($elm$json$Json$Encode$string),
+				_List_fromArray(
+					[
+						_Utils_Tuple2('id', w.du),
+						_Utils_Tuple2('name', w.dO),
+						_Utils_Tuple2('role', w.eo),
+						_Utils_Tuple2('trigger', w.eR),
+						_Utils_Tuple2('inputs', w.dz),
+						_Utils_Tuple2('tools', w.eP),
+						_Utils_Tuple2('outputs', w.d2),
+						_Utils_Tuple2('handoff', w.dp),
+						_Utils_Tuple2('approval', w.cv),
+						_Utils_Tuple2('status', w.ez),
+						_Utils_Tuple2('evidence', w.de)
+					])),
+			A2(
+				$elm$core$List$filterMap,
+				$elm$core$Basics$identity,
+				_List_fromArray(
+					[
+						A2(
+						$elm$core$Maybe$map,
+						function (v) {
+							return _Utils_Tuple2(
+								'rolePerson',
+								$elm$json$Json$Encode$string(v));
+						},
+						w.ep),
+						A2(
+						$elm$core$Maybe$map,
+						function (v) {
+							return _Utils_Tuple2(
+								'approvalPerson',
+								$elm$json$Json$Encode$string(v));
+						},
+						w.cx),
+						A2(
+						$elm$core$Maybe$map,
+						function (v) {
+							return _Utils_Tuple2(
+								'approvalPermission',
+								$elm$json$Json$Encode$string(v));
+						},
+						w.cw),
+						$elm$core$List$isEmpty(w.bA) ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(
+						_Utils_Tuple2(
+							'handoffWorkflows',
+							A2($elm$json$Json$Encode$list, $elm$json$Json$Encode$string, w.bA)))
+					]))));
+};
 var $author$project$Api$Discovery$strings = function (pairs) {
 	return $elm$json$Json$Encode$object(
 		A2(
@@ -6543,10 +6928,10 @@ var $author$project$Api$Discovery$encode = function (doc) {
 			[
 				_Utils_Tuple2(
 				'scope',
-				$elm$json$Json$Encode$string(doc.eg)),
+				$elm$json$Json$Encode$string(doc.eq)),
 				_Utils_Tuple2(
 				'asOf',
-				$elm$json$Json$Encode$string(doc.cv)),
+				$elm$json$Json$Encode$string(doc.cz)),
 				_Utils_Tuple2(
 				'observations',
 				A2(
@@ -6555,43 +6940,24 @@ var $author$project$Api$Discovery$encode = function (doc) {
 						return $author$project$Api$Discovery$strings(
 							_List_fromArray(
 								[
-									_Utils_Tuple2('id', o.bC),
-									_Utils_Tuple2('subject', o.es),
-									_Utils_Tuple2('detail', o.s),
-									_Utils_Tuple2('status', o.a5),
-									_Utils_Tuple2('evidence', o.bu)
+									_Utils_Tuple2('id', o.du),
+									_Utils_Tuple2('subject', o.eD),
+									_Utils_Tuple2('detail', o.o),
+									_Utils_Tuple2('status', o.ez),
+									_Utils_Tuple2('evidence', o.de)
 								]));
 					},
-					doc.dO)),
+					doc.dZ)),
 				_Utils_Tuple2(
 				'workflows',
-				A2(
-					$elm$json$Json$Encode$list,
-					function (w) {
-						return $author$project$Api$Discovery$strings(
-							_List_fromArray(
-								[
-									_Utils_Tuple2('id', w.bC),
-									_Utils_Tuple2('name', w.dD),
-									_Utils_Tuple2('role', w.ee),
-									_Utils_Tuple2('trigger', w.eF),
-									_Utils_Tuple2('inputs', w.dp),
-									_Utils_Tuple2('tools', w.eD),
-									_Utils_Tuple2('outputs', w.dT),
-									_Utils_Tuple2('handoff', w.di),
-									_Utils_Tuple2('approval', w.ct),
-									_Utils_Tuple2('status', w.a5),
-									_Utils_Tuple2('evidence', w.bu)
-								]));
-					},
-					doc.eL)),
+				A2($elm$json$Json$Encode$list, $author$project$Api$Discovery$encodeWorkflow, doc.eX)),
 				_Utils_Tuple2(
 				'review',
 				$author$project$Api$Discovery$strings(
 					_List_fromArray(
 						[
-							_Utils_Tuple2('status', doc.b1.a5),
-							_Utils_Tuple2('note', doc.b1.dN)
+							_Utils_Tuple2('status', doc.b1.ez),
+							_Utils_Tuple2('note', doc.b1.dY)
 						])))
 			]));
 };
@@ -6614,12 +6980,12 @@ var $elm$browser$Browser$Dom$focus = _Browser_call('focus');
 var $elm$json$Json$Encode$int = _Json_wrap;
 var $author$project$Domain$Summary = F4(
 	function (organization, demo, peopleCount, goalCount) {
-		return {bn: demo, df: goalCount, bQ: organization, dW: peopleCount};
+		return {bp: demo, dm: goalCount, bQ: organization, d5: peopleCount};
 	});
 var $elm$json$Json$Decode$bool = _Json_decodeBool;
 var $author$project$Domain$Organization = F3(
 	function (id, name, createdAt) {
-		return {cR: createdAt, bC: id, dD: name};
+		return {cV: createdAt, du: id, dO: name};
 	});
 var $elm$json$Json$Decode$map3 = _Json_map3;
 var $author$project$Api$Decode$organizationDecoder = A4(
@@ -6648,11 +7014,11 @@ var $author$project$Api$Decode$summaryDecoder = A3(
 var $author$project$Api$Http$organizations = function (onResult) {
 	return $elm$http$Http$get(
 		{
-			aC: A2(
+			an: A2(
 				$elm$http$Http$expectJson,
 				onResult,
 				$elm$json$Json$Decode$list($author$project$Api$Decode$summaryDecoder)),
-			aU: '/api/organizations'
+			aB: '/api/organizations'
 		});
 };
 var $elm$http$Http$jsonBody = function (value) {
@@ -6674,8 +7040,8 @@ var $author$project$Api$Http$send = F4(
 	function (onResult, method, path, body) {
 		return $elm$http$Http$request(
 			{
-				cB: $elm$http$Http$jsonBody(body),
-				aC: A2(
+				cF: $elm$http$Http$jsonBody(body),
+				an: A2(
 					$elm$http$Http$expectStringResponse,
 					onResult,
 					function (response) {
@@ -6696,21 +7062,21 @@ var $author$project$Api$Http$send = F4(
 										A2(
 											$elm$json$Json$Decode$decodeString,
 											A2($elm$json$Json$Decode$field, 'error', $elm$json$Json$Decode$string),
-											content)) + (' (' + ($elm$core$String$fromInt(metadata.ep) + ')')));
+											content)) + (' (' + ($elm$core$String$fromInt(metadata.eA) + ')')));
 							default:
 								return $elm$core$Result$Ok(0);
 						}
 					}),
-				dj: _List_Nil,
-				dx: method,
-				ez: $elm$core$Maybe$Just(30000),
-				eE: $elm$core$Maybe$Nothing,
-				aU: path
+				dr: _List_Nil,
+				dI: method,
+				eL: $elm$core$Maybe$Just(30000),
+				eQ: $elm$core$Maybe$Nothing,
+				aB: path
 			});
 	});
 var $author$project$Domain$ReviewWarning = F2(
 	function (id, warnings) {
-		return {bC: id, cj: warnings};
+		return {du: id, cl: warnings};
 	});
 var $author$project$Domain$Workspace = function (organization) {
 	return function (version) {
@@ -6724,7 +7090,7 @@ var $author$project$Domain$Workspace = function (organization) {
 									return function (events) {
 										return function (decisionShare) {
 											return function (reviewWarnings) {
-												return {cx: authorities, cN: compiler, cU: decisionShare, bn: demo, c3: edges, c8: events, dh: goals, bQ: organization, dV: people, ea: reviewWarnings, eb: reviews, ay: version};
+												return {cB: authorities, cR: compiler, cY: decisionShare, bp: demo, c8: edges, dd: events, $7: goals, bQ: organization, d4: people, ek: reviewWarnings, el: reviews, aC: version};
 											};
 										};
 									};
@@ -6743,10 +7109,10 @@ var $elm$json$Json$Decode$at = F2(
 	});
 var $author$project$Domain$Audit = F7(
 	function (seq, at, actor, description, evaluatedGoal, evaluatedStatus, activity) {
-		return {V: activity, cn: actor, cw: at, cZ: description, c6: evaluatedGoal, c7: evaluatedStatus, ek: seq};
+		return {X: activity, cp: actor, cA: at, c1: description, db: evaluatedGoal, dc: evaluatedStatus, eu: seq};
 	});
 var $elm$json$Json$Decode$decodeValue = _Json_run;
-var $author$project$Api$Activity$empty = {s: '', aM: $elm$core$Maybe$Nothing, bY: 'null', b2: $elm$core$Maybe$Nothing, a7: '', ce: '', cf: ''};
+var $author$project$Api$Activity$empty = {o: '', aP: $elm$core$Maybe$Nothing, bY: 'null', b2: $elm$core$Maybe$Nothing, a9: '', cg: '', ch: ''};
 var $elm$json$Json$Decode$float = _Json_decodeFloat;
 var $elm$core$String$fromFloat = _String_fromNumber;
 var $elm$core$Set$Set_elm_builtin = $elm$core$Basics$identity;
@@ -6760,24 +7126,7 @@ var $elm$core$Set$fromList = function (list) {
 	return A3($elm$core$List$foldl, $elm$core$Set$insert, $elm$core$Set$empty, list);
 };
 var $elm$json$Json$Decode$index = _Json_decodeIndex;
-var $elm$core$List$isEmpty = function (xs) {
-	if (!xs.b) {
-		return true;
-	} else {
-		return false;
-	}
-};
 var $elm$json$Json$Encode$null = _Json_encodeNull;
-var $elm$json$Json$Decode$null = _Json_decodeNull;
-var $elm$json$Json$Decode$oneOf = _Json_oneOf;
-var $elm$json$Json$Decode$nullable = function (decoder) {
-	return $elm$json$Json$Decode$oneOf(
-		_List_fromArray(
-			[
-				$elm$json$Json$Decode$null($elm$core$Maybe$Nothing),
-				A2($elm$json$Json$Decode$map, $elm$core$Maybe$Just, decoder)
-			]));
-};
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
 		return A3(
@@ -6858,7 +7207,6 @@ var $author$project$Api$Activity$statusLabel = function (key) {
 							_Utils_Tuple2('Achieved', '달성')
 						])))));
 };
-var $elm$json$Json$Decode$value = _Json_decodeValue;
 var $author$project$Api$Activity$interpret = function (raw) {
 	var tag = A2(
 		$author$project$Api$Activity$read,
@@ -6868,7 +7216,7 @@ var $author$project$Api$Activity$interpret = function (raw) {
 		function (kind, ident) {
 			return _Utils_update(
 				$author$project$Api$Activity$empty,
-				{a7: tag, ce: ident, cf: kind});
+				{a9: tag, cg: ident, ch: kind});
 		});
 	var number = A2($elm$json$Json$Decode$map, $elm$core$String$fromFloat, $elm$json$Json$Decode$float);
 	var contents = A2(
@@ -6917,7 +7265,7 @@ var $author$project$Api$Activity$interpret = function (raw) {
 		return _Utils_update(
 			event,
 			{
-				s: A2(objectAt, 0, 'name') + (' · ' + A2(objectAt, 0, 'role'))
+				o: A2(objectAt, 0, 'name') + (' · ' + A2(objectAt, 0, 'role'))
 			});
 	}();
 	switch (tag) {
@@ -6929,14 +7277,14 @@ var $author$project$Api$Activity$interpret = function (raw) {
 			return _Utils_update(
 				event,
 				{
-					s: field('name')
+					o: field('name')
 				});
 		case 'OrganizationRenamed':
 			var event = pair('organization');
 			return _Utils_update(
 				event,
 				{
-					s: detail(
+					o: detail(
 						A2(at, 1, $elm$json$Json$Decode$string))
 				});
 		case 'OrganizationDeleted':
@@ -6951,7 +7299,7 @@ var $author$project$Api$Activity$interpret = function (raw) {
 			return _Utils_update(
 				event,
 				{
-					s: field('name') + (' · ' + field('role'))
+					o: field('name') + (' · ' + field('role'))
 				});
 		case 'EmployeeAdded':
 			return personEvent;
@@ -6962,7 +7310,7 @@ var $author$project$Api$Activity$interpret = function (raw) {
 			return _Utils_update(
 				event,
 				{
-					aM: A2(
+					aP: A2(
 						$elm$core$Result$withDefault,
 						$elm$core$Maybe$Nothing,
 						A2(
@@ -6981,14 +7329,14 @@ var $author$project$Api$Activity$interpret = function (raw) {
 			return _Utils_update(
 				event,
 				{
-					s: field('description')
+					o: field('description')
 				});
 		case 'OwnerAssigned':
 			var event = pair('goal');
 			return _Utils_update(
 				event,
 				{
-					aM: $elm$core$Maybe$Just(
+					aP: $elm$core$Maybe$Just(
 						detail(
 							A2(at, 1, $elm$json$Json$Decode$string)))
 				});
@@ -7036,7 +7384,7 @@ var $author$project$Api$Activity$interpret = function (raw) {
 			return _Utils_update(
 				event,
 				{
-					s: '예산 ' + (detail(
+					o: '예산 ' + (detail(
 						A2(
 							at,
 							1,
@@ -7047,7 +7395,7 @@ var $author$project$Api$Activity$interpret = function (raw) {
 			return _Utils_update(
 				event,
 				{
-					s: $author$project$Api$Activity$permissionLabel(
+					o: $author$project$Api$Activity$permissionLabel(
 						detail(
 							A2(at, 1, $elm$json$Json$Decode$string)))
 				});
@@ -7058,12 +7406,12 @@ var $author$project$Api$Activity$interpret = function (raw) {
 			return _Utils_update(
 				event,
 				{
-					s: '값 ' + (detail(
+					o: '값 ' + (detail(
 						A2(
 							at,
 							1,
 							A2($elm$json$Json$Decode$field, 'value', number))) + (' · ' + A2(objectAt, 1, 'note'))),
-					aM: A2(
+					aP: A2(
 						$elm$core$Result$withDefault,
 						$elm$core$Maybe$Nothing,
 						A2(
@@ -7082,7 +7430,7 @@ var $author$project$Api$Activity$interpret = function (raw) {
 			return _Utils_update(
 				event,
 				{
-					s: $author$project$Api$Activity$statusLabel(
+					o: $author$project$Api$Activity$statusLabel(
 						A2(objectAt, 1, 'status')) + (' · 진행률 ' + detail(
 						A2(
 							at,
@@ -7106,7 +7454,7 @@ var $author$project$Api$Activity$interpret = function (raw) {
 			return _Utils_update(
 				event,
 				{
-					s: field('note') + (' · 결정 ' + (detail(
+					o: field('note') + (' · 결정 ' + (detail(
 						A2(
 							$elm$json$Json$Decode$field,
 							'decisions',
@@ -7129,13 +7477,55 @@ var $author$project$Api$Activity$interpret = function (raw) {
 			return _Utils_update(
 				event,
 				{
-					s: detail(
+					o: detail(
 						A2(at, 1, $elm$json$Json$Decode$string))
+				});
+		case 'DiscoverySaved':
+			var event = A2(target, 'survey', '');
+			return _Utils_update(
+				event,
+				{
+					o: '범위: ' + (field('scope') + (' · 업무 ' + (detail(
+						A2(
+							$elm$json$Json$Decode$field,
+							'workflows',
+							A2(
+								$elm$json$Json$Decode$map,
+								A2($elm$core$Basics$composeR, $elm$core$List$length, $elm$core$String$fromInt),
+								$elm$json$Json$Decode$list($elm$json$Json$Decode$value)))) + ('건 · 검토 ' + A2(
+						$author$project$Api$Activity$read,
+						A2(
+							$elm$json$Json$Decode$at,
+							_List_fromArray(
+								['review', 'status']),
+							$elm$json$Json$Decode$string),
+						contents)))))
+				});
+		case 'AgentRolesSaved':
+			var event = A2(target, 'agents', '');
+			return _Utils_update(
+				event,
+				{
+					o: '역할 ' + (detail(
+						A2(
+							$elm$json$Json$Decode$map,
+							A2($elm$core$Basics$composeR, $elm$core$List$length, $elm$core$String$fromInt),
+							$elm$json$Json$Decode$list($elm$json$Json$Decode$value))) + ('개: ' + A2(
+						$elm$core$String$join,
+						', ',
+						A2(
+							$elm$core$Result$withDefault,
+							_List_Nil,
+							A2(
+								$elm$json$Json$Decode$decodeValue,
+								$elm$json$Json$Decode$list(
+									A2($elm$json$Json$Decode$field, 'name', $elm$json$Json$Decode$string)),
+								contents)))))
 				});
 		default:
 			return _Utils_update(
 				$author$project$Api$Activity$empty,
-				{a7: tag});
+				{a9: tag});
 	}
 };
 var $elm$core$Result$map = F2(
@@ -7215,30 +7605,6 @@ var $author$project$Api$Decode$evaluationField = function (decoder) {
 				$elm$json$Json$Decode$succeed($elm$core$Maybe$Nothing)
 			]));
 };
-var $elm$json$Json$Decode$keyValuePairs = _Json_decodeKeyValuePairs;
-var $author$project$Api$Decode$optional = F2(
-	function (name, decoder) {
-		return $elm$json$Json$Decode$oneOf(
-			_List_fromArray(
-				[
-					A2(
-					$elm$json$Json$Decode$field,
-					name,
-					$elm$json$Json$Decode$nullable(decoder)),
-					A2(
-					$elm$json$Json$Decode$andThen,
-					function (fields) {
-						return A2(
-							$elm$core$List$any,
-							A2(
-								$elm$core$Basics$composeR,
-								$elm$core$Tuple$first,
-								$elm$core$Basics$eq(name)),
-							fields) ? $elm$json$Json$Decode$fail('잘못된 필드 형식: ' + name) : $elm$json$Json$Decode$succeed($elm$core$Maybe$Nothing);
-					},
-					$elm$json$Json$Decode$keyValuePairs($elm$json$Json$Decode$value))
-				]));
-	});
 var $author$project$Domain$Achieved = 4;
 var $author$project$Domain$AtRisk = 2;
 var $author$project$Domain$NoData = 0;
@@ -7319,7 +7685,7 @@ var $author$project$Api$Decode$auditDecoder = A2(
 							$elm$json$Json$Decode$succeed($author$project$Domain$Audit))))))));
 var $author$project$Domain$Authority = F5(
 	function (owner, budgetLimit, canHire, canChangePrice, canApprove) {
-		return {cE: budgetLimit, cG: canApprove, cH: canChangePrice, cI: canHire, a1: owner};
+		return {cI: budgetLimit, cK: canApprove, cL: canChangePrice, cM: canHire, a3: owner};
 	});
 var $author$project$Api$Decode$authorityDecoder = A3(
 	$author$project$Api$Decode$field,
@@ -7344,33 +7710,8 @@ var $author$project$Api$Decode$authorityDecoder = A3(
 					$elm$json$Json$Decode$succeed($author$project$Domain$Authority))))));
 var $author$project$Domain$Compiler = F3(
 	function (errors, warnings, diagnostics) {
-		return {c$: diagnostics, I: errors, cj: warnings};
+		return {c3: diagnostics, I: errors, cl: warnings};
 	});
-var $author$project$Domain$Diagnostic = F5(
-	function (severity, code, message, subject, details) {
-		return {cM: code, c_: details, dw: message, em: severity, es: subject};
-	});
-var $author$project$Api$Decode$diagnosticDecoder = A3(
-	$author$project$Api$Decode$field,
-	'details',
-	$elm$json$Json$Decode$list($elm$json$Json$Decode$string),
-	A3(
-		$author$project$Api$Decode$field,
-		'subject',
-		$elm$json$Json$Decode$string,
-		A3(
-			$author$project$Api$Decode$field,
-			'message',
-			$elm$json$Json$Decode$string,
-			A3(
-				$author$project$Api$Decode$field,
-				'code',
-				$elm$json$Json$Decode$string,
-				A3(
-					$author$project$Api$Decode$field,
-					'severity',
-					$elm$json$Json$Decode$string,
-					$elm$json$Json$Decode$succeed($author$project$Domain$Diagnostic))))));
 var $author$project$Api$Decode$compilerDecoder = A3(
 	$author$project$Api$Decode$field,
 	'diagnostics',
@@ -7404,11 +7745,11 @@ var $elm$json$Json$Decode$dict = function (decoder) {
 };
 var $author$project$Domain$Edge = F3(
 	function (from, to, kind) {
-		return {de: from, dr: kind, eA: to};
+		return {dl: from, dB: kind, eM: to};
 	});
 var $author$project$Domain$Node = F2(
 	function (tag, contents) {
-		return {cP: contents, a7: tag};
+		return {cT: contents, a9: tag};
 	});
 var $author$project$Api$Decode$nodeDecoder = A3(
 	$author$project$Api$Decode$field,
@@ -7434,11 +7775,11 @@ var $author$project$Api$Decode$edgeDecoder = A3(
 			$elm$json$Json$Decode$succeed($author$project$Domain$Edge))));
 var $author$project$Domain$Analysis = F2(
 	function (coverage, possibleCause) {
-		return {cQ: coverage, dY: possibleCause};
+		return {cU: coverage, d7: possibleCause};
 	});
 var $author$project$Domain$GoalView = F7(
 	function (goal, owner, active, evaluation, analysis, results, strategies) {
-		return {ba: active, cs: analysis, bs: evaluation, aY: goal, a1: owner, d8: results, er: strategies};
+		return {bc: active, cu: analysis, bu: evaluation, a_: goal, a3: owner, ei: results, eC: strategies};
 	});
 var $author$project$Api$Decode$analysisDecoder = A3(
 	$author$project$Api$Decode$field,
@@ -7451,7 +7792,7 @@ var $author$project$Api$Decode$analysisDecoder = A3(
 		$elm$json$Json$Decode$succeed($author$project$Domain$Analysis)));
 var $author$project$Domain$Evaluation = F3(
 	function (status, progress, latestValue) {
-		return {ds: latestValue, dZ: progress, a5: status};
+		return {dC: latestValue, d8: progress, ez: status};
 	});
 var $author$project$Api$Decode$evaluationDecoder = A2(
 	$author$project$Api$Decode$andMap,
@@ -7467,11 +7808,11 @@ var $author$project$Api$Decode$evaluationDecoder = A2(
 			$elm$json$Json$Decode$succeed($author$project$Domain$Evaluation))));
 var $author$project$Domain$Goal = F8(
 	function (id, description, metric, baseline, target, deadline, requiredBudget, requiredPermissions) {
-		return {cA: baseline, cS: deadline, cZ: description, bC: id, dy: metric, d6: requiredBudget, d7: requiredPermissions, ex: target};
+		return {cE: baseline, cW: deadline, c1: description, du: id, dJ: metric, eg: requiredBudget, eh: requiredPermissions, eI: target};
 	});
 var $author$project$Domain$Metric = F4(
 	function (id, name, unit, direction) {
-		return {c0: direction, bC: id, dD: name, eH: unit};
+		return {c4: direction, du: id, dO: name, eT: unit};
 	});
 var $author$project$Api$Decode$metricDecoder = A3(
 	$author$project$Api$Decode$field,
@@ -7525,7 +7866,7 @@ var $author$project$Api$Decode$goalDecoder = A3(
 								$elm$json$Json$Decode$succeed($author$project$Domain$Goal)))))))));
 var $author$project$Domain$Measurement = F4(
 	function (value, reportedAt, note, reportedBy) {
-		return {dN: note, d3: reportedAt, d4: reportedBy, a8: value};
+		return {dY: note, ed: reportedAt, ee: reportedBy, ba: value};
 	});
 var $author$project$Api$Decode$measurementDecoder = A2(
 	$author$project$Api$Decode$andMap,
@@ -7588,7 +7929,7 @@ var $author$project$Api$Decode$goalViewDecoder = A3(
 							$elm$json$Json$Decode$succeed($author$project$Domain$GoalView))))))));
 var $author$project$Domain$Person = F7(
 	function (id, name, role, reportsTo, department, email, active) {
-		return {ba: active, cY: department, c5: email, bC: id, dD: name, d5: reportsTo, ee: role};
+		return {bc: active, c0: department, da: email, du: id, dO: name, ef: reportsTo, eo: role};
 	});
 var $author$project$Api$Decode$personDecoder = A2(
 	$author$project$Api$Decode$andMap,
@@ -7633,11 +7974,11 @@ var $author$project$Api$Decode$personDecoder = A2(
 							$elm$json$Json$Decode$succeed($author$project$Domain$Person))))))));
 var $author$project$Domain$Review = F7(
 	function (id, goal, heldAt, note, evaluation, learnings, decisions) {
-		return {cV: decisions, bs: evaluation, aY: goal, dk: heldAt, bC: id, dt: learnings, dN: note};
+		return {cZ: decisions, bu: evaluation, a_: goal, ds: heldAt, du: id, dD: learnings, dY: note};
 	});
 var $author$project$Domain$Decision = F3(
 	function (text, owner, deadline) {
-		return {cS: deadline, a1: owner, ey: text};
+		return {cW: deadline, a3: owner, eK: text};
 	});
 var $author$project$Api$Decode$decisionDecoder = A2(
 	$author$project$Api$Decode$andMap,
@@ -7745,8 +8086,8 @@ var $author$project$Api$Http$workspace = F2(
 	function (org, onResult) {
 		return $elm$http$Http$get(
 			{
-				aC: A2($elm$http$Http$expectJson, onResult, $author$project$Api$Decode$workspaceDecoder),
-				aU: A2($author$project$Api$Path$orgPath, org, 'dashboard')
+				an: A2($elm$http$Http$expectJson, onResult, $author$project$Api$Decode$workspaceDecoder),
+				aB: A2($author$project$Api$Path$orgPath, org, 'dashboard')
 			});
 	});
 var $author$project$Main$perform = function (effect) {
@@ -7804,10 +8145,40 @@ var $author$project$Main$perform = function (effect) {
 						[
 							_Utils_Tuple2(
 							'expectedVersion',
-							$elm$json$Json$Encode$int(snapshot.ay)),
+							$elm$json$Json$Encode$int(snapshot.aC)),
 							_Utils_Tuple2(
 							'discovery',
-							$author$project$Api$Discovery$encode(snapshot.X))
+							$author$project$Api$Discovery$encode(snapshot.Z))
+						])));
+		case 5:
+			var token = effect.a;
+			var org = effect.b;
+			return A2(
+				$author$project$Api$Http$agents,
+				org,
+				A2(
+					$elm$core$Basics$composeR,
+					$elm$core$Result$mapError($author$project$Api$Http$errorText),
+					A2($author$project$App$Update$GotAgents, token, org)));
+		case 6:
+			var token = effect.a;
+			var org = effect.b;
+			var version = effect.c;
+			var agents = effect.d;
+			return A4(
+				$author$project$Api$Http$send,
+				A2($author$project$App$Update$SavedAgents, token, org),
+				'POST',
+				A2($author$project$Api$Path$orgPath, org, 'agents'),
+				$elm$json$Json$Encode$object(
+					_List_fromArray(
+						[
+							_Utils_Tuple2(
+							'expectedVersion',
+							$elm$json$Json$Encode$int(version)),
+							_Utils_Tuple2(
+							'agents',
+							$author$project$Api$Agents$encode(agents))
 						])));
 		default:
 			var target = effect.a;
@@ -7825,15 +8196,18 @@ var $author$project$Main$runEffects = function (_v0) {
 		$elm$core$Platform$Cmd$batch(
 			A2($elm$core$List$map, $author$project$Main$perform, effects)));
 };
-var $author$project$Page$ActivityLog = 10;
+var $author$project$Page$ActivityLog = 11;
 var $author$project$Domain$Discovery$AddObservation = function (a) {
 	return {$: 2, a: a};
 };
 var $author$project$Domain$Discovery$AddWorkflow = function (a) {
 	return {$: 4, a: a};
 };
-var $author$project$Page$Authorities = 7;
+var $author$project$Page$Authorities = 8;
 var $author$project$Form$Goal$Direction = {$: 4};
+var $author$project$App$Update$EditAgents = function (a) {
+	return {$: 32, a: a};
+};
 var $author$project$App$Update$EditDiscovery = function (a) {
 	return {$: 24, a: a};
 };
@@ -7846,59 +8220,314 @@ var $author$project$App$Update$EditReview = F2(
 		return {$: 11, a: a, b: b};
 	});
 var $author$project$App$Effect$FocusElement = function (a) {
-	return {$: 5, a: a};
+	return {$: 7, a: a};
 };
 var $author$project$App$Update$Guide = F2(
 	function (a, b) {
 		return {$: 18, a: a, b: b};
 	});
+var $author$project$Domain$Agent$Import = function (a) {
+	return {$: 0, a: a};
+};
 var $author$project$Form$Goal$MetricId = {$: 3};
 var $author$project$Form$Goal$MetricName = {$: 1};
 var $author$project$App$Update$OpenPerson = function (a) {
 	return {$: 22, a: a};
 };
-var $author$project$Page$People = 4;
-var $author$project$Page$Responsibility = 6;
-var $author$project$Page$Reviews = 9;
+var $author$project$Page$People = 5;
+var $author$project$Page$Responsibility = 7;
+var $author$project$Page$Reviews = 10;
 var $author$project$Form$Goal$Unit = {$: 2};
 var $author$project$App$Drafts$advanceSerial = function (state) {
 	return _Utils_update(
 		state,
-		{b6: state.b6 + 1});
+		{b7: state.b7 + 1});
 };
+var $elm$core$Maybe$andThen = F2(
+	function (callback, maybeValue) {
+		if (!maybeValue.$) {
+			var value = maybeValue.a;
+			return callback(value);
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
 var $author$project$App$Session$busy = function (state) {
-	return !_Utils_eq(state.ar, $author$project$App$Session$Idle);
+	return !_Utils_eq(state.au, $author$project$App$Session$Idle);
 };
 var $author$project$App$Update$busy = function (model) {
-	return $author$project$App$Session$busy(model.ab);
+	return $author$project$App$Session$busy(model.ad);
 };
+var $author$project$App$Agents$clearDraft = F2(
+	function (org, state) {
+		return _Utils_update(
+			state,
+			{
+				q: A2($elm$core$Dict$remove, org, state.q)
+			});
+	});
 var $author$project$App$Discovery$clearDraft = F2(
 	function (org, state) {
 		return _Utils_update(
 			state,
 			{
-				t: A2($elm$core$Dict$remove, org, state.t)
+				q: A2($elm$core$Dict$remove, org, state.q)
 			});
 	});
 var $author$project$App$Drafts$closeDelete = function (state) {
 	return _Utils_update(
 		state,
-		{bm: $elm$core$Maybe$Nothing});
+		{bo: $elm$core$Maybe$Nothing});
 };
 var $author$project$App$Drafts$confirmDelete = F2(
 	function (name, state) {
 		return _Utils_update(
 			state,
 			{
-				bm: A2(
+				bo: A2(
 					$elm$core$Maybe$map,
 					function (snapshot) {
 						return _Utils_update(
 							snapshot,
-							{bg: name});
+							{bi: name});
 					},
-					state.bm)
+					state.bo)
 			});
+	});
+var $author$project$Domain$Agent$mapRole = F2(
+	function (ident, f) {
+		return $elm$core$List$map(
+			function (role) {
+				return _Utils_eq(role.du, ident) ? f(role) : role;
+			});
+	});
+var $author$project$Domain$Agent$parseApproval = function (key) {
+	return A2($elm$core$String$startsWith, 'person:', key) ? $elm$core$Maybe$Just(
+		$author$project$Domain$Agent$Person(
+			A2($elm$core$String$dropLeft, 7, key))) : (A2($elm$core$String$startsWith, 'permission:', key) ? $elm$core$Maybe$Just(
+		$author$project$Domain$Agent$Permission(
+			A2($elm$core$String$dropLeft, 11, key))) : $elm$core$Maybe$Nothing);
+};
+var $elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
+		}
+	});
+var $elm$core$List$concat = function (lists) {
+	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
+};
+var $elm$core$List$concatMap = F2(
+	function (f, list) {
+		return $elm$core$List$concat(
+			A2($elm$core$List$map, f, list));
+	});
+var $elm$core$Basics$not = _Basics_not;
+var $elm$core$String$trim = _String_trim;
+var $author$project$Domain$Agent$splitTools = A2(
+	$elm$core$Basics$composeR,
+	$elm$core$String$split(','),
+	A2(
+		$elm$core$Basics$composeR,
+		$elm$core$List$concatMap(
+			$elm$core$String$split('\n')),
+		A2(
+			$elm$core$Basics$composeR,
+			$elm$core$List$map($elm$core$String$trim),
+			$elm$core$List$filter(
+				A2($elm$core$Basics$composeL, $elm$core$Basics$not, $elm$core$String$isEmpty)))));
+var $author$project$Domain$Agent$apply = F2(
+	function (change, roles) {
+		switch (change.$) {
+			case 0:
+				var drafts = change.a;
+				return drafts;
+			case 1:
+				var ident = change.a;
+				var value = change.b;
+				return A3(
+					$author$project$Domain$Agent$mapRole,
+					ident,
+					function (r) {
+						return _Utils_update(
+							r,
+							{dO: value});
+					},
+					roles);
+			case 2:
+				var ident = change.a;
+				var value = change.b;
+				return A3(
+					$author$project$Domain$Agent$mapRole,
+					ident,
+					function (r) {
+						return _Utils_update(
+							r,
+							{dz: value});
+					},
+					roles);
+			case 3:
+				var ident = change.a;
+				var value = change.b;
+				return A3(
+					$author$project$Domain$Agent$mapRole,
+					ident,
+					function (r) {
+						return _Utils_update(
+							r,
+							{d2: value});
+					},
+					roles);
+			case 4:
+				var ident = change.a;
+				var value = change.b;
+				return A3(
+					$author$project$Domain$Agent$mapRole,
+					ident,
+					function (r) {
+						return _Utils_update(
+							r,
+							{
+								eP: $author$project$Domain$Agent$splitTools(value)
+							});
+					},
+					roles);
+			case 5:
+				var ident = change.a;
+				var value = change.b;
+				return A3(
+					$author$project$Domain$Agent$mapRole,
+					ident,
+					function (r) {
+						return _Utils_update(
+							r,
+							{dG: value});
+					},
+					roles);
+			case 6:
+				var ident = change.a;
+				var value = change.b;
+				return A3(
+					$author$project$Domain$Agent$mapRole,
+					ident,
+					function (r) {
+						return _Utils_update(
+							r,
+							{
+								cv: $author$project$Domain$Agent$parseApproval(value)
+							});
+					},
+					roles);
+			case 7:
+				var ident = change.a;
+				var target = change.b;
+				var selected = change.c;
+				return A3(
+					$author$project$Domain$Agent$mapRole,
+					ident,
+					function (r) {
+						var without = A2(
+							$elm$core$List$filter,
+							$elm$core$Basics$neq(target),
+							r.dq);
+						return _Utils_update(
+							r,
+							{
+								dq: (selected && (!_Utils_eq(target, ident))) ? _Utils_ap(
+									without,
+									_List_fromArray(
+										[target])) : without
+							});
+					},
+					roles);
+			case 8:
+				var ident = change.a;
+				var value = change.b;
+				return A3(
+					$author$project$Domain$Agent$mapRole,
+					ident,
+					function (r) {
+						return _Utils_update(
+							r,
+							{ez: value});
+					},
+					roles);
+			case 9:
+				var ident = change.a;
+				var value = change.b;
+				return A3(
+					$author$project$Domain$Agent$mapRole,
+					ident,
+					function (r) {
+						return _Utils_update(
+							r,
+							{de: value});
+					},
+					roles);
+			default:
+				var ident = change.a;
+				return A2(
+					$elm$core$List$map,
+					function (r) {
+						return _Utils_update(
+							r,
+							{
+								dq: A2(
+									$elm$core$List$filter,
+									$elm$core$Basics$neq(ident),
+									r.dq)
+							});
+					},
+					A2(
+						$elm$core$List$filter,
+						function (r) {
+							return !_Utils_eq(r.du, ident);
+						},
+						roles));
+		}
+	});
+var $author$project$App$Agents$saved = F2(
+	function (org, state) {
+		return A2($elm$core$Dict$get, org, state.U);
+	});
+var $author$project$App$Agents$current = F2(
+	function (org, state) {
+		var _v0 = A2($elm$core$Dict$get, org, state.q);
+		if (!_v0.$) {
+			var draft = _v0.a;
+			return $elm$core$Maybe$Just(draft);
+		} else {
+			return A2(
+				$elm$core$Maybe$map,
+				function (snapshot) {
+					return {N: snapshot.N, aC: snapshot.aC};
+				},
+				A2($author$project$App$Agents$saved, org, state));
+		}
+	});
+var $author$project$App$Agents$edit = F3(
+	function (org, change, state) {
+		var _v0 = A2($author$project$App$Agents$current, org, state);
+		if (_v0.$ === 1) {
+			return state;
+		} else {
+			var design = _v0.a;
+			return _Utils_update(
+				state,
+				{
+					q: A3(
+						$elm$core$Dict$insert,
+						org,
+						_Utils_update(
+							design,
+							{
+								N: A2($author$project$Domain$Agent$apply, change, design.N)
+							}),
+						state.q)
+				});
+		}
 	});
 var $author$project$Domain$Discovery$editObservation = F3(
 	function (key, value, o) {
@@ -7906,19 +8535,19 @@ var $author$project$Domain$Discovery$editObservation = F3(
 			case 'subject':
 				return _Utils_update(
 					o,
-					{es: value});
+					{eD: value});
 			case 'detail':
 				return _Utils_update(
 					o,
-					{s: value});
+					{o: value});
 			case 'status':
 				return _Utils_update(
 					o,
-					{a5: value});
+					{ez: value});
 			case 'evidence':
 				return _Utils_update(
 					o,
-					{bu: value});
+					{de: value});
 			default:
 				return o;
 		}
@@ -7929,47 +8558,66 @@ var $author$project$Domain$Discovery$editWorkflow = F3(
 			case 'name':
 				return _Utils_update(
 					w,
-					{dD: value});
+					{dO: value});
 			case 'role':
 				return _Utils_update(
 					w,
-					{ee: value});
+					{eo: value});
 			case 'trigger':
 				return _Utils_update(
 					w,
-					{eF: value});
+					{eR: value});
 			case 'inputs':
 				return _Utils_update(
 					w,
-					{dp: value});
+					{dz: value});
 			case 'tools':
 				return _Utils_update(
 					w,
-					{eD: value});
+					{eP: value});
 			case 'outputs':
 				return _Utils_update(
 					w,
-					{dT: value});
+					{d2: value});
 			case 'handoff':
 				return _Utils_update(
 					w,
-					{di: value});
+					{dp: value});
 			case 'approval':
 				return _Utils_update(
 					w,
-					{ct: value});
+					{cv: value});
 			case 'status':
 				return _Utils_update(
 					w,
-					{a5: value});
+					{ez: value});
 			case 'evidence':
 				return _Utils_update(
 					w,
-					{bu: value});
+					{de: value});
 			default:
 				return w;
 		}
 	});
+var $author$project$Domain$Discovery$emptyWorkflow = function (ident) {
+	return {cv: '', cw: $elm$core$Maybe$Nothing, cx: $elm$core$Maybe$Nothing, de: '', dp: '', bA: _List_Nil, du: ident, dz: '', dO: '', d2: '', eo: '', ep: $elm$core$Maybe$Nothing, ez: 'unknown', eP: '', eR: ''};
+};
+var $author$project$Domain$Discovery$mapWorkflow = F3(
+	function (ident, f, doc) {
+		return _Utils_update(
+			doc,
+			{
+				eX: A2(
+					$elm$core$List$map,
+					function (w) {
+						return _Utils_eq(w.du, ident) ? f(w) : w;
+					},
+					doc.eX)
+			});
+	});
+var $author$project$Domain$Discovery$optional = function (value) {
+	return ($elm$core$String$trim(value) === '') ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(value);
+};
 var $author$project$Domain$Discovery$apply = F2(
 	function (change, doc) {
 		var updated = function () {
@@ -7978,22 +8626,22 @@ var $author$project$Domain$Discovery$apply = F2(
 					var value = change.a;
 					return _Utils_update(
 						doc,
-						{eg: value});
+						{eq: value});
 				case 1:
 					var value = change.a;
 					return _Utils_update(
 						doc,
-						{cv: value});
+						{cz: value});
 				case 2:
 					var ident = change.a;
 					return _Utils_update(
 						doc,
 						{
-							dO: _Utils_ap(
-								doc.dO,
+							dZ: _Utils_ap(
+								doc.dZ,
 								_List_fromArray(
 									[
-										{s: '', bu: '', bC: ident, a5: 'unknown', es: ''}
+										{o: '', de: '', du: ident, ez: 'unknown', eD: ''}
 									]))
 						});
 				case 3:
@@ -8003,99 +8651,170 @@ var $author$project$Domain$Discovery$apply = F2(
 					return _Utils_update(
 						doc,
 						{
-							dO: A2(
+							dZ: A2(
 								$elm$core$List$map,
 								function (o) {
-									return _Utils_eq(o.bC, ident) ? A3($author$project$Domain$Discovery$editObservation, key, value, o) : o;
+									return _Utils_eq(o.du, ident) ? A3($author$project$Domain$Discovery$editObservation, key, value, o) : o;
 								},
-								doc.dO)
+								doc.dZ)
 						});
 				case 4:
 					var ident = change.a;
 					return _Utils_update(
 						doc,
 						{
-							eL: _Utils_ap(
-								doc.eL,
+							eX: _Utils_ap(
+								doc.eX,
 								_List_fromArray(
 									[
-										{ct: '', bu: '', di: '', bC: ident, dp: '', dD: '', dT: '', ee: '', a5: 'unknown', eD: '', eF: ''}
+										$author$project$Domain$Discovery$emptyWorkflow(ident)
 									]))
 						});
 				case 5:
 					var ident = change.a;
 					var key = change.b;
 					var value = change.c;
-					return _Utils_update(
-						doc,
-						{
-							eL: A2(
-								$elm$core$List$map,
-								function (w) {
-									return _Utils_eq(w.bC, ident) ? A3($author$project$Domain$Discovery$editWorkflow, key, value, w) : w;
-								},
-								doc.eL)
-						});
+					return A3(
+						$author$project$Domain$Discovery$mapWorkflow,
+						ident,
+						A2($author$project$Domain$Discovery$editWorkflow, key, value),
+						doc);
 				case 6:
 					var ident = change.a;
-					return _Utils_update(
-						doc,
-						{
-							dO: A2(
-								$elm$core$List$filter,
-								function (o) {
-									return !_Utils_eq(o.bC, ident);
-								},
-								doc.dO)
-						});
+					var value = change.b;
+					return A3(
+						$author$project$Domain$Discovery$mapWorkflow,
+						ident,
+						function (w) {
+							return _Utils_update(
+								w,
+								{
+									ep: $author$project$Domain$Discovery$optional(value)
+								});
+						},
+						doc);
 				case 7:
+					var ident = change.a;
+					var value = change.b;
+					return A3(
+						$author$project$Domain$Discovery$mapWorkflow,
+						ident,
+						function (w) {
+							return _Utils_update(
+								w,
+								{
+									cx: $author$project$Domain$Discovery$optional(value)
+								});
+						},
+						doc);
+				case 8:
+					var ident = change.a;
+					var value = change.b;
+					return A3(
+						$author$project$Domain$Discovery$mapWorkflow,
+						ident,
+						function (w) {
+							return _Utils_update(
+								w,
+								{
+									cw: $author$project$Domain$Discovery$optional(value)
+								});
+						},
+						doc);
+				case 9:
+					var ident = change.a;
+					var target = change.b;
+					var selected = change.c;
+					return A3(
+						$author$project$Domain$Discovery$mapWorkflow,
+						ident,
+						function (w) {
+							var without = A2(
+								$elm$core$List$filter,
+								$elm$core$Basics$neq(target),
+								w.bA);
+							return _Utils_update(
+								w,
+								{
+									bA: (selected && (!_Utils_eq(target, ident))) ? _Utils_ap(
+										without,
+										_List_fromArray(
+											[target])) : without
+								});
+						},
+						doc);
+				case 10:
 					var ident = change.a;
 					return _Utils_update(
 						doc,
 						{
-							eL: A2(
+							dZ: A2(
 								$elm$core$List$filter,
-								function (w) {
-									return !_Utils_eq(w.bC, ident);
+								function (o) {
+									return !_Utils_eq(o.du, ident);
 								},
-								doc.eL)
+								doc.dZ)
 						});
-				case 8:
+				case 11:
+					var ident = change.a;
+					return _Utils_update(
+						doc,
+						{
+							eX: A2(
+								$elm$core$List$map,
+								function (w) {
+									return _Utils_update(
+										w,
+										{
+											bA: A2(
+												$elm$core$List$filter,
+												$elm$core$Basics$neq(ident),
+												w.bA)
+										});
+								},
+								A2(
+									$elm$core$List$filter,
+									function (w) {
+										return !_Utils_eq(w.du, ident);
+									},
+									doc.eX))
+						});
+				case 12:
 					var value = change.a;
 					return _Utils_update(
 						doc,
 						{
-							b1: {dN: value, a5: doc.b1.a5}
+							b1: {dY: value, ez: doc.b1.ez}
 						});
 				default:
 					var value = change.a;
 					return _Utils_update(
 						doc,
 						{
-							b1: {dN: doc.b1.dN, a5: value}
+							b1: {dY: doc.b1.dY, ez: value}
 						});
 			}
 		}();
 		switch (change.$) {
-			case 8:
+			case 12:
 				return updated;
-			case 9:
+			case 13:
 				return updated;
 			default:
 				return _Utils_update(
 					updated,
 					{
-						b1: {dN: updated.b1.dN, a5: 'pending'}
+						b1: {dY: updated.b1.dY, ez: 'pending'}
 					});
 		}
 	});
 var $author$project$App$Discovery$saved = F2(
 	function (org, state) {
-		return A2($elm$core$Dict$get, org, state.O);
+		return A2($elm$core$Dict$get, org, state.P);
 	});
 var $author$project$App$Discovery$current = F2(
 	function (org, state) {
-		var _v0 = A2($elm$core$Dict$get, org, state.t);
+		var _v0 = A2($elm$core$Dict$get, org, state.q);
 		if (!_v0.$) {
 			var draft = _v0.a;
 			return $elm$core$Maybe$Just(draft);
@@ -8113,32 +8832,32 @@ var $author$project$App$Discovery$edit = F3(
 			return _Utils_update(
 				state,
 				{
-					t: A3(
+					q: A3(
 						$elm$core$Dict$insert,
 						org,
 						_Utils_update(
 							snapshot,
 							{
-								X: A2($author$project$Domain$Discovery$apply, change, snapshot.X)
+								Z: A2($author$project$Domain$Discovery$apply, change, snapshot.Z)
 							}),
-						state.t)
+						state.q)
 				});
 		}
 	});
 var $author$project$App$Drafts$defaultContext = function (model) {
 	return {
-		cS: model.aE.cS,
-		dg: A2(
+		cW: model.aH.cW,
+		dn: A2(
 			$elm$core$Maybe$withDefault,
 			0,
 			A2(
 				$elm$core$Dict$get,
-				A2($elm$core$Maybe$withDefault, '', model.ab.aI),
-				model.w._)),
-		b5: model.aE.b5,
-		eB: model.aE.eB,
-		a9: function () {
-			var _v0 = model.ab.a9;
+				A2($elm$core$Maybe$withDefault, '', model.ad.aL),
+				model.w.ab)),
+		b6: model.aH.b6,
+		eN: model.aH.eN,
+		bb: function () {
+			var _v0 = model.ad.bb;
 			if (_v0.$ === 1) {
 				var data = _v0.a;
 				return $elm$core$Maybe$Just(data);
@@ -8148,18 +8867,9 @@ var $author$project$App$Drafts$defaultContext = function (model) {
 		}()
 	};
 };
-var $elm$core$Maybe$andThen = F2(
-	function (callback, maybeValue) {
-		if (!maybeValue.$) {
-			var value = maybeValue.a;
-			return callback(value);
-		} else {
-			return $elm$core$Maybe$Nothing;
-		}
-	});
 var $author$project$Form$Defaults$defaultValue = F3(
 	function (model, action, name) {
-		var w = model.a9;
+		var w = model.bb;
 		var owner = function (key) {
 			return A2(
 				$elm$core$Maybe$withDefault,
@@ -8170,7 +8880,7 @@ var $author$project$Form$Defaults$defaultValue = F3(
 						return A2(
 							$elm$core$Maybe$andThen,
 							function ($) {
-								return $.a1;
+								return $.a3;
 							},
 							$elm$core$List$head(
 								A2(
@@ -8178,15 +8888,15 @@ var $author$project$Form$Defaults$defaultValue = F3(
 									A2(
 										$elm$core$Basics$composeR,
 										function ($) {
-											return $.aY;
+											return $.a_;
 										},
 										A2(
 											$elm$core$Basics$composeR,
 											function ($) {
-												return $.bC;
+												return $.du;
 											},
 											$elm$core$Basics$eq(key))),
-									data.dh)));
+									data.$7)));
 					},
 					w));
 		};
@@ -8203,7 +8913,7 @@ var $author$project$Form$Defaults$defaultValue = F3(
 								return $.bQ;
 							},
 							function ($) {
-								return $.dD;
+								return $.dO;
 							}),
 						w)) : '';
 			case 4:
@@ -8217,10 +8927,10 @@ var $author$project$Form$Defaults$defaultValue = F3(
 								A2(
 									$elm$core$Basics$composeR,
 									function ($) {
-										return $.bC;
+										return $.du;
 									},
 									$elm$core$Basics$eq(key)),
-								data.dV));
+								data.d4));
 					},
 					w);
 				return A2(
@@ -8231,15 +8941,15 @@ var $author$project$Form$Defaults$defaultValue = F3(
 						function (p) {
 							switch (name) {
 								case 'name':
-									return p.dD;
+									return p.dO;
 								case 'role':
-									return p.ee;
+									return p.eo;
 								case 'department':
-									return A2($elm$core$Maybe$withDefault, '', p.cY);
+									return A2($elm$core$Maybe$withDefault, '', p.c0);
 								case 'email':
-									return A2($elm$core$Maybe$withDefault, '', p.c5);
+									return A2($elm$core$Maybe$withDefault, '', p.da);
 								case 'reportsTo':
-									return A2($elm$core$Maybe$withDefault, '', p.d5);
+									return A2($elm$core$Maybe$withDefault, '', p.ef);
 								default:
 									return '';
 							}
@@ -8254,13 +8964,13 @@ var $author$project$Form$Defaults$defaultValue = F3(
 					case 'budget':
 						return '0';
 					case 'metricId':
-						return 'metric-' + (model.b5 + ('-' + $elm$core$String$fromInt(model.dg)));
+						return 'metric-' + (model.b6 + ('-' + $elm$core$String$fromInt(model.dn)));
 					case 'direction':
 						return 'HigherIsBetter';
 					case 'startsAt':
-						return model.eB;
+						return model.eN;
 					case 'deadline':
-						return model.cS;
+						return model.cW;
 					default:
 						return '';
 				}
@@ -8281,10 +8991,10 @@ var $author$project$Form$Defaults$defaultValue = F3(
 								A2(
 									$elm$core$Basics$composeR,
 									function ($) {
-										return $.a1;
+										return $.a3;
 									},
 									$elm$core$Basics$eq(key)),
-								data.cx));
+								data.cB));
 					},
 					w);
 				return (name === 'budget') ? A2(
@@ -8295,7 +9005,7 @@ var $author$project$Form$Defaults$defaultValue = F3(
 						A2(
 							$elm$core$Basics$composeR,
 							function ($) {
-								return $.cE;
+								return $.cI;
 							},
 							$elm$core$String$fromFloat),
 						authority)) : (A2(
@@ -8304,7 +9014,7 @@ var $author$project$Form$Defaults$defaultValue = F3(
 					A2(
 						$elm$core$Maybe$map,
 						function (a) {
-							return A2($elm$core$List$member, name, a.cG) || (((name === 'Hiring') && a.cI) || ((name === 'Pricing') && a.cH));
+							return A2($elm$core$List$member, name, a.cK) || (((name === 'Hiring') && a.cM) || ((name === 'Pricing') && a.cL));
 						},
 						authority)) ? 'true' : 'false');
 			default:
@@ -8376,13 +9086,13 @@ var $author$project$Form$Action$actionKey = function (action) {
 };
 var $author$project$App$Drafts$formKey = F2(
 	function (model, action) {
-		return A2($elm$core$Maybe$withDefault, 'list', model.ab.aI) + ('/' + $author$project$Form$Action$actionKey(action));
+		return A2($elm$core$Maybe$withDefault, 'list', model.ad.aL) + ('/' + $author$project$Form$Action$actionKey(action));
 	});
 var $author$project$App$Drafts$workspaceVersion = function (model) {
-	var _v0 = model.ab.a9;
+	var _v0 = model.ad.bb;
 	if (_v0.$ === 1) {
 		var w = _v0.a;
-		return w.ay;
+		return w.aC;
 	} else {
 		return 0;
 	}
@@ -8394,7 +9104,7 @@ var $author$project$App$Drafts$edit = F4(
 		var current = A2(
 			$elm$core$Maybe$withDefault,
 			A2($author$project$App$Drafts$draftDefaults, model, action),
-			A2($elm$core$Dict$get, draftKey, state.t));
+			A2($elm$core$Dict$get, draftKey, state.q));
 		var version = function () {
 			switch (action.$) {
 				case 4:
@@ -8417,7 +9127,7 @@ var $author$project$App$Drafts$edit = F4(
 		return _Utils_update(
 			state,
 			{
-				t: A3(
+				q: A3(
 					$elm$core$Dict$insert,
 					draftKey,
 					A3(
@@ -8425,7 +9135,7 @@ var $author$project$App$Drafts$edit = F4(
 						'__version',
 						version,
 						A3($elm$core$Dict$insert, key, value, current)),
-					state.t)
+					state.q)
 			});
 	});
 var $author$project$Form$Action$AddGoal = {$: 6};
@@ -8435,62 +9145,62 @@ var $author$project$Form$Goal$edit = F3(
 			case 0:
 				return _Utils_update(
 					draft,
-					{cZ: content});
+					{c1: content});
 			case 1:
 				return _Utils_update(
 					draft,
-					{dA: content});
+					{dL: content});
 			case 2:
 				return _Utils_update(
 					draft,
-					{eH: content});
+					{eT: content});
 			case 3:
 				return _Utils_update(
 					draft,
-					{dz: content});
+					{dK: content});
 			case 4:
 				return _Utils_update(
 					draft,
-					{c0: content});
+					{c4: content});
 			case 5:
 				return _Utils_update(
 					draft,
-					{cA: content});
+					{cE: content});
 			case 6:
 				return _Utils_update(
 					draft,
-					{ex: content});
+					{eI: content});
 			case 7:
 				return _Utils_update(
 					draft,
-					{en: content});
+					{ey: content});
 			case 8:
 				return _Utils_update(
 					draft,
-					{cS: content});
+					{cW: content});
 			case 9:
 				return _Utils_update(
 					draft,
-					{cD: content});
+					{cH: content});
 			case 10:
 				return _Utils_update(
 					draft,
-					{dU: content});
+					{d3: content});
 			default:
 				var permission = key.a;
 				return _Utils_update(
 					draft,
 					{
-						dX: (content === 'true') ? A2(
+						d6: (content === 'true') ? A2(
 							$elm$core$List$cons,
 							permission,
 							A2(
 								$elm$core$List$filter,
 								$elm$core$Basics$neq(permission),
-								draft.dX)) : A2(
+								draft.d6)) : A2(
 							$elm$core$List$filter,
 							$elm$core$Basics$neq(permission),
-							draft.dX)
+							draft.d6)
 					});
 		}
 	});
@@ -8500,23 +9210,23 @@ var $author$project$App$Drafts$defaultValue = function (model) {
 };
 var $author$project$Form$Goal$fromValues = function (get) {
 	return {
-		cA: get('baseline'),
-		cD: get('budget'),
-		cS: get('deadline'),
-		cZ: get('description'),
-		c0: get('direction'),
-		dz: get('metricId'),
-		dA: get('metricName'),
-		dU: get('parent'),
-		dX: A2(
+		cE: get('baseline'),
+		cH: get('budget'),
+		cW: get('deadline'),
+		c1: get('description'),
+		c4: get('direction'),
+		dK: get('metricId'),
+		dL: get('metricName'),
+		d3: get('parent'),
+		d6: A2(
 			$elm$core$List$filter,
 			function (key) {
 				return get(key) === 'true';
 			},
 			$author$project$Domain$Permission$permissionKeys),
-		en: get('startsAt'),
-		ex: get('target'),
-		eH: get('unit')
+		ey: get('startsAt'),
+		eI: get('target'),
+		eT: get('unit')
 	};
 };
 var $author$project$App$Drafts$goalDraft = function (model) {
@@ -8553,11 +9263,11 @@ var $author$project$Form$Review$edit = F3(
 			case 0:
 				return _Utils_update(
 					draft,
-					{aY: content});
+					{a_: content});
 			case 1:
 				return _Utils_update(
 					draft,
-					{dN: content});
+					{dY: content});
 			case 2:
 				return _Utils_update(
 					draft,
@@ -8565,25 +9275,25 @@ var $author$project$Form$Review$edit = F3(
 			case 3:
 				return _Utils_update(
 					draft,
-					{bj: content});
+					{bl: content});
 			case 4:
 				return _Utils_update(
 					draft,
-					{cT: content});
+					{cX: content});
 			default:
 				return _Utils_update(
 					draft,
-					{bk: content});
+					{bm: content});
 		}
 	});
 var $author$project$Form$Review$fromValues = function (get) {
 	return {
-		bj: get('decision'),
-		bk: get('decisionDeadline'),
-		cT: get('decisionOwner'),
-		aY: get('goal'),
+		bl: get('decision'),
+		bm: get('decisionDeadline'),
+		cX: get('decisionOwner'),
+		a_: get('goal'),
 		bI: get('learning'),
-		dN: get('note')
+		dY: get('note')
 	};
 };
 var $author$project$App$Drafts$reviewDraft = function (model) {
@@ -8617,12 +9327,12 @@ var $author$project$App$PageState$filterPeople = F2(
 	function (status, state) {
 		return _Utils_update(
 			state,
-			{aL: status});
+			{aO: status});
 	});
 var $author$project$App$Session$finishSave = function (state) {
 	return _Utils_update(
 		state,
-		{ar: $author$project$App$Session$Idle});
+		{au: $author$project$App$Session$Idle});
 };
 var $author$project$Form$Goal$Baseline = {$: 5};
 var $author$project$Form$Goal$Budget = {$: 9};
@@ -8692,10 +9402,10 @@ var $author$project$App$PageState$guide = F3(
 		return _Utils_update(
 			state,
 			{
-				V: (page === 10) ? $author$project$Ui$Activity$init : state.V,
-				aB: A2($elm$core$String$startsWith, 'goal-', target) ? $elm$core$Maybe$Just(
-					A2($elm$core$String$dropLeft, 5, target)) : state.aB,
-				aa: page
+				X: (page === 11) ? $author$project$Ui$Activity$init : state.X,
+				aF: A2($elm$core$String$startsWith, 'goal-', target) ? $elm$core$Maybe$Just(
+					A2($elm$core$String$dropLeft, 5, target)) : state.aF,
+				ac: page
 			});
 	});
 var $elm$core$Tuple$mapFirst = F2(
@@ -8719,15 +9429,14 @@ var $author$project$App$PageState$navigate = F2(
 	function (page, state) {
 		return _Utils_update(
 			state,
-			{V: $author$project$Ui$Activity$init, am: $author$project$Ui$ResponsibilityGraph$init, aa: page, aK: '', aL: 'active', aR: $elm$core$Maybe$Nothing});
+			{X: $author$project$Ui$Activity$init, ap: $author$project$Ui$ResponsibilityGraph$init, ac: page, aN: '', aO: 'active', aU: $elm$core$Maybe$Nothing});
 	});
-var $elm$core$Basics$not = _Basics_not;
 var $author$project$App$Drafts$openDelete = F2(
 	function (snapshot, state) {
 		return _Utils_update(
 			state,
 			{
-				bm: $elm$core$Maybe$Just(snapshot)
+				bo: $elm$core$Maybe$Just(snapshot)
 			});
 	});
 var $author$project$App$PageState$openPerson = F2(
@@ -8735,54 +9444,54 @@ var $author$project$App$PageState$openPerson = F2(
 		return _Utils_update(
 			state,
 			{
-				aR: $elm$core$Maybe$Just(key)
+				aU: $elm$core$Maybe$Just(key)
 			});
 	});
 var $author$project$Form$Goal$value = F2(
 	function (draft, key) {
 		switch (key.$) {
 			case 0:
-				return draft.cZ;
+				return draft.c1;
 			case 1:
-				return draft.dA;
+				return draft.dL;
 			case 2:
-				return draft.eH;
+				return draft.eT;
 			case 3:
-				return draft.dz;
+				return draft.dK;
 			case 4:
-				return draft.c0;
+				return draft.c4;
 			case 5:
-				return draft.cA;
+				return draft.cE;
 			case 6:
-				return draft.ex;
+				return draft.eI;
 			case 7:
-				return draft.en;
+				return draft.ey;
 			case 8:
-				return draft.cS;
+				return draft.cW;
 			case 9:
-				return draft.cD;
+				return draft.cH;
 			case 10:
-				return draft.dU;
+				return draft.d3;
 			default:
 				var permission = key.a;
-				return A2($elm$core$List$member, permission, draft.dX) ? 'true' : 'false';
+				return A2($elm$core$List$member, permission, draft.d6) ? 'true' : 'false';
 		}
 	});
 var $author$project$Form$Review$value = F2(
 	function (draft, key) {
 		switch (key) {
 			case 0:
-				return draft.aY;
+				return draft.a_;
 			case 1:
-				return draft.dN;
+				return draft.dY;
 			case 2:
 				return draft.bI;
 			case 3:
-				return draft.bj;
+				return draft.bl;
 			case 4:
-				return draft.cT;
+				return draft.cX;
 			default:
-				return draft.bk;
+				return draft.bm;
 		}
 	});
 var $author$project$App$Drafts$get = F3(
@@ -8816,41 +9525,85 @@ var $author$project$App$Drafts$get = F3(
 						A2(
 							$elm$core$Dict$get,
 							A2($author$project$App$Drafts$formKey, model, action),
-							model.w.t)));
+							model.w.q)));
 		}
 	});
 var $author$project$App$Drafts$prepareReview = function (model) {
 	return (A3($author$project$App$Drafts$get, model, $author$project$Form$Action$AddReview, 'goal') === '') ? A3($author$project$App$Drafts$editReview, 0, 'demo-revenue', model) : model.w;
 };
+var $author$project$App$Agents$rebase = F2(
+	function (org, state) {
+		var _v0 = _Utils_Tuple2(
+			A2($elm$core$Dict$get, org, state.q),
+			A2($author$project$App$Agents$saved, org, state));
+		if ((!_v0.a.$) && (!_v0.b.$)) {
+			var draft = _v0.a.a;
+			var latest = _v0.b.a;
+			return _Utils_update(
+				state,
+				{
+					q: A3(
+						$elm$core$Dict$insert,
+						org,
+						_Utils_update(
+							draft,
+							{aC: latest.aC}),
+						state.q)
+				});
+		} else {
+			return state;
+		}
+	});
 var $author$project$App$Discovery$rebase = F2(
 	function (org, state) {
 		var _v0 = _Utils_Tuple2(
-			A2($elm$core$Dict$get, org, state.t),
+			A2($elm$core$Dict$get, org, state.q),
 			A2($author$project$App$Discovery$saved, org, state));
 		if ((!_v0.a.$) && (!_v0.b.$)) {
 			var draft = _v0.a.a;
 			var latest = _v0.b.a;
-			var doc = draft.X;
+			var doc = draft.Z;
 			return _Utils_update(
 				state,
 				{
-					t: A3(
+					q: A3(
 						$elm$core$Dict$insert,
 						org,
 						_Utils_update(
 							draft,
 							{
-								X: _Utils_update(
+								Z: _Utils_update(
 									doc,
 									{
-										b1: {dN: doc.b1.dN, a5: 'pending'}
+										b1: {dY: doc.b1.dY, ez: 'pending'}
 									}),
-								ay: latest.ay
+								aC: latest.aC
 							}),
-						state.t)
+						state.q)
 				});
 		} else {
 			return state;
+		}
+	});
+var $author$project$App$Agents$receive = F3(
+	function (org, result, state) {
+		if (!result.$) {
+			var snapshot = result.a;
+			return _Utils_update(
+				state,
+				{
+					I: A2($elm$core$Dict$remove, org, state.I),
+					aJ: false,
+					U: A3($elm$core$Dict$insert, org, snapshot, state.U)
+				});
+		} else {
+			var error = result.a;
+			return _Utils_update(
+				state,
+				{
+					I: A3($elm$core$Dict$insert, org, error, state.I),
+					aJ: false
+				});
 		}
 	});
 var $author$project$App$Discovery$receive = F3(
@@ -8860,9 +9613,9 @@ var $author$project$App$Discovery$receive = F3(
 			return _Utils_update(
 				state,
 				{
-					O: A3($elm$core$Dict$insert, org, snapshot, state.O),
+					P: A3($elm$core$Dict$insert, org, snapshot, state.P),
 					I: A2($elm$core$Dict$remove, org, state.I),
-					aG: false
+					aJ: false
 				});
 		} else {
 			var error = result.a;
@@ -8870,27 +9623,27 @@ var $author$project$App$Discovery$receive = F3(
 				state,
 				{
 					I: A3($elm$core$Dict$insert, org, error, state.I),
-					aG: false
+					aJ: false
 				});
 		}
 	});
 var $author$project$App$Update$receive = F4(
 	function (token, result, session, model) {
-		if (!_Utils_eq(token, model.ab.aN)) {
+		if (!_Utils_eq(token, model.ad.aQ)) {
 			return _Utils_Tuple2(model, _List_Nil);
 		} else {
 			if (!result.$) {
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{ab: session}),
+						{ad: session}),
 					_List_Nil);
 			} else {
 				var message = result.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{br: true, bN: message, ab: session}),
+						{bt: true, bN: message, ad: session}),
 					_List_Nil);
 			}
 		}
@@ -8922,9 +9675,9 @@ var $author$project$App$Session$receiveOrganizations = F2(
 		return _Utils_update(
 			state,
 			{
-				al: $author$project$App$Session$succeeded(result),
-				aJ: $author$project$App$Session$response(result),
-				at: false
+				ao: $author$project$App$Session$succeeded(result),
+				aM: $author$project$App$Session$response(result),
+				aw: false
 			});
 	});
 var $author$project$App$Session$receiveWorkspace = F2(
@@ -8932,9 +9685,9 @@ var $author$project$App$Session$receiveWorkspace = F2(
 		return _Utils_update(
 			state,
 			{
-				al: $author$project$App$Session$succeeded(result),
-				at: false,
-				a9: $author$project$App$Session$response(result)
+				ao: $author$project$App$Session$succeeded(result),
+				aw: false,
+				bb: $author$project$App$Session$response(result)
 			});
 	});
 var $author$project$Form$Action$DeactivatePerson = function (a) {
@@ -8949,7 +9702,7 @@ var $author$project$App$Drafts$resetPerson = F2(
 		return _Utils_update(
 			state,
 			{
-				t: A2(
+				q: A2(
 					$elm$core$Dict$remove,
 					A2(
 						$author$project$App$Drafts$formKey,
@@ -8961,22 +9714,32 @@ var $author$project$App$Drafts$resetPerson = F2(
 							$author$project$App$Drafts$formKey,
 							model,
 							$author$project$Form$Action$UpdatePerson(key)),
-						state.t))
+						state.q))
 			});
 	});
 var $author$project$Form$Action$DeleteOrg = {$: 14};
 var $author$project$App$Session$organizationDeleted = function (state) {
 	return _Utils_update(
 		state,
-		{aI: $elm$core$Maybe$Nothing, aJ: $author$project$Remote$Loading, a9: $author$project$Remote$Loading});
+		{aL: $elm$core$Maybe$Nothing, aM: $author$project$Remote$Loading, bb: $author$project$Remote$Loading});
 };
+var $author$project$App$Agents$remove = F2(
+	function (org, state) {
+		return _Utils_update(
+			state,
+			{
+				q: A2($elm$core$Dict$remove, org, state.q),
+				I: A2($elm$core$Dict$remove, org, state.I),
+				U: A2($elm$core$Dict$remove, org, state.U)
+			});
+	});
 var $author$project$App$Discovery$remove = F2(
 	function (org, state) {
 		return _Utils_update(
 			state,
 			{
-				O: A2($elm$core$Dict$remove, org, state.O),
-				t: A2($elm$core$Dict$remove, org, state.t),
+				P: A2($elm$core$Dict$remove, org, state.P),
+				q: A2($elm$core$Dict$remove, org, state.q),
 				I: A2($elm$core$Dict$remove, org, state.I)
 			});
 	});
@@ -9028,7 +9791,7 @@ var $author$project$App$Drafts$removeOrganization = F2(
 		return _Utils_update(
 			state,
 			{
-				t: A2($elm$core$Dict$filter, keep, state.t),
+				q: A2($elm$core$Dict$filter, keep, state.q),
 				z: A2($elm$core$Dict$filter, keep, state.z),
 				D: A2($elm$core$Dict$filter, keep, state.D)
 			});
@@ -9040,12 +9803,12 @@ var $author$project$App$Drafts$saved = F2(
 		return _Utils_update(
 			state,
 			{
-				bm: $elm$core$Maybe$Nothing,
-				t: A2($elm$core$Dict$remove, key, state.t),
+				bo: $elm$core$Maybe$Nothing,
+				q: A2($elm$core$Dict$remove, key, state.q),
 				z: _Utils_eq(action, $author$project$Form$Action$AddGoal) ? A2($elm$core$Dict$remove, key, state.z) : state.z,
-				_: _Utils_eq(action, $author$project$Form$Action$AddGoal) ? A3(
+				ab: _Utils_eq(action, $author$project$Form$Action$AddGoal) ? A3(
 					$elm$core$Dict$update,
-					A2($elm$core$Maybe$withDefault, '', model.ab.aI),
+					A2($elm$core$Maybe$withDefault, '', model.ad.aL),
 					A2(
 						$elm$core$Basics$composeR,
 						$elm$core$Maybe$withDefault(0),
@@ -9053,7 +9816,7 @@ var $author$project$App$Drafts$saved = F2(
 							$elm$core$Basics$composeR,
 							$elm$core$Basics$add(1),
 							$elm$core$Maybe$Just)),
-					state._) : state._,
+					state.ab) : state.ab,
 				D: _Utils_eq(action, $author$project$Form$Action$AddReview) ? A2($elm$core$Dict$remove, key, state.D) : state.D
 			});
 	});
@@ -9061,7 +9824,7 @@ var $author$project$App$PageState$setPage = F2(
 	function (page, state) {
 		return _Utils_update(
 			state,
-			{aa: page});
+			{ac: page});
 	});
 var $author$project$App$Update$saved = F3(
 	function (action, response, model) {
@@ -9071,37 +9834,46 @@ var $author$project$App$Update$saved = F3(
 				_Utils_update(
 					model,
 					{
-						br: true,
+						bt: true,
 						w: $author$project$App$Drafts$closeDelete(model.w),
 						bN: message + ' 자동 재시도하지 않았습니다. 최신 상태를 확인한 뒤 다시 저장하세요. 입력 내용은 보존됩니다.',
-						ab: $author$project$App$Session$finishSave(model.ab)
+						ad: $author$project$App$Session$finishSave(model.ad)
 					}));
 		} else {
 			var next = _Utils_update(
 				model,
 				{
-					br: false,
+					bt: false,
 					w: A2($author$project$App$Drafts$saved, action, model),
 					bN: '저장했습니다. 최신 조직 상태와 감사 기록을 확인하세요.',
-					ab: $author$project$App$Session$finishSave(model.ab)
+					ad: $author$project$App$Session$finishSave(model.ad)
 				});
 			return _Utils_eq(action, $author$project$Form$Action$DeleteOrg) ? $author$project$App$Update$refresh(
 				_Utils_update(
 					next,
 					{
-						X: A2(
+						N: A2(
 							$elm$core$Maybe$withDefault,
-							next.X,
+							next.N,
 							A2(
 								$elm$core$Maybe$map,
 								function (org) {
-									return A2($author$project$App$Discovery$remove, org, next.X);
+									return A2($author$project$App$Agents$remove, org, next.N);
 								},
-								model.ab.aI)),
-						w: A2($author$project$App$Drafts$removeOrganization, model.ab.aI, next.w),
+								model.ad.aL)),
+						Z: A2(
+							$elm$core$Maybe$withDefault,
+							next.Z,
+							A2(
+								$elm$core$Maybe$map,
+								function (org) {
+									return A2($author$project$App$Discovery$remove, org, next.Z);
+								},
+								model.ad.aL)),
+						w: A2($author$project$App$Drafts$removeOrganization, model.ad.aL, next.w),
 						bN: '조직을 논리 삭제했습니다. 원본 감사 기록과 다른 조직은 보존됩니다.',
 						bR: A2($author$project$App$PageState$setPage, 0, next.bR),
-						ab: $author$project$App$Session$organizationDeleted(next.ab)
+						ad: $author$project$App$Session$organizationDeleted(next.ad)
 					})) : $author$project$App$Update$refresh(next);
 		}
 	});
@@ -9109,19 +9881,19 @@ var $author$project$App$PageState$searchPeople = F2(
 	function (query, state) {
 		return _Utils_update(
 			state,
-			{aK: query});
+			{aN: query});
 	});
 var $author$project$App$Session$selectOrganization = F2(
 	function (org, state) {
 		return _Utils_update(
 			state,
-			{aI: org, a9: $author$project$Remote$Loading});
+			{aL: org, bb: $author$project$Remote$Loading});
 	});
 var $author$project$App$PageState$setActivity = F2(
 	function (activity, state) {
 		return _Utils_update(
 			state,
-			{V: activity});
+			{X: activity});
 	});
 var $author$project$Page$pageName = function (page) {
 	switch (page) {
@@ -9134,18 +9906,20 @@ var $author$project$Page$pageName = function (page) {
 		case 3:
 			return '에이전트 초안';
 		case 4:
-			return '구성원';
+			return '에이전트 구조';
 		case 5:
-			return '목표';
+			return '구성원';
 		case 6:
-			return '책임';
+			return '목표';
 		case 7:
-			return '권한';
+			return '책임';
 		case 8:
-			return '결과';
+			return '권한';
 		case 9:
-			return '학습';
+			return '결과';
 		case 10:
+			return '학습';
+		case 11:
 			return '활동 기록';
 		default:
 			return '조직 설정';
@@ -9156,11 +9930,11 @@ var $author$project$App$PageState$setListMode = F3(
 		return _Utils_update(
 			state,
 			{
-				ap: A3(
+				as: A3(
 					$elm$core$Dict$insert,
 					$author$project$Page$pageName(page),
 					mode,
-					state.ap)
+					state.as)
 			});
 	});
 var $author$project$App$Effect$SaveCommand = F5(
@@ -9175,13 +9949,12 @@ var $author$project$App$Session$beginSave = F2(
 		return _Utils_update(
 			state,
 			{
-				ar: $author$project$App$Session$Saving(key)
+				au: $author$project$App$Session$Saving(key)
 			});
 	});
 var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$json$Json$Encode$float = _Json_wrap;
 var $elm$core$String$toFloat = _String_toFloat;
-var $elm$core$String$trim = _String_trim;
 var $author$project$Form$Goal$validate = function (draft) {
 	if (A2(
 		$elm$core$List$any,
@@ -9190,19 +9963,19 @@ var $author$project$Form$Goal$validate = function (draft) {
 			$elm$core$String$trim,
 			$elm$core$Basics$eq('')),
 		_List_fromArray(
-			[draft.cZ, draft.dz, draft.dA, draft.eH, draft.en, draft.cS]))) {
+			[draft.c1, draft.dK, draft.dL, draft.eT, draft.ey, draft.cW]))) {
 		return $elm$core$Result$Err('필수 항목을 모두 입력하세요.');
 	} else {
 		var _v0 = _Utils_Tuple3(
-			$elm$core$String$toFloat(draft.cA),
-			$elm$core$String$toFloat(draft.ex),
-			$elm$core$String$toFloat(draft.cD));
+			$elm$core$String$toFloat(draft.cE),
+			$elm$core$String$toFloat(draft.eI),
+			$elm$core$String$toFloat(draft.cH));
 		if (((!_v0.a.$) && (!_v0.b.$)) && (!_v0.c.$)) {
 			var baseline = _v0.a.a;
 			var target = _v0.b.a;
 			var budget = _v0.c.a;
-			return (_Utils_cmp(draft.cS, draft.en) < 0) ? $elm$core$Result$Err('마감일은 시작일 이후여야 합니다.') : $elm$core$Result$Ok(
-				{cA: baseline, cD: budget, cS: draft.cS, cZ: draft.cZ, c0: draft.c0, dz: draft.dz, dA: draft.dA, dU: draft.dU, dX: draft.dX, en: draft.en, ex: target, eH: draft.eH});
+			return (_Utils_cmp(draft.cW, draft.ey) < 0) ? $elm$core$Result$Err('마감일은 시작일 이후여야 합니다.') : $elm$core$Result$Ok(
+				{cE: baseline, cH: budget, cW: draft.cW, c1: draft.c1, c4: draft.c4, dK: draft.dK, dL: draft.dL, d3: draft.d3, d6: draft.d6, ey: draft.ey, eI: target, eT: draft.eT});
 		} else {
 			return $elm$core$Result$Err('숫자 항목을 올바르게 입력하세요.');
 		}
@@ -9216,19 +9989,19 @@ var $author$project$Form$Review$validate = function (draft) {
 			$elm$core$String$trim,
 			$elm$core$Basics$eq('')),
 		_List_fromArray(
-			[draft.aY, draft.dN])) ? $elm$core$Result$Err('필수 항목을 모두 입력하세요.') : ((($elm$core$String$trim(draft.bj) !== '') && (draft.cT === '')) ? $elm$core$Result$Err('다음 결정의 담당자를 선택하세요.') : $elm$core$Result$Ok(draft));
+			[draft.a_, draft.dY])) ? $elm$core$Result$Err('필수 항목을 모두 입력하세요.') : ((($elm$core$String$trim(draft.bl) !== '') && (draft.cX === '')) ? $elm$core$Result$Err('다음 결정의 담당자를 선택하세요.') : $elm$core$Result$Ok(draft));
 };
 var $author$project$Api$Command$payload = F2(
 	function (model, action) {
 		var version = A2(
 			$elm$core$Maybe$withDefault,
-			model.ay,
+			model.aC,
 			$elm$core$String$toInt(
-				A2(model.a8, action, '__version')));
-		var val = model.a8(action);
+				A2(model.ba, action, '__version')));
+		var val = model.ba(action);
 		var uid = function (prefix) {
 			return $elm$json$Json$Encode$string(
-				prefix + ('-' + (model.b5 + ('-' + $elm$core$String$fromInt(model.b6)))));
+				prefix + ('-' + (model.b6 + ('-' + $elm$core$String$fromInt(model.b7)))));
 		};
 		var str = function (key) {
 			return _Utils_Tuple2(
@@ -9256,7 +10029,7 @@ var $author$project$Api$Command$payload = F2(
 		var path = function (tail) {
 			return A2(
 				$author$project$Api$Path$orgPath,
-				A2($elm$core$Maybe$withDefault, '', model.aI),
+				A2($elm$core$Maybe$withDefault, '', model.aL),
 				tail);
 		};
 		var num = function (key) {
@@ -9290,7 +10063,7 @@ var $author$project$Api$Command$payload = F2(
 					val('reportsTo')))
 			]);
 		var current = function (result) {
-			return (!_Utils_eq(version, model.ay)) ? $elm$core$Result$Err('작성 중 조직이 변경되었습니다. ‘최신 정보로 다시 불러오기’를 눌러 변경 내용을 확인한 뒤 다시 작성해 주세요.') : result;
+			return (!_Utils_eq(version, model.aC)) ? $elm$core$Result$Err('작성 중 조직이 변경되었습니다. ‘최신 정보로 다시 불러오기’를 눌러 변경 내용을 확인한 뒤 다시 작성해 주세요.') : result;
 		};
 		var blank = function (keys) {
 			return A2(
@@ -9341,7 +10114,7 @@ var $author$project$Api$Command$payload = F2(
 					_List_fromArray(
 						['name']),
 					_List_Nil,
-					(!_Utils_eq(version, model.ay)) ? $elm$core$Result$Err('작성 중 조직이 변경되었습니다. 최신 조직 이름을 확인하고 수정 입력을 다시 해 주세요.') : $elm$core$Result$Ok(
+					(!_Utils_eq(version, model.aC)) ? $elm$core$Result$Err('작성 중 조직이 변경되었습니다. 최신 조직 이름을 확인하고 수정 입력을 다시 해 주세요.') : $elm$core$Result$Ok(
 						_Utils_Tuple3(
 							'PATCH',
 							path(''),
@@ -9421,10 +10194,10 @@ var $author$project$Api$Command$payload = F2(
 										_Utils_Tuple2(
 										'organization',
 										$elm$json$Json$Encode$string(
-											A2($elm$core$Maybe$withDefault, '', model.aI))),
+											A2($elm$core$Maybe$withDefault, '', model.aL))),
 										_Utils_Tuple2(
 										'description',
-										$elm$json$Json$Encode$string(goal.cZ)),
+										$elm$json$Json$Encode$string(goal.c1)),
 										_Utils_Tuple2(
 										'metric',
 										$elm$json$Json$Encode$object(
@@ -9432,32 +10205,32 @@ var $author$project$Api$Command$payload = F2(
 												[
 													_Utils_Tuple2(
 													'id',
-													$elm$json$Json$Encode$string(goal.dz)),
+													$elm$json$Json$Encode$string(goal.dK)),
 													_Utils_Tuple2(
 													'name',
-													$elm$json$Json$Encode$string(goal.dA)),
+													$elm$json$Json$Encode$string(goal.dL)),
 													_Utils_Tuple2(
 													'unit',
-													$elm$json$Json$Encode$string(goal.eH)),
+													$elm$json$Json$Encode$string(goal.eT)),
 													_Utils_Tuple2(
 													'direction',
-													$elm$json$Json$Encode$string(goal.c0))
+													$elm$json$Json$Encode$string(goal.c4))
 												]))),
 										_Utils_Tuple2(
 										'baseline',
-										$elm$json$Json$Encode$float(goal.cA)),
+										$elm$json$Json$Encode$float(goal.cE)),
 										_Utils_Tuple2(
 										'target',
-										$elm$json$Json$Encode$float(goal.ex)),
+										$elm$json$Json$Encode$float(goal.eI)),
 										_Utils_Tuple2(
 										'startsAt',
-										$elm$json$Json$Encode$string(goal.en + 'T00:00:00Z')),
+										$elm$json$Json$Encode$string(goal.ey + 'T00:00:00Z')),
 										_Utils_Tuple2(
 										'deadline',
-										$elm$json$Json$Encode$string(goal.cS + 'T00:00:00Z')),
+										$elm$json$Json$Encode$string(goal.cW + 'T00:00:00Z')),
 										_Utils_Tuple2(
 										'parent',
-										nullable(goal.dU)),
+										nullable(goal.d3)),
 										_Utils_Tuple2(
 										'requiredPermissions',
 										A2(
@@ -9466,15 +10239,15 @@ var $author$project$Api$Command$payload = F2(
 											A2(
 												$elm$core$List$filter,
 												function (key) {
-													return A2($elm$core$List$member, key, goal.dX);
+													return A2($elm$core$List$member, key, goal.d6);
 												},
 												$author$project$Domain$Permission$permissionKeys))),
 										_Utils_Tuple2(
 										'requiredBudget',
-										$elm$json$Json$Encode$float(goal.cD))
+										$elm$json$Json$Encode$float(goal.cH))
 									])));
 					},
-					$author$project$Form$Goal$validate(model.aY));
+					$author$project$Form$Goal$validate(model.a_));
 			case 7:
 				var key = action.a;
 				return A3(
@@ -9589,10 +10362,10 @@ var $author$project$Api$Command$payload = F2(
 										uid('review')),
 										_Utils_Tuple2(
 										'goal',
-										$elm$json$Json$Encode$string(review.aY)),
+										$elm$json$Json$Encode$string(review.a_)),
 										_Utils_Tuple2(
 										'note',
-										$elm$json$Json$Encode$string(review.dN)),
+										$elm$json$Json$Encode$string(review.dY)),
 										_Utils_Tuple2(
 										'learnings',
 										A2(
@@ -9613,44 +10386,44 @@ var $author$project$Api$Command$payload = F2(
 										A2(
 											$elm$json$Json$Encode$list,
 											$elm$core$Basics$identity,
-											($elm$core$String$trim(review.bj) === '') ? _List_Nil : _List_fromArray(
+											($elm$core$String$trim(review.bl) === '') ? _List_Nil : _List_fromArray(
 												[
 													$elm$json$Json$Encode$object(
 													_List_fromArray(
 														[
 															_Utils_Tuple2(
 															'text',
-															$elm$json$Json$Encode$string(review.bj)),
+															$elm$json$Json$Encode$string(review.bl)),
 															_Utils_Tuple2(
 															'owner',
-															$elm$json$Json$Encode$string(review.cT)),
+															$elm$json$Json$Encode$string(review.cX)),
 															_Utils_Tuple2(
 															'deadline',
-															(review.bk === '') ? $elm$json$Json$Encode$null : $elm$json$Json$Encode$string(review.bk + 'T23:59:59Z'))
+															(review.bm === '') ? $elm$json$Json$Encode$null : $elm$json$Json$Encode$string(review.bm + 'T23:59:59Z'))
 														]))
 												])))
 									])));
 					},
 					$author$project$Form$Review$validate(model.b1));
 			default:
-				var _v1 = model.bm;
+				var _v1 = model.bo;
 				if (!_v1.$) {
 					var snapshot = _v1.a;
-					return (_Utils_eq(snapshot.bg, snapshot.dD) && _Utils_eq(
-						model.aI,
-						$elm$core$Maybe$Just(snapshot.bC))) ? $elm$core$Result$Ok(
+					return (_Utils_eq(snapshot.bi, snapshot.dO) && _Utils_eq(
+						model.aL,
+						$elm$core$Maybe$Just(snapshot.du))) ? $elm$core$Result$Ok(
 						_Utils_Tuple3(
 							'DELETE',
-							A2($author$project$Api$Path$orgPath, snapshot.bC, ''),
+							A2($author$project$Api$Path$orgPath, snapshot.du, ''),
 							$elm$json$Json$Encode$object(
 								_List_fromArray(
 									[
 										_Utils_Tuple2(
 										'confirmName',
-										$elm$json$Json$Encode$string(snapshot.bg)),
+										$elm$json$Json$Encode$string(snapshot.bi)),
 										_Utils_Tuple2(
 										'expectedVersion',
-										$elm$json$Json$Encode$int(snapshot.ay))
+										$elm$json$Json$Encode$int(snapshot.aC))
 									])))) : $elm$core$Result$Err('조직 이름을 정확히 입력하세요.');
 				} else {
 					return $elm$core$Result$Err('삭제 확인을 먼저 열어 주세요.');
@@ -9662,14 +10435,14 @@ var $author$project$App$Drafts$payload = F2(
 		return A2(
 			$author$project$Api$Command$payload,
 			{
-				bm: model.w.bm,
-				aY: $author$project$App$Drafts$goalDraft(model),
-				aI: model.ab.aI,
+				bo: model.w.bo,
+				a_: $author$project$App$Drafts$goalDraft(model),
+				aL: model.ad.aL,
 				b1: $author$project$App$Drafts$reviewDraft(model),
-				b5: model.aE.b5,
-				b6: model.w.b6,
-				a8: $author$project$App$Drafts$get(model),
-				ay: $author$project$App$Drafts$workspaceVersion(model)
+				b6: model.aH.b6,
+				b7: model.w.b7,
+				ba: $author$project$App$Drafts$get(model),
+				aC: $author$project$App$Drafts$workspaceVersion(model)
 			},
 			action);
 	});
@@ -9679,11 +10452,11 @@ var $author$project$App$Update$submit = F2(
 		if ($author$project$App$Update$busy(model)) {
 			return _Utils_Tuple2(model, _List_Nil);
 		} else {
-			if (!model.ab.al) {
+			if (!model.ad.ao) {
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{br: true, bN: '최신 상태를 먼저 불러와 주세요. 입력 내용은 보존됩니다.'}),
+						{bt: true, bN: '최신 상태를 먼저 불러와 주세요. 입력 내용은 보존됩니다.'}),
 					_List_Nil);
 			} else {
 				var _v0 = A2($author$project$App$Update$payload, model, action);
@@ -9692,7 +10465,7 @@ var $author$project$App$Update$submit = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{br: true, bN: message}),
+							{bt: true, bN: message}),
 						_List_Nil);
 				} else {
 					var _v1 = _v0.a;
@@ -9703,22 +10476,96 @@ var $author$project$App$Update$submit = F2(
 						_Utils_update(
 							model,
 							{
-								br: false,
+								bt: false,
 								w: $author$project$App$Drafts$advanceSerial(model.w),
 								bN: '저장 중입니다…',
-								ab: A2(
+								ad: A2(
 									$author$project$App$Session$beginSave,
 									$author$project$Form$Action$actionKey(action),
-									model.ab)
+									model.ad)
 							}),
 						_List_fromArray(
 							[
-								A5($author$project$App$Effect$SaveCommand, model.ab.aN, action, method, path, body)
+								A5($author$project$App$Effect$SaveCommand, model.ad.aQ, action, method, path, body)
 							]));
 				}
 			}
 		}
 	});
+var $author$project$App$Effect$SaveAgents = F4(
+	function (a, b, c, d) {
+		return {$: 6, a: a, b: b, c: c, d: d};
+	});
+var $author$project$App$Agents$conflicted = F2(
+	function (org, state) {
+		var _v0 = _Utils_Tuple2(
+			A2($elm$core$Dict$get, org, state.q),
+			A2($author$project$App$Agents$saved, org, state));
+		if ((!_v0.a.$) && (!_v0.b.$)) {
+			var draft = _v0.a.a;
+			var latest = _v0.b.a;
+			return !_Utils_eq(draft.aC, latest.aC);
+		} else {
+			return false;
+		}
+	});
+var $author$project$Domain$Agent$problems = function (roles) {
+	return A2(
+		$elm$core$List$concatMap,
+		function (role) {
+			return _Utils_ap(
+				($elm$core$String$trim(role.dO) === '') ? _List_fromArray(
+					[role.du + ': 역할 이름을 입력하세요.']) : _List_Nil,
+				((role.ez === 'confirmed') && ($elm$core$String$trim(role.de) === '')) ? _List_fromArray(
+					[role.dO + ': 확인된 사실에는 근거가 필요합니다.']) : _List_Nil);
+		},
+		roles);
+};
+var $author$project$App$Update$submitAgents = function (model) {
+	var _v0 = model.ad.aL;
+	if (_v0.$ === 1) {
+		return _Utils_Tuple2(model, _List_Nil);
+	} else {
+		var org = _v0.a;
+		var _v1 = A2($author$project$App$Agents$current, org, model.N);
+		if (_v1.$ === 1) {
+			return _Utils_Tuple2(model, _List_Nil);
+		} else {
+			var design = _v1.a;
+			return ($author$project$App$Update$busy(model) || (model.N.aJ || ((!model.ad.ao) || A2($elm$core$Dict$member, org, model.N.I)))) ? _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{bt: true, bN: '최신 설계를 불러온 뒤 저장하세요. 입력은 보존됩니다.'}),
+				_List_Nil) : (A2($author$project$App$Agents$conflicted, org, model.N) ? _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{bt: true, bN: '입력 중 저장된 조직이 변경되었습니다. 최신 저장 내용과 비교한 뒤 다시 적용하세요.'}),
+				_List_Nil) : ((!$elm$core$List$isEmpty(
+				$author$project$Domain$Agent$problems(design.N))) ? _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{
+						bt: true,
+						bN: A2(
+							$elm$core$String$join,
+							' ',
+							$author$project$Domain$Agent$problems(design.N))
+					}),
+				_List_Nil) : _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{
+						bt: false,
+						bN: '설계안 저장 중…',
+						ad: A2($author$project$App$Session$beginSave, 'agents', model.ad)
+					}),
+				_List_fromArray(
+					[
+						A4($author$project$App$Effect$SaveAgents, model.ad.aQ, org, design.aC, design.N)
+					]))));
+		}
+	}
+};
 var $author$project$App$Effect$SaveDiscovery = F3(
 	function (a, b, c) {
 		return {$: 4, a: a, b: b, c: c};
@@ -9731,88 +10578,72 @@ var $author$project$App$Discovery$conflicted = F2(
 		if ((!_v0.a.$) && (!_v0.b.$)) {
 			var draft = _v0.a.a;
 			var latest = _v0.b.a;
-			return !_Utils_eq(draft.ay, latest.ay);
+			return !_Utils_eq(draft.aC, latest.aC);
 		} else {
 			return false;
 		}
-	});
-var $elm$core$List$append = F2(
-	function (xs, ys) {
-		if (!ys.b) {
-			return xs;
-		} else {
-			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
-		}
-	});
-var $elm$core$List$concat = function (lists) {
-	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
-};
-var $elm$core$List$concatMap = F2(
-	function (f, list) {
-		return $elm$core$List$concat(
-			A2($elm$core$List$map, f, list));
 	});
 var $author$project$Domain$Discovery$problems = function (doc) {
 	var blank = A2($elm$core$Basics$composeR, $elm$core$String$trim, $elm$core$String$isEmpty);
 	var observation = function (o) {
 		return _Utils_ap(
-			blank(o.es) ? _List_fromArray(
+			blank(o.eD) ? _List_fromArray(
 				['현황 항목의 제목을 입력하세요.']) : _List_Nil,
-			((o.a5 === 'confirmed') && blank(o.bu)) ? _List_fromArray(
-				[o.es + ': 확인된 사실에는 근거가 필요합니다.']) : _List_Nil);
+			((o.ez === 'confirmed') && blank(o.de)) ? _List_fromArray(
+				[o.eD + ': 확인된 사실에는 근거가 필요합니다.']) : _List_Nil);
 	};
 	var workflow = function (w) {
 		return _Utils_ap(
-			blank(w.dD) ? _List_fromArray(
+			blank(w.dO) ? _List_fromArray(
 				['업무 이름을 입력하세요.']) : _List_Nil,
-			((w.a5 === 'confirmed') && blank(w.bu)) ? _List_fromArray(
-				[w.dD + ': 확인된 사실에는 근거가 필요합니다.']) : _List_Nil);
+			((w.ez === 'confirmed') && blank(w.de)) ? _List_fromArray(
+				[w.dO + ': 확인된 사실에는 근거가 필요합니다.']) : _List_Nil);
 	};
 	return _Utils_ap(
-		A2($elm$core$List$concatMap, observation, doc.dO),
-		A2($elm$core$List$concatMap, workflow, doc.eL));
+		A2($elm$core$List$concatMap, observation, doc.dZ),
+		A2($elm$core$List$concatMap, workflow, doc.eX));
 };
 var $author$project$App$Update$submitDiscovery = function (model) {
-	var _v0 = model.ab.aI;
+	var _v0 = model.ad.aL;
 	if (_v0.$ === 1) {
 		return _Utils_Tuple2(model, _List_Nil);
 	} else {
 		var org = _v0.a;
-		var _v1 = A2($author$project$App$Discovery$current, org, model.X);
+		var _v1 = A2($author$project$App$Discovery$current, org, model.Z);
 		if (_v1.$ === 1) {
 			return _Utils_Tuple2(model, _List_Nil);
 		} else {
 			var snapshot = _v1.a;
-			return ($author$project$App$Update$busy(model) || (model.X.aG || ((!model.ab.al) || A2($elm$core$Dict$member, org, model.X.I)))) ? _Utils_Tuple2(
+			return ($author$project$App$Update$busy(model) || (model.Z.aJ || ((!model.ad.ao) || A2($elm$core$Dict$member, org, model.Z.I)))) ? _Utils_Tuple2(
 				_Utils_update(
 					model,
-					{br: true, bN: '최신 현황을 불러온 뒤 저장하세요. 입력은 보존됩니다.'}),
-				_List_Nil) : (A2($author$project$App$Discovery$conflicted, org, model.X) ? _Utils_Tuple2(
+					{bt: true, bN: '최신 현황을 불러온 뒤 저장하세요. 입력은 보존됩니다.'}),
+				_List_Nil) : (A2($author$project$App$Discovery$conflicted, org, model.Z) ? _Utils_Tuple2(
 				_Utils_update(
 					model,
-					{br: true, bN: '입력 중 저장된 조직이 변경되었습니다. 최신 저장 내용과 비교한 뒤 다시 적용하세요.'}),
+					{bt: true, bN: '입력 중 저장된 조직이 변경되었습니다. 최신 저장 내용과 비교한 뒤 다시 적용하세요.'}),
 				_List_Nil) : ((!$elm$core$List$isEmpty(
-				$author$project$Domain$Discovery$problems(snapshot.X))) ? _Utils_Tuple2(
+				$author$project$Domain$Discovery$problems(snapshot.Z))) ? _Utils_Tuple2(
 				_Utils_update(
 					model,
 					{
-						br: true,
+						bt: true,
 						bN: A2(
 							$elm$core$String$join,
 							' ',
-							$author$project$Domain$Discovery$problems(snapshot.X))
+							$author$project$Domain$Discovery$problems(snapshot.Z))
 					}),
 				_List_Nil) : _Utils_Tuple2(
 				_Utils_update(
 					model,
 					{
-						br: false,
+						bt: false,
 						bN: '현황 저장 중…',
-						ab: A2($author$project$App$Session$beginSave, 'discovery', model.ab)
+						ad: A2($author$project$App$Session$beginSave, 'discovery', model.ad)
 					}),
 				_List_fromArray(
 					[
-						A3($author$project$App$Effect$SaveDiscovery, model.ab.aN, org, snapshot)
+						A3($author$project$App$Effect$SaveDiscovery, model.ad.aQ, org, snapshot)
 					]))));
 		}
 	}
@@ -9820,7 +10651,7 @@ var $author$project$App$Update$submitDiscovery = function (model) {
 var $author$project$App$PageState$toggleGuide = function (state) {
 	return _Utils_update(
 		state,
-		{aF: !state.aF});
+		{aI: !state.aI});
 };
 var $elm$core$Basics$clamp = F3(
 	function (low, high, number) {
@@ -9833,29 +10664,29 @@ var $author$project$Ui$ResponsibilityGraph$update = F2(
 				var value = msg.a;
 				return _Utils_update(
 					state,
-					{W: value});
+					{Y: value});
 			case 1:
 				var value = msg.a;
 				return _Utils_update(
 					state,
-					{d_: value, ei: $elm$core$Maybe$Nothing});
+					{d9: value, es: $elm$core$Maybe$Nothing});
 			case 2:
 				var value = msg.a;
 				return _Utils_update(
 					state,
-					{as: value});
+					{av: value});
 			case 3:
 				var value = msg.a;
 				return _Utils_update(
 					state,
 					{
-						ei: ((!value) && A2(
+						es: ((!value) && A2(
 							$elm$core$Maybe$withDefault,
 							false,
 							A2(
 								$elm$core$Maybe$map,
 								$elm$core$String$startsWith('ResourceNode:'),
-								state.ei))) ? $elm$core$Maybe$Nothing : state.ei,
+								state.es))) ? $elm$core$Maybe$Nothing : state.es,
 						L: value
 					});
 			case 4:
@@ -9863,12 +10694,12 @@ var $author$project$Ui$ResponsibilityGraph$update = F2(
 				return _Utils_update(
 					state,
 					{
-						ei: $elm$core$Maybe$Just(key)
+						es: $elm$core$Maybe$Just(key)
 					});
 			case 5:
 				return _Utils_update(
 					state,
-					{ei: $elm$core$Maybe$Nothing});
+					{es: $elm$core$Maybe$Nothing});
 			case 6:
 				var delta = msg.a;
 				return _Utils_update(
@@ -9887,7 +10718,7 @@ var $author$project$App$PageState$updateGraph = F2(
 		return _Utils_update(
 			state,
 			{
-				am: A2($author$project$Ui$ResponsibilityGraph$update, message, state.am)
+				ap: A2($author$project$Ui$ResponsibilityGraph$update, message, state.ap)
 			});
 	});
 var $author$project$App$Update$update = F2(
@@ -9899,44 +10730,44 @@ var $author$project$App$Update$update = F2(
 					var token = msg.a;
 					var org = msg.b;
 					var response = msg.c;
-					return ((!_Utils_eq(token, model.ab.aN)) || (!_Utils_eq(
+					return ((!_Utils_eq(token, model.ad.aQ)) || (!_Utils_eq(
 						$elm$core$Maybe$Just(org),
-						model.ab.aI))) ? _Utils_Tuple2(model, _List_Nil) : _Utils_Tuple2(
+						model.ad.aL))) ? _Utils_Tuple2(model, _List_Nil) : _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{
-								X: A3($author$project$App$Discovery$receive, org, response, model.X)
+								Z: A3($author$project$App$Discovery$receive, org, response, model.Z)
 							}),
 						_List_Nil);
 				case 24:
 					var change = msg.a;
-					return ($author$project$App$Update$busy(model) || (model.X.aG || A2(
+					return ($author$project$App$Update$busy(model) || (model.Z.aJ || A2(
 						$elm$core$Maybe$withDefault,
 						false,
 						A2(
 							$elm$core$Maybe$map,
 							function (org) {
-								return A2($elm$core$Dict$member, org, model.X.I);
+								return A2($elm$core$Dict$member, org, model.Z.I);
 							},
-							model.ab.aI)))) ? _Utils_Tuple2(model, _List_Nil) : _Utils_Tuple2(
+							model.ad.aL)))) ? _Utils_Tuple2(model, _List_Nil) : _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{
-								X: A2(
+								Z: A2(
 									$elm$core$Maybe$withDefault,
-									model.X,
+									model.Z,
 									A2(
 										$elm$core$Maybe$map,
 										function (org) {
-											return A3($author$project$App$Discovery$edit, org, change, model.X);
+											return A3($author$project$App$Discovery$edit, org, change, model.Z);
 										},
-										model.ab.aI))
+										model.ad.aL))
 							}),
 						_List_Nil);
 				case 25:
 					var $temp$msg = $author$project$App$Update$EditDiscovery(
 						$author$project$Domain$Discovery$AddObservation(
-							'observation-' + (model.aE.b5 + ('-' + $elm$core$String$fromInt(model.w.b6))))),
+							'observation-' + (model.aH.b6 + ('-' + $elm$core$String$fromInt(model.w.b7))))),
 						$temp$model = _Utils_update(
 						model,
 						{
@@ -9948,7 +10779,7 @@ var $author$project$App$Update$update = F2(
 				case 26:
 					var $temp$msg = $author$project$App$Update$EditDiscovery(
 						$author$project$Domain$Discovery$AddWorkflow(
-							'workflow-' + (model.aE.b5 + ('-' + $elm$core$String$fromInt(model.w.b6))))),
+							'workflow-' + (model.aH.b6 + ('-' + $elm$core$String$fromInt(model.w.b7))))),
 						$temp$model = _Utils_update(
 						model,
 						{
@@ -9962,15 +10793,15 @@ var $author$project$App$Update$update = F2(
 						_Utils_update(
 							model,
 							{
-								X: A2(
+								Z: A2(
 									$elm$core$Maybe$withDefault,
-									model.X,
+									model.Z,
 									A2(
 										$elm$core$Maybe$map,
 										function (org) {
-											return A2($author$project$App$Discovery$clearDraft, org, model.X);
+											return A2($author$project$App$Discovery$clearDraft, org, model.Z);
 										},
-										model.ab.aI))
+										model.ad.aL))
 							}),
 						_List_Nil);
 				case 30:
@@ -9978,15 +10809,15 @@ var $author$project$App$Update$update = F2(
 						_Utils_update(
 							model,
 							{
-								X: A2(
+								Z: A2(
 									$elm$core$Maybe$withDefault,
-									model.X,
+									model.Z,
 									A2(
 										$elm$core$Maybe$map,
 										function (org) {
-											return A2($author$project$App$Discovery$rebase, org, model.X);
+											return A2($author$project$App$Discovery$rebase, org, model.Z);
 										},
-										model.ab.aI)),
+										model.ad.aL)),
 								bN: '최신 버전에 입력을 다시 적용했습니다. 내용을 검토한 뒤 저장하세요.'
 							}),
 						_List_Nil);
@@ -9996,9 +10827,9 @@ var $author$project$App$Update$update = F2(
 					var token = msg.a;
 					var org = msg.b;
 					var response = msg.c;
-					if ((!_Utils_eq(token, model.ab.aN)) || (!_Utils_eq(
+					if ((!_Utils_eq(token, model.ad.aQ)) || (!_Utils_eq(
 						$elm$core$Maybe$Just(org),
-						model.ab.aI))) {
+						model.ad.aL))) {
 						return _Utils_Tuple2(model, _List_Nil);
 					} else {
 						if (!response.$) {
@@ -10006,10 +10837,10 @@ var $author$project$App$Update$update = F2(
 								_Utils_update(
 									model,
 									{
-										X: A2($author$project$App$Discovery$clearDraft, org, model.X),
-										br: false,
+										Z: A2($author$project$App$Discovery$clearDraft, org, model.Z),
+										bt: false,
 										bN: '현황을 저장했습니다. 저장된 근거로 에이전트 초안을 다시 확인하세요.',
-										ab: $author$project$App$Session$finishSave(model.ab)
+										ad: $author$project$App$Session$finishSave(model.ad)
 									}));
 						} else {
 							var message = response.a;
@@ -10017,9 +10848,133 @@ var $author$project$App$Update$update = F2(
 								_Utils_update(
 									model,
 									{
-										br: true,
+										bt: true,
 										bN: message + ' 입력은 보존했습니다. 최신 저장 내용과 비교한 뒤 다시 적용하세요.',
-										ab: $author$project$App$Session$finishSave(model.ab)
+										ad: $author$project$App$Session$finishSave(model.ad)
+									}));
+						}
+					}
+				case 31:
+					var token = msg.a;
+					var org = msg.b;
+					var response = msg.c;
+					return ((!_Utils_eq(token, model.ad.aQ)) || (!_Utils_eq(
+						$elm$core$Maybe$Just(org),
+						model.ad.aL))) ? _Utils_Tuple2(model, _List_Nil) : _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								N: A3($author$project$App$Agents$receive, org, response, model.N)
+							}),
+						_List_Nil);
+				case 32:
+					var change = msg.a;
+					return ($author$project$App$Update$busy(model) || (model.N.aJ || A2(
+						$elm$core$Maybe$withDefault,
+						false,
+						A2(
+							$elm$core$Maybe$map,
+							function (org) {
+								return A2($elm$core$Dict$member, org, model.N.I);
+							},
+							model.ad.aL)))) ? _Utils_Tuple2(model, _List_Nil) : _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								N: A2(
+									$elm$core$Maybe$withDefault,
+									model.N,
+									A2(
+										$elm$core$Maybe$map,
+										function (org) {
+											return A3($author$project$App$Agents$edit, org, change, model.N);
+										},
+										model.ad.aL))
+							}),
+						_List_Nil);
+				case 33:
+					var _v2 = A2(
+						$elm$core$Maybe$andThen,
+						function (org) {
+							return A2($author$project$App$Agents$saved, org, model.N);
+						},
+						model.ad.aL);
+					if (!_v2.$) {
+						var snapshot = _v2.a;
+						var $temp$msg = $author$project$App$Update$EditAgents(
+							$author$project$Domain$Agent$Import(snapshot.q)),
+							$temp$model = _Utils_update(
+							model,
+							{bt: false, bN: '규칙 기반 초안을 설계안으로 가져왔습니다. 등급, 승인 주체, 인계 대상을 검토한 뒤 저장하세요.'});
+						msg = $temp$msg;
+						model = $temp$model;
+						continue update;
+					} else {
+						return _Utils_Tuple2(model, _List_Nil);
+					}
+				case 36:
+					return $author$project$App$Update$busy(model) ? _Utils_Tuple2(model, _List_Nil) : _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								N: A2(
+									$elm$core$Maybe$withDefault,
+									model.N,
+									A2(
+										$elm$core$Maybe$map,
+										function (org) {
+											return A2($author$project$App$Agents$clearDraft, org, model.N);
+										},
+										model.ad.aL))
+							}),
+						_List_Nil);
+				case 37:
+					return $author$project$App$Update$busy(model) ? _Utils_Tuple2(model, _List_Nil) : _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								N: A2(
+									$elm$core$Maybe$withDefault,
+									model.N,
+									A2(
+										$elm$core$Maybe$map,
+										function (org) {
+											return A2($author$project$App$Agents$rebase, org, model.N);
+										},
+										model.ad.aL)),
+								bN: '최신 버전에 설계안 입력을 다시 적용했습니다. 내용을 검토한 뒤 저장하세요.'
+							}),
+						_List_Nil);
+				case 34:
+					return $author$project$App$Update$submitAgents(model);
+				case 35:
+					var token = msg.a;
+					var org = msg.b;
+					var response = msg.c;
+					if ((!_Utils_eq(token, model.ad.aQ)) || (!_Utils_eq(
+						$elm$core$Maybe$Just(org),
+						model.ad.aL))) {
+						return _Utils_Tuple2(model, _List_Nil);
+					} else {
+						if (!response.$) {
+							return $author$project$App$Update$refresh(
+								_Utils_update(
+									model,
+									{
+										N: A2($author$project$App$Agents$clearDraft, org, model.N),
+										bt: false,
+										bN: '에이전트 설계안을 저장했습니다. 저장된 설계의 진단과 구조 화면을 확인하세요.',
+										ad: $author$project$App$Session$finishSave(model.ad)
+									}));
+						} else {
+							var message = response.a;
+							return $author$project$App$Update$refresh(
+								_Utils_update(
+									model,
+									{
+										bt: true,
+										bN: message + ' 설계안 입력은 보존했습니다. 최신 저장 내용과 비교한 뒤 다시 적용하세요.',
+										ad: $author$project$App$Session$finishSave(model.ad)
 									}));
 						}
 					}
@@ -10043,18 +10998,18 @@ var $author$project$App$Update$update = F2(
 									bR: A2(
 										$author$project$App$PageState$setActivity,
 										{
-											de: '',
-											dr: '',
-											d_: '',
+											dl: '',
+											dB: '',
+											d9: '',
 											b1: $elm$core$Maybe$Just(review),
-											eI: ''
+											eU: ''
 										},
 										next.bR)
 								});
 						},
 						A2(
 							$author$project$App$Update$update,
-							A2($author$project$App$Update$Guide, 10, 'audit-history'),
+							A2($author$project$App$Update$Guide, 11, 'audit-history'),
 							model));
 				case 5:
 					var target = msg.a;
@@ -10067,20 +11022,20 @@ var $author$project$App$Update$update = F2(
 								$temp$model = _Utils_update(
 								model,
 								{
-									bR: A2($author$project$App$PageState$setPage, 4, model.bR)
+									bR: A2($author$project$App$PageState$setPage, 5, model.bR)
 								});
 							msg = $temp$msg;
 							model = $temp$model;
 							continue update;
 						} else {
 							if (A2($elm$core$String$startsWith, 'authority-', target)) {
-								var $temp$msg = A2($author$project$App$Update$Guide, 7, target),
+								var $temp$msg = A2($author$project$App$Update$Guide, 8, target),
 									$temp$model = model;
 								msg = $temp$msg;
 								model = $temp$model;
 								continue update;
 							} else {
-								var $temp$msg = A2($author$project$App$Update$Guide, 6, target),
+								var $temp$msg = A2($author$project$App$Update$Guide, 7, target),
 									$temp$model = model;
 								msg = $temp$msg;
 								model = $temp$model;
@@ -10110,7 +11065,7 @@ var $author$project$App$Update$update = F2(
 				case 0:
 					var page = msg.a;
 					var org = msg.b;
-					return $author$project$App$Update$busy(model) ? _Utils_Tuple2(model, _List_Nil) : ((_Utils_eq(org, model.ab.aI) && (!_Utils_eq(org, $elm$core$Maybe$Nothing))) ? _Utils_Tuple2(
+					return $author$project$App$Update$busy(model) ? _Utils_Tuple2(model, _List_Nil) : ((_Utils_eq(org, model.ad.aL) && (!_Utils_eq(org, $elm$core$Maybe$Nothing))) ? _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{
@@ -10121,11 +11076,11 @@ var $author$project$App$Update$update = F2(
 						_Utils_update(
 							model,
 							{
-								br: false,
+								bt: false,
 								w: $author$project$App$Drafts$closeDelete(model.w),
 								bN: '',
 								bR: A2($author$project$App$PageState$navigate, page, model.bR),
-								ab: A2($author$project$App$Session$selectOrganization, org, model.ab)
+								ad: A2($author$project$App$Session$selectOrganization, org, model.ad)
 							})));
 				case 6:
 					return $author$project$App$Update$busy(model) ? _Utils_Tuple2(model, _List_Nil) : $author$project$App$Update$refresh(model);
@@ -10136,7 +11091,7 @@ var $author$project$App$Update$update = F2(
 						$author$project$App$Update$receive,
 						token,
 						response,
-						A2($author$project$App$Session$receiveOrganizations, response, model.ab),
+						A2($author$project$App$Session$receiveOrganizations, response, model.ad),
 						model);
 				case 8:
 					var token = msg.a;
@@ -10145,7 +11100,7 @@ var $author$project$App$Update$update = F2(
 						$author$project$App$Update$receive,
 						token,
 						response,
-						A2($author$project$App$Session$receiveWorkspace, response, model.ab),
+						A2($author$project$App$Session$receiveWorkspace, response, model.ad),
 						model);
 				case 9:
 					var action = msg.a;
@@ -10198,9 +11153,9 @@ var $author$project$App$Update$update = F2(
 						return _Utils_Tuple2(model, _List_Nil);
 					} else {
 						var metric = function () {
-							var _v6 = model.ab.a9;
-							if (_v6.$ === 1) {
-								var workspace = _v6.a;
+							var _v8 = model.ad.bb;
+							if (_v8.$ === 1) {
+								var workspace = _v8.a;
 								return A2(
 									$elm$core$Dict$get,
 									val,
@@ -10208,19 +11163,19 @@ var $author$project$App$Update$update = F2(
 										A2(
 											$elm$core$List$map,
 											function (metric_) {
-												return _Utils_Tuple2(metric_.bC, metric_);
+												return _Utils_Tuple2(metric_.du, metric_);
 											},
 											A2(
 												$elm$core$List$map,
 												A2(
 													$elm$core$Basics$composeR,
 													function ($) {
-														return $.aY;
+														return $.a_;
 													},
 													function ($) {
-														return $.dy;
+														return $.dJ;
 													}),
-												workspace.dh))));
+												workspace.$7))));
 							} else {
 								return $elm$core$Maybe$Nothing;
 							}
@@ -10232,9 +11187,9 @@ var $author$project$App$Update$update = F2(
 									return A3(
 										$elm$core$List$foldl,
 										F2(
-											function (_v4, current) {
-												var key = _v4.a;
-												var content = _v4.b;
+											function (_v6, current) {
+												var key = _v6.a;
+												var content = _v6.b;
 												return _Utils_update(
 													current,
 													{
@@ -10244,18 +11199,18 @@ var $author$project$App$Update$update = F2(
 										model,
 										_List_fromArray(
 											[
-												_Utils_Tuple2($author$project$Form$Goal$MetricId, selected.bC),
-												_Utils_Tuple2($author$project$Form$Goal$MetricName, selected.dD),
-												_Utils_Tuple2($author$project$Form$Goal$Unit, selected.eH),
-												_Utils_Tuple2($author$project$Form$Goal$Direction, selected.c0)
+												_Utils_Tuple2($author$project$Form$Goal$MetricId, selected.du),
+												_Utils_Tuple2($author$project$Form$Goal$MetricName, selected.dO),
+												_Utils_Tuple2($author$project$Form$Goal$Unit, selected.eT),
+												_Utils_Tuple2($author$project$Form$Goal$Direction, selected.c4)
 											]));
 								} else {
 									return A3(
 										$elm$core$List$foldl,
 										F2(
-											function (_v5, current) {
-												var key = _v5.a;
-												var content = _v5.b;
+											function (_v7, current) {
+												var key = _v7.a;
+												var content = _v7.b;
 												return _Utils_update(
 													current,
 													{
@@ -10271,7 +11226,7 @@ var $author$project$App$Update$update = F2(
 											[
 												_Utils_Tuple2(
 												$author$project$Form$Goal$MetricId,
-												'metric-' + (model.aE.b5 + ('-new-' + $elm$core$String$fromInt(model.w.b6)))),
+												'metric-' + (model.aH.b6 + ('-new-' + $elm$core$String$fromInt(model.w.b7)))),
 												_Utils_Tuple2($author$project$Form$Goal$MetricName, ''),
 												_Utils_Tuple2($author$project$Form$Goal$Unit, ''),
 												_Utils_Tuple2($author$project$Form$Goal$Direction, 'HigherIsBetter')
@@ -10304,18 +11259,18 @@ var $author$project$App$Update$update = F2(
 					var token = msg.a;
 					var action = msg.b;
 					var response = msg.c;
-					return (!_Utils_eq(token, model.ab.aN)) ? _Utils_Tuple2(model, _List_Nil) : A3($author$project$App$Update$saved, action, response, model);
+					return (!_Utils_eq(token, model.ad.aQ)) ? _Utils_Tuple2(model, _List_Nil) : A3($author$project$App$Update$saved, action, response, model);
 				case 14:
-					var _v7 = model.ab.a9;
-					if (_v7.$ === 1) {
-						var workspace = _v7.a;
-						return (model.ab.al && (!$author$project$App$Update$busy(model))) ? _Utils_Tuple2(
+					var _v9 = model.ad.bb;
+					if (_v9.$ === 1) {
+						var workspace = _v9.a;
+						return (model.ad.ao && (!$author$project$App$Update$busy(model))) ? _Utils_Tuple2(
 							_Utils_update(
 								model,
 								{
 									w: A2(
 										$author$project$App$Drafts$openDelete,
-										{bg: '', bC: workspace.bQ.bC, dD: workspace.bQ.dD, ay: workspace.ay},
+										{bi: '', du: workspace.bQ.du, dO: workspace.bQ.dO, aC: workspace.aC},
 										model.w)
 								}),
 							_List_fromArray(
@@ -10324,7 +11279,7 @@ var $author$project$App$Update$update = F2(
 								])) : _Utils_Tuple2(
 							_Utils_update(
 								model,
-								{br: true, bN: '최신 조직 정보를 불러온 뒤 다시 확인하세요.'}),
+								{bt: true, bN: '최신 조직 정보를 불러온 뒤 다시 확인하세요.'}),
 							_List_Nil);
 					} else {
 						return _Utils_Tuple2(model, _List_Nil);
@@ -10361,7 +11316,7 @@ var $author$project$App$Update$update = F2(
 						_Utils_update(
 							model,
 							{
-								w: ((page === 9) && (target === 'review-form')) ? $author$project$App$Drafts$prepareReview(model) : model.w,
+								w: ((page === 10) && (target === 'review-form')) ? $author$project$App$Drafts$prepareReview(model) : model.w,
 								bR: A3($author$project$App$PageState$guide, page, target, model.bR)
 							}),
 						_List_fromArray(
@@ -10392,7 +11347,7 @@ var $author$project$App$Update$update = F2(
 						_Utils_update(
 							model,
 							{
-								br: false,
+								bt: false,
 								w: A2($author$project$App$Drafts$resetPerson, key, model),
 								bN: '구성원 수정·인계 입력을 초기화하고 최신 정보를 불러옵니다. 확인한 뒤 다시 작성하세요.'
 							}));
@@ -10414,19 +11369,20 @@ var $author$project$App$Update$update = F2(
 		}
 	});
 var $author$project$Page$AgentDrafts = 3;
-var $author$project$Page$Dashboard = 5;
+var $author$project$Page$AgentGraph = 4;
+var $author$project$Page$Dashboard = 6;
 var $author$project$Page$Discovery = 1;
 var $author$project$App$Update$Navigate = F2(
 	function (a, b) {
 		return {$: 0, a: a, b: b};
 	});
 var $author$project$App$Update$Refresh = {$: 6};
-var $author$project$Page$Results = 8;
+var $author$project$Page$Results = 9;
 var $author$project$App$Update$SetListMode = F2(
 	function (a, b) {
 		return {$: 1, a: a, b: b};
 	});
-var $author$project$Page$Settings = 11;
+var $author$project$Page$Settings = 12;
 var $author$project$Page$Workflows = 2;
 var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$html$Html$aside = _VirtualDom_node('aside');
@@ -10439,7 +11395,7 @@ var $elm$virtual_dom$VirtualDom$attribute = F2(
 	});
 var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
 var $author$project$Main$busy = function (model) {
-	return $author$project$App$Session$busy(model.ab);
+	return $author$project$App$Session$busy(model.ad);
 };
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$Attributes$stringProperty = F2(
@@ -10565,11 +11521,11 @@ var $author$project$App$Update$Submit = function (a) {
 };
 var $author$project$Main$formConfig = function (model) {
 	return {
-		aV: $author$project$Main$busy(model),
-		aA: $author$project$App$Update$Edit,
-		al: model.ab.al,
-		ar: function () {
-			var _v0 = model.ab.ar;
+		aE: $author$project$Main$busy(model),
+		am: $author$project$App$Update$Edit,
+		ao: model.ad.ao,
+		au: function () {
+			var _v0 = model.ad.au;
 			if (!_v0.$) {
 				return $elm$core$Maybe$Nothing;
 			} else {
@@ -10577,8 +11533,8 @@ var $author$project$Main$formConfig = function (model) {
 				return $elm$core$Maybe$Just(key);
 			}
 		}(),
-		et: $author$project$App$Update$Submit,
-		a8: $author$project$App$Drafts$get(model)
+		eE: $author$project$App$Update$Submit,
+		ba: $author$project$App$Drafts$get(model)
 	};
 };
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
@@ -10597,8 +11553,8 @@ var $author$project$App$PageState$listMode = function (state) {
 		1,
 		A2(
 			$elm$core$Dict$get,
-			$author$project$Page$pageName(state.aa),
-			state.ap));
+			$author$project$Page$pageName(state.ac),
+			state.as));
 };
 var $author$project$Main$listMode = function (model) {
 	return $author$project$App$PageState$listMode(model.bR);
@@ -10617,16 +11573,16 @@ var $author$project$Main$navigationButton = F2(
 						[
 							_Utils_Tuple2(
 							'selected',
-							_Utils_eq(model.bR.aa, page))
+							_Utils_eq(model.bR.ac, page))
 						])),
 					A2(
 					$elm$html$Html$Attributes$attribute,
 					'aria-current',
-					_Utils_eq(model.bR.aa, page) ? 'page' : 'false'),
+					_Utils_eq(model.bR.ac, page) ? 'page' : 'false'),
 					$elm$html$Html$Attributes$disabled(
-					$author$project$Main$busy(model) || _Utils_eq(model.ab.aI, $elm$core$Maybe$Nothing)),
+					$author$project$Main$busy(model) || _Utils_eq(model.ad.aL, $elm$core$Maybe$Nothing)),
 					$elm$html$Html$Events$onClick(
-					A2($author$project$App$Update$Navigate, page, model.ab.aI))
+					A2($author$project$App$Update$Navigate, page, model.ad.aL))
 				]),
 			_List_fromArray(
 				[
@@ -10705,7 +11661,7 @@ var $author$project$Ui$Form$formView = F4(
 			_List_fromArray(
 				[
 					$elm$html$Html$Events$onSubmit(
-					model.et(action))
+					model.eE(action))
 				]),
 			_List_fromArray(
 				[
@@ -10713,7 +11669,7 @@ var $author$project$Ui$Form$formView = F4(
 					$elm$html$Html$fieldset,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$disabled(model.aV)
+							$elm$html$Html$Attributes$disabled(model.aE)
 						]),
 					_Utils_ap(
 						children,
@@ -10724,13 +11680,13 @@ var $author$project$Ui$Form$formView = F4(
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$type_('submit'),
-										$elm$html$Html$Attributes$disabled(!model.al)
+										$elm$html$Html$Attributes$disabled(!model.ao)
 									]),
 								_List_fromArray(
 									[
 										$elm$html$Html$text(
 										_Utils_eq(
-											model.ar,
+											model.au,
 											$elm$core$Maybe$Just(
 												$author$project$Form$Action$actionKey(action))) ? '저장 중…' : label_)
 									]))
@@ -10912,8 +11868,8 @@ var $author$project$Ui$Form$inputField = F6(
 			$author$project$Ui$Form$help(key),
 			kind,
 			required_,
-			A2(model.a8, action, key),
-			A2(model.aA, action, key));
+			A2(model.ba, action, key),
+			A2(model.am, action, key));
 	});
 var $author$project$Ui$Common$note = function (content) {
 	return A2(
@@ -11033,7 +11989,7 @@ var $author$project$Page$Organizations$organizationTable = F2(
 									]),
 								_List_fromArray(
 									[
-										$elm$html$Html$text(item.bQ.dD)
+										$elm$html$Html$text(item.bQ.dO)
 									])),
 								A2(
 								$elm$html$Html$td,
@@ -11041,7 +11997,7 @@ var $author$project$Page$Organizations$organizationTable = F2(
 								_List_fromArray(
 									[
 										$elm$html$Html$text(
-										item.bn ? '가상 데이터 · 데모' : '내 조직')
+										item.bp ? '가상 데이터 · 데모' : '내 조직')
 									])),
 								A2(
 								$elm$html$Html$td,
@@ -11049,7 +12005,7 @@ var $author$project$Page$Organizations$organizationTable = F2(
 								_List_fromArray(
 									[
 										$elm$html$Html$text(
-										$elm$core$String$fromInt(item.dW) + '명')
+										$elm$core$String$fromInt(item.d5) + '명')
 									])),
 								A2(
 								$elm$html$Html$td,
@@ -11057,7 +12013,7 @@ var $author$project$Page$Organizations$organizationTable = F2(
 								_List_fromArray(
 									[
 										$elm$html$Html$text(
-										$elm$core$String$fromInt(item.df) + '개')
+										$elm$core$String$fromInt(item.dm) + '개')
 									])),
 								A2(
 								$elm$html$Html$td,
@@ -11065,7 +12021,7 @@ var $author$project$Page$Organizations$organizationTable = F2(
 								_List_fromArray(
 									[
 										$elm$html$Html$text(
-										A2($elm$core$String$left, 10, item.bQ.cR))
+										A2($elm$core$String$left, 10, item.bQ.cV))
 									])),
 								A2(
 								$elm$html$Html$td,
@@ -11084,9 +12040,9 @@ var $author$project$Page$Organizations$organizationTable = F2(
 												$elm$html$Html$button,
 												_List_fromArray(
 													[
-														$elm$html$Html$Attributes$disabled(model.w.aV),
+														$elm$html$Html$Attributes$disabled(model.w.aE),
 														$elm$html$Html$Events$onClick(
-														model.bP(item.bQ.bC))
+														model.bP(item.bQ.du))
 													]),
 												_List_fromArray(
 													[
@@ -11097,9 +12053,9 @@ var $author$project$Page$Organizations$organizationTable = F2(
 												_List_fromArray(
 													[
 														$elm$html$Html$Attributes$class('secondary'),
-														$elm$html$Html$Attributes$disabled(model.w.aV),
+														$elm$html$Html$Attributes$disabled(model.w.aE),
 														$elm$html$Html$Events$onClick(
-														model.el(item.bQ.bC))
+														model.ev(item.bQ.du))
 													]),
 												_List_fromArray(
 													[
@@ -11190,8 +12146,8 @@ var $author$project$Page$Organizations$viewWith = F2(
 								[
 									$elm$html$Html$Attributes$class('secondary'),
 									$elm$html$Html$Attributes$disabled(
-									model.w.aV || ((!model.w.al) || function () {
-										var _v0 = model.aJ;
+									model.w.aE || ((!model.w.ao) || function () {
+										var _v0 = model.aM;
 										if (_v0.$ === 1) {
 											var items = _v0.a;
 											return A2(
@@ -11204,7 +12160,7 @@ var $author$project$Page$Organizations$viewWith = F2(
 													A2(
 														$elm$core$Basics$composeR,
 														function ($) {
-															return $.bC;
+															return $.du;
 														},
 														$elm$core$Basics$eq('demo-northstar-v2'))),
 												items);
@@ -11213,7 +12169,7 @@ var $author$project$Page$Organizations$viewWith = F2(
 										}
 									}())),
 									$elm$html$Html$Events$onClick(
-									model.w.et($author$project$Form$Action$ImportDemo))
+									model.w.eE($author$project$Form$Action$ImportDemo))
 								]),
 							_List_fromArray(
 								[
@@ -11222,7 +12178,7 @@ var $author$project$Page$Organizations$viewWith = F2(
 						])),
 					A2(
 					$author$project$Remote$view,
-					model.aJ,
+					model.aM,
 					function (items) {
 						return A2(
 							$elm$html$Html$div,
@@ -11283,14 +12239,14 @@ var $author$project$Page$Organizations$viewWith = F2(
 														_List_fromArray(
 															[
 																$elm$html$Html$text(
-																item.bn ? '가상 데이터 · 데모' : '내 조직')
+																item.bp ? '가상 데이터 · 데모' : '내 조직')
 															])),
 														A2(
 														$elm$html$Html$h2,
 														_List_Nil,
 														_List_fromArray(
 															[
-																$elm$html$Html$text(item.bQ.dD)
+																$elm$html$Html$text(item.bQ.dO)
 															])),
 														A2(
 														$elm$html$Html$p,
@@ -11298,7 +12254,7 @@ var $author$project$Page$Organizations$viewWith = F2(
 														_List_fromArray(
 															[
 																$elm$html$Html$text(
-																'구성원 ' + ($elm$core$String$fromInt(item.dW) + ('명 · 목표 ' + ($elm$core$String$fromInt(item.df) + '개'))))
+																'구성원 ' + ($elm$core$String$fromInt(item.d5) + ('명 · 목표 ' + ($elm$core$String$fromInt(item.dm) + '개'))))
 															])),
 														A2(
 														$elm$html$Html$small,
@@ -11306,7 +12262,7 @@ var $author$project$Page$Organizations$viewWith = F2(
 														_List_fromArray(
 															[
 																$elm$html$Html$text(
-																'등록 ' + A2($elm$core$String$left, 10, item.bQ.cR))
+																'등록 ' + A2($elm$core$String$left, 10, item.bQ.cV))
 															])),
 														A2(
 														$elm$html$Html$div,
@@ -11320,9 +12276,9 @@ var $author$project$Page$Organizations$viewWith = F2(
 																$elm$html$Html$button,
 																_List_fromArray(
 																	[
-																		$elm$html$Html$Attributes$disabled(model.w.aV),
+																		$elm$html$Html$Attributes$disabled(model.w.aE),
 																		$elm$html$Html$Events$onClick(
-																		model.bP(item.bQ.bC))
+																		model.bP(item.bQ.du))
 																	]),
 																_List_fromArray(
 																	[
@@ -11333,9 +12289,9 @@ var $author$project$Page$Organizations$viewWith = F2(
 																_List_fromArray(
 																	[
 																		$elm$html$Html$Attributes$class('secondary'),
-																		$elm$html$Html$Attributes$disabled(model.w.aV),
+																		$elm$html$Html$Attributes$disabled(model.w.aE),
 																		$elm$html$Html$Events$onClick(
-																		model.el(item.bQ.bC))
+																		model.ev(item.bQ.du))
 																	]),
 																_List_fromArray(
 																	[
@@ -11365,35 +12321,43 @@ var $author$project$App$Update$GraphGo = function (a) {
 var $author$project$App$Update$GraphMsg = function (a) {
 	return {$: 4, a: a};
 };
+var $author$project$App$Update$ImportAgentDrafts = {$: 33};
 var $author$project$App$Update$OpenDelete = {$: 14};
 var $author$project$App$Update$OpenReviewActivity = function (a) {
 	return {$: 3, a: a};
 };
+var $author$project$App$Update$RebaseAgents = {$: 37};
+var $author$project$App$Update$ResetAgents = {$: 36};
 var $author$project$App$Update$ResetPerson = function (a) {
 	return {$: 21, a: a};
 };
 var $author$project$App$Update$SearchPeople = function (a) {
 	return {$: 19, a: a};
 };
+var $author$project$App$Update$SubmitAgents = {$: 34};
 var $author$project$App$Update$ToggleGuide = {$: 17};
 var $author$project$App$Update$AddObservation = {$: 25};
 var $author$project$App$Update$AddWorkflow = {$: 26};
 var $author$project$App$Update$RebaseDiscovery = {$: 30};
 var $author$project$App$Update$ResetDiscovery = {$: 29};
 var $author$project$App$Update$SubmitDiscovery = {$: 27};
-var $author$project$Domain$Discovery$ReviewNote = function (a) {
-	return {$: 8, a: a};
-};
-var $author$project$Domain$Discovery$ReviewStatus = function (a) {
-	return {$: 9, a: a};
-};
-var $elm$html$Html$dd = _VirtualDom_node('dd');
-var $elm$html$Html$dl = _VirtualDom_node('dl');
-var $elm$html$Html$dt = _VirtualDom_node('dt');
-var $elm$html$Html$h3 = _VirtualDom_node('h3');
-var $author$project$Page$Discovery$known = function (value_) {
-	return ($elm$core$String$trim(value_) === '') ? '미확인 · 확인 후 입력' : value_;
-};
+var $author$project$App$Discovery$changed = F2(
+	function (org, state) {
+		return !_Utils_eq(
+			A2(
+				$elm$core$Maybe$map,
+				function ($) {
+					return $.Z;
+				},
+				A2($author$project$App$Discovery$current, org, state)),
+			A2(
+				$elm$core$Maybe$map,
+				function ($) {
+					return $.Z;
+				},
+				A2($author$project$App$Discovery$saved, org, state)));
+	});
+var $elm$html$Html$details = _VirtualDom_node('details');
 var $author$project$Domain$Discovery$statusLabel = function (status) {
 	switch (status) {
 		case 'confirmed':
@@ -11404,100 +12368,58 @@ var $author$project$Domain$Discovery$statusLabel = function (status) {
 			return '미확인';
 	}
 };
-var $author$project$Page$Discovery$agentCard = function (workflow_) {
+var $author$project$Page$Discovery$documentSummary = function (doc) {
 	return A2(
-		$elm$html$Html$section,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('panel agent-card')
-			]),
-		_List_fromArray(
-			[
+		$elm$core$String$join,
+		'\n',
+		_Utils_ap(
+			_List_fromArray(
+				['범위: ' + doc.eq, '기준일: ' + doc.cz]),
+			_Utils_ap(
 				A2(
-				$elm$html$Html$span,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('tag')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('규칙 기반 제안 / 추론')
-					])),
-				A2(
-				$elm$html$Html$h2,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(
-						(($elm$core$String$trim(workflow_.ee) === '') ? (workflow_.dD + ' 담당') : workflow_.ee) + ' 에이전트 후보')
-					])),
-				A2(
-				$elm$html$Html$p,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text('제안 이유: ‘' + (workflow_.dD + '’의 입력을 받아 산출물을 만드는 역할 경계가 필요하기 때문입니다.'))
-					])),
-				A2(
-				$elm$html$Html$h3,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text('사용자가 저장한 근거')
-					])),
-				$author$project$Ui$Common$note(
-				'정보 구분: ' + $author$project$Domain$Discovery$statusLabel(workflow_.a5)),
-				$author$project$Ui$Common$note(
-				'근거: ' + $author$project$Page$Discovery$known(workflow_.bu)),
-				A2(
-				$elm$html$Html$dl,
-				_List_Nil,
-				A2(
-					$elm$core$List$concatMap,
-					function (_v0) {
-						var title = _v0.a;
-						var value_ = _v0.b;
-						return _List_fromArray(
-							[
-								A2(
-								$elm$html$Html$dt,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text(title)
-									])),
-								A2(
-								$elm$html$Html$dd,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text(
-										$author$project$Page$Discovery$known(value_))
-									]))
-							]);
+					$elm$core$List$map,
+					function (o) {
+						return o.eD + (' / ' + ($author$project$Domain$Discovery$statusLabel(o.ez) + (' / ' + (o.o + (' / 근거: ' + o.de)))));
 					},
+					doc.dZ),
+				_Utils_ap(
+					A2(
+						$elm$core$List$map,
+						function (w) {
+							return A2(
+								$elm$core$String$join,
+								' / ',
+								_List_fromArray(
+									[
+										w.dO,
+										w.eo,
+										w.eR,
+										w.dz,
+										w.eP,
+										w.d2,
+										w.dp,
+										w.cv,
+										$author$project$Domain$Discovery$statusLabel(w.ez),
+										w.de
+									]));
+						},
+						doc.eX),
 					_List_fromArray(
-						[
-							_Utils_Tuple2('담당 업무', workflow_.dD),
-							_Utils_Tuple2('시작 조건', workflow_.eF),
-							_Utils_Tuple2('입력', workflow_.dp),
-							_Utils_Tuple2('도구 후보', workflow_.eD),
-							_Utils_Tuple2('산출물', workflow_.dT),
-							_Utils_Tuple2('인계 대상 / 조건', workflow_.di),
-							_Utils_Tuple2('사람 승인', workflow_.ct)
-						]))),
-				A2(
-				$elm$html$Html$h3,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text('확인할 사항')
-					])),
-				$author$project$Ui$Common$note(
-				(workflow_.a5 === 'confirmed') ? '근거가 확인된 업무라도 에이전트의 수행 가능성·도구 권한·인계 상대는 별도 검토가 필요합니다.' : '현재 업무의 사실 여부가 확정되지 않았습니다. 이 후보를 확정된 조직 구조로 사용하기 전에 근거를 확인하세요.')
-			]));
+						['검토: ' + (doc.b1.ez + (' / ' + doc.b1.dY))])))));
 };
-var $elm$html$Html$Attributes$checked = $elm$html$Html$Attributes$boolProperty('checked');
+var $author$project$Domain$Discovery$empty = {
+	cz: '',
+	dZ: _List_Nil,
+	b1: {dY: '', ez: 'pending'},
+	eq: '',
+	eX: _List_Nil
+};
+var $author$project$Domain$Discovery$AsOf = function (a) {
+	return {$: 1, a: a};
+};
+var $author$project$Domain$Discovery$Scope = function (a) {
+	return {$: 0, a: a};
+};
 var $elm$html$Html$Attributes$rows = function (n) {
 	return A2(
 		_VirtualDom_attribute,
@@ -11569,165 +12491,6 @@ var $author$project$Ui$Form$guidedArea = F6(
 						]))
 				]));
 	});
-var $elm$html$Html$Events$targetChecked = A2(
-	$elm$json$Json$Decode$at,
-	_List_fromArray(
-		['target', 'checked']),
-	$elm$json$Json$Decode$bool);
-var $elm$html$Html$Events$onCheck = function (tagger) {
-	return A2(
-		$elm$html$Html$Events$on,
-		'change',
-		A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetChecked));
-};
-var $author$project$Page$Discovery$sourceChanged = F2(
-	function (doc, latest) {
-		return (!_Utils_eq(
-			_Utils_Tuple3(doc.eg, doc.cv, doc.dO),
-			_Utils_Tuple3(latest.eg, latest.cv, latest.dO))) || (!_Utils_eq(doc.eL, latest.eL));
-	});
-var $author$project$Page$Discovery$agents = F4(
-	function (controls, doc, latest, unsaved) {
-		return A2(
-			$elm$html$Html$div,
-			_List_Nil,
-			_List_fromArray(
-				[
-					A2(
-					$author$project$Ui$Common$panel,
-					'저장된 업무에서 도출한 역할 후보',
-					_List_fromArray(
-						[
-							$author$project$Ui$Common$note('규칙 기반 제안 · 업무별로 하나의 에이전트 역할 후보를 구성합니다. 실제 AI 실행이나 도구 접근 권한 발급은 수행하지 않습니다. 여러 후보의 책임과 인계를 사람이 검토해 확정하세요.'),
-							$author$project$Ui$Common$note('도출 규칙: 저장된 업무의 역할을 후보 이름으로 사용하고, 시작 조건·입력·도구·산출물·인계를 역할 경계로 제안합니다. 비어 있는 정보는 채우지 않고 미확인으로 표시합니다.')
-						])),
-					$elm$core$List$isEmpty(latest.eL) ? A2(
-					$author$project$Ui$Common$panel,
-					'아직 도출할 업무가 없습니다',
-					_List_fromArray(
-						[
-							$author$project$Ui$Common$note('업무 흐름 화면에서 업무 이름과 알고 있는 내용을 입력하고 저장하세요.')
-						])) : A2(
-					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('grid')
-						]),
-					A2($elm$core$List$map, $author$project$Page$Discovery$agentCard, latest.eL)),
-					A2(
-					$author$project$Ui$Common$panel,
-					'사람의 검토와 수정 의견',
-					_List_fromArray(
-						[
-							$author$project$Ui$Common$note(
-							(latest.b1.a5 === 'reviewed') ? '저장 상태: 검토 완료. 입력 근거가 바뀌면 다시 검토해야 합니다.' : '저장 상태: 검토 대기. 역할 중복, 인계 누락과 사람 승인 조건을 확인하세요.'),
-							A6(
-							$author$project$Ui$Form$guidedArea,
-							'agent-review-note',
-							'검토 의견 / 수정할 제안',
-							'예: 분류와 답변 역할을 분리하고 환불 실행은 사람 승인 후에만 허용',
-							false,
-							doc.b1.dN,
-							A2($elm$core$Basics$composeL, controls.aA, $author$project$Domain$Discovery$ReviewNote)),
-							A2(
-							$elm$html$Html$label,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('review-confirmation')
-								]),
-							_List_fromArray(
-								[
-									A2(
-									$elm$html$Html$input,
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$type_('checkbox'),
-											$elm$html$Html$Attributes$checked(doc.b1.a5 === 'reviewed'),
-											$elm$html$Html$Attributes$disabled(
-											A2($author$project$Page$Discovery$sourceChanged, doc, latest) || $elm$core$List$isEmpty(latest.eL)),
-											$elm$html$Html$Events$onCheck(
-											function (checked_) {
-												return controls.aA(
-													$author$project$Domain$Discovery$ReviewStatus(
-														checked_ ? 'reviewed' : 'pending'));
-											})
-										]),
-									_List_Nil),
-									$elm$html$Html$text('저장된 근거와 미확인 사항을 검토했습니다')
-								])),
-							A2($author$project$Page$Discovery$sourceChanged, doc, latest) ? $author$project$Ui$Common$note('업무 또는 현황에 미저장 변경이 있습니다. 먼저 저장하면 새 근거를 바탕으로 검토할 수 있습니다.') : $elm$html$Html$text('')
-						]))
-				]));
-	});
-var $author$project$App$Discovery$changed = F2(
-	function (org, state) {
-		return !_Utils_eq(
-			A2(
-				$elm$core$Maybe$map,
-				function ($) {
-					return $.X;
-				},
-				A2($author$project$App$Discovery$current, org, state)),
-			A2(
-				$elm$core$Maybe$map,
-				function ($) {
-					return $.X;
-				},
-				A2($author$project$App$Discovery$saved, org, state)));
-	});
-var $elm$html$Html$details = _VirtualDom_node('details');
-var $author$project$Page$Discovery$documentSummary = function (doc) {
-	return A2(
-		$elm$core$String$join,
-		'\n',
-		_Utils_ap(
-			_List_fromArray(
-				['범위: ' + doc.eg, '기준일: ' + doc.cv]),
-			_Utils_ap(
-				A2(
-					$elm$core$List$map,
-					function (o) {
-						return o.es + (' / ' + ($author$project$Domain$Discovery$statusLabel(o.a5) + (' / ' + (o.s + (' / 근거: ' + o.bu)))));
-					},
-					doc.dO),
-				_Utils_ap(
-					A2(
-						$elm$core$List$map,
-						function (w) {
-							return A2(
-								$elm$core$String$join,
-								' / ',
-								_List_fromArray(
-									[
-										w.dD,
-										w.ee,
-										w.eF,
-										w.dp,
-										w.eD,
-										w.dT,
-										w.di,
-										w.ct,
-										$author$project$Domain$Discovery$statusLabel(w.a5),
-										w.bu
-									]));
-						},
-						doc.eL),
-					_List_fromArray(
-						['검토: ' + (doc.b1.a5 + (' / ' + doc.b1.dN))])))));
-};
-var $author$project$Domain$Discovery$empty = {
-	cv: '',
-	dO: _List_Nil,
-	b1: {dN: '', a5: 'pending'},
-	eg: '',
-	eL: _List_Nil
-};
-var $author$project$Domain$Discovery$AsOf = function (a) {
-	return {$: 1, a: a};
-};
-var $author$project$Domain$Discovery$Scope = function (a) {
-	return {$: 0, a: a};
-};
 var $author$project$Ui$Form$guidedInput = F7(
 	function (key, title, hint, kind, required_, current, edit) {
 		return A8($author$project$Ui$Form$guidedInputNamed, key, key, title, hint, kind, required_, current, edit);
@@ -11737,11 +12500,12 @@ var $author$project$Domain$Discovery$ObservationField = F3(
 		return {$: 3, a: a, b: b, c: c};
 	});
 var $author$project$Domain$Discovery$RemoveObservation = function (a) {
-	return {$: 6, a: a};
+	return {$: 10, a: a};
 };
 var $author$project$Page$Discovery$evidenceHint = function (status) {
 	return (status === 'confirmed') ? '필수: 문서명·확인한 담당자·확인 날짜 등 확인 가능한 근거를 적으세요.' : '예: 9월 운영 매뉴얼, 담당자 인터뷰 또는 확인할 사람과 질문';
 };
+var $elm$html$Html$h3 = _VirtualDom_node('h3');
 var $elm$html$Html$option = _VirtualDom_node('option');
 var $elm$html$Html$select = _VirtualDom_node('select');
 var $elm$html$Html$Attributes$selected = $elm$html$Html$Attributes$boolProperty('selected');
@@ -11850,50 +12614,50 @@ var $author$project$Page$Discovery$observation = F2(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							(item.es === '') ? '새 현황 항목 · 미확인' : item.es)
+							(item.eD === '') ? '새 현황 항목 · 미확인' : item.eD)
 						])),
 					A7(
 					$author$project$Ui$Form$guidedInput,
-					item.bC + '-subject',
+					item.du + '-subject',
 					'현황 항목',
 					'예: 고객지원팀의 환불 승인 권한',
 					'text',
 					true,
-					item.es,
+					item.eD,
 					A2(
 						$elm$core$Basics$composeL,
-						controls.aA,
-						A2($author$project$Domain$Discovery$ObservationField, item.bC, 'subject'))),
+						controls.am,
+						A2($author$project$Domain$Discovery$ObservationField, item.du, 'subject'))),
 					A6(
 					$author$project$Ui$Form$guidedArea,
-					item.bC + '-detail',
+					item.du + '-detail',
 					'내용',
 					'현재 알고 있는 내용만 적으세요. 미확인은 부분 입력도 가능합니다.',
 					false,
-					item.s,
+					item.o,
 					A2(
 						$elm$core$Basics$composeL,
-						controls.aA,
-						A2($author$project$Domain$Discovery$ObservationField, item.bC, 'detail'))),
+						controls.am,
+						A2($author$project$Domain$Discovery$ObservationField, item.du, 'detail'))),
 					A3(
 					$author$project$Page$Discovery$statusField,
-					item.bC + '-status',
-					item.a5,
+					item.du + '-status',
+					item.ez,
 					A2(
 						$elm$core$Basics$composeL,
-						controls.aA,
-						A2($author$project$Domain$Discovery$ObservationField, item.bC, 'status'))),
+						controls.am,
+						A2($author$project$Domain$Discovery$ObservationField, item.du, 'status'))),
 					A6(
 					$author$project$Ui$Form$guidedArea,
-					item.bC + '-evidence',
+					item.du + '-evidence',
 					'입력 근거 / 확인할 곳',
-					$author$project$Page$Discovery$evidenceHint(item.a5),
-					item.a5 === 'confirmed',
-					item.bu,
+					$author$project$Page$Discovery$evidenceHint(item.ez),
+					item.ez === 'confirmed',
+					item.de,
 					A2(
 						$elm$core$Basics$composeL,
-						controls.aA,
-						A2($author$project$Domain$Discovery$ObservationField, item.bC, 'evidence'))),
+						controls.am,
+						A2($author$project$Domain$Discovery$ObservationField, item.du, 'evidence'))),
 					A2(
 					$elm$html$Html$button,
 					_List_fromArray(
@@ -11901,8 +12665,8 @@ var $author$project$Page$Discovery$observation = F2(
 							$elm$html$Html$Attributes$type_('button'),
 							$elm$html$Html$Attributes$class('secondary'),
 							$elm$html$Html$Events$onClick(
-							controls.aA(
-								$author$project$Domain$Discovery$RemoveObservation(item.bC)))
+							controls.am(
+								$author$project$Domain$Discovery$RemoveObservation(item.du)))
 						]),
 					_List_fromArray(
 						[
@@ -11929,8 +12693,8 @@ var $author$project$Page$Discovery$overview = F2(
 							'분석 범위',
 							'포함하는 팀·업무와 조사 목적을 적으세요. 예: 고객지원팀 문의 접수부터 해결까지',
 							false,
-							doc.eg,
-							A2($elm$core$Basics$composeL, controls.aA, $author$project$Domain$Discovery$Scope)),
+							doc.eq,
+							A2($elm$core$Basics$composeL, controls.am, $author$project$Domain$Discovery$Scope)),
 							A7(
 							$author$project$Ui$Form$guidedInput,
 							'discovery-asof',
@@ -11938,8 +12702,8 @@ var $author$project$Page$Discovery$overview = F2(
 							'이 정보가 유효한 날짜입니다. 확인 전이면 비워 두세요.',
 							'date',
 							false,
-							doc.cv,
-							A2($elm$core$Basics$composeL, controls.aA, $author$project$Domain$Discovery$AsOf))
+							doc.cz,
+							A2($elm$core$Basics$composeL, controls.am, $author$project$Domain$Discovery$AsOf))
 						])),
 					A2(
 					$author$project$Ui$Common$panel,
@@ -11953,7 +12717,7 @@ var $author$project$Page$Discovery$overview = F2(
 							A2(
 								$elm$core$List$map,
 								$author$project$Page$Discovery$observation(controls),
-								doc.dO),
+								doc.dZ),
 							_List_fromArray(
 								[
 									A2(
@@ -11962,7 +12726,7 @@ var $author$project$Page$Discovery$overview = F2(
 										[
 											$elm$html$Html$Attributes$type_('button'),
 											$elm$html$Html$Attributes$class('secondary'),
-											$elm$html$Html$Events$onClick(controls.cp)
+											$elm$html$Html$Events$onClick(controls.cr)
 										]),
 									_List_fromArray(
 										[
@@ -11972,16 +12736,257 @@ var $author$project$Page$Discovery$overview = F2(
 				]));
 	});
 var $elm$html$Html$pre = _VirtualDom_node('pre');
+var $author$project$Domain$Discovery$ReviewNote = function (a) {
+	return {$: 12, a: a};
+};
+var $author$project$Domain$Discovery$ReviewStatus = function (a) {
+	return {$: 13, a: a};
+};
+var $elm$html$Html$Attributes$checked = $elm$html$Html$Attributes$boolProperty('checked');
+var $elm$html$Html$Events$targetChecked = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'checked']),
+	$elm$json$Json$Decode$bool);
+var $elm$html$Html$Events$onCheck = function (tagger) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'change',
+		A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetChecked));
+};
+var $author$project$Page$Discovery$sourceChanged = F2(
+	function (doc, latest) {
+		return (!_Utils_eq(
+			_Utils_Tuple3(doc.eq, doc.cz, doc.dZ),
+			_Utils_Tuple3(latest.eq, latest.cz, latest.dZ))) || (!_Utils_eq(doc.eX, latest.eX));
+	});
+var $author$project$Page$Discovery$reviewForm = F3(
+	function (doc, latest, controls) {
+		return A2(
+			$elm$html$Html$div,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					$author$project$Ui$Common$panel,
+					'사람의 검토와 수정 의견',
+					_List_fromArray(
+						[
+							$author$project$Ui$Common$note('초안과 설계안은 에이전트 초안 화면 위쪽에 있습니다. 여기서는 저장된 근거와 미확인 사항을 사람이 검토했는지 기록합니다.'),
+							$author$project$Ui$Common$note(
+							(latest.b1.ez === 'reviewed') ? '저장 상태: 검토 완료. 입력 근거가 바뀌면 다시 검토해야 합니다.' : '저장 상태: 검토 대기. 역할 중복, 인계 누락과 사람 승인 조건을 확인하세요.'),
+							A6(
+							$author$project$Ui$Form$guidedArea,
+							'agent-review-note',
+							'검토 의견 / 수정할 제안',
+							'예: 분류와 답변 역할을 분리하고 환불 실행은 사람 승인 후에만 허용',
+							false,
+							doc.b1.dY,
+							A2($elm$core$Basics$composeL, controls.am, $author$project$Domain$Discovery$ReviewNote)),
+							A2(
+							$elm$html$Html$label,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('review-confirmation')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$input,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$type_('checkbox'),
+											$elm$html$Html$Attributes$checked(doc.b1.ez === 'reviewed'),
+											$elm$html$Html$Attributes$disabled(
+											A2($author$project$Page$Discovery$sourceChanged, doc, latest) || $elm$core$List$isEmpty(latest.eX)),
+											$elm$html$Html$Events$onCheck(
+											function (checked_) {
+												return controls.am(
+													$author$project$Domain$Discovery$ReviewStatus(
+														checked_ ? 'reviewed' : 'pending'));
+											})
+										]),
+									_List_Nil),
+									$elm$html$Html$text('저장된 근거와 미확인 사항을 검토했습니다')
+								])),
+							A2($author$project$Page$Discovery$sourceChanged, doc, latest) ? $author$project$Ui$Common$note('업무 또는 현황에 미저장 변경이 있습니다. 먼저 저장하면 새 근거를 바탕으로 검토할 수 있습니다.') : $elm$html$Html$text('')
+						]))
+				]));
+	});
 var $elm$html$Html$summary = _VirtualDom_node('summary');
 var $author$project$Domain$Discovery$RemoveWorkflow = function (a) {
-	return {$: 7, a: a};
+	return {$: 11, a: a};
 };
 var $author$project$Domain$Discovery$WorkflowField = F3(
 	function (a, b, c) {
 		return {$: 5, a: a, b: b, c: c};
 	});
-var $author$project$Page$Discovery$workflow = F2(
-	function (controls, item) {
+var $author$project$Domain$Discovery$WorkflowApprovalPermission = F2(
+	function (a, b) {
+		return {$: 8, a: a, b: b};
+	});
+var $author$project$Domain$Discovery$WorkflowApprovalPerson = F2(
+	function (a, b) {
+		return {$: 7, a: a, b: b};
+	});
+var $author$project$Domain$Discovery$WorkflowHandoff = F3(
+	function (a, b, c) {
+		return {$: 9, a: a, b: b, c: c};
+	});
+var $author$project$Domain$Discovery$WorkflowRolePerson = F2(
+	function (a, b) {
+		return {$: 6, a: a, b: b};
+	});
+var $elm$html$Html$legend = _VirtualDom_node('legend');
+var $author$project$Ui$Form$peopleOptions = function (w) {
+	return A2(
+		$elm$core$List$cons,
+		_Utils_Tuple2('', '구성원 선택'),
+		A2(
+			$elm$core$List$map,
+			function (p) {
+				return _Utils_Tuple2(p.du, p.dO + (' · ' + p.eo));
+			},
+			A2(
+				$elm$core$List$filter,
+				function ($) {
+					return $.bc;
+				},
+				w.d4)));
+};
+var $author$project$Ui$Label$permissions = _List_fromArray(
+	[
+		_Utils_Tuple2('Pricing', '가격 결정'),
+		_Utils_Tuple2('Hiring', '채용'),
+		_Utils_Tuple2('BudgetApproval', '예산 승인'),
+		_Utils_Tuple2('Contracting', '계약'),
+		_Utils_Tuple2('Marketing', '마케팅'),
+		_Utils_Tuple2('Infrastructure', '인프라'),
+		_Utils_Tuple2('ProductLaunch', '제품 출시')
+	]);
+var $author$project$Page$Discovery$references = F4(
+	function (controls, workspace, doc, item) {
+		var permissionOptions = A2(
+			$elm$core$List$cons,
+			_Utils_Tuple2('', '권한 선택 안 함'),
+			$author$project$Ui$Label$permissions);
+		var others = A2(
+			$elm$core$List$filter,
+			function (w) {
+				return !_Utils_eq(w.du, item.du);
+			},
+			doc.eX);
+		return A2(
+			$elm$html$Html$fieldset,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('form-section')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$legend,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('참조 연결 · 조직 데이터와 이어지는 정보')
+						])),
+					$author$project$Ui$Common$note('텍스트로 적은 담당자, 승인 조건, 인계 대상을 등록된 구성원, 결정 권한, 다른 업무에 연결합니다. 모르면 비워 두세요.'),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('fields')
+						]),
+					_List_fromArray(
+						[
+							A6(
+							$author$project$Ui$Form$selectValue,
+							item.du + '-role-person',
+							A2($elm$core$Maybe$withDefault, '', item.ep),
+							A2(
+								$elm$core$Basics$composeL,
+								controls.am,
+								$author$project$Domain$Discovery$WorkflowRolePerson(item.du)),
+							'담당 구성원',
+							false,
+							$author$project$Ui$Form$peopleOptions(workspace)),
+							A6(
+							$author$project$Ui$Form$selectValue,
+							item.du + '-approval-person',
+							A2($elm$core$Maybe$withDefault, '', item.cx),
+							A2(
+								$elm$core$Basics$composeL,
+								controls.am,
+								$author$project$Domain$Discovery$WorkflowApprovalPerson(item.du)),
+							'승인 구성원',
+							false,
+							$author$project$Ui$Form$peopleOptions(workspace)),
+							A6(
+							$author$project$Ui$Form$selectValue,
+							item.du + '-approval-permission',
+							A2($elm$core$Maybe$withDefault, '', item.cw),
+							A2(
+								$elm$core$Basics$composeL,
+								controls.am,
+								$author$project$Domain$Discovery$WorkflowApprovalPermission(item.du)),
+							'승인에 필요한 결정 권한',
+							false,
+							permissionOptions)
+						])),
+					$elm$core$List$isEmpty(others) ? $author$project$Ui$Common$note('인계 대상으로 연결할 다른 업무가 아직 없습니다.') : A2(
+					$elm$html$Html$fieldset,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('permission-fields')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$legend,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('인계 대상 업무')
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('checks')
+								]),
+							A2(
+								$elm$core$List$map,
+								function (other) {
+									return A2(
+										$elm$html$Html$label,
+										_List_Nil,
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$input,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$type_('checkbox'),
+														$elm$html$Html$Attributes$checked(
+														A2($elm$core$List$member, other.du, item.bA)),
+														$elm$html$Html$Events$onCheck(
+														A2(
+															$elm$core$Basics$composeL,
+															controls.am,
+															A2($author$project$Domain$Discovery$WorkflowHandoff, item.du, other.du)))
+													]),
+												_List_Nil),
+												$elm$html$Html$text(
+												($elm$core$String$trim(other.dO) === '') ? ('이름 없는 업무 (' + (other.du + ')')) : other.dO)
+											]));
+								},
+								others))
+						]))
+				]));
+	});
+var $author$project$Page$Discovery$workflow = F4(
+	function (controls, workspace, doc, item) {
 		return A2(
 			$elm$html$Html$section,
 			_List_fromArray(
@@ -11996,20 +13001,20 @@ var $author$project$Page$Discovery$workflow = F2(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							(item.dD === '') ? '새 업무 흐름' : item.dD)
+							(item.dO === '') ? '새 업무 흐름' : item.dO)
 						])),
 					A7(
 					$author$project$Ui$Form$guidedInput,
-					item.bC + '-name',
+					item.du + '-name',
 					'업무 이름',
 					'예: 고객 문의 분류와 답변',
 					'text',
 					true,
-					item.dD,
+					item.dO,
 					A2(
 						$elm$core$Basics$composeL,
-						controls.aA,
-						A2($author$project$Domain$Discovery$WorkflowField, item.bC, 'name'))),
+						controls.am,
+						A2($author$project$Domain$Discovery$WorkflowField, item.du, 'name'))),
 					A2(
 					$elm$html$Html$div,
 					_List_fromArray(
@@ -12026,66 +13031,67 @@ var $author$project$Page$Discovery$workflow = F2(
 							var value_ = _v1.b;
 							return A6(
 								$author$project$Ui$Form$guidedArea,
-								item.bC + ('-' + key),
+								item.du + ('-' + key),
 								title,
 								hint,
 								false,
 								value_,
 								A2(
 									$elm$core$Basics$composeL,
-									controls.aA,
-									A2($author$project$Domain$Discovery$WorkflowField, item.bC, key)));
+									controls.am,
+									A2($author$project$Domain$Discovery$WorkflowField, item.du, key)));
 						},
 						_List_fromArray(
 							[
 								_Utils_Tuple3(
 								'role',
 								'현재 담당 역할 / 구성원',
-								_Utils_Tuple2('직급보다 실제 책임을 적으세요. 예: 고객지원 담당 김민서', item.ee)),
+								_Utils_Tuple2('직급보다 실제 책임을 적으세요. 예: 고객지원 담당 김민서', item.eo)),
 								_Utils_Tuple3(
 								'trigger',
 								'시작 조건',
-								_Utils_Tuple2('무엇이 발생하면 시작하나요? 예: 새 문의 접수', item.eF)),
+								_Utils_Tuple2('무엇이 발생하면 시작하나요? 예: 새 문의 접수', item.eR)),
 								_Utils_Tuple3(
 								'inputs',
 								'입력 정보',
-								_Utils_Tuple2('예: 문의 내용, 고객 계약 정보', item.dp)),
+								_Utils_Tuple2('예: 문의 내용, 고객 계약 정보', item.dz)),
 								_Utils_Tuple3(
 								'tools',
 								'현재 사용하는 도구',
-								_Utils_Tuple2('예: CRM, 고객지원 문서. 실제 접근 권한은 별도 확인합니다.', item.eD)),
+								_Utils_Tuple2('예: CRM, 고객지원 문서. 실제 접근 권한은 별도 확인합니다.', item.eP)),
 								_Utils_Tuple3(
 								'outputs',
 								'산출물',
-								_Utils_Tuple2('예: 문의 분류와 답변 초안', item.dT)),
+								_Utils_Tuple2('예: 문의 분류와 답변 초안', item.d2)),
 								_Utils_Tuple3(
 								'handoff',
 								'전달 대상 / 인계 조건',
-								_Utils_Tuple2('예: 환불 문의는 재무 담당자에게 금액과 사유 전달', item.di)),
+								_Utils_Tuple2('예: 환불 문의는 재무 담당자에게 금액과 사유 전달', item.dp)),
 								_Utils_Tuple3(
 								'approval',
 								'사람의 승인 조건',
-								_Utils_Tuple2('예: 환불 집행 전 재무 책임자 승인. 없음과 미확인을 구분하세요.', item.ct))
+								_Utils_Tuple2('예: 환불 집행 전 재무 책임자 승인. 없음과 미확인을 구분하세요.', item.cv))
 							]))),
+					A4($author$project$Page$Discovery$references, controls, workspace, doc, item),
 					A3(
 					$author$project$Page$Discovery$statusField,
-					item.bC + '-status',
-					item.a5,
+					item.du + '-status',
+					item.ez,
 					A2(
 						$elm$core$Basics$composeL,
-						controls.aA,
-						A2($author$project$Domain$Discovery$WorkflowField, item.bC, 'status'))),
+						controls.am,
+						A2($author$project$Domain$Discovery$WorkflowField, item.du, 'status'))),
 					A6(
 					$author$project$Ui$Form$guidedArea,
-					item.bC + '-evidence',
+					item.du + '-evidence',
 					'입력 근거 / 확인할 곳',
-					$author$project$Page$Discovery$evidenceHint(item.a5),
-					item.a5 === 'confirmed',
-					item.bu,
+					$author$project$Page$Discovery$evidenceHint(item.ez),
+					item.ez === 'confirmed',
+					item.de,
 					A2(
 						$elm$core$Basics$composeL,
-						controls.aA,
-						A2($author$project$Domain$Discovery$WorkflowField, item.bC, 'evidence'))),
+						controls.am,
+						A2($author$project$Domain$Discovery$WorkflowField, item.du, 'evidence'))),
 					A2(
 					$elm$html$Html$button,
 					_List_fromArray(
@@ -12093,8 +13099,8 @@ var $author$project$Page$Discovery$workflow = F2(
 							$elm$html$Html$Attributes$type_('button'),
 							$elm$html$Html$Attributes$class('secondary'),
 							$elm$html$Html$Events$onClick(
-							controls.aA(
-								$author$project$Domain$Discovery$RemoveWorkflow(item.bC)))
+							controls.am(
+								$author$project$Domain$Discovery$RemoveWorkflow(item.du)))
 						]),
 					_List_fromArray(
 						[
@@ -12116,15 +13122,15 @@ var $author$project$Page$Discovery$workflows = F3(
 						[
 							$author$project$Ui$Common$note('한 업무가 시작되는 조건부터 입력, 도구, 산출물, 다음 전달 대상을 적습니다. 완벽히 알지 못해도 업무 이름과 미확인 상태로 시작할 수 있습니다.'),
 							$author$project$Ui$Common$note(
-							'등록된 구성원 역할 참고: ' + ($elm$core$List$isEmpty(workspace.dV) ? '구성원 화면에서 현재 담당자를 등록할 수 있습니다.' : A2(
+							'등록된 구성원 역할 참고: ' + ($elm$core$List$isEmpty(workspace.d4) ? '구성원 화면에서 현재 담당자를 등록할 수 있습니다.' : A2(
 								$elm$core$String$join,
 								' · ',
 								A2(
 									$elm$core$List$map,
 									function (p) {
-										return p.dD + (' / ' + p.ee);
+										return p.dO + (' / ' + p.eo);
 									},
-									workspace.dV)))),
+									workspace.d4)))),
 							$author$project$Ui$Common$note('예: 문의 접수 → 고객지원 담당 → CRM 고객 정보 확인 → 답변 초안 → 환불 건은 재무 담당자의 승인 후 처리')
 						])),
 					A2(
@@ -12132,15 +13138,15 @@ var $author$project$Page$Discovery$workflows = F3(
 					_List_Nil,
 					A2(
 						$elm$core$List$map,
-						$author$project$Page$Discovery$workflow(controls),
-						doc.eL)),
+						A3($author$project$Page$Discovery$workflow, controls, workspace, doc),
+						doc.eX)),
 					A2(
 					$elm$html$Html$button,
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$type_('button'),
 							$elm$html$Html$Attributes$class('secondary'),
-							$elm$html$Html$Events$onClick(controls.cq)
+							$elm$html$Html$Events$onClick(controls.cs)
 						]),
 					_List_fromArray(
 						[
@@ -12150,7 +13156,7 @@ var $author$project$Page$Discovery$workflows = F3(
 	});
 var $author$project$Page$Discovery$view = F3(
 	function (page, controls, workspace) {
-		var _v0 = A2($author$project$App$Discovery$current, controls.aI, controls.eo);
+		var _v0 = A2($author$project$App$Discovery$current, controls.aL, controls.cb);
 		if (_v0.$ === 1) {
 			return A2(
 				$author$project$Ui$Common$panel,
@@ -12161,23 +13167,23 @@ var $author$project$Page$Discovery$view = F3(
 						A2(
 							$elm$core$Maybe$withDefault,
 							'조직 현황을 불러오고 있습니다…',
-							A2($elm$core$Dict$get, controls.aI, controls.eo.I)))
+							A2($elm$core$Dict$get, controls.aL, controls.cb.I)))
 					]));
 		} else {
 			var snapshot = _v0.a;
-			var unsaved = A2($author$project$App$Discovery$changed, controls.aI, controls.eo);
-			var unavailable = controls.eo.aG || A2($elm$core$Dict$member, controls.aI, controls.eo.I);
+			var unsaved = A2($author$project$App$Discovery$changed, controls.aL, controls.cb);
+			var unavailable = controls.cb.aJ || A2($elm$core$Dict$member, controls.aL, controls.cb.I);
 			var latest = A2(
 				$elm$core$Maybe$withDefault,
 				$author$project$Domain$Discovery$empty,
 				A2(
 					$elm$core$Maybe$map,
 					function ($) {
-						return $.X;
+						return $.Z;
 					},
-					A2($author$project$App$Discovery$saved, controls.aI, controls.eo)));
-			var doc = snapshot.X;
-			var conflict = A2($author$project$App$Discovery$conflicted, controls.aI, controls.eo);
+					A2($author$project$App$Discovery$saved, controls.aL, controls.cb)));
+			var doc = snapshot.Z;
+			var conflict = A2($author$project$App$Discovery$conflicted, controls.aL, controls.cb);
 			return A2(
 				$elm$html$Html$div,
 				_List_Nil,
@@ -12188,7 +13194,7 @@ var $author$project$Page$Discovery$view = F3(
 						A2(
 							$elm$core$Maybe$withDefault,
 							'최신 현황 확인 중 · 저장은 조회 완료 후 가능합니다.',
-							A2($elm$core$Dict$get, controls.aI, controls.eo.I))) : $elm$html$Html$text(''),
+							A2($elm$core$Dict$get, controls.aL, controls.cb.I))) : $elm$html$Html$text(''),
 						unsaved ? A2(
 						$elm$html$Html$p,
 						_List_fromArray(
@@ -12232,8 +13238,8 @@ var $author$project$Page$Discovery$view = F3(
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$type_('button'),
-										$elm$html$Html$Attributes$disabled(controls.aV || unavailable),
-										$elm$html$Html$Events$onClick(controls.d$)
+										$elm$html$Html$Attributes$disabled(controls.aE || unavailable),
+										$elm$html$Html$Events$onClick(controls.bZ)
 									]),
 								_List_fromArray(
 									[
@@ -12259,8 +13265,8 @@ var $author$project$Page$Discovery$view = F3(
 									[
 										$elm$html$Html$Attributes$type_('button'),
 										$elm$html$Html$Attributes$class('secondary'),
-										$elm$html$Html$Attributes$disabled(controls.aV),
-										$elm$html$Html$Events$onClick(controls.b$)
+										$elm$html$Html$Attributes$disabled(controls.aE),
+										$elm$html$Html$Events$onClick(controls.a5)
 									]),
 								_List_fromArray(
 									[
@@ -12271,7 +13277,7 @@ var $author$project$Page$Discovery$view = F3(
 						$elm$html$Html$form,
 						_List_fromArray(
 							[
-								$elm$html$Html$Events$onSubmit(controls.ef)
+								$elm$html$Html$Events$onSubmit(controls.b4)
 							]),
 						_List_fromArray(
 							[
@@ -12279,7 +13285,7 @@ var $author$project$Page$Discovery$view = F3(
 								$elm$html$Html$fieldset,
 								_List_fromArray(
 									[
-										$elm$html$Html$Attributes$disabled(controls.aV || unavailable)
+										$elm$html$Html$Attributes$disabled(controls.aE || unavailable)
 									]),
 								_List_fromArray(
 									[
@@ -12290,7 +13296,7 @@ var $author$project$Page$Discovery$view = F3(
 											case 2:
 												return A3($author$project$Page$Discovery$workflows, controls, workspace, doc);
 											default:
-												return A4($author$project$Page$Discovery$agents, controls, doc, latest, unsaved);
+												return A3($author$project$Page$Discovery$reviewForm, doc, latest, controls);
 										}
 									}(),
 										$elm$core$List$isEmpty(
@@ -12333,7 +13339,7 @@ var $author$project$Page$Discovery$view = F3(
 												_List_fromArray(
 													[
 														$elm$html$Html$text(
-														controls.aV ? '저장 중…' : ((page === 3) ? '검토 의견과 상태 저장' : '현황 저장'))
+														controls.aE ? '저장 중…' : ((page === 3) ? '검토 의견과 상태 저장' : '현황 저장'))
 													])),
 												A2(
 												$elm$html$Html$button,
@@ -12342,8 +13348,8 @@ var $author$project$Page$Discovery$view = F3(
 														$elm$html$Html$Attributes$type_('button'),
 														$elm$html$Html$Attributes$class('secondary'),
 														$elm$html$Html$Events$onClick(
-														controls.bz(
-															(page === 1) ? 2 : ((page === 2) ? 3 : 6)))
+														controls.aZ(
+															(page === 1) ? 2 : ((page === 2) ? 3 : 7)))
 													]),
 												_List_fromArray(
 													[
@@ -12362,28 +13368,700 @@ var $author$project$Main$discoveryPage = F3(
 			$author$project$Page$Discovery$view,
 			page,
 			{
-				cp: $author$project$App$Update$AddObservation,
-				cq: $author$project$App$Update$AddWorkflow,
-				aV: $author$project$Main$busy(model),
-				aA: $author$project$App$Update$EditDiscovery,
-				bz: function (target) {
-					return A2($author$project$App$Update$Navigate, target, model.ab.aI);
+				cr: $author$project$App$Update$AddObservation,
+				cs: $author$project$App$Update$AddWorkflow,
+				aE: $author$project$Main$busy(model),
+				am: $author$project$App$Update$EditDiscovery,
+				aZ: function (target) {
+					return A2($author$project$App$Update$Navigate, target, model.ad.aL);
 				},
-				aI: w.bQ.bC,
-				d$: $author$project$App$Update$RebaseDiscovery,
-				b$: $author$project$App$Update$ResetDiscovery,
-				ef: $author$project$App$Update$SubmitDiscovery,
-				eo: model.X
+				aL: w.bQ.du,
+				bZ: $author$project$App$Update$RebaseDiscovery,
+				a5: $author$project$App$Update$ResetDiscovery,
+				b4: $author$project$App$Update$SubmitDiscovery,
+				cb: model.Z
 			},
 			w);
 	});
+var $elm$html$Html$code = _VirtualDom_node('code');
+var $author$project$Page$Agents$diagnostics = F3(
+	function (title, items, emptyText) {
+		return A2(
+			$author$project$Ui$Common$panel,
+			title,
+			$elm$core$List$isEmpty(items) ? _List_fromArray(
+				[
+					$author$project$Ui$Common$note(emptyText)
+				]) : A2(
+				$elm$core$List$map,
+				function (d) {
+					return A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$classList(
+								_List_fromArray(
+									[
+										_Utils_Tuple2('diagnostic', true),
+										_Utils_Tuple2('error', d.ew === 'Error')
+									]))
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$code,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text(d.cQ)
+									])),
+								A2(
+								$elm$html$Html$strong,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text(d.dH)
+									])),
+								A2(
+								$elm$html$Html$p,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text('역할: ' + d.eD)
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_Nil,
+								A2(
+									$elm$core$List$map,
+									function (line) {
+										return A2(
+											$elm$html$Html$p,
+											_List_Nil,
+											_List_fromArray(
+												[
+													$elm$html$Html$text(line)
+												]));
+									},
+									d.c2))
+							]));
+				},
+				items));
+	});
+var $author$project$Ui$Label$permissionName = function (key) {
+	return A2(
+		$elm$core$Maybe$withDefault,
+		key,
+		A2(
+			$elm$core$Maybe$map,
+			$elm$core$Tuple$second,
+			$elm$core$List$head(
+				A2(
+					$elm$core$List$filter,
+					A2(
+						$elm$core$Basics$composeR,
+						$elm$core$Tuple$first,
+						$elm$core$Basics$eq(key)),
+					$author$project$Ui$Label$permissions))));
+};
+var $author$project$Ui$Label$personName = F2(
+	function (w, key) {
+		return A2(
+			$elm$core$Maybe$withDefault,
+			key,
+			A2(
+				$elm$core$Maybe$map,
+				function (p) {
+					return _Utils_ap(
+						p.dO,
+						p.bc ? '' : ' (비활성)');
+				},
+				$elm$core$List$head(
+					A2(
+						$elm$core$List$filter,
+						A2(
+							$elm$core$Basics$composeR,
+							function ($) {
+								return $.du;
+							},
+							$elm$core$Basics$eq(key)),
+						w.d4))));
+	});
+var $author$project$Ui$AgentGraph$approvalLabel = F2(
+	function (w, approval) {
+		if (!approval.$) {
+			var uid = approval.a;
+			return A2($author$project$Ui$Label$personName, w, uid) + ' 승인';
+		} else {
+			var permission = approval.a;
+			return $author$project$Ui$Label$permissionName(permission) + ' 권한자 승인';
+		}
+	});
+var $elm$core$Set$member = F2(
+	function (key, _v0) {
+		var dict = _v0;
+		return A2($elm$core$Dict$member, key, dict);
+	});
+var $author$project$Ui$AgentGraph$layers = function (roles) {
+	var step = F3(
+		function (remaining, counts, acc) {
+			step:
+			while (true) {
+				if ($elm$core$List$isEmpty(remaining)) {
+					return $elm$core$List$reverse(acc);
+				} else {
+					var ready = A2(
+						$elm$core$List$filter,
+						function (role) {
+							return _Utils_eq(
+								A2($elm$core$Dict$get, role.du, counts),
+								$elm$core$Maybe$Nothing) || _Utils_eq(
+								A2($elm$core$Dict$get, role.du, counts),
+								$elm$core$Maybe$Just(0));
+						},
+						remaining);
+					if ($elm$core$List$isEmpty(ready)) {
+						return $elm$core$List$reverse(
+							A2($elm$core$List$cons, remaining, acc));
+					} else {
+						var released = A3(
+							$elm$core$List$foldl,
+							F2(
+								function (role, c) {
+									return A3(
+										$elm$core$List$foldl,
+										function (target) {
+											return A2(
+												$elm$core$Dict$update,
+												target,
+												$elm$core$Maybe$map(
+													function (n) {
+														return n - 1;
+													}));
+										},
+										c,
+										role.dq);
+								}),
+							counts,
+							ready);
+						var readyIds = $elm$core$Set$fromList(
+							A2(
+								$elm$core$List$map,
+								function ($) {
+									return $.du;
+								},
+								ready));
+						var next = A2(
+							$elm$core$List$filter,
+							function (role) {
+								return !A2($elm$core$Set$member, role.du, readyIds);
+							},
+							remaining);
+						var $temp$remaining = next,
+							$temp$counts = released,
+							$temp$acc = A2($elm$core$List$cons, ready, acc);
+						remaining = $temp$remaining;
+						counts = $temp$counts;
+						acc = $temp$acc;
+						continue step;
+					}
+				}
+			}
+		});
+	var ids = $elm$core$Set$fromList(
+		A2(
+			$elm$core$List$map,
+			function ($) {
+				return $.du;
+			},
+			roles));
+	var incoming = A3(
+		$elm$core$List$foldl,
+		F2(
+			function (role, acc) {
+				return A3(
+					$elm$core$List$foldl,
+					function (target) {
+						return A2(
+							$elm$core$Dict$update,
+							target,
+							A2(
+								$elm$core$Basics$composeR,
+								$elm$core$Maybe$withDefault(0),
+								A2(
+									$elm$core$Basics$composeR,
+									$elm$core$Basics$add(1),
+									$elm$core$Maybe$Just)));
+					},
+					acc,
+					A2(
+						$elm$core$List$filter,
+						function (t) {
+							return A2($elm$core$Set$member, t, ids);
+						},
+						role.dq));
+			}),
+		$elm$core$Dict$empty,
+		roles);
+	var byId = $elm$core$Dict$fromList(
+		A2(
+			$elm$core$List$map,
+			function (role) {
+				return _Utils_Tuple2(role.du, role);
+			},
+			roles));
+	return A3(
+		step,
+		A2(
+			$elm$core$List$filterMap,
+			function (role) {
+				return A2($elm$core$Dict$get, role.du, byId);
+			},
+			roles),
+		incoming,
+		_List_Nil);
+};
+var $author$project$Domain$Agent$levels = _List_fromArray(
+	[
+		_Utils_Tuple2('L0', 'L0 읽기'),
+		_Utils_Tuple2('L1', 'L1 작업 공간 쓰기'),
+		_Utils_Tuple2('L2', 'L2 외부 영향 · 사람 승인 필요'),
+		_Utils_Tuple2('L3', 'L3 금지 · 사람이 직접 수행')
+	]);
+var $author$project$Domain$Agent$levelLabel = function (level) {
+	return A2(
+		$elm$core$Maybe$withDefault,
+		level,
+		A2(
+			$elm$core$Maybe$map,
+			$elm$core$Tuple$second,
+			$elm$core$List$head(
+				A2(
+					$elm$core$List$filter,
+					A2(
+						$elm$core$Basics$composeR,
+						$elm$core$Tuple$first,
+						$elm$core$Basics$eq(level)),
+					$author$project$Domain$Agent$levels))));
+};
 var $elm$html$Html$li = _VirtualDom_node('li');
+var $elm$core$List$maximum = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(
+			A3($elm$core$List$foldl, $elm$core$Basics$max, x, xs));
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $elm$virtual_dom$VirtualDom$nodeNS = F2(
+	function (namespace, tag) {
+		return A2(
+			_VirtualDom_nodeNS,
+			namespace,
+			_VirtualDom_noScript(tag));
+	});
+var $author$project$Ui$AgentGraph$svg = $elm$virtual_dom$VirtualDom$nodeNS('http://www.w3.org/2000/svg');
 var $elm$html$Html$ul = _VirtualDom_node('ul');
+var $author$project$Ui$AgentGraph$view = F3(
+	function (w, roles, diagnostics) {
+		var issues = function (role) {
+			return A2(
+				$elm$core$List$filter,
+				function (d) {
+					return _Utils_eq(d.eD, role.du);
+				},
+				diagnostics);
+		};
+		var node = function (pos) {
+			var role = pos.eo;
+			var flagged = A2(
+				$elm$core$List$any,
+				function (d) {
+					return d.ew === 'Error';
+				},
+				issues(role));
+			return A3(
+				$author$project$Ui$AgentGraph$svg,
+				'g',
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$attribute, 'class', 'graph-node agent-node'),
+						A2(
+						$elm$html$Html$Attributes$attribute,
+						'transform',
+						'translate(' + ($elm$core$String$fromFloat(pos.aD) + (',' + ($elm$core$String$fromFloat(pos.ag) + ')')))),
+						A2($elm$html$Html$Attributes$attribute, 'role', 'listitem'),
+						$elm$html$Html$Attributes$tabindex(0),
+						A2(
+						$elm$html$Html$Attributes$attribute,
+						'aria-label',
+						role.dO + (' · ' + ($author$project$Domain$Agent$levelLabel(role.dG) + A2(
+							$elm$core$Maybe$withDefault,
+							'',
+							A2(
+								$elm$core$Maybe$map,
+								function (a) {
+									return ' · ' + A2($author$project$Ui$AgentGraph$approvalLabel, w, a);
+								},
+								role.cv)))))
+					]),
+				_List_fromArray(
+					[
+						A3(
+						$author$project$Ui$AgentGraph$svg,
+						'rect',
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$attribute, 'width', '240'),
+								A2($elm$html$Html$Attributes$attribute, 'height', '100'),
+								A2($elm$html$Html$Attributes$attribute, 'rx', '10'),
+								A2($elm$html$Html$Attributes$attribute, 'fill', '#fff'),
+								A2(
+								$elm$html$Html$Attributes$attribute,
+								'stroke',
+								flagged ? '#bd7769' : '#8fb47e'),
+								A2($elm$html$Html$Attributes$attribute, 'stroke-width', '2')
+							]),
+						_List_Nil),
+						A3(
+						$author$project$Ui$AgentGraph$svg,
+						'text',
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$attribute, 'x', '14'),
+								A2($elm$html$Html$Attributes$attribute, 'y', '28'),
+								A2($elm$html$Html$Attributes$attribute, 'class', 'graph-node-label')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								A2($elm$core$String$left, 18, role.dO))
+							])),
+						A3(
+						$author$project$Ui$AgentGraph$svg,
+						'text',
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$attribute, 'x', '14'),
+								A2($elm$html$Html$Attributes$attribute, 'y', '50'),
+								A2($elm$html$Html$Attributes$attribute, 'class', 'graph-node-meta')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								$author$project$Domain$Agent$levelLabel(role.dG))
+							])),
+						A3(
+						$author$project$Ui$AgentGraph$svg,
+						'text',
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$attribute, 'x', '14'),
+								A2($elm$html$Html$Attributes$attribute, 'y', '70'),
+								A2($elm$html$Html$Attributes$attribute, 'class', 'graph-node-meta')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								A2(
+									$elm$core$Maybe$withDefault,
+									'사람 승인 없음 또는 미확인',
+									A2(
+										$elm$core$Maybe$map,
+										$author$project$Ui$AgentGraph$approvalLabel(w),
+										role.cv)))
+							])),
+						A3(
+						$author$project$Ui$AgentGraph$svg,
+						'text',
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$attribute, 'x', '14'),
+								A2($elm$html$Html$Attributes$attribute, 'y', '90'),
+								A2($elm$html$Html$Attributes$attribute, 'class', 'graph-node-meta')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								$elm$core$List$isEmpty(
+									issues(role)) ? '진단 없음' : ($elm$core$String$fromInt(
+									$elm$core$List$length(
+										issues(role))) + '건 확인 필요'))
+							]))
+					]));
+		};
+		var columns = $author$project$Ui$AgentGraph$layers(roles);
+		var positions = $elm$core$List$concat(
+			A2(
+				$elm$core$List$indexedMap,
+				F2(
+					function (column, layer) {
+						return A2(
+							$elm$core$List$indexedMap,
+							F2(
+								function (row, role) {
+									return {eo: role, aD: 24 + (column * 300), ag: 40 + (row * 132)};
+								}),
+							layer);
+					}),
+				columns));
+		var height = A2(
+			$elm$core$Maybe$withDefault,
+			160,
+			$elm$core$List$maximum(
+				A2(
+					$elm$core$List$map,
+					function (pos) {
+						return pos.ag + 130;
+					},
+					positions)));
+		var lookup = $elm$core$Dict$fromList(
+			A2(
+				$elm$core$List$map,
+				function (pos) {
+					return _Utils_Tuple2(pos.eo.du, pos);
+				},
+				positions));
+		var edge = F2(
+			function (pos, target) {
+				var _v0 = A2($elm$core$Dict$get, target, lookup);
+				if (!_v0.$) {
+					var to = _v0.a;
+					return A3(
+						$author$project$Ui$AgentGraph$svg,
+						'line',
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$Attributes$attribute,
+								'x1',
+								$elm$core$String$fromFloat(pos.aD + 240)),
+								A2(
+								$elm$html$Html$Attributes$attribute,
+								'y1',
+								$elm$core$String$fromFloat(pos.ag + 50)),
+								A2(
+								$elm$html$Html$Attributes$attribute,
+								'x2',
+								$elm$core$String$fromFloat(to.aD)),
+								A2(
+								$elm$html$Html$Attributes$attribute,
+								'y2',
+								$elm$core$String$fromFloat(to.ag + 50)),
+								A2($elm$html$Html$Attributes$attribute, 'stroke', '#466253'),
+								A2($elm$html$Html$Attributes$attribute, 'stroke-width', '2'),
+								A2($elm$html$Html$Attributes$attribute, 'marker-end', 'url(#agent-arrow)')
+							]),
+						_List_Nil);
+				} else {
+					return $elm$html$Html$text('');
+				}
+			});
+		var edges = A2(
+			$elm$core$List$concatMap,
+			function (pos) {
+				return A2(
+					$elm$core$List$map,
+					edge(pos),
+					pos.eo.dq);
+			},
+			positions);
+		var width = (A2(
+			$elm$core$Basics$max,
+			1,
+			$elm$core$List$length(columns)) * 300) + 40;
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('agent-graph')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$p,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('note graph-legend')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('왼쪽에서 오른쪽으로 산출물이 인계됩니다. 붉은 테두리는 오류 진단이 있는 역할입니다. 사람 승인은 각 역할 안에 표시합니다.')
+						])),
+					$elm$core$List$isEmpty(roles) ? A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('아직 표시할 에이전트 역할이 없습니다. 업무 흐름을 저장하면 규칙 기반 초안이 나타나고, 에이전트 초안 화면에서 설계안을 저장할 수 있습니다.')
+						])) : A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('graph-viewport'),
+							$elm$html$Html$Attributes$tabindex(0),
+							A2($elm$html$Html$Attributes$attribute, 'role', 'region'),
+							A2($elm$html$Html$Attributes$attribute, 'aria-label', '에이전트 인계 구조 다이어그램')
+						]),
+					_List_fromArray(
+						[
+							A3(
+							$author$project$Ui$AgentGraph$svg,
+							'svg',
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$Attributes$attribute,
+									'viewBox',
+									'0 0 ' + ($elm$core$String$fromFloat(width) + (' ' + $elm$core$String$fromFloat(height)))),
+									A2($elm$html$Html$Attributes$attribute, 'width', '100%'),
+									A2($elm$html$Html$Attributes$attribute, 'class', 'graph-svg graph-fit'),
+									A2($elm$html$Html$Attributes$attribute, 'role', 'list')
+								]),
+							A2(
+								$elm$core$List$cons,
+								A3(
+									$author$project$Ui$AgentGraph$svg,
+									'defs',
+									_List_Nil,
+									_List_fromArray(
+										[
+											A3(
+											$author$project$Ui$AgentGraph$svg,
+											'marker',
+											_List_fromArray(
+												[
+													A2($elm$html$Html$Attributes$attribute, 'id', 'agent-arrow'),
+													A2($elm$html$Html$Attributes$attribute, 'markerWidth', '10'),
+													A2($elm$html$Html$Attributes$attribute, 'markerHeight', '10'),
+													A2($elm$html$Html$Attributes$attribute, 'refX', '9'),
+													A2($elm$html$Html$Attributes$attribute, 'refY', '5'),
+													A2($elm$html$Html$Attributes$attribute, 'orient', 'auto')
+												]),
+											_List_fromArray(
+												[
+													A3(
+													$author$project$Ui$AgentGraph$svg,
+													'path',
+													_List_fromArray(
+														[
+															A2($elm$html$Html$Attributes$attribute, 'd', 'M0,0 L10,5 L0,10 z'),
+															A2($elm$html$Html$Attributes$attribute, 'fill', '#466253')
+														]),
+													_List_Nil)
+												]))
+										])),
+								_Utils_ap(
+									edges,
+									A2($elm$core$List$map, node, positions))))
+						])),
+					A2(
+					$elm$html$Html$ul,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('graph-relations')
+						]),
+					A2(
+						$elm$core$List$concatMap,
+						function (role) {
+							return A2(
+								$elm$core$List$map,
+								function (target) {
+									return A2(
+										$elm$html$Html$li,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('graph-edge')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$strong,
+												_List_Nil,
+												_List_fromArray(
+													[
+														$elm$html$Html$text(role.dO)
+													])),
+												A2(
+												$elm$html$Html$span,
+												_List_Nil,
+												_List_fromArray(
+													[
+														$elm$html$Html$text('→ 인계 →')
+													])),
+												A2(
+												$elm$html$Html$strong,
+												_List_Nil,
+												_List_fromArray(
+													[
+														$elm$html$Html$text(
+														A2(
+															$elm$core$Maybe$withDefault,
+															target,
+															A2(
+																$elm$core$Maybe$map,
+																A2(
+																	$elm$core$Basics$composeR,
+																	function ($) {
+																		return $.eo;
+																	},
+																	function ($) {
+																		return $.dO;
+																	}),
+																A2($elm$core$Dict$get, target, lookup))))
+													]))
+											]));
+								},
+								role.dq);
+						},
+						roles))
+				]));
+	});
+var $author$project$Page$Agents$graph = F3(
+	function (state, org, workspace) {
+		var _v0 = A2($author$project$App$Agents$saved, org, state);
+		if (_v0.$ === 1) {
+			return A2(
+				$author$project$Ui$Common$panel,
+				'설계 불러오기',
+				_List_fromArray(
+					[
+						$author$project$Ui$Common$note(
+						A2(
+							$elm$core$Maybe$withDefault,
+							'에이전트 설계를 불러오고 있습니다…',
+							A2($elm$core$Dict$get, org, state.I)))
+					]));
+		} else {
+			var snapshot = _v0.a;
+			var _v1 = $elm$core$List$isEmpty(snapshot.N) ? _Utils_Tuple3(snapshot.q, snapshot.c7, '규칙 기반 초안 (저장된 설계 없음)') : _Utils_Tuple3(snapshot.N, snapshot.c3, '저장된 설계');
+			var roles = _v1.a;
+			var items = _v1.b;
+			var source = _v1.c;
+			return A2(
+				$elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$author$project$Ui$Common$panel,
+						'에이전트 인계 구조 · ' + source,
+						_List_fromArray(
+							[
+								$author$project$Ui$Common$note('역할 사이의 인계와 사람 승인 지점을 확인합니다. 조직 운영의 책임 그래프와 달리 이 구조는 설계 기록이며 실제 실행 경로가 아닙니다.'),
+								A3($author$project$Ui$AgentGraph$view, workspace, roles, items)
+							])),
+						A3($author$project$Page$Agents$diagnostics, '구조 진단', items, '확인할 사항이 없습니다.')
+					]));
+		}
+	});
 var $author$project$Page$Discovery$guide = F4(
 	function (expanded, toggle, go, doc) {
-		var workflowsDone = !$elm$core$List$isEmpty(doc.eL);
-		var scopeDone = ($elm$core$String$trim(doc.eg) !== '') && (!$elm$core$List$isEmpty(doc.dO));
-		var reviewed = workflowsDone && (doc.b1.a5 === 'reviewed');
+		var workflowsDone = !$elm$core$List$isEmpty(doc.eX);
+		var scopeDone = ($elm$core$String$trim(doc.eq) !== '') && (!$elm$core$List$isEmpty(doc.dZ));
+		var reviewed = workflowsDone && (doc.b1.ez === 'reviewed');
 		var next = (!scopeDone) ? 1 : ((!workflowsDone) ? 2 : 3);
 		return A2(
 			$elm$html$Html$section,
@@ -12486,29 +14164,6 @@ var $author$project$Page$Discovery$guide = F4(
 						])) : $elm$html$Html$text('')
 				]));
 	});
-var $author$project$Ui$Label$personName = F2(
-	function (w, key) {
-		return A2(
-			$elm$core$Maybe$withDefault,
-			key,
-			A2(
-				$elm$core$Maybe$map,
-				function (p) {
-					return _Utils_ap(
-						p.dD,
-						p.ba ? '' : ' (비활성)');
-				},
-				$elm$core$List$head(
-					A2(
-						$elm$core$List$filter,
-						A2(
-							$elm$core$Basics$composeR,
-							function ($) {
-								return $.bC;
-							},
-							$elm$core$Basics$eq(key)),
-						w.dV))));
-	});
 var $author$project$Ui$Activity$actorName = F2(
 	function (w, event) {
 		return A2(
@@ -12519,11 +14174,11 @@ var $author$project$Ui$Activity$actorName = F2(
 				function (ident) {
 					return A2($author$project$Ui$Label$personName, w, ident) + ' (미인증)';
 				},
-				event.cn));
+				event.cp));
 	});
 var $elm$html$Html$article = _VirtualDom_node('article');
 var $author$project$Ui$Activity$category = function (event) {
-	var _v0 = event.V.a7;
+	var _v0 = event.X.a9;
 	switch (_v0) {
 		case 'OwnerAssigned':
 			return '책임';
@@ -12539,8 +14194,12 @@ var $author$project$Ui$Activity$category = function (event) {
 			return '학습';
 		case 'StrategyChanged':
 			return '학습';
+		case 'DiscoverySaved':
+			return '진단';
+		case 'AgentRolesSaved':
+			return '에이전트';
 		default:
-			var _v1 = event.V.cf;
+			var _v1 = event.X.ch;
 			switch (_v1) {
 				case 'person':
 					return '구성원';
@@ -12563,10 +14222,10 @@ var $author$project$Ui$Label$goalName = F2(
 				A2(
 					$elm$core$Basics$composeR,
 					function ($) {
-						return $.aY;
+						return $.a_;
 					},
 					function ($) {
-						return $.cZ;
+						return $.c1;
 					}),
 				$elm$core$List$head(
 					A2(
@@ -12574,26 +14233,30 @@ var $author$project$Ui$Label$goalName = F2(
 						A2(
 							$elm$core$Basics$composeR,
 							function ($) {
-								return $.aY;
+								return $.a_;
 							},
 							A2(
 								$elm$core$Basics$composeR,
 								function ($) {
-									return $.bC;
+									return $.du;
 								},
 								$elm$core$Basics$eq(key))),
-						w.dh))));
+						w.$7))));
 	});
 var $author$project$Ui$Activity$targetName = F2(
 	function (w, event) {
-		var _v0 = event.V.cf;
+		var _v0 = event.X.ch;
 		switch (_v0) {
 			case 'person':
-				return A2($author$project$Ui$Label$personName, w, event.V.ce);
+				return A2($author$project$Ui$Label$personName, w, event.X.cg);
 			case 'goal':
-				return A2($author$project$Ui$Label$goalName, w, event.V.ce);
+				return A2($author$project$Ui$Label$goalName, w, event.X.cg);
 			case 'organization':
-				return _Utils_eq(event.V.ce, w.bQ.bC) ? w.bQ.dD : event.V.ce;
+				return _Utils_eq(event.X.cg, w.bQ.du) ? w.bQ.dO : event.X.cg;
+			case 'survey':
+				return '조직 진단';
+			case 'agents':
+				return '에이전트 설계';
 			default:
 				return '—';
 		}
@@ -12602,7 +14265,7 @@ var $author$project$Ui$Activity$description = F2(
 	function (w, event) {
 		var target = A2($author$project$Ui$Activity$targetName, w, event);
 		var withDetail = function (label) {
-			return target + (' · ' + (label + ((event.V.s === '') ? '' : (' · ' + event.V.s))));
+			return target + (' · ' + (label + ((event.X.o === '') ? '' : (' · ' + event.X.o))));
 		};
 		var person = A2(
 			$elm$core$Maybe$withDefault,
@@ -12610,8 +14273,8 @@ var $author$project$Ui$Activity$description = F2(
 			A2(
 				$elm$core$Maybe$map,
 				$author$project$Ui$Label$personName(w),
-				event.V.aM));
-		var _v0 = event.V.a7;
+				event.X.aP));
+		var _v0 = event.X.a9;
 		switch (_v0) {
 			case 'OwnerAssigned':
 				return target + ('의 책임자를 ' + (person + '으로 지정'));
@@ -12652,10 +14315,9 @@ var $author$project$Ui$Activity$description = F2(
 			case 'StrategyChanged':
 				return withDetail('전략 변경');
 			default:
-				return event.cZ;
+				return event.c1;
 		}
 	});
-var $elm$html$Html$code = _VirtualDom_node('code');
 var $author$project$Page$Activity$detail = function (event) {
 	return A2(
 		$elm$html$Html$details,
@@ -12668,14 +14330,14 @@ var $author$project$Page$Activity$detail = function (event) {
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
-						'기록 상세 #' + $elm$core$String$fromInt(event.ek))
+						'기록 상세 #' + $elm$core$String$fromInt(event.eu))
 					])),
 				A2(
 				$elm$html$Html$p,
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text('원본 시각: ' + event.cw)
+						$elm$html$Html$text('원본 시각: ' + event.cA)
 					])),
 				A2(
 				$elm$html$Html$p,
@@ -12683,21 +14345,21 @@ var $author$project$Page$Activity$detail = function (event) {
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
-						'기록 주체 ID: ' + A2($elm$core$Maybe$withDefault, '없음', event.cn))
+						'기록 주체 ID: ' + A2($elm$core$Maybe$withDefault, '없음', event.cp))
 					])),
 				A2(
 				$elm$html$Html$p,
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text('대상 ID: ' + event.V.ce)
+						$elm$html$Html$text('대상 ID: ' + event.X.cg)
 					])),
 				A2(
 				$elm$html$Html$p,
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text('원본 설명: ' + event.cZ)
+						$elm$html$Html$text('원본 설명: ' + event.c1)
 					])),
 				A2(
 				$elm$html$Html$pre,
@@ -12712,7 +14374,7 @@ var $author$project$Page$Activity$detail = function (event) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text(event.V.bY)
+								$elm$html$Html$text(event.X.bY)
 							]))
 					]))
 			]));
@@ -12756,7 +14418,7 @@ var $author$project$Page$Activity$card = F2(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							$author$project$Ui$Activity$timestamp(event.cw))
+							$author$project$Ui$Activity$timestamp(event.cA))
 						])),
 					A2(
 					$elm$html$Html$p,
@@ -12787,22 +14449,22 @@ var $author$project$Ui$Activity$filtered = F2(
 			A2(
 				$elm$core$Basics$composeR,
 				function ($) {
-					return $.ek;
+					return $.eu;
 				},
 				$elm$core$Basics$negate),
 			A2(
 				$elm$core$List$filter,
 				function (event) {
-					return ((state.dr === '') || _Utils_eq(
+					return ((state.dB === '') || _Utils_eq(
 						$author$project$Ui$Activity$category(event),
-						state.dr)) && (((state.de === '') || (_Utils_cmp(
-						A2($elm$core$String$left, 10, event.cw),
-						state.de) > -1)) && (((state.eI === '') || (_Utils_cmp(
-						A2($elm$core$String$left, 10, event.cw),
-						state.eI) < 1)) && ((_Utils_eq(state.b1, $elm$core$Maybe$Nothing) || _Utils_eq(event.V.b2, state.b1)) && A2(
+						state.dB)) && (((state.dl === '') || (_Utils_cmp(
+						A2($elm$core$String$left, 10, event.cA),
+						state.dl) > -1)) && (((state.eU === '') || (_Utils_cmp(
+						A2($elm$core$String$left, 10, event.cA),
+						state.eU) < 1)) && ((_Utils_eq(state.b1, $elm$core$Maybe$Nothing) || _Utils_eq(event.X.b2, state.b1)) && A2(
 						$elm$core$String$contains,
 						$elm$core$String$toLower(
-							$elm$core$String$trim(state.d_)),
+							$elm$core$String$trim(state.d9)),
 						$elm$core$String$toLower(
 							A2(
 								$elm$core$String$join,
@@ -12812,14 +14474,14 @@ var $author$project$Ui$Activity$filtered = F2(
 										A2($author$project$Ui$Activity$targetName, w, event),
 										A2($author$project$Ui$Activity$actorName, w, event),
 										A2($author$project$Ui$Activity$description, w, event),
-										event.V.ce,
-										A2($elm$core$Maybe$withDefault, '', event.V.aM),
-										A2($elm$core$Maybe$withDefault, '', event.V.b2),
-										A2($elm$core$Maybe$withDefault, '', event.cn),
+										event.X.cg,
+										A2($elm$core$Maybe$withDefault, '', event.X.aP),
+										A2($elm$core$Maybe$withDefault, '', event.X.b2),
+										A2($elm$core$Maybe$withDefault, '', event.cp),
 										$author$project$Ui$Activity$category(event)
 									])))))));
 				},
-				w.c8));
+				w.dd));
 	});
 var $author$project$Page$Activity$row = F2(
 	function (w, event) {
@@ -12834,7 +14496,7 @@ var $author$project$Page$Activity$row = F2(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							$author$project$Ui$Activity$timestamp(event.cw))
+							$author$project$Ui$Activity$timestamp(event.cA))
 						])),
 					A2(
 					$elm$html$Html$td,
@@ -12932,12 +14594,12 @@ var $author$project$Page$Activity$view = F4(
 							field,
 							'활동 검색',
 							'search',
-							state.d_,
+							state.d9,
 							function (v) {
 								return change(
 									_Utils_update(
 										state,
-										{d_: v}));
+										{d9: v}));
 							}),
 							A2(
 							$elm$html$Html$label,
@@ -12949,13 +14611,13 @@ var $author$project$Page$Activity$view = F4(
 									$elm$html$Html$select,
 									_List_fromArray(
 										[
-											$elm$html$Html$Attributes$value(state.dr),
+											$elm$html$Html$Attributes$value(state.dB),
 											$elm$html$Html$Events$onInput(
 											function (v) {
 												return change(
 													_Utils_update(
 														state,
-														{dr: v}));
+														{dB: v}));
 											})
 										]),
 									A2(
@@ -12974,32 +14636,32 @@ var $author$project$Page$Activity$view = F4(
 													]));
 										},
 										_List_fromArray(
-											['', '조직', '구성원', '목표', '책임', '권한', '결과', '학습', '기타'])))
+											['', '조직', '진단', '구성원', '목표', '책임', '권한', '에이전트', '결과', '학습', '기타'])))
 								])),
 							A4(
 							field,
 							'시작일 (UTC)',
 							'date',
-							state.de,
+							state.dl,
 							function (v) {
 								return change(
 									_Utils_update(
 										state,
-										{de: v}));
+										{dl: v}));
 							}),
 							A4(
 							field,
 							'종료일 (UTC)',
 							'date',
-							state.eI,
+							state.eU,
 							function (v) {
 								return change(
 									_Utils_update(
 										state,
-										{eI: v}));
+										{eU: v}));
 							})
 						])),
-					((state.de !== '') && ((state.eI !== '') && (_Utils_cmp(state.de, state.eI) > 0))) ? A2(
+					((state.dl !== '') && ((state.eU !== '') && (_Utils_cmp(state.dl, state.eU) > 0))) ? A2(
 					$elm$html$Html$p,
 					_List_fromArray(
 						[
@@ -13072,6 +14734,707 @@ var $author$project$Page$Activity$view = F4(
 						events)))
 				]));
 	});
+var $author$project$App$Agents$changed = F2(
+	function (org, state) {
+		return !_Utils_eq(
+			A2(
+				$elm$core$Maybe$map,
+				function ($) {
+					return $.N;
+				},
+				A2($author$project$App$Agents$current, org, state)),
+			A2(
+				$elm$core$Maybe$map,
+				function ($) {
+					return $.N;
+				},
+				A2($author$project$App$Agents$saved, org, state)));
+	});
+var $author$project$Domain$Agent$Evidence = F2(
+	function (a, b) {
+		return {$: 9, a: a, b: b};
+	});
+var $author$project$Domain$Agent$Handoff = F3(
+	function (a, b, c) {
+		return {$: 7, a: a, b: b, c: c};
+	});
+var $author$project$Domain$Agent$Inputs = F2(
+	function (a, b) {
+		return {$: 2, a: a, b: b};
+	});
+var $author$project$Domain$Agent$Level = F2(
+	function (a, b) {
+		return {$: 5, a: a, b: b};
+	});
+var $author$project$Domain$Agent$Name = F2(
+	function (a, b) {
+		return {$: 1, a: a, b: b};
+	});
+var $author$project$Domain$Agent$Outputs = F2(
+	function (a, b) {
+		return {$: 3, a: a, b: b};
+	});
+var $author$project$Domain$Agent$Remove = function (a) {
+	return {$: 10, a: a};
+};
+var $author$project$Domain$Agent$SetApproval = F2(
+	function (a, b) {
+		return {$: 6, a: a, b: b};
+	});
+var $author$project$Domain$Agent$Status = F2(
+	function (a, b) {
+		return {$: 8, a: a, b: b};
+	});
+var $author$project$Domain$Agent$Tools = F2(
+	function (a, b) {
+		return {$: 4, a: a, b: b};
+	});
+var $author$project$Domain$Agent$approvalKey = function (approval) {
+	if (!approval.$) {
+		if (!approval.a.$) {
+			var uid = approval.a.a;
+			return 'person:' + uid;
+		} else {
+			var permission = approval.a.a;
+			return 'permission:' + permission;
+		}
+	} else {
+		return '';
+	}
+};
+var $elm$core$List$drop = F2(
+	function (n, list) {
+		drop:
+		while (true) {
+			if (n <= 0) {
+				return list;
+			} else {
+				if (!list.b) {
+					return list;
+				} else {
+					var x = list.a;
+					var xs = list.b;
+					var $temp$n = n - 1,
+						$temp$list = xs;
+					n = $temp$n;
+					list = $temp$list;
+					continue drop;
+				}
+			}
+		}
+	});
+var $author$project$Page$Agents$known = function (value_) {
+	return ($elm$core$String$trim(value_) === '') ? '미확인 · 확인 후 입력' : value_;
+};
+var $author$project$Domain$Agent$toolsText = $elm$core$String$join(', ');
+var $author$project$Page$Agents$designCard = F4(
+	function (controls, workspace, roles, role) {
+		var others = A2(
+			$elm$core$List$filter,
+			function (r) {
+				return !_Utils_eq(r.du, role.du);
+			},
+			roles);
+		var key = function (suffix) {
+			return 'agent-' + (role.du + ('-' + suffix));
+		};
+		var approvalOptions = A2(
+			$elm$core$List$cons,
+			_Utils_Tuple2('', '없음 또는 미확인'),
+			_Utils_ap(
+				A2(
+					$elm$core$List$map,
+					function (_v0) {
+						var uid = _v0.a;
+						var label_ = _v0.b;
+						return _Utils_Tuple2('person:' + uid, '구성원 · ' + label_);
+					},
+					A2(
+						$elm$core$List$drop,
+						1,
+						$author$project$Ui$Form$peopleOptions(workspace))),
+				A2(
+					$elm$core$List$map,
+					function (_v1) {
+						var permission = _v1.a;
+						var label_ = _v1.b;
+						return _Utils_Tuple2('permission:' + permission, '권한 보유자 · ' + label_);
+					},
+					$author$project$Ui$Label$permissions)));
+		return A2(
+			$elm$html$Html$section,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('panel agent-card discovery-item'),
+					$elm$html$Html$Attributes$id('design-' + role.du)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$h2,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							$author$project$Page$Agents$known(role.dO))
+						])),
+					$author$project$Ui$Common$note(
+					'도출 근거 업무: ' + (A2($elm$core$Maybe$withDefault, '없음', role.ex) + (' · 담당 업무: ' + role.eJ))),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('fields')
+						]),
+					_List_fromArray(
+						[
+							A7(
+							$author$project$Ui$Form$guidedInput,
+							key('name'),
+							'역할 이름',
+							'에이전트가 맡는 책임을 이름으로 적으세요.',
+							'text',
+							true,
+							role.dO,
+							A2(
+								$elm$core$Basics$composeL,
+								controls.am,
+								$author$project$Domain$Agent$Name(role.du))),
+							A6(
+							$author$project$Ui$Form$selectValue,
+							key('level'),
+							role.dG,
+							A2(
+								$elm$core$Basics$composeL,
+								controls.am,
+								$author$project$Domain$Agent$Level(role.du)),
+							'권한 등급',
+							true,
+							$author$project$Domain$Agent$levels),
+							A6(
+							$author$project$Ui$Form$guidedArea,
+							key('inputs'),
+							'입력',
+							'이 역할이 받는 정보',
+							false,
+							role.dz,
+							A2(
+								$elm$core$Basics$composeL,
+								controls.am,
+								$author$project$Domain$Agent$Inputs(role.du))),
+							A6(
+							$author$project$Ui$Form$guidedArea,
+							key('outputs'),
+							'산출물',
+							'이 역할이 만드는 결과물',
+							false,
+							role.d2,
+							A2(
+								$elm$core$Basics$composeL,
+								controls.am,
+								$author$project$Domain$Agent$Outputs(role.du))),
+							A6(
+							$author$project$Ui$Form$guidedArea,
+							key('tools'),
+							'허용 도구 후보',
+							'쉼표로 구분합니다. 실제 접근 권한은 별도로 부여합니다.',
+							false,
+							$author$project$Domain$Agent$toolsText(role.eP),
+							A2(
+								$elm$core$Basics$composeL,
+								controls.am,
+								$author$project$Domain$Agent$Tools(role.du))),
+							A6(
+							$author$project$Ui$Form$selectValue,
+							key('approval'),
+							$author$project$Domain$Agent$approvalKey(role.cv),
+							A2(
+								$elm$core$Basics$composeL,
+								controls.am,
+								$author$project$Domain$Agent$SetApproval(role.du)),
+							'사람 승인 주체',
+							false,
+							approvalOptions)
+						])),
+					$elm$core$List$isEmpty(others) ? $author$project$Ui$Common$note('인계 대상으로 연결할 다른 역할이 없습니다.') : A2(
+					$elm$html$Html$fieldset,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('permission-fields')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$legend,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('인계 대상 역할')
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('checks')
+								]),
+							A2(
+								$elm$core$List$map,
+								function (other) {
+									return A2(
+										$elm$html$Html$label,
+										_List_Nil,
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$input,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$type_('checkbox'),
+														$elm$html$Html$Attributes$checked(
+														A2($elm$core$List$member, other.du, role.dq)),
+														$elm$html$Html$Events$onCheck(
+														A2(
+															$elm$core$Basics$composeL,
+															controls.am,
+															A2($author$project$Domain$Agent$Handoff, role.du, other.du)))
+													]),
+												_List_Nil),
+												$elm$html$Html$text(
+												$author$project$Page$Agents$known(other.dO))
+											]));
+								},
+								others))
+						])),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('fields')
+						]),
+					_List_fromArray(
+						[
+							A6(
+							$author$project$Ui$Form$selectValue,
+							key('status'),
+							role.ez,
+							A2(
+								$elm$core$Basics$composeL,
+								controls.am,
+								$author$project$Domain$Agent$Status(role.du)),
+							'정보 구분',
+							true,
+							_List_fromArray(
+								[
+									_Utils_Tuple2('unknown', '미확인'),
+									_Utils_Tuple2('confirmed', '확인된 사실'),
+									_Utils_Tuple2('proposed', '개선안')
+								])),
+							A6(
+							$author$project$Ui$Form$guidedArea,
+							key('evidence'),
+							'근거',
+							'확인된 사실이면 근거가 필요합니다.',
+							role.ez === 'confirmed',
+							role.de,
+							A2(
+								$elm$core$Basics$composeL,
+								controls.am,
+								$author$project$Domain$Agent$Evidence(role.du)))
+						])),
+					A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$type_('button'),
+							$elm$html$Html$Attributes$class('secondary'),
+							$elm$html$Html$Events$onClick(
+							controls.am(
+								$author$project$Domain$Agent$Remove(role.du)))
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('이 역할 제외 · 저장 전 취소 가능')
+						]))
+				]));
+	});
+var $author$project$Page$Agents$approvalText = F2(
+	function (workspace, approval) {
+		if (!approval.$) {
+			if (!approval.a.$) {
+				var uid = approval.a.a;
+				return '구성원 ' + A2($author$project$Ui$Label$personName, workspace, uid);
+			} else {
+				var permission = approval.a.a;
+				return $author$project$Ui$Label$permissionName(permission) + ' 권한 보유자';
+			}
+		} else {
+			return '없음 또는 미확인';
+		}
+	});
+var $elm$html$Html$dd = _VirtualDom_node('dd');
+var $elm$html$Html$dl = _VirtualDom_node('dl');
+var $elm$html$Html$dt = _VirtualDom_node('dt');
+var $author$project$Page$Agents$handoffText = F2(
+	function (roles, targets) {
+		return $elm$core$List$isEmpty(targets) ? '미확인' : A2(
+			$elm$core$String$join,
+			', ',
+			A2(
+				$elm$core$List$map,
+				function (t) {
+					return A2(
+						$elm$core$Maybe$withDefault,
+						t,
+						A2(
+							$elm$core$Maybe$map,
+							function ($) {
+								return $.dO;
+							},
+							$elm$core$List$head(
+								A2(
+									$elm$core$List$filter,
+									A2(
+										$elm$core$Basics$composeR,
+										function ($) {
+											return $.du;
+										},
+										$elm$core$Basics$eq(t)),
+									roles))));
+				},
+				targets));
+	});
+var $author$project$Page$Agents$draftCard = F3(
+	function (workspace, roles, role) {
+		return A2(
+			$elm$html$Html$section,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('panel agent-card'),
+					$elm$html$Html$Attributes$id('draft-' + role.du)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('tag')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('규칙 기반 제안 / 추론')
+						])),
+					A2(
+					$elm$html$Html$h2,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text(role.dO + ' 에이전트 후보')
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('제안 이유: ‘' + (role.eJ + '’의 입력을 받아 산출물을 만드는 역할 경계가 필요하기 때문입니다.'))
+						])),
+					$author$project$Ui$Common$note(
+					'정보 구분: ' + ($author$project$Domain$Discovery$statusLabel(role.ez) + (' · 근거: ' + $author$project$Page$Agents$known(role.de)))),
+					A2(
+					$elm$html$Html$dl,
+					_List_Nil,
+					A2(
+						$elm$core$List$concatMap,
+						function (_v0) {
+							var title = _v0.a;
+							var value_ = _v0.b;
+							return _List_fromArray(
+								[
+									A2(
+									$elm$html$Html$dt,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text(title)
+										])),
+									A2(
+									$elm$html$Html$dd,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text(value_)
+										]))
+								]);
+						},
+						_List_fromArray(
+							[
+								_Utils_Tuple2('담당 업무', role.eJ),
+								_Utils_Tuple2(
+								'입력',
+								$author$project$Page$Agents$known(role.dz)),
+								_Utils_Tuple2(
+								'산출물',
+								$author$project$Page$Agents$known(role.d2)),
+								_Utils_Tuple2(
+								'도구 후보',
+								$author$project$Page$Agents$known(
+									$author$project$Domain$Agent$toolsText(role.eP))),
+								_Utils_Tuple2(
+								'권한 등급',
+								$author$project$Domain$Agent$levelLabel(role.dG)),
+								_Utils_Tuple2(
+								'사람 승인',
+								A2($author$project$Page$Agents$approvalText, workspace, role.cv)),
+								_Utils_Tuple2(
+								'인계 대상',
+								A2($author$project$Page$Agents$handoffText, roles, role.dq))
+							])))
+				]));
+	});
+var $author$project$Page$Agents$drafts = F3(
+	function (controls, workspace, snapshot) {
+		return A2(
+			$author$project$Ui$Common$panel,
+			'저장된 업무에서 도출한 역할 후보',
+			_Utils_ap(
+				_List_fromArray(
+					[
+						$author$project$Ui$Common$note('도출 규칙: 담당 역할이 후보 이름이 되고, 승인 조건이 있으면 L2, 도구가 있으면 L1, 그 외 L0입니다. 승인 주체와 인계 대상은 참조 연결을 우선 사용하고, 없으면 텍스트에 포함된 구성원 이름과 업무 이름으로 찾습니다. 비어 있는 정보는 미확인으로 남깁니다.')
+					]),
+				_Utils_ap(
+					$elm$core$List$isEmpty(snapshot.q) ? _List_fromArray(
+						[
+							$author$project$Ui$Common$note('아직 도출할 업무가 없습니다. 업무 흐름 화면에서 업무 이름과 알고 있는 내용을 입력하고 저장하세요.')
+						]) : _List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('grid')
+								]),
+							A2(
+								$elm$core$List$map,
+								A2($author$project$Page$Agents$draftCard, workspace, snapshot.q),
+								snapshot.q))
+						]),
+					_List_fromArray(
+						[
+							A3($author$project$Page$Agents$diagnostics, '초안 진단', snapshot.c7, '초안에서 확인할 사항이 없습니다.')
+						]))));
+	});
+var $elm$html$Html$Attributes$rel = _VirtualDom_attribute('rel');
+var $elm$html$Html$Attributes$target = $elm$html$Html$Attributes$stringProperty('target');
+var $author$project$Page$Agents$view = F2(
+	function (controls, workspace) {
+		var _v0 = A2($author$project$App$Agents$saved, controls.aL, controls.cb);
+		if (_v0.$ === 1) {
+			return A2(
+				$author$project$Ui$Common$panel,
+				'설계 불러오기',
+				_List_fromArray(
+					[
+						$author$project$Ui$Common$note(
+						A2(
+							$elm$core$Maybe$withDefault,
+							'에이전트 설계를 불러오고 있습니다…',
+							A2($elm$core$Dict$get, controls.aL, controls.cb.I)))
+					]));
+		} else {
+			var snapshot = _v0.a;
+			var unsaved = A2($author$project$App$Agents$changed, controls.aL, controls.cb);
+			var unavailable = controls.cb.aJ || A2($elm$core$Dict$member, controls.aL, controls.cb.I);
+			var design = A2(
+				$elm$core$Maybe$withDefault,
+				snapshot.N,
+				A2(
+					$elm$core$Maybe$map,
+					function ($) {
+						return $.N;
+					},
+					A2($author$project$App$Agents$current, controls.aL, controls.cb)));
+			var conflict = A2($author$project$App$Agents$conflicted, controls.aL, controls.cb);
+			return A2(
+				$elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$author$project$Ui$Common$note('규칙 기반 초안은 저장된 업무 흐름에서 결정적으로 만듭니다. 실제 AI 실행, 도구 접근 권한 발급, 권한 부여는 하지 않습니다. 사람이 등급, 승인 주체, 인계 대상을 검토해 설계안으로 저장하세요.'),
+						A3($author$project$Page$Agents$drafts, controls, workspace, snapshot),
+						unsaved ? A2(
+						$elm$html$Html$p,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('draft-notice'),
+								A2($elm$html$Html$Attributes$attribute, 'role', 'status')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('저장하지 않은 설계안 입력이 있습니다. 화면 이동 시 유지되지만 브라우저를 닫거나 전체 새로고침하면 사라집니다.')
+							])) : $elm$html$Html$text(''),
+						conflict ? A2(
+						$author$project$Ui$Common$panel,
+						'입력 중 조직이 변경되었습니다',
+						_List_fromArray(
+							[
+								$author$project$Ui$Common$note('최신 저장 설계와 현재 입력을 비교하세요. 아래 버튼은 입력을 최신 버전에 다시 적용할 준비를 하며, 저장은 별도로 해야 합니다.'),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$type_('button'),
+										$elm$html$Html$Attributes$disabled(controls.aE || unavailable),
+										$elm$html$Html$Events$onClick(controls.bZ)
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('최신 내용 확인 후 내 입력 다시 적용')
+									]))
+							])) : $elm$html$Html$text(''),
+						A2(
+						$elm$html$Html$form,
+						_List_fromArray(
+							[
+								$elm$html$Html$Events$onSubmit(controls.b4)
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$fieldset,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$disabled(controls.aE || unavailable)
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$author$project$Ui$Common$panel,
+										'사람이 검토한 설계안',
+										_Utils_ap(
+											_List_fromArray(
+												[
+													$author$project$Ui$Common$note('각 역할의 권한 등급(L0 읽기, L1 작업 공간, L2 외부 영향, L3 금지), 사람 승인 주체, 허용 도구, 인계 대상을 확정합니다. 저장 후 서버가 같은 규칙으로 다시 진단합니다.'),
+													A2(
+													$elm$html$Html$div,
+													_List_fromArray(
+														[
+															$elm$html$Html$Attributes$class('actions')
+														]),
+													_List_fromArray(
+														[
+															A2(
+															$elm$html$Html$button,
+															_List_fromArray(
+																[
+																	$elm$html$Html$Attributes$type_('button'),
+																	$elm$html$Html$Attributes$id('agent-import'),
+																	$elm$html$Html$Attributes$class('secondary'),
+																	$elm$html$Html$Attributes$disabled(
+																	$elm$core$List$isEmpty(snapshot.q)),
+																	$elm$html$Html$Events$onClick(controls.dv)
+																]),
+															_List_fromArray(
+																[
+																	$elm$html$Html$text('규칙 기반 초안을 설계안으로 가져오기')
+																])),
+															unsaved ? A2(
+															$elm$html$Html$button,
+															_List_fromArray(
+																[
+																	$elm$html$Html$Attributes$type_('button'),
+																	$elm$html$Html$Attributes$class('secondary'),
+																	$elm$html$Html$Events$onClick(controls.a5)
+																]),
+															_List_fromArray(
+																[
+																	$elm$html$Html$text('미저장 설계안 입력 취소')
+																])) : $elm$html$Html$text('')
+														]))
+												]),
+											$elm$core$List$isEmpty(design) ? _List_fromArray(
+												[
+													$author$project$Ui$Common$note('아직 설계안이 없습니다. 초안을 가져온 뒤 검토하세요.')
+												]) : A2(
+												$elm$core$List$map,
+												A3($author$project$Page$Agents$designCard, controls, workspace, design),
+												design))),
+										A3($author$project$Page$Agents$diagnostics, '저장된 설계 진단', snapshot.c3, '저장된 설계에서 확인할 사항이 없습니다. 저장 전 입력은 저장 후 진단합니다.'),
+										$elm$core$List$isEmpty(
+										$author$project$Domain$Agent$problems(design)) ? $elm$html$Html$text('') : A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('field-errors'),
+												A2($elm$html$Html$Attributes$attribute, 'role', 'status')
+											]),
+										A2(
+											$elm$core$List$map,
+											function (message) {
+												return A2(
+													$elm$html$Html$p,
+													_List_Nil,
+													_List_fromArray(
+														[
+															$elm$html$Html$text(message)
+														]));
+											},
+											$author$project$Domain$Agent$problems(design))),
+										A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('actions')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$button,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$type_('submit'),
+														$elm$html$Html$Attributes$disabled(
+														unavailable || (conflict || (!$elm$core$List$isEmpty(
+															$author$project$Domain$Agent$problems(design)))))
+													]),
+												_List_fromArray(
+													[
+														$elm$html$Html$text(
+														controls.aE ? '저장 중…' : '설계안 저장')
+													])),
+												A2(
+												$elm$html$Html$a,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('button-link secondary'),
+														$elm$html$Html$Attributes$href(controls.dh),
+														$elm$html$Html$Attributes$target('_blank'),
+														$elm$html$Html$Attributes$rel('noopener')
+													]),
+												_List_fromArray(
+													[
+														$elm$html$Html$text('정의 파일 내보내기 (Markdown)')
+													])),
+												A2(
+												$elm$html$Html$button,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$type_('button'),
+														$elm$html$Html$Attributes$class('secondary'),
+														$elm$html$Html$Events$onClick(
+														controls.aZ(4))
+													]),
+												_List_fromArray(
+													[
+														$elm$html$Html$text('에이전트 구조 보기 →')
+													]))
+											])),
+										$author$project$Ui$Common$note('내보내기는 저장된 설계를 사용하며, 저장된 설계가 없으면 규칙 기반 초안을 내보냅니다. 파일은 .claude/agents/<id>.md 형식의 정의 초안이며 실행 설정이 아닙니다.')
+									]))
+							])),
+						controls.b1
+					]));
+		}
+	});
 var $author$project$Form$Action$Rename = {$: 2};
 var $author$project$Page$Settings$view = F2(
 	function (model, w) {
@@ -13082,7 +15445,7 @@ var $author$project$Page$Settings$view = F2(
 				[
 					A2(
 					$author$project$Ui$Common$panel,
-					w.bQ.dD,
+					w.bQ.dO,
 					_List_fromArray(
 						[
 							A2(
@@ -13105,7 +15468,7 @@ var $author$project$Page$Settings$view = F2(
 									_List_Nil,
 									_List_fromArray(
 										[
-											$elm$html$Html$text(w.bQ.bC)
+											$elm$html$Html$text(w.bQ.du)
 										])),
 									A2(
 									$elm$html$Html$dt,
@@ -13120,7 +15483,7 @@ var $author$project$Page$Settings$view = F2(
 									_List_fromArray(
 										[
 											$elm$html$Html$text(
-											A2($elm$core$String$left, 10, w.bQ.cR))
+											A2($elm$core$String$left, 10, w.bQ.cV))
 										])),
 									A2(
 									$elm$html$Html$dt,
@@ -13136,7 +15499,7 @@ var $author$project$Page$Settings$view = F2(
 										[
 											$elm$html$Html$text(
 											$elm$core$String$fromInt(
-												$elm$core$List$length(w.dV)) + '명')
+												$elm$core$List$length(w.d4)) + '명')
 										])),
 									A2(
 									$elm$html$Html$dt,
@@ -13152,15 +15515,15 @@ var $author$project$Page$Settings$view = F2(
 										[
 											$elm$html$Html$text(
 											$elm$core$String$fromInt(
-												$elm$core$List$length(w.dh)) + '개')
+												$elm$core$List$length(w.$7)) + '개')
 										]))
 								])),
 							A2(
 							$elm$html$Html$button,
 							_List_fromArray(
 								[
-									$elm$html$Html$Attributes$disabled(model.w.aV),
-									$elm$html$Html$Events$onClick(model.dh)
+									$elm$html$Html$Attributes$disabled(model.w.aE),
+									$elm$html$Html$Events$onClick(model.$7)
 								]),
 							_List_fromArray(
 								[
@@ -13207,15 +15570,15 @@ var $author$project$Page$Settings$view = F2(
 								])),
 							$author$project$Ui$Common$note('논리 삭제입니다. 원본 감사 이벤트는 파일·DB에 보존되며 완전히 지워지지 않습니다. 다른 조직은 삭제되지 않습니다.'),
 							function () {
-							var _v0 = model.bm;
+							var _v0 = model.bo;
 							if (_v0.$ === 1) {
 								return A2(
 									$elm$html$Html$button,
 									_List_fromArray(
 										[
 											$elm$html$Html$Attributes$class('danger-outline'),
-											$elm$html$Html$Attributes$disabled(model.w.aV || (!model.w.al)),
-											$elm$html$Html$Events$onClick(model.dR)
+											$elm$html$Html$Attributes$disabled(model.w.aE || (!model.w.ao)),
+											$elm$html$Html$Events$onClick(model.d0)
 										]),
 									_List_fromArray(
 										[
@@ -13228,14 +15591,14 @@ var $author$project$Page$Settings$view = F2(
 									_List_fromArray(
 										[
 											$elm$html$Html$Events$onSubmit(
-											model.w.et($author$project$Form$Action$DeleteOrg)),
+											model.w.eE($author$project$Form$Action$DeleteOrg)),
 											A2(
 											$elm$html$Html$Events$preventDefaultOn,
 											'keydown',
 											A2(
 												$elm$json$Json$Decode$map,
 												function (key) {
-													return (key === 'Escape') ? _Utils_Tuple2(model.cL, true) : _Utils_Tuple2(model.dF, false);
+													return (key === 'Escape') ? _Utils_Tuple2(model.cP, true) : _Utils_Tuple2(model.dQ, false);
 												},
 												A2($elm$json$Json$Decode$field, 'key', $elm$json$Json$Decode$string))),
 											$elm$html$Html$Attributes$class('delete-confirmation'),
@@ -13251,13 +15614,13 @@ var $author$project$Page$Settings$view = F2(
 												]),
 											_List_fromArray(
 												[
-													$elm$html$Html$text(snapshot.dD + ' 조직을 삭제할까요?')
+													$elm$html$Html$text(snapshot.dO + ' 조직을 삭제할까요?')
 												])),
 											A2(
 											$elm$html$Html$fieldset,
 											_List_fromArray(
 												[
-													$elm$html$Html$Attributes$disabled(model.w.aV)
+													$elm$html$Html$Attributes$disabled(model.w.aE)
 												]),
 											_List_fromArray(
 												[
@@ -13272,8 +15635,8 @@ var $author$project$Page$Settings$view = F2(
 															_List_fromArray(
 																[
 																	$elm$html$Html$Attributes$id('delete-confirm'),
-																	$elm$html$Html$Attributes$value(snapshot.bg),
-																	$elm$html$Html$Events$onInput(model.cO),
+																	$elm$html$Html$Attributes$value(snapshot.bi),
+																	$elm$html$Html$Events$onInput(model.cS),
 																	$elm$html$Html$Attributes$autocomplete(false),
 																	$elm$html$Html$Attributes$required(true)
 																]),
@@ -13293,7 +15656,7 @@ var $author$project$Page$Settings$view = F2(
 																[
 																	$elm$html$Html$Attributes$type_('button'),
 																	$elm$html$Html$Attributes$class('secondary'),
-																	$elm$html$Html$Events$onClick(model.cL)
+																	$elm$html$Html$Events$onClick(model.cP)
 																]),
 															_List_fromArray(
 																[
@@ -13306,12 +15669,12 @@ var $author$project$Page$Settings$view = F2(
 																	$elm$html$Html$Attributes$type_('submit'),
 																	$elm$html$Html$Attributes$class('danger'),
 																	$elm$html$Html$Attributes$disabled(
-																	(!_Utils_eq(snapshot.bg, snapshot.dD)) || (!model.w.al))
+																	(!_Utils_eq(snapshot.bi, snapshot.dO)) || (!model.w.ao))
 																]),
 															_List_fromArray(
 																[
 																	$elm$html$Html$text(
-																	model.w.aV ? '삭제 중…' : '조직 삭제')
+																	model.w.aE ? '삭제 중…' : '조직 삭제')
 																]))
 														]))
 												]))
@@ -13323,21 +15686,21 @@ var $author$project$Page$Settings$view = F2(
 	});
 var $author$project$Ui$Guide$GuideStep = F5(
 	function (done, title, instruction, page, target) {
-		return {ak: done, bE: instruction, aa: page, ex: target, cg: title};
+		return {al: done, bE: instruction, ac: page, eI: target, ci: title};
 	});
 var $author$project$Ui$Guide$view = F2(
 	function (model, w) {
 		var reviewed = A2(
 			$elm$core$List$any,
 			function (r) {
-				return (r.aY === 'demo-revenue') && ((r.bs.a5 === 4) && ((!$elm$core$List$isEmpty(r.dt)) && A2(
+				return (r.a_ === 'demo-revenue') && ((r.bu.ez === 4) && ((!$elm$core$List$isEmpty(r.dD)) && A2(
 					$elm$core$List$any,
 					function (d) {
-						return (d.a1 !== '') && (!_Utils_eq(d.cS, $elm$core$Maybe$Nothing));
+						return (d.a3 !== '') && (!_Utils_eq(d.cW, $elm$core$Maybe$Nothing));
 					},
-					r.cV)));
+					r.cZ)));
 			},
-			w.eb);
+			w.el);
 		var goal = function (key) {
 			return $elm$core$List$head(
 				A2(
@@ -13345,15 +15708,15 @@ var $author$project$Ui$Guide$view = F2(
 					A2(
 						$elm$core$Basics$composeR,
 						function ($) {
-							return $.aY;
+							return $.a_;
 						},
 						A2(
 							$elm$core$Basics$composeR,
 							function ($) {
-								return $.bC;
+								return $.du;
 							},
 							$elm$core$Basics$eq('demo-' + key))),
-					w.dh));
+					w.$7));
 		};
 		var ready = A2(
 			$elm$core$Maybe$withDefault,
@@ -13363,12 +15726,12 @@ var $author$project$Ui$Guide$view = F2(
 				A2(
 					$elm$core$Basics$composeR,
 					function ($) {
-						return $.cs;
+						return $.cu;
 					},
 					A2(
 						$elm$core$Basics$composeR,
 						function ($) {
-							return $.cQ;
+							return $.cU;
 						},
 						$elm$core$Basics$eq(1))),
 				goal('launch')));
@@ -13376,18 +15739,24 @@ var $author$project$Ui$Guide$view = F2(
 			$elm$core$List$any,
 			function (e) {
 				return _Utils_eq(
-					e.c6,
+					e.db,
 					$elm$core$Maybe$Just('demo-revenue')) && _Utils_eq(
-					e.c7,
+					e.dc,
 					$elm$core$Maybe$Just(4));
 			},
-			w.c8);
+			w.dd);
+		var designed = A2(
+			$elm$core$List$any,
+			function (e) {
+				return e.X.a9 === 'AgentRolesSaved';
+			},
+			w.dd);
 		var assigned = !_Utils_eq(
 			$elm$core$Maybe$Nothing,
 			A2(
 				$elm$core$Maybe$andThen,
 				function ($) {
-					return $.a1;
+					return $.a3;
 				},
 				goal('partners')));
 		var active = function (key) {
@@ -13397,7 +15766,7 @@ var $author$project$Ui$Guide$view = F2(
 				A2(
 					$elm$core$Maybe$map,
 					function ($) {
-						return $.ba;
+						return $.bc;
 					},
 					goal(key)));
 		};
@@ -13409,12 +15778,12 @@ var $author$project$Ui$Guide$view = F2(
 				A2(
 					$elm$core$Basics$composeR,
 					function ($) {
-						return $.bs;
+						return $.bu;
 					},
 					A2(
 						$elm$core$Basics$composeR,
 						function ($) {
-							return $.a5;
+							return $.ez;
 						},
 						$elm$core$Basics$eq(4))),
 				goal('revenue')));
@@ -13425,23 +15794,24 @@ var $author$project$Ui$Guide$view = F2(
 				active('partners'),
 				'01 · 빈 책임 자리 채우기',
 				'파트너십 목표에 계약 권한을 가진 한유진을 최종 책임자로 지정하고 활성화하세요.',
-				assigned ? 5 : 6,
+				assigned ? 6 : 7,
 				assigned ? 'goal-demo-partners' : 'owner-demo-partners'),
 				A5(
 				$author$project$Ui$Guide$GuideStep,
 				active('launch'),
 				'02 · 책임에 맞는 권한 주기',
 				'이지원에게 채용 권한과 예산 30,000,000원을 부여하세요. 제품 출시 권한을 유지하고 신제품 출시 목표를 활성화하세요.',
-				ready ? 5 : 7,
+				ready ? 6 : 8,
 				ready ? 'goal-demo-launch' : 'authority-demo-product'),
-				A5($author$project$Ui$Guide$GuideStep, achieved && evaluated, '03 · 결과에서 평가까지', '매출 실측값 50 (단위: 억원)과 보고자, 설명을 보고한 뒤 평가 기록을 누르세요.', 8, 'goal-demo-revenue'),
-				A5($author$project$Ui$Guide$GuideStep, reviewed, '04 · 배움을 다음 결정으로', '매출 목표의 학습과 다음 결정, 담당자, 미래 기한을 기록하세요. 달성 결과와 평가가 함께 보존됩니다.', 9, 'review-form')
+				A5($author$project$Ui$Guide$GuideStep, achieved && evaluated, '03 · 결과에서 평가까지', '매출 실측값 50 (단위: 억원)과 보고자, 설명을 보고한 뒤 평가 기록을 누르세요.', 9, 'goal-demo-revenue'),
+				A5($author$project$Ui$Guide$GuideStep, reviewed, '04 · 배움을 다음 결정으로', '매출 목표의 학습과 다음 결정, 담당자, 미래 기한을 기록하세요. 달성 결과와 평가가 함께 보존됩니다.', 10, 'review-form'),
+				A5($author$project$Ui$Guide$GuideStep, designed, '05 · 업무에서 에이전트 설계로', '저장된 업무 흐름 4건에서 도출한 역할 후보를 설계안으로 가져오고, 등급과 승인 주체, 인계 대상을 검토해 저장하세요. 저장하면 구조 화면과 내보내기를 사용할 수 있습니다.', 3, 'agent-import')
 			]);
 		var count = $elm$core$List$length(
 			A2(
 				$elm$core$List$filter,
 				function ($) {
-					return $.ak;
+					return $.al;
 				},
 				steps));
 		return A2(
@@ -13480,14 +15850,14 @@ var $author$project$Ui$Guide$view = F2(
 									_List_Nil,
 									_List_fromArray(
 										[
-											$elm$html$Html$text('조직의 운영 흐름, 네 단계로 체험하세요')
+											$elm$html$Html$text('조직의 운영 흐름, 다섯 단계로 체험하세요')
 										])),
 									A2(
 									$elm$html$Html$p,
 									_List_Nil,
 									_List_fromArray(
 										[
-											$elm$html$Html$text('6명 · 7개 목표 · 5가지 성과 상태. 실제 저장 상태로 진행률을 계산합니다.')
+											$elm$html$Html$text('6명 · 7개 목표 · 5가지 성과 상태 · 업무 흐름 4건. 실제 저장 상태로 진행률을 계산합니다.')
 										]))
 								])),
 							A2(
@@ -13499,7 +15869,7 @@ var $author$project$Ui$Guide$view = F2(
 							_List_fromArray(
 								[
 									$elm$html$Html$text(
-									$elm$core$String$fromInt(count) + ' / 4 완료')
+									$elm$core$String$fromInt(count) + ' / 5 완료')
 								]))
 						])),
 					A2(
@@ -13507,18 +15877,18 @@ var $author$project$Ui$Guide$view = F2(
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$class('guide-toggle secondary'),
-							$elm$html$Html$Events$onClick(model.eC),
+							$elm$html$Html$Events$onClick(model.eO),
 							A2(
 							$elm$html$Html$Attributes$attribute,
 							'aria-expanded',
-							model.aF ? 'true' : 'false')
+							model.aI ? 'true' : 'false')
 						]),
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							model.aF ? '체험 가이드 접기' : '체험 가이드 열기')
+							model.aI ? '체험 가이드 접기' : '체험 가이드 열기')
 						])),
-					model.aF ? A2(
+					model.aI ? A2(
 					$elm$html$Html$div,
 					_List_Nil,
 					_List_fromArray(
@@ -13540,7 +15910,7 @@ var $author$project$Ui$Guide$view = F2(
 												_List_fromArray(
 													[
 														_Utils_Tuple2('guide-step', true),
-														_Utils_Tuple2('complete', step_.ak)
+														_Utils_Tuple2('complete', step_.al)
 													]))
 											]),
 										_List_fromArray(
@@ -13554,14 +15924,14 @@ var $author$project$Ui$Guide$view = F2(
 												_List_fromArray(
 													[
 														$elm$html$Html$text(
-														step_.ak ? '✓ 완료' : '○ 체험 대기')
+														step_.al ? '✓ 완료' : '○ 체험 대기')
 													])),
 												A2(
 												$elm$html$Html$h3,
 												_List_Nil,
 												_List_fromArray(
 													[
-														$elm$html$Html$text(step_.cg)
+														$elm$html$Html$text(step_.ci)
 													])),
 												A2(
 												$elm$html$Html$p,
@@ -13575,14 +15945,14 @@ var $author$project$Ui$Guide$view = F2(
 												_List_fromArray(
 													[
 														$elm$html$Html$Attributes$class('secondary'),
-														$elm$html$Html$Attributes$disabled(model.aV),
+														$elm$html$Html$Attributes$disabled(model.aE),
 														$elm$html$Html$Events$onClick(
-														A2(model.bz, step_.aa, step_.ex))
+														A2(model.aZ, step_.ac, step_.eI))
 													]),
 												_List_fromArray(
 													[
 														$elm$html$Html$text(
-														step_.ak ? '다시 살펴보기 →' : '이 단계 진행 →')
+														step_.al ? '다시 살펴보기 →' : '이 단계 진행 →')
 													]))
 											]));
 								},
@@ -13601,9 +15971,9 @@ var $author$project$Ui$Guide$view = F2(
 									_List_fromArray(
 										[
 											$elm$html$Html$Attributes$class('secondary'),
-											$elm$html$Html$Attributes$disabled(model.aV),
+											$elm$html$Html$Attributes$disabled(model.aE),
 											$elm$html$Html$Events$onClick(
-											A2(model.bz, 4, 'new-person'))
+											A2(model.aZ, 5, 'new-person'))
 										]),
 									_List_fromArray(
 										[
@@ -13614,9 +15984,9 @@ var $author$project$Ui$Guide$view = F2(
 									_List_fromArray(
 										[
 											$elm$html$Html$Attributes$class('secondary'),
-											$elm$html$Html$Attributes$disabled(model.aV),
+											$elm$html$Html$Attributes$disabled(model.aE),
 											$elm$html$Html$Events$onClick(
-											A2(model.bz, 6, 'responsibility-graph'))
+											A2(model.aZ, 7, 'responsibility-graph'))
 										]),
 									_List_fromArray(
 										[
@@ -13627,9 +15997,9 @@ var $author$project$Ui$Guide$view = F2(
 									_List_fromArray(
 										[
 											$elm$html$Html$Attributes$class('secondary'),
-											$elm$html$Html$Attributes$disabled(model.aV),
+											$elm$html$Html$Attributes$disabled(model.aE),
 											$elm$html$Html$Events$onClick(
-											A2(model.bz, 10, 'audit-history'))
+											A2(model.aZ, 11, 'audit-history'))
 										]),
 									_List_fromArray(
 										[
@@ -13663,10 +16033,10 @@ var $author$project$Ui$Common$diagnosticView = function (w) {
 						_List_fromArray(
 							[
 								$elm$html$Html$text(
-								$elm$core$String$fromInt(w.cN.I) + (' 오류 · ' + ($elm$core$String$fromInt(w.cN.cj) + ' 경고')))
+								$elm$core$String$fromInt(w.cR.I) + (' 오류 · ' + ($elm$core$String$fromInt(w.cR.cl) + ' 경고')))
 							]))
 					])),
-				$elm$core$List$isEmpty(w.cN.c$) ? $author$project$Ui$Common$note('현재 입력에 적용한 규칙에서 추가 확인 사항이 발견되지 않았습니다. 미입력 정보나 실제 업무까지 검증한 것은 아닙니다.') : A2(
+				$elm$core$List$isEmpty(w.cR.c3) ? $author$project$Ui$Common$note('현재 입력에 적용한 규칙에서 추가 확인 사항이 발견되지 않았습니다. 미입력 정보나 실제 업무까지 검증한 것은 아닙니다.') : A2(
 				$elm$html$Html$div,
 				_List_Nil,
 				A2(
@@ -13680,7 +16050,7 @@ var $author$project$Ui$Common$diagnosticView = function (w) {
 									_List_fromArray(
 										[
 											_Utils_Tuple2('diagnostic', true),
-											_Utils_Tuple2('error', d.em === 'Error')
+											_Utils_Tuple2('error', d.ew === 'Error')
 										]))
 								]),
 							_List_fromArray(
@@ -13690,21 +16060,21 @@ var $author$project$Ui$Common$diagnosticView = function (w) {
 									_List_Nil,
 									_List_fromArray(
 										[
-											$elm$html$Html$text(d.cM)
+											$elm$html$Html$text(d.cQ)
 										])),
 									A2(
 									$elm$html$Html$strong,
 									_List_Nil,
 									_List_fromArray(
 										[
-											$elm$html$Html$text(d.dw)
+											$elm$html$Html$text(d.dH)
 										])),
 									A2(
 									$elm$html$Html$p,
 									_List_Nil,
 									_List_fromArray(
 										[
-											$elm$html$Html$text(d.es)
+											$elm$html$Html$text(d.eD)
 										])),
 									A2(
 									$elm$html$Html$div,
@@ -13720,10 +16090,10 @@ var $author$project$Ui$Common$diagnosticView = function (w) {
 														$elm$html$Html$text(line)
 													]));
 										},
-										d.c_))
+										d.c2))
 								]));
 					},
-					w.cN.c$)),
+					w.cR.c3)),
 				$author$project$Ui$Common$note('권한 집중도는 권한 종류와 예산 보유를 각각 1점으로 세는 규칙 기반 추정치입니다.')
 			]));
 };
@@ -13750,41 +16120,20 @@ var $author$project$Ui$Common$badge = function (g) {
 				_List_fromArray(
 					[
 						_Utils_Tuple2('tag', true),
-						_Utils_Tuple2('draft', !g.ba),
-						_Utils_Tuple2('error', g.bs.a5 === 3),
-						_Utils_Tuple2('warn', g.bs.a5 === 2)
+						_Utils_Tuple2('draft', !g.bc),
+						_Utils_Tuple2('error', g.bu.ez === 3),
+						_Utils_Tuple2('warn', g.bu.ez === 2)
 					]))
 			]),
 		_List_fromArray(
 			[
 				$elm$html$Html$text(
-				g.ba ? $author$project$Ui$Label$statusName(g.bs.a5) : '초안')
+				g.bc ? $author$project$Ui$Label$statusName(g.bu.ez) : '초안')
 			]));
 };
 var $elm$core$Basics$abs = function (n) {
 	return (n < 0) ? (-n) : n;
 };
-var $elm$core$List$drop = F2(
-	function (n, list) {
-		drop:
-		while (true) {
-			if (n <= 0) {
-				return list;
-			} else {
-				if (!list.b) {
-					return list;
-				} else {
-					var x = list.a;
-					var xs = list.b;
-					var $temp$n = n - 1,
-						$temp$list = xs;
-					n = $temp$n;
-					list = $temp$list;
-					continue drop;
-				}
-			}
-		}
-	});
 var $elm$core$String$reverse = _String_reverse;
 var $author$project$Ui$Label$formatNumber = function (number) {
 	var parts = A2(
@@ -13821,30 +16170,14 @@ var $author$project$Ui$Label$formatNumber = function (number) {
 var $author$project$Form$Action$Assign = function (a) {
 	return {$: 7, a: a};
 };
-var $author$project$Ui$Form$peopleOptions = function (w) {
-	return A2(
-		$elm$core$List$cons,
-		_Utils_Tuple2('', '구성원 선택'),
-		A2(
-			$elm$core$List$map,
-			function (p) {
-				return _Utils_Tuple2(p.bC, p.dD + (' · ' + p.ee));
-			},
-			A2(
-				$elm$core$List$filter,
-				function ($) {
-					return $.ba;
-				},
-				w.dV)));
-};
 var $author$project$Ui$Form$selectField = F6(
 	function (model, action, label_, key, required_, options) {
 		return A7(
 			$author$project$Ui$Form$selectWithHelp,
 			$author$project$Form$Action$actionKey(action) + ('-' + key),
 			key,
-			A2(model.a8, action, key),
-			A2(model.aA, action, key),
+			A2(model.ba, action, key),
+			A2(model.am, action, key),
 			label_,
 			required_,
 			options);
@@ -13854,46 +16187,20 @@ var $author$project$Page$Responsibility$ownerForm = F3(
 		return A4(
 			$author$project$Ui$Form$formView,
 			model.w,
-			$author$project$Form$Action$Assign(g.aY.bC),
+			$author$project$Form$Action$Assign(g.a_.du),
 			'책임자 지정',
 			_List_fromArray(
 				[
 					A6(
 					$author$project$Ui$Form$selectField,
 					model.w,
-					$author$project$Form$Action$Assign(g.aY.bC),
+					$author$project$Form$Action$Assign(g.a_.du),
 					'책임자',
 					'owner',
 					true,
 					$author$project$Ui$Form$peopleOptions(w))
 				]));
 	});
-var $author$project$Ui$Label$permissions = _List_fromArray(
-	[
-		_Utils_Tuple2('Pricing', '가격 결정'),
-		_Utils_Tuple2('Hiring', '채용'),
-		_Utils_Tuple2('BudgetApproval', '예산 승인'),
-		_Utils_Tuple2('Contracting', '계약'),
-		_Utils_Tuple2('Marketing', '마케팅'),
-		_Utils_Tuple2('Infrastructure', '인프라'),
-		_Utils_Tuple2('ProductLaunch', '제품 출시')
-	]);
-var $author$project$Ui$Label$permissionName = function (key) {
-	return A2(
-		$elm$core$Maybe$withDefault,
-		key,
-		A2(
-			$elm$core$Maybe$map,
-			$elm$core$Tuple$second,
-			$elm$core$List$head(
-				A2(
-					$elm$core$List$filter,
-					A2(
-						$elm$core$Basics$composeR,
-						$elm$core$Tuple$first,
-						$elm$core$Basics$eq(key)),
-					$author$project$Ui$Label$permissions))));
-};
 var $author$project$Page$Responsibility$requirements = function (g) {
 	return _List_fromArray(
 		[
@@ -13906,11 +16213,11 @@ var $author$project$Page$Responsibility$requirements = function (g) {
 					A2(
 						$elm$core$String$join,
 						' · ',
-						A2($elm$core$List$map, $author$project$Ui$Label$permissionName, g.aY.d7)))
+						A2($elm$core$List$map, $author$project$Ui$Label$permissionName, g.a_.eh)))
 				])),
 			$author$project$Ui$Common$note(
-			'예산 ' + ($author$project$Ui$Label$formatNumber(g.aY.d6) + ('원 · ' + ($elm$core$String$fromInt(
-				$elm$core$Basics$round(g.cs.cQ * 100)) + '% 통제'))))
+			'예산 ' + ($author$project$Ui$Label$formatNumber(g.a_.eg) + ('원 · ' + ($elm$core$String$fromInt(
+				$elm$core$Basics$round(g.cu.cU * 100)) + '% 통제'))))
 		]);
 };
 var $author$project$Page$Responsibility$responsibilityCard = F3(
@@ -13920,7 +16227,7 @@ var $author$project$Page$Responsibility$responsibilityCard = F3(
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class('goal-card'),
-					$elm$html$Html$Attributes$id('owner-' + g.aY.bC),
+					$elm$html$Html$Attributes$id('owner-' + g.a_.du),
 					$elm$html$Html$Attributes$tabindex(-1)
 				]),
 			_Utils_ap(
@@ -13932,14 +16239,14 @@ var $author$project$Page$Responsibility$responsibilityCard = F3(
 						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text(g.aY.cZ)
+								$elm$html$Html$text(g.a_.c1)
 							])),
 						A2(
 						$elm$html$Html$small,
 						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text(g.aY.dy.dD)
+								$elm$html$Html$text(g.a_.dJ.dO)
 							])),
 						A2(
 						$elm$html$Html$p,
@@ -13947,7 +16254,7 @@ var $author$project$Page$Responsibility$responsibilityCard = F3(
 						_List_fromArray(
 							[
 								$elm$html$Html$text(
-								'목표값 ' + ($author$project$Ui$Label$formatNumber(g.aY.ex) + (' ' + g.aY.dy.eH)))
+								'목표값 ' + ($author$project$Ui$Label$formatNumber(g.a_.eI) + (' ' + g.a_.dJ.eT)))
 							])),
 						$author$project$Ui$Common$note(
 						'최종 책임자: ' + A2(
@@ -13956,7 +16263,7 @@ var $author$project$Page$Responsibility$responsibilityCard = F3(
 							A2(
 								$elm$core$Maybe$map,
 								$author$project$Ui$Label$personName(w),
-								g.a1))),
+								g.a3))),
 						A3($author$project$Page$Responsibility$ownerForm, model, w, g)
 					]),
 				$author$project$Page$Responsibility$requirements(g)));
@@ -13967,7 +16274,7 @@ var $author$project$Page$Responsibility$responsibilityRow = F3(
 			$elm$html$Html$tr,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$id('owner-' + g.aY.bC),
+					$elm$html$Html$Attributes$id('owner-' + g.a_.du),
 					$elm$html$Html$Attributes$tabindex(-1)
 				]),
 			_List_fromArray(
@@ -13985,14 +16292,14 @@ var $author$project$Page$Responsibility$responsibilityRow = F3(
 							_List_Nil,
 							_List_fromArray(
 								[
-									$elm$html$Html$text(g.aY.cZ)
+									$elm$html$Html$text(g.a_.c1)
 								])),
 							A2(
 							$elm$html$Html$small,
 							_List_Nil,
 							_List_fromArray(
 								[
-									$elm$html$Html$text(g.aY.dy.dD)
+									$elm$html$Html$text(g.a_.dJ.dO)
 								]))
 						])),
 					A2(
@@ -14007,7 +16314,7 @@ var $author$project$Page$Responsibility$responsibilityRow = F3(
 								A2(
 									$elm$core$Maybe$map,
 									$author$project$Ui$Label$personName(w),
-									g.a1))),
+									g.a3))),
 							A3($author$project$Page$Responsibility$ownerForm, model, w, g)
 						])),
 					A2(
@@ -14016,7 +16323,7 @@ var $author$project$Page$Responsibility$responsibilityRow = F3(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							$author$project$Ui$Label$formatNumber(g.aY.ex) + (' ' + g.aY.dy.eH))
+							$author$project$Ui$Label$formatNumber(g.a_.eI) + (' ' + g.a_.dJ.eT))
 						])),
 					A2(
 					$elm$html$Html$td,
@@ -14047,7 +16354,7 @@ var $elm$core$Maybe$map2 = F3(
 		}
 	});
 var $author$project$Ui$ResponsibilityGraph$nodeKey = function (node) {
-	return node.a7 + (':' + node.cP);
+	return node.a9 + (':' + node.cT);
 };
 var $author$project$Ui$ResponsibilityGraph$pair = F2(
 	function (x, y) {
@@ -14067,13 +16374,6 @@ var $author$project$Ui$ResponsibilityGraph$relationLabel = function (kind) {
 			return kind;
 	}
 };
-var $elm$virtual_dom$VirtualDom$nodeNS = F2(
-	function (namespace, tag) {
-		return A2(
-			_VirtualDom_nodeNS,
-			namespace,
-			_VirtualDom_noScript(tag));
-	});
 var $author$project$Ui$ResponsibilityGraph$svg = $elm$virtual_dom$VirtualDom$nodeNS('http://www.w3.org/2000/svg');
 var $author$project$Ui$ResponsibilityGraph$edgeView = F3(
 	function (state, positions, edge) {
@@ -14100,21 +16400,21 @@ var $author$project$Ui$ResponsibilityGraph$edgeView = F3(
 				$elm$core$Maybe$map,
 				function (key) {
 					return _Utils_eq(
-						$author$project$Ui$ResponsibilityGraph$nodeKey(edge.de),
+						$author$project$Ui$ResponsibilityGraph$nodeKey(edge.dl),
 						key) || _Utils_eq(
-						$author$project$Ui$ResponsibilityGraph$nodeKey(edge.eA),
+						$author$project$Ui$ResponsibilityGraph$nodeKey(edge.eM),
 						key);
 				},
-				state.ei));
+				state.es));
 		return A3(
 			$elm$core$Maybe$map2,
 			F2(
 				function (from, to) {
-					var y2 = to.af + 42;
-					var y1 = from.af + 42;
-					var x2 = to.az;
-					var x1 = from.az + 260;
-					var d = (edge.dr === 'DependsOn') ? ('M ' + (A2($author$project$Ui$ResponsibilityGraph$pair, x1, y1) + (' C ' + (A2($author$project$Ui$ResponsibilityGraph$pair, x1 + 55, y1) + (' ' + (A2($author$project$Ui$ResponsibilityGraph$pair, x1 + 55, y2) + (' ' + A2($author$project$Ui$ResponsibilityGraph$pair, x1 + 3, y2)))))))) : ((edge.dr === 'Controls') ? ('M ' + (A2($author$project$Ui$ResponsibilityGraph$pair, x1, y1 + 25) + (' C ' + (A2($author$project$Ui$ResponsibilityGraph$pair, x1 + 45, y1 + 65) + (' ' + (A2($author$project$Ui$ResponsibilityGraph$pair, x2 - 45, y2 + 65) + (' ' + A2($author$project$Ui$ResponsibilityGraph$pair, x2, y2 + 25)))))))) : ('M ' + (A2($author$project$Ui$ResponsibilityGraph$pair, x1, y1) + (' C ' + (A2($author$project$Ui$ResponsibilityGraph$pair, x1 + 40, y1) + (' ' + (A2($author$project$Ui$ResponsibilityGraph$pair, x2 - 40, y2) + (' ' + A2($author$project$Ui$ResponsibilityGraph$pair, x2, y2)))))))));
+					var y2 = to.ag + 42;
+					var y1 = from.ag + 42;
+					var x2 = to.aD;
+					var x1 = from.aD + 260;
+					var d = (edge.dB === 'DependsOn') ? ('M ' + (A2($author$project$Ui$ResponsibilityGraph$pair, x1, y1) + (' C ' + (A2($author$project$Ui$ResponsibilityGraph$pair, x1 + 55, y1) + (' ' + (A2($author$project$Ui$ResponsibilityGraph$pair, x1 + 55, y2) + (' ' + A2($author$project$Ui$ResponsibilityGraph$pair, x1 + 3, y2)))))))) : ((edge.dB === 'Controls') ? ('M ' + (A2($author$project$Ui$ResponsibilityGraph$pair, x1, y1 + 25) + (' C ' + (A2($author$project$Ui$ResponsibilityGraph$pair, x1 + 45, y1 + 65) + (' ' + (A2($author$project$Ui$ResponsibilityGraph$pair, x2 - 45, y2 + 65) + (' ' + A2($author$project$Ui$ResponsibilityGraph$pair, x2, y2 + 25)))))))) : ('M ' + (A2($author$project$Ui$ResponsibilityGraph$pair, x1, y1) + (' C ' + (A2($author$project$Ui$ResponsibilityGraph$pair, x1 + 40, y1) + (' ' + (A2($author$project$Ui$ResponsibilityGraph$pair, x2 - 40, y2) + (' ' + A2($author$project$Ui$ResponsibilityGraph$pair, x2, y2)))))))));
 					return A3(
 						$author$project$Ui$ResponsibilityGraph$svg,
 						'g',
@@ -14134,7 +16434,7 @@ var $author$project$Ui$ResponsibilityGraph$edgeView = F3(
 								_List_fromArray(
 									[
 										$elm$html$Html$text(
-										$author$project$Ui$ResponsibilityGraph$relationLabel(edge.dr))
+										$author$project$Ui$ResponsibilityGraph$relationLabel(edge.dB))
 									])),
 								A3(
 								$author$project$Ui$ResponsibilityGraph$svg,
@@ -14147,29 +16447,19 @@ var $author$project$Ui$ResponsibilityGraph$edgeView = F3(
 										A2(
 										$elm$html$Html$Attributes$attribute,
 										'stroke-width',
-										((!_Utils_eq(state.ei, $elm$core$Maybe$Nothing)) && active) ? '3' : '1.5'),
+										((!_Utils_eq(state.es, $elm$core$Maybe$Nothing)) && active) ? '3' : '1.5'),
 										A2(
 										$elm$html$Html$Attributes$attribute,
 										'stroke-dasharray',
-										((edge.dr === 'DependsOn') || (edge.dr === 'Controls')) ? '6 4' : 'none'),
+										((edge.dB === 'DependsOn') || (edge.dB === 'Controls')) ? '6 4' : 'none'),
 										A2($elm$html$Html$Attributes$attribute, 'marker-end', 'url(#responsibility-arrow)')
 									]),
 								_List_Nil)
 							]));
 				}),
-			find(edge.de),
-			find(edge.eA));
+			find(edge.dl),
+			find(edge.eM));
 	});
-var $elm$core$List$maximum = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return $elm$core$Maybe$Just(
-			A3($elm$core$List$foldl, $elm$core$Basics$max, x, xs));
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
-};
 var $author$project$Ui$ResponsibilityGraph$Select = function (a) {
 	return {$: 4, a: a};
 };
@@ -14178,13 +16468,13 @@ var $author$project$Ui$ResponsibilityGraph$bool = function (value) {
 };
 var $author$project$Ui$ResponsibilityGraph$goalWarning = F2(
 	function (w, node) {
-		return (node.a7 !== 'GoalNode') ? '' : A2(
+		return (node.a9 !== 'GoalNode') ? '' : A2(
 			$elm$core$Maybe$withDefault,
 			'',
 			A2(
 				$elm$core$Maybe$map,
 				function (g) {
-					return _Utils_eq(g.a1, $elm$core$Maybe$Nothing) ? '책임자 미지정' : ((g.cs.cQ < 1) ? '권한 부족' : '');
+					return _Utils_eq(g.a3, $elm$core$Maybe$Nothing) ? '책임자 미지정' : ((g.cu.cU < 1) ? '권한 부족' : '');
 				},
 				$elm$core$List$head(
 					A2(
@@ -14192,42 +16482,42 @@ var $author$project$Ui$ResponsibilityGraph$goalWarning = F2(
 						A2(
 							$elm$core$Basics$composeR,
 							function ($) {
-								return $.aY;
+								return $.a_;
 							},
 							A2(
 								$elm$core$Basics$composeR,
 								function ($) {
-									return $.bC;
+									return $.du;
 								},
-								$elm$core$Basics$eq(node.cP))),
-						w.dh))));
+								$elm$core$Basics$eq(node.cT))),
+						w.$7))));
 	});
 var $author$project$Ui$ResponsibilityGraph$nodeLabel = F2(
 	function (w, node) {
-		var _v0 = node.a7;
+		var _v0 = node.a9;
 		switch (_v0) {
 			case 'PersonNode':
-				return A2($author$project$Ui$Label$personName, w, node.cP);
+				return A2($author$project$Ui$Label$personName, w, node.cT);
 			case 'GoalNode':
-				return A2($author$project$Ui$Label$goalName, w, node.cP);
+				return A2($author$project$Ui$Label$goalName, w, node.cT);
 			case 'MetricNode':
 				return A2(
 					$elm$core$Maybe$withDefault,
-					node.cP,
+					node.cT,
 					A2(
 						$elm$core$Maybe$map,
 						A2(
 							$elm$core$Basics$composeR,
 							function ($) {
-								return $.aY;
+								return $.a_;
 							},
 							A2(
 								$elm$core$Basics$composeR,
 								function ($) {
-									return $.dy;
+									return $.dJ;
 								},
 								function ($) {
-									return $.dD;
+									return $.dO;
 								})),
 						$elm$core$List$head(
 							A2(
@@ -14235,24 +16525,24 @@ var $author$project$Ui$ResponsibilityGraph$nodeLabel = F2(
 								A2(
 									$elm$core$Basics$composeR,
 									function ($) {
-										return $.aY;
+										return $.a_;
 									},
 									A2(
 										$elm$core$Basics$composeR,
 										function ($) {
-											return $.dy;
+											return $.dJ;
 										},
 										A2(
 											$elm$core$Basics$composeR,
 											function ($) {
-												return $.bC;
+												return $.du;
 											},
-											$elm$core$Basics$eq(node.cP)))),
-								w.dh))));
+											$elm$core$Basics$eq(node.cT)))),
+								w.$7))));
 			case 'ResourceNode':
-				return (node.cP === 'Budget') ? '예산' : $author$project$Ui$Label$permissionName(node.cP);
+				return (node.cT === 'Budget') ? '예산' : $author$project$Ui$Label$permissionName(node.cT);
 			default:
-				return node.cP;
+				return node.cT;
 		}
 	});
 var $author$project$Ui$ResponsibilityGraph$matches = F3(
@@ -14262,10 +16552,10 @@ var $author$project$Ui$ResponsibilityGraph$matches = F3(
 			$elm$core$String$toLower(
 				$elm$core$String$trim(query)),
 			$elm$core$String$toLower(
-				A2($author$project$Ui$ResponsibilityGraph$nodeLabel, w, node) + (' ' + node.cP)));
+				A2($author$project$Ui$ResponsibilityGraph$nodeLabel, w, node) + (' ' + node.cT)));
 	});
 var $author$project$Ui$ResponsibilityGraph$nodeType = function (node) {
-	var _v0 = node.a7;
+	var _v0 = node.a9;
 	switch (_v0) {
 		case 'PersonNode':
 			return '사람';
@@ -14283,13 +16573,13 @@ var $author$project$Ui$ResponsibilityGraph$related = F3(
 			$elm$core$List$any,
 			function (edge) {
 				return (_Utils_eq(
-					$author$project$Ui$ResponsibilityGraph$nodeKey(edge.de),
+					$author$project$Ui$ResponsibilityGraph$nodeKey(edge.dl),
 					selected) && _Utils_eq(
-					$author$project$Ui$ResponsibilityGraph$nodeKey(edge.eA),
+					$author$project$Ui$ResponsibilityGraph$nodeKey(edge.eM),
 					key)) || (_Utils_eq(
-					$author$project$Ui$ResponsibilityGraph$nodeKey(edge.eA),
+					$author$project$Ui$ResponsibilityGraph$nodeKey(edge.eM),
 					selected) && _Utils_eq(
-					$author$project$Ui$ResponsibilityGraph$nodeKey(edge.de),
+					$author$project$Ui$ResponsibilityGraph$nodeKey(edge.dl),
 					key));
 			},
 			edges);
@@ -14310,7 +16600,7 @@ var $author$project$Ui$ResponsibilityGraph$nodeView = F5(
 		var title = A2($author$project$Ui$ResponsibilityGraph$nodeLabel, w, pos.k);
 		var key = $author$project$Ui$ResponsibilityGraph$nodeKey(pos.k);
 		var selected = _Utils_eq(
-			state.ei,
+			state.es,
 			$elm$core$Maybe$Just(key));
 		var illuminated = A2(
 			$elm$core$Maybe$withDefault,
@@ -14320,8 +16610,8 @@ var $author$project$Ui$ResponsibilityGraph$nodeView = F5(
 				function (chosen) {
 					return A3($author$project$Ui$ResponsibilityGraph$related, edges, chosen, key);
 				},
-				state.ei));
-		var found = A3($author$project$Ui$ResponsibilityGraph$matches, state.d_, w, pos.k);
+				state.es));
+		var found = A3($author$project$Ui$ResponsibilityGraph$matches, state.d9, w, pos.k);
 		var events = A2(
 			$elm$core$Maybe$withDefault,
 			_List_Nil,
@@ -14349,7 +16639,7 @@ var $author$project$Ui$ResponsibilityGraph$nodeView = F5(
 						]);
 				},
 				dispatch));
-		var color = (warning !== '') ? '#fff2dc' : ((pos.k.a7 === 'PersonNode') ? '#eaf3ec' : ((pos.k.a7 === 'MetricNode') ? '#eaf1fa' : ((pos.k.a7 === 'ResourceNode') ? '#f1edf8' : '#fff')));
+		var color = (warning !== '') ? '#fff2dc' : ((pos.k.a9 === 'PersonNode') ? '#eaf3ec' : ((pos.k.a9 === 'MetricNode') ? '#eaf1fa' : ((pos.k.a9 === 'ResourceNode') ? '#f1edf8' : '#fff')));
 		return A3(
 			$author$project$Ui$ResponsibilityGraph$svg,
 			'g',
@@ -14359,7 +16649,7 @@ var $author$project$Ui$ResponsibilityGraph$nodeView = F5(
 						A2(
 						$elm$html$Html$Attributes$attribute,
 						'transform',
-						'translate(' + (A2($author$project$Ui$ResponsibilityGraph$pair, pos.az, pos.af) + ')')),
+						'translate(' + (A2($author$project$Ui$ResponsibilityGraph$pair, pos.aD, pos.ag) + ')')),
 						A2($elm$html$Html$Attributes$attribute, 'class', 'graph-node'),
 						A2($elm$html$Html$Attributes$attribute, 'role', 'button'),
 						A2($elm$html$Html$Attributes$attribute, 'tabindex', '0'),
@@ -14401,11 +16691,11 @@ var $author$project$Ui$ResponsibilityGraph$nodeView = F5(
 							A2(
 							$elm$html$Html$Attributes$attribute,
 							'stroke',
-							selected ? '#1c6147' : ((found && ($elm$core$String$trim(state.d_) !== '')) ? '#3479b3' : '#b8cbbd')),
+							selected ? '#1c6147' : ((found && ($elm$core$String$trim(state.d9) !== '')) ? '#3479b3' : '#b8cbbd')),
 							A2(
 							$elm$html$Html$Attributes$attribute,
 							'stroke-width',
-							(selected || (($elm$core$String$trim(state.d_) !== '') && found)) ? '3' : '1.5')
+							(selected || (($elm$core$String$trim(state.d9) !== '') && found)) ? '3' : '1.5')
 						]),
 					_List_Nil),
 					A3(
@@ -14464,7 +16754,7 @@ var $author$project$Ui$ResponsibilityGraph$diagram = F5(
 				A2(
 					$elm$core$List$map,
 					function (pos) {
-						return pos.af + 110;
+						return pos.ag + 110;
 					},
 					positions)));
 		return A2(
@@ -14611,23 +16901,23 @@ var $author$project$Ui$ResponsibilityGraph$nodes = function (w) {
 					A2(
 						$elm$core$List$map,
 						function (person) {
-							return A2($author$project$Domain$Node, 'PersonNode', person.bC);
+							return A2($author$project$Domain$Node, 'PersonNode', person.du);
 						},
-						w.dV),
+						w.d4),
 					_Utils_ap(
 						A2(
 							$elm$core$List$map,
 							function (g) {
-								return A2($author$project$Domain$Node, 'GoalNode', g.aY.bC);
+								return A2($author$project$Domain$Node, 'GoalNode', g.a_.du);
 							},
-							w.dh),
+							w.$7),
 						A2(
 							$elm$core$List$concatMap,
 							function (edge) {
 								return _List_fromArray(
-									[edge.de, edge.eA]);
+									[edge.dl, edge.eM]);
 							},
-							w.c3))))));
+							w.c8))))));
 };
 var $author$project$Ui$ResponsibilityGraph$layout = F2(
 	function (state, w) {
@@ -14640,7 +16930,7 @@ var $author$project$Ui$ResponsibilityGraph$layout = F2(
 							$elm$core$List$indexedMap,
 							F2(
 								function (row, node) {
-									return {k: node, az: 24 + (column * 340), af: 56 + (row * 118)};
+									return {k: node, aD: 24 + (column * 340), ag: 56 + (row * 118)};
 								}),
 							A2(
 								$elm$core$List$sortBy,
@@ -14648,7 +16938,7 @@ var $author$project$Ui$ResponsibilityGraph$layout = F2(
 								A2(
 									$elm$core$List$filter,
 									function (node) {
-										return _Utils_eq(node.a7, tag) && ((tag !== 'ResourceNode') || state.L);
+										return _Utils_eq(node.a9, tag) && ((tag !== 'ResourceNode') || state.L);
 									},
 									$author$project$Ui$ResponsibilityGraph$nodes(w))));
 					}),
@@ -14660,7 +16950,7 @@ var $author$project$Ui$ResponsibilityGraph$relationList = F5(
 		var shown = A2(
 			$elm$core$List$filter,
 			function (edge) {
-				return A3($author$project$Ui$ResponsibilityGraph$matches, state.d_, w, edge.de) || A3($author$project$Ui$ResponsibilityGraph$matches, state.d_, w, edge.eA);
+				return A3($author$project$Ui$ResponsibilityGraph$matches, state.d9, w, edge.dl) || A3($author$project$Ui$ResponsibilityGraph$matches, state.d9, w, edge.eM);
 			},
 			edges);
 		var pick = function (node) {
@@ -14700,12 +16990,12 @@ var $author$project$Ui$ResponsibilityGraph$relationList = F5(
 					$elm$core$List$any,
 					function (edge) {
 						return _Utils_eq(
-							$author$project$Ui$ResponsibilityGraph$nodeKey(edge.de),
+							$author$project$Ui$ResponsibilityGraph$nodeKey(edge.dl),
 							$author$project$Ui$ResponsibilityGraph$nodeKey(pos.k)) || _Utils_eq(
-							$author$project$Ui$ResponsibilityGraph$nodeKey(edge.eA),
+							$author$project$Ui$ResponsibilityGraph$nodeKey(edge.eM),
 							$author$project$Ui$ResponsibilityGraph$nodeKey(pos.k));
 					},
-					edges)) && A3($author$project$Ui$ResponsibilityGraph$matches, state.d_, w, pos.k);
+					edges)) && A3($author$project$Ui$ResponsibilityGraph$matches, state.d9, w, pos.k);
 			},
 			positions);
 		return A2(
@@ -14726,16 +17016,16 @@ var $author$project$Ui$ResponsibilityGraph$relationList = F5(
 								]),
 							_List_fromArray(
 								[
-									pick(edge.de),
+									pick(edge.dl),
 									A2(
 									$elm$html$Html$span,
 									_List_Nil,
 									_List_fromArray(
 										[
 											$elm$html$Html$text(
-											'─ ' + ($author$project$Ui$ResponsibilityGraph$relationLabel(edge.dr) + ' →'))
+											'─ ' + ($author$project$Ui$ResponsibilityGraph$relationLabel(edge.dB) + ' →'))
 										])),
-									pick(edge.eA)
+									pick(edge.eM)
 								]));
 					},
 					shown),
@@ -14782,20 +17072,20 @@ var $author$project$Ui$ResponsibilityGraph$personDetails = F3(
 				A2(
 					$elm$core$Basics$composeR,
 					function ($) {
-						return $.bC;
+						return $.du;
 					},
-					$elm$core$Basics$eq(node.cP)),
-				w.dV));
+					$elm$core$Basics$eq(node.cT)),
+				w.d4));
 		var owned = A2(
 			$elm$core$List$filter,
 			A2(
 				$elm$core$Basics$composeR,
 				function ($) {
-					return $.a1;
+					return $.a3;
 				},
 				$elm$core$Basics$eq(
-					$elm$core$Maybe$Just(node.cP))),
-			w.dh);
+					$elm$core$Maybe$Just(node.cT))),
+			w.$7);
 		var navigate = F2(
 			function (target, title) {
 				return A2(
@@ -14840,7 +17130,7 @@ var $author$project$Ui$ResponsibilityGraph$personDetails = F3(
 								_List_fromArray(
 									[
 										$elm$html$Html$text(
-										'역할: ' + (p.ee + (' · ' + (p.ba ? '재직' : '비활성'))))
+										'역할: ' + (p.eo + (' · ' + (p.bc ? '재직' : '비활성'))))
 									]))
 							]);
 					},
@@ -14882,7 +17172,7 @@ var $author$project$Ui$ResponsibilityGraph$personDetails = F3(
 										_List_fromArray(
 											[
 												$elm$html$Html$text(
-												'보유 예산 ' + ($author$project$Ui$Label$formatNumber(authority.cE) + '원'))
+												'보유 예산 ' + ($author$project$Ui$Label$formatNumber(authority.cI) + '원'))
 											]))
 									]);
 							},
@@ -14892,14 +17182,14 @@ var $author$project$Ui$ResponsibilityGraph$personDetails = F3(
 									A2(
 										$elm$core$Basics$composeR,
 										function ($) {
-											return $.a1;
+											return $.a3;
 										},
-										$elm$core$Basics$eq(node.cP)),
-									w.cx)))),
+										$elm$core$Basics$eq(node.cT)),
+									w.cB)))),
 					_Utils_ap(
 						_List_fromArray(
 							[
-								A2(navigate, 'person:' + node.cP, '구성원 상세로 이동')
+								A2(navigate, 'person:' + node.cT, '구성원 상세로 이동')
 							]),
 						A2(
 							$elm$core$Maybe$withDefault,
@@ -14907,11 +17197,11 @@ var $author$project$Ui$ResponsibilityGraph$personDetails = F3(
 							A2(
 								$elm$core$Maybe$map,
 								function ($) {
-									return $.ba;
+									return $.bc;
 								},
 								person)) ? _List_fromArray(
 							[
-								A2(navigate, 'authority-' + node.cP, '권한 관리로 이동')
+								A2(navigate, 'authority-' + node.cT, '권한 관리로 이동')
 							]) : _List_Nil))));
 	});
 var $author$project$Ui$ResponsibilityGraph$selectionDetails = F4(
@@ -14928,7 +17218,7 @@ var $author$project$Ui$ResponsibilityGraph$selectionDetails = F4(
 							$elm$core$Basics$eq(key)),
 						$author$project$Ui$ResponsibilityGraph$nodes(w)));
 			},
-			state.ei);
+			state.es);
 		if (_v0.$ === 1) {
 			return A2(
 				$elm$html$Html$p,
@@ -14948,22 +17238,22 @@ var $author$project$Ui$ResponsibilityGraph$selectionDetails = F4(
 					A2(
 						$elm$core$Basics$composeR,
 						function ($) {
-							return $.aY;
+							return $.a_;
 						},
 						A2(
 							$elm$core$Basics$composeR,
 							function ($) {
-								return $.bC;
+								return $.du;
 							},
-							$elm$core$Basics$eq(node.cP))),
-					w.dh));
+							$elm$core$Basics$eq(node.cT))),
+					w.$7));
 			var edges = A2(
 				$elm$core$List$filter,
 				function (edge) {
-					return _Utils_eq(edge.de, node) || _Utils_eq(edge.eA, node);
+					return _Utils_eq(edge.dl, node) || _Utils_eq(edge.eM, node);
 				},
-				w.c3);
-			var details = (node.a7 === 'GoalNode') ? A2(
+				w.c8);
+			var details = (node.a9 === 'GoalNode') ? A2(
 				$elm$core$Maybe$withDefault,
 				_List_Nil,
 				A2(
@@ -14983,7 +17273,7 @@ var $author$project$Ui$ResponsibilityGraph$selectionDetails = F4(
 											A2(
 												$elm$core$Maybe$map,
 												$author$project$Ui$Label$personName(w),
-												g.a1)))
+												g.a3)))
 									])),
 								A2(
 								$elm$html$Html$p,
@@ -14991,8 +17281,8 @@ var $author$project$Ui$ResponsibilityGraph$selectionDetails = F4(
 								_List_fromArray(
 									[
 										$elm$html$Html$text(
-										(g.ba ? '활성' : '초안') + (' · ' + ($author$project$Ui$Label$statusName(g.bs.a5) + (' · 권한 통제율 ' + ($elm$core$String$fromInt(
-											$elm$core$Basics$round(g.cs.cQ * 100)) + '%')))))
+										(g.bc ? '활성' : '초안') + (' · ' + ($author$project$Ui$Label$statusName(g.bu.ez) + (' · 권한 통제율 ' + ($elm$core$String$fromInt(
+											$elm$core$Basics$round(g.cu.cU * 100)) + '%')))))
 									])),
 								A2(
 								$elm$html$Html$p,
@@ -15003,7 +17293,7 @@ var $author$project$Ui$ResponsibilityGraph$selectionDetails = F4(
 										'필요 권한: ' + (A2(
 											$elm$core$String$join,
 											', ',
-											A2($elm$core$List$map, $author$project$Ui$Label$permissionName, g.aY.d7)) + (' · 필요 예산 ' + ($author$project$Ui$Label$formatNumber(g.aY.d6) + '원'))))
+											A2($elm$core$List$map, $author$project$Ui$Label$permissionName, g.a_.eh)) + (' · 필요 예산 ' + ($author$project$Ui$Label$formatNumber(g.a_.eg) + '원'))))
 									])),
 								A2(
 								$elm$html$Html$button,
@@ -15023,7 +17313,7 @@ var $author$project$Ui$ResponsibilityGraph$selectionDetails = F4(
 												return _List_fromArray(
 													[
 														$elm$html$Html$Events$onClick(
-														navigate('owner-' + node.cP))
+														navigate('owner-' + node.cT))
 													]);
 											},
 											go))),
@@ -15033,7 +17323,7 @@ var $author$project$Ui$ResponsibilityGraph$selectionDetails = F4(
 									]))
 							]);
 					},
-					goal)) : ((node.a7 === 'PersonNode') ? A3($author$project$Ui$ResponsibilityGraph$personDetails, go, w, node) : _List_Nil);
+					goal)) : ((node.a9 === 'PersonNode') ? A3($author$project$Ui$ResponsibilityGraph$personDetails, go, w, node) : _List_Nil);
 			return A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -15077,7 +17367,7 @@ var $author$project$Ui$ResponsibilityGraph$selectionDetails = F4(
 										_List_fromArray(
 											[
 												$elm$html$Html$text(
-												A2($author$project$Ui$ResponsibilityGraph$nodeLabel, w, edge.de) + (' ─ ' + ($author$project$Ui$ResponsibilityGraph$relationLabel(edge.dr) + (' → ' + A2($author$project$Ui$ResponsibilityGraph$nodeLabel, w, edge.eA)))))
+												A2($author$project$Ui$ResponsibilityGraph$nodeLabel, w, edge.dl) + (' ─ ' + ($author$project$Ui$ResponsibilityGraph$relationLabel(edge.dB) + (' → ' + A2($author$project$Ui$ResponsibilityGraph$nodeLabel, w, edge.eM)))))
 											]));
 								},
 								edges),
@@ -15222,12 +17512,12 @@ var $author$project$Ui$ResponsibilityGraph$toolbar = F2(
 							A3(
 							toggle,
 							'다이어그램',
-							state.W,
+							state.Y,
 							$author$project$Ui$ResponsibilityGraph$SetDiagram(true)),
 							A3(
 							toggle,
 							'관계 목록',
-							!state.W,
+							!state.Y,
 							$author$project$Ui$ResponsibilityGraph$SetDiagram(false))
 						])),
 					A2(
@@ -15245,7 +17535,7 @@ var $author$project$Ui$ResponsibilityGraph$toolbar = F2(
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$type_('search'),
-										$elm$html$Html$Attributes$value(state.d_),
+										$elm$html$Html$Attributes$value(state.d9),
 										$elm$html$Html$Attributes$placeholder('사람, 목표, 지표, 권한 검색'),
 										$elm$html$Html$Attributes$disabled(
 										_Utils_eq(dispatch, $elm$core$Maybe$Nothing))
@@ -15273,7 +17563,7 @@ var $author$project$Ui$ResponsibilityGraph$toolbar = F2(
 						]),
 					_List_fromArray(
 						[
-							A3(check, '목표 간 관계', state.as, $author$project$Ui$ResponsibilityGraph$Dependencies),
+							A3(check, '목표 간 관계', state.av, $author$project$Ui$ResponsibilityGraph$Dependencies),
 							A3(check, '권한·예산', state.L, $author$project$Ui$ResponsibilityGraph$Resources)
 						])),
 					A2(
@@ -15350,13 +17640,13 @@ var $author$project$Ui$ResponsibilityGraph$toolbar = F2(
 var $author$project$Ui$ResponsibilityGraph$visibleEdges = function (state) {
 	return $elm$core$List$filter(
 		function (edge) {
-			return ((edge.dr !== 'DependsOn') || state.as) && ((edge.dr !== 'Controls') || state.L);
+			return ((edge.dB !== 'DependsOn') || state.av) && ((edge.dB !== 'Controls') || state.L);
 		});
 };
 var $author$project$Ui$ResponsibilityGraph$view = F4(
 	function (state, dispatch, go, w) {
 		var positions = A2($author$project$Ui$ResponsibilityGraph$layout, state, w);
-		var edges = A2($author$project$Ui$ResponsibilityGraph$visibleEdges, state, w.c3);
+		var edges = A2($author$project$Ui$ResponsibilityGraph$visibleEdges, state, w.c8);
 		var count = $elm$core$List$length(
 			A2(
 				$elm$core$List$filter,
@@ -15365,7 +17655,7 @@ var $author$project$Ui$ResponsibilityGraph$view = F4(
 					function ($) {
 						return $.k;
 					},
-					A2($author$project$Ui$ResponsibilityGraph$matches, state.d_, w)),
+					A2($author$project$Ui$ResponsibilityGraph$matches, state.d9, w)),
 				positions));
 		return A2(
 			$elm$html$Html$div,
@@ -15398,9 +17688,9 @@ var $author$project$Ui$ResponsibilityGraph$view = F4(
 							$elm$html$Html$text(
 							'노드 ' + ($elm$core$String$fromInt(
 								$elm$core$List$length(positions)) + ('개 · 관계 ' + ($elm$core$String$fromInt(
-								$elm$core$List$length(edges)) + ('개' + (($elm$core$String$trim(state.d_) === '') ? '' : (' · 검색 일치 ' + ($elm$core$String$fromInt(count) + '개'))))))))
+								$elm$core$List$length(edges)) + ('개' + (($elm$core$String$trim(state.d9) === '') ? '' : (' · 검색 일치 ' + ($elm$core$String$fromInt(count) + '개'))))))))
 						])),
-					((!count) && ($elm$core$String$trim(state.d_) !== '')) ? A2(
+					((!count) && ($elm$core$String$trim(state.d9) !== '')) ? A2(
 					$elm$html$Html$p,
 					_List_fromArray(
 						[
@@ -15420,7 +17710,7 @@ var $author$project$Ui$ResponsibilityGraph$view = F4(
 									_Utils_Tuple2('graph-content', true),
 									_Utils_Tuple2(
 									'has-selection',
-									!_Utils_eq(state.ei, $elm$core$Maybe$Nothing))
+									!_Utils_eq(state.es, $elm$core$Maybe$Nothing))
 								]))
 						]),
 					_List_fromArray(
@@ -15431,7 +17721,7 @@ var $author$project$Ui$ResponsibilityGraph$view = F4(
 							_List_fromArray(
 								[
 									$elm$html$Html$text('아직 구성원과 목표가 없습니다. 구성원이나 목표를 추가하면 관계를 확인할 수 있습니다.')
-								])) : (state.W ? A5($author$project$Ui$ResponsibilityGraph$diagram, state, dispatch, w, positions, edges) : A5($author$project$Ui$ResponsibilityGraph$relationList, state, dispatch, w, positions, edges)),
+								])) : (state.Y ? A5($author$project$Ui$ResponsibilityGraph$diagram, state, dispatch, w, positions, edges) : A5($author$project$Ui$ResponsibilityGraph$relationList, state, dispatch, w, positions, edges)),
 							A4($author$project$Ui$ResponsibilityGraph$selectionDetails, state, dispatch, go, w)
 						]))
 				]));
@@ -15449,7 +17739,7 @@ var $author$project$Page$Responsibility$viewInteractive = F6(
 					_List_fromArray(
 						[
 							$author$project$Ui$Common$note('현재 목표에 대해 최종 설명과 판단을 맡는 한 사람을 기록하세요. 함께 일하는 모든 수행자를 뜻하지 않습니다. 책임자가 불명확하면 임의로 지정하지 말고 조직 진단에 미확인으로 남기세요.'),
-							$elm$core$List$isEmpty(w.dh) ? A2($author$project$Ui$Common$emptyState, '아직 책임을 배정할 목표가 없습니다', '목표 메뉴에서 목표를 만든 뒤 책임자를 지정하세요.') : ((mode === 1) ? A3(
+							$elm$core$List$isEmpty(w.$7) ? A2($author$project$Ui$Common$emptyState, '아직 책임을 배정할 목표가 없습니다', '목표 메뉴에서 목표를 만든 뒤 책임자를 지정하세요.') : ((mode === 1) ? A3(
 							$author$project$Ui$ListView$tableView,
 							'목표별 책임',
 							_List_fromArray(
@@ -15457,7 +17747,7 @@ var $author$project$Page$Responsibility$viewInteractive = F6(
 							A2(
 								$elm$core$List$map,
 								A2($author$project$Page$Responsibility$responsibilityRow, model, w),
-								w.dh)) : A2(
+								w.$7)) : A2(
 							$elm$html$Html$div,
 							_List_fromArray(
 								[
@@ -15466,7 +17756,7 @@ var $author$project$Page$Responsibility$viewInteractive = F6(
 							A2(
 								$elm$core$List$map,
 								A2($author$project$Page$Responsibility$responsibilityCard, model, w),
-								w.dh)))
+								w.$7)))
 						])),
 					A2(
 					$elm$html$Html$section,
@@ -15494,7 +17784,6 @@ var $author$project$Page$Responsibility$viewInteractive = F6(
 var $author$project$Form$Action$Grant = function (a) {
 	return {$: 8, a: a};
 };
-var $elm$html$Html$legend = _VirtualDom_node('legend');
 var $author$project$Ui$Form$checks = F2(
 	function (model, action) {
 		return A2(
@@ -15534,11 +17823,11 @@ var $author$project$Ui$Form$checks = F2(
 											[
 												$elm$html$Html$Attributes$type_('checkbox'),
 												$elm$html$Html$Attributes$checked(
-												A2(model.a8, action, key) === 'true'),
+												A2(model.ba, action, key) === 'true'),
 												$elm$html$Html$Events$onCheck(
 												function (checked_) {
 													return A3(
-														model.aA,
+														model.am,
 														action,
 														key,
 														checked_ ? 'true' : 'false');
@@ -15556,14 +17845,14 @@ var $author$project$Page$Authorities$authorityForm = F2(
 		return A4(
 			$author$project$Ui$Form$formView,
 			model.w,
-			$author$project$Form$Action$Grant(person.bC),
+			$author$project$Form$Action$Grant(person.du),
 			'권한 저장',
 			_List_fromArray(
 				[
 					A6(
 					$author$project$Ui$Form$inputField,
 					model.w,
-					$author$project$Form$Action$Grant(person.bC),
+					$author$project$Form$Action$Grant(person.du),
 					'현재 집행 가능한 예산 한도 (KRW)',
 					'budget',
 					'number',
@@ -15571,7 +17860,7 @@ var $author$project$Page$Authorities$authorityForm = F2(
 					A2(
 					$author$project$Ui$Form$checks,
 					model.w,
-					$author$project$Form$Action$Grant(person.bC))
+					$author$project$Form$Action$Grant(person.du))
 				]));
 	});
 var $author$project$Page$Authorities$authorityShare = F2(
@@ -15581,7 +17870,7 @@ var $author$project$Page$Authorities$authorityShare = F2(
 				100 * A2(
 					$elm$core$Maybe$withDefault,
 					0,
-					A2($elm$core$Dict$get, person.bC, w.cU)))) + '%';
+					A2($elm$core$Dict$get, person.du, w.cY)))) + '%';
 	});
 var $elm$html$Html$Attributes$colspan = function (n) {
 	return A2(
@@ -15639,11 +17928,11 @@ var $author$project$Page$Authorities$goalCount = F2(
 					A2(
 						$elm$core$Basics$composeR,
 						function ($) {
-							return $.a1;
+							return $.a3;
 						},
 						$elm$core$Basics$eq(
-							$elm$core$Maybe$Just(person.bC))),
-					w.dh))) + '개';
+							$elm$core$Maybe$Just(person.du))),
+					w.$7))) + '개';
 	});
 var $author$project$Page$Authorities$savedAuthority = F2(
 	function (w, person) {
@@ -15653,10 +17942,10 @@ var $author$project$Page$Authorities$savedAuthority = F2(
 				A2(
 					$elm$core$Basics$composeR,
 					function ($) {
-						return $.a1;
+						return $.a3;
 					},
-					$elm$core$Basics$eq(person.bC)),
-				w.cx));
+					$elm$core$Basics$eq(person.du)),
+				w.cB));
 	});
 var $author$project$Page$Authorities$savedBudget = F2(
 	function (w, person) {
@@ -15666,7 +17955,7 @@ var $author$project$Page$Authorities$savedBudget = F2(
 			A2(
 				$elm$core$Maybe$map,
 				function (a) {
-					return $author$project$Ui$Label$formatNumber(a.cE) + '원';
+					return $author$project$Ui$Label$formatNumber(a.cI) + '원';
 				},
 				A2($author$project$Page$Authorities$savedAuthority, w, person)));
 	});
@@ -15684,7 +17973,7 @@ var $author$project$Page$Authorities$savedPermissions = F2(
 					$elm$core$List$filter,
 					function (_v1) {
 						var key = _v1.a;
-						return A2($elm$core$List$member, key, authority.cG) || (((key === 'Hiring') && authority.cI) || ((key === 'Pricing') && authority.cH));
+						return A2($elm$core$List$member, key, authority.cK) || (((key === 'Hiring') && authority.cM) || ((key === 'Pricing') && authority.cL));
 					},
 					$author$project$Ui$Label$permissions));
 			return $elm$core$List$isEmpty(labels) ? '없음' : A2($elm$core$String$join, ' · ', labels);
@@ -15709,9 +17998,9 @@ var $author$project$Page$Authorities$viewWith = F3(
 					A2(
 						$elm$core$List$filter,
 						function ($) {
-							return $.ba;
+							return $.bc;
 						},
-						w.dV)) ? A2($author$project$Ui$Common$emptyState, '구성원을 먼저 추가하세요', '구성원 메뉴에서 재직 구성원을 추가한 뒤 권한을 부여할 수 있습니다.') : ((mode === 1) ? A3(
+						w.d4)) ? A2($author$project$Ui$Common$emptyState, '구성원을 먼저 추가하세요', '구성원 메뉴에서 재직 구성원을 추가한 뒤 권한을 부여할 수 있습니다.') : ((mode === 1) ? A3(
 					$author$project$Ui$ListView$tableView,
 					'구성원별 권한',
 					_List_fromArray(
@@ -15725,7 +18014,7 @@ var $author$project$Page$Authorities$viewWith = F3(
 									$elm$html$Html$tr,
 									_List_fromArray(
 										[
-											$elm$html$Html$Attributes$id('authority-' + person.bC),
+											$elm$html$Html$Attributes$id('authority-' + person.du),
 											$elm$html$Html$Attributes$tabindex(-1)
 										]),
 									_List_fromArray(
@@ -15738,14 +18027,14 @@ var $author$project$Page$Authorities$viewWith = F3(
 												]),
 											_List_fromArray(
 												[
-													$elm$html$Html$text(person.dD)
+													$elm$html$Html$text(person.dO)
 												])),
 											A2(
 											$elm$html$Html$td,
 											_List_Nil,
 											_List_fromArray(
 												[
-													$elm$html$Html$text(person.ee)
+													$elm$html$Html$text(person.eo)
 												])),
 											A2(
 											$elm$html$Html$td,
@@ -15784,7 +18073,7 @@ var $author$project$Page$Authorities$viewWith = F3(
 									$author$project$Ui$ListView$detailRow,
 									6,
 									_List_Nil,
-									person.dD + ' · 예산 · 권한 편집',
+									person.dO + ' · 예산 · 권한 편집',
 									_List_fromArray(
 										[
 											A2($author$project$Page$Authorities$authorityForm, model, person)
@@ -15794,9 +18083,9 @@ var $author$project$Page$Authorities$viewWith = F3(
 						A2(
 							$elm$core$List$filter,
 							function ($) {
-								return $.ba;
+								return $.bc;
 							},
-							w.dV))) : A2(
+							w.d4))) : A2(
 					$elm$html$Html$div,
 					_List_fromArray(
 						[
@@ -15810,7 +18099,7 @@ var $author$project$Page$Authorities$viewWith = F3(
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$class('panel'),
-										$elm$html$Html$Attributes$id('authority-' + person.bC),
+										$elm$html$Html$Attributes$id('authority-' + person.du),
 										$elm$html$Html$Attributes$tabindex(-1)
 									]),
 								_List_fromArray(
@@ -15834,7 +18123,7 @@ var $author$project$Page$Authorities$viewWith = F3(
 											]),
 										_List_fromArray(
 											[
-												$elm$html$Html$text(person.dD)
+												$elm$html$Html$text(person.dO)
 											])),
 										A2(
 										$elm$html$Html$p,
@@ -15844,7 +18133,7 @@ var $author$project$Page$Authorities$viewWith = F3(
 											]),
 										_List_fromArray(
 											[
-												$elm$html$Html$text(person.ee)
+												$elm$html$Html$text(person.eo)
 											])),
 										A2($author$project$Page$Authorities$authorityForm, model, person),
 										$author$project$Ui$Common$note(
@@ -15854,9 +18143,9 @@ var $author$project$Page$Authorities$viewWith = F3(
 						A2(
 							$elm$core$List$filter,
 							function ($) {
-								return $.ba;
+								return $.bc;
 							},
-							w.dV)))),
+							w.d4)))),
 					$author$project$Ui$Common$diagnosticView(w)
 				]));
 	});
@@ -15870,18 +18159,18 @@ var $author$project$Page$Goals$goalManagement = F3(
 	function (model, w, g) {
 		return _List_fromArray(
 			[
-				$author$project$Ui$Common$note(g.cs.dY),
+				$author$project$Ui$Common$note(g.cu.d7),
 				A4(
 				$author$project$Ui$Form$formView,
 				model.w,
-				$author$project$Form$Action$Assign(g.aY.bC),
+				$author$project$Form$Action$Assign(g.a_.du),
 				'책임자 지정',
 				_List_fromArray(
 					[
 						A6(
 						$author$project$Ui$Form$selectField,
 						model.w,
-						$author$project$Form$Action$Assign(g.aY.bC),
+						$author$project$Form$Action$Assign(g.a_.du),
 						'단일 최종 책임자',
 						'owner',
 						true,
@@ -15900,28 +18189,28 @@ var $author$project$Page$Goals$goalManagement = F3(
 						$elm$html$Html$button,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$disabled(model.w.aV || ((!model.w.al) || g.ba)),
+								$elm$html$Html$Attributes$disabled(model.w.aE || ((!model.w.ao) || g.bc)),
 								$elm$html$Html$Events$onClick(
-								model.w.et(
-									$author$project$Form$Action$Activate(g.aY.bC)))
+								model.w.eE(
+									$author$project$Form$Action$Activate(g.a_.du)))
 							]),
 						_List_fromArray(
 							[
 								$elm$html$Html$text(
-								g.ba ? '활성화됨' : '목표 활성화')
+								g.bc ? '활성화됨' : '목표 활성화')
 							]))
 					])),
 				A4(
 				$author$project$Ui$Form$formView,
 				model.w,
-				$author$project$Form$Action$Strategy(g.aY.bC),
+				$author$project$Form$Action$Strategy(g.a_.du),
 				'전략 변경 기록',
 				_List_fromArray(
 					[
 						A6(
 						$author$project$Ui$Form$inputField,
 						model.w,
-						$author$project$Form$Action$Strategy(g.aY.bC),
+						$author$project$Form$Action$Strategy(g.a_.du),
 						'새로운 전략과 변경 이유',
 						'note',
 						'text',
@@ -15938,7 +18227,7 @@ var $author$project$Page$Goals$goalManagement = F3(
 						return $author$project$Ui$Common$note(
 							A2($elm$core$String$left, 10, at) + (' · ' + message));
 					},
-					g.er))
+					g.eC))
 			]);
 	});
 var $elm$html$Html$Attributes$max = $elm$html$Html$Attributes$stringProperty('max');
@@ -15953,7 +18242,7 @@ var $author$project$Ui$Common$goalSummary = F2(
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text(g.aY.cZ)
+						$elm$html$Html$text(g.a_.c1)
 					])),
 				A2(
 				$elm$html$Html$small,
@@ -15961,7 +18250,7 @@ var $author$project$Ui$Common$goalSummary = F2(
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
-						g.aY.dy.dD + (' · ' + (((g.aY.dy.c0 === 'HigherIsBetter') ? '↑ 증가' : '↓ 감소') + ' 목표')))
+						g.a_.dJ.dO + (' · ' + (((g.a_.dJ.c4 === 'HigherIsBetter') ? '↑ 증가' : '↓ 감소') + ' 목표')))
 					])),
 				A2(
 				$elm$html$Html$div,
@@ -15980,7 +18269,7 @@ var $author$project$Ui$Common$goalSummary = F2(
 								A2(
 									$elm$core$Maybe$withDefault,
 									'—',
-									A2($elm$core$Maybe$map, $author$project$Ui$Label$formatNumber, g.bs.ds)))
+									A2($elm$core$Maybe$map, $author$project$Ui$Label$formatNumber, g.bu.dC)))
 							])),
 						A2(
 						$elm$html$Html$span,
@@ -15991,7 +18280,7 @@ var $author$project$Ui$Common$goalSummary = F2(
 						_List_fromArray(
 							[
 								$elm$html$Html$text(
-								'/ ' + ($author$project$Ui$Label$formatNumber(g.aY.ex) + (' ' + g.aY.dy.eH)))
+								'/ ' + ($author$project$Ui$Label$formatNumber(g.a_.eI) + (' ' + g.a_.dJ.eT)))
 							]))
 					])),
 				A2(
@@ -16001,7 +18290,7 @@ var $author$project$Ui$Common$goalSummary = F2(
 						$elm$html$Html$Attributes$max('1'),
 						$elm$html$Html$Attributes$value(
 						$elm$core$String$fromFloat(
-							A3($elm$core$Basics$clamp, 0, 1, g.bs.dZ))),
+							A3($elm$core$Basics$clamp, 0, 1, g.bu.d8))),
 						A2($elm$html$Html$Attributes$attribute, 'aria-label', '목표 달성률')
 					]),
 				_List_Nil),
@@ -16012,7 +18301,7 @@ var $author$project$Ui$Common$goalSummary = F2(
 					[
 						$elm$html$Html$text(
 						$elm$core$String$fromInt(
-							$elm$core$Basics$round(g.bs.dZ * 100)) + ('% 달성 · 기준 ' + $author$project$Ui$Label$formatNumber(g.aY.cA)))
+							$elm$core$Basics$round(g.bu.d8 * 100)) + ('% 달성 · 기준 ' + $author$project$Ui$Label$formatNumber(g.a_.cE)))
 					])),
 				A2(
 				$elm$html$Html$div,
@@ -16034,7 +18323,7 @@ var $author$project$Ui$Common$goalSummary = F2(
 									A2(
 										$elm$core$Maybe$map,
 										$author$project$Ui$Label$personName(w),
-										g.a1)))
+										g.a3)))
 							])),
 						A2(
 						$elm$html$Html$span,
@@ -16042,7 +18331,7 @@ var $author$project$Ui$Common$goalSummary = F2(
 						_List_fromArray(
 							[
 								$elm$html$Html$text(
-								A2($elm$core$String$left, 10, g.aY.cS) + ' 마감')
+								A2($elm$core$String$left, 10, g.a_.cW) + ' 마감')
 							]))
 					]))
 			]);
@@ -16070,9 +18359,9 @@ var $author$project$Page$Goals$resultLink = F2(
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$class('secondary'),
-							$elm$html$Html$Attributes$disabled(model.w.aV),
+							$elm$html$Html$Attributes$disabled(model.w.aE),
 							$elm$html$Html$Events$onClick(
-							model.d8('goal-' + g.aY.bC))
+							model.ei('goal-' + g.a_.du))
 						]),
 					_List_fromArray(
 						[
@@ -16096,8 +18385,8 @@ var $author$project$Page$Goals$goalContent = F3(
 							'open',
 							$elm$json$Json$Encode$bool(
 								_Utils_eq(
-									model.aB,
-									$elm$core$Maybe$Just(g.aY.bC))))
+									model.aF,
+									$elm$core$Maybe$Just(g.a_.du))))
 						]),
 					A2(
 						$elm$core$List$cons,
@@ -16118,7 +18407,7 @@ var $author$project$Page$Goals$goalCard = F3(
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class('goal-card'),
-					$elm$html$Html$Attributes$id('goal-' + g.aY.bC),
+					$elm$html$Html$Attributes$id('goal-' + g.a_.du),
 					$elm$html$Html$Attributes$tabindex(-1)
 				]),
 			A3($author$project$Page$Goals$goalContent, model, w, g));
@@ -16224,8 +18513,8 @@ var $author$project$Page$Goals$formInput = F5(
 		return A6(
 			$author$project$Ui$Form$inputValue,
 			$author$project$Form$Goal$fieldName(field),
-			A2($author$project$Form$Goal$value, model.bp, field),
-			model.aA(field),
+			A2($author$project$Form$Goal$value, model.br, field),
+			model.am(field),
 			label_,
 			kind,
 			required_);
@@ -16235,8 +18524,8 @@ var $author$project$Page$Goals$formSelect = F5(
 		return A6(
 			$author$project$Ui$Form$selectValue,
 			$author$project$Form$Goal$fieldName(field),
-			A2($author$project$Form$Goal$value, model.bp, field),
-			model.aA(field),
+			A2($author$project$Form$Goal$value, model.br, field),
+			model.am(field),
 			label_,
 			required_,
 			options);
@@ -16248,9 +18537,9 @@ var $author$project$Ui$Form$goalOptions = function (w) {
 		A2(
 			$elm$core$List$map,
 			function (g) {
-				return _Utils_Tuple2(g.aY.bC, g.aY.cZ);
+				return _Utils_Tuple2(g.a_.du, g.a_.c1);
 			},
-			w.dh));
+			w.$7));
 };
 var $author$project$Page$Goals$metricPicker = F2(
 	function (model, w) {
@@ -16258,20 +18547,20 @@ var $author$project$Page$Goals$metricPicker = F2(
 			A2(
 				$elm$core$List$map,
 				function (metric) {
-					return _Utils_Tuple2(metric.bC, metric);
+					return _Utils_Tuple2(metric.du, metric);
 				},
 				A2(
 					$elm$core$List$map,
 					A2(
 						$elm$core$Basics$composeR,
 						function ($) {
-							return $.aY;
+							return $.a_;
 						},
 						function ($) {
-							return $.dy;
+							return $.dJ;
 						}),
-					w.dh)));
-		var selected = A2($elm$core$Dict$get, model.bp.dz, metrics);
+					w.$7)));
+		var selected = A2($elm$core$Dict$get, model.br.dK, metrics);
 		return A2(
 			$elm$html$Html$div,
 			_List_Nil,
@@ -16286,10 +18575,10 @@ var $author$project$Page$Goals$metricPicker = F2(
 						A2(
 							$elm$core$Maybe$map,
 							function ($) {
-								return $.bC;
+								return $.du;
 							},
 							selected)),
-					model.aA($author$project$Form$Goal$MetricId),
+					model.am($author$project$Form$Goal$MetricId),
 					'사용할 지표',
 					false,
 					A2(
@@ -16298,7 +18587,7 @@ var $author$project$Page$Goals$metricPicker = F2(
 						A2(
 							$elm$core$List$map,
 							function (metric) {
-								return _Utils_Tuple2(metric.bC, metric.dD + (' · ' + metric.eH));
+								return _Utils_Tuple2(metric.du, metric.dO + (' · ' + metric.eT));
 							},
 							$elm$core$Dict$values(metrics)))),
 					$author$project$Ui$Common$note('같은 지표를 공유하는 목표는 기존 지표를 선택하세요. 동일 지표의 책임 관계를 연결하는 데 사용합니다. 이름이 같아도 정의가 다르면 새 지표를 만드세요.'),
@@ -16306,7 +18595,7 @@ var $author$project$Page$Goals$metricPicker = F2(
 					if (!selected.$) {
 						var metric = selected.a;
 						return $author$project$Ui$Common$note(
-							'선택한 지표: ' + (metric.dD + (' / ' + (metric.eH + (' / ' + ((metric.c0 === 'HigherIsBetter') ? '높을수록 좋음' : '낮을수록 좋음'))))));
+							'선택한 지표: ' + (metric.dO + (' / ' + (metric.eT + (' / ' + ((metric.c4 === 'HigherIsBetter') ? '높을수록 좋음' : '낮을수록 좋음'))))));
 					} else {
 						return A2(
 							$elm$html$Html$div,
@@ -16426,11 +18715,11 @@ var $author$project$Page$Goals$goalForm = F2(
 							function (key) {
 								return A2(
 									$author$project$Form$Goal$value,
-									model.bp,
+									model.br,
 									$author$project$Form$Goal$Permission(key));
 							},
 							function (key) {
-								return model.aA(
+								return model.am(
 									$author$project$Form$Goal$Permission(key));
 							})
 						]))
@@ -16452,7 +18741,7 @@ var $author$project$Page$Goals$goalTable = F2(
 							$elm$html$Html$tr,
 							_List_fromArray(
 								[
-									$elm$html$Html$Attributes$id('goal-' + g.aY.bC),
+									$elm$html$Html$Attributes$id('goal-' + g.a_.du),
 									$elm$html$Html$Attributes$tabindex(-1)
 								]),
 							_List_fromArray(
@@ -16470,7 +18759,7 @@ var $author$project$Page$Goals$goalTable = F2(
 											_List_Nil,
 											_List_fromArray(
 												[
-													$elm$html$Html$text(g.aY.cZ)
+													$elm$html$Html$text(g.a_.c1)
 												])),
 											A2(
 											$elm$html$Html$small,
@@ -16478,7 +18767,7 @@ var $author$project$Page$Goals$goalTable = F2(
 											_List_fromArray(
 												[
 													$elm$html$Html$text(
-													g.aY.dy.dD + (' · ' + ((g.aY.dy.c0 === 'HigherIsBetter') ? '↑ 증가' : '↓ 감소')))
+													g.a_.dJ.dO + (' · ' + ((g.a_.dJ.c4 === 'HigherIsBetter') ? '↑ 증가' : '↓ 감소')))
 												]))
 										])),
 									A2(
@@ -16493,7 +18782,7 @@ var $author$project$Page$Goals$goalTable = F2(
 												A2(
 													$elm$core$Maybe$map,
 													$author$project$Ui$Label$personName(w),
-													g.a1)))
+													g.a3)))
 										])),
 									A2(
 									$elm$html$Html$td,
@@ -16504,7 +18793,7 @@ var $author$project$Page$Goals$goalTable = F2(
 											A2(
 												$elm$core$Maybe$withDefault,
 												'—',
-												A2($elm$core$Maybe$map, $author$project$Ui$Label$formatNumber, g.bs.ds)) + (' / ' + ($author$project$Ui$Label$formatNumber(g.aY.ex) + (' ' + g.aY.dy.eH))))
+												A2($elm$core$Maybe$map, $author$project$Ui$Label$formatNumber, g.bu.dC)) + (' / ' + ($author$project$Ui$Label$formatNumber(g.a_.eI) + (' ' + g.a_.dJ.eT))))
 										])),
 									A2(
 									$elm$html$Html$td,
@@ -16513,14 +18802,14 @@ var $author$project$Page$Goals$goalTable = F2(
 										[
 											$elm$html$Html$text(
 											$elm$core$String$fromInt(
-												$elm$core$Basics$round(g.bs.dZ * 100)) + '%'),
+												$elm$core$Basics$round(g.bu.d8 * 100)) + '%'),
 											A2(
 											$elm$html$Html$small,
 											_List_Nil,
 											_List_fromArray(
 												[
 													$elm$html$Html$text(
-													'기준 ' + $author$project$Ui$Label$formatNumber(g.aY.cA))
+													'기준 ' + $author$project$Ui$Label$formatNumber(g.a_.cE))
 												]))
 										])),
 									A2(
@@ -16529,7 +18818,7 @@ var $author$project$Page$Goals$goalTable = F2(
 									_List_fromArray(
 										[
 											$elm$html$Html$text(
-											A2($elm$core$String$left, 10, g.aY.cS))
+											A2($elm$core$String$left, 10, g.a_.cW))
 										])),
 									A2(
 									$elm$html$Html$td,
@@ -16549,17 +18838,17 @@ var $author$project$Page$Goals$goalTable = F2(
 									'open',
 									$elm$json$Json$Encode$bool(
 										_Utils_eq(
-											model.aB,
-											$elm$core$Maybe$Just(g.aY.bC))))
+											model.aF,
+											$elm$core$Maybe$Just(g.a_.du))))
 								]),
-							g.aY.cZ + ' · 책임 · 권한 · 전략 관리',
+							g.a_.c1 + ' · 책임 · 권한 · 전략 관리',
 							A2(
 								$elm$core$List$cons,
 								A2($author$project$Page$Goals$resultLink, model, g),
 								A3($author$project$Page$Goals$goalManagement, model, w, g)))
 						]);
 				},
-				w.dh));
+				w.$7));
 	});
 var $elm$core$List$sum = function (numbers) {
 	return A3($elm$core$List$foldl, $elm$core$Basics$add, 0, numbers);
@@ -16619,7 +18908,7 @@ var $author$project$Page$Goals$viewWith = F3(
 							[
 								_Utils_Tuple3(
 								'전체 목표',
-								$elm$core$List$length(w.dh),
+								$elm$core$List$length(w.$7),
 								'측정 가능한 결과'),
 								_Utils_Tuple3(
 								'활성 목표',
@@ -16627,11 +18916,11 @@ var $author$project$Page$Goals$viewWith = F3(
 									A2(
 										$elm$core$List$filter,
 										function ($) {
-											return $.ba;
+											return $.bc;
 										},
-										w.dh)),
+										w.$7)),
 								'책임과 권한 검증 완료'),
-								_Utils_Tuple3('구조 진단', w.cN.I + w.cN.cj, '확인이 필요한 항목'),
+								_Utils_Tuple3('구조 진단', w.cR.I + w.cR.cl, '확인이 필요한 항목'),
 								_Utils_Tuple3(
 								'누적 학습',
 								$elm$core$List$sum(
@@ -16640,10 +18929,10 @@ var $author$project$Page$Goals$viewWith = F3(
 										A2(
 											$elm$core$Basics$composeR,
 											function ($) {
-												return $.dt;
+												return $.dD;
 											},
 											$elm$core$List$length),
-										w.eb)),
+										w.el)),
 								'다음 결정의 근거')
 							]))),
 					A2(
@@ -16672,7 +18961,7 @@ var $author$project$Page$Goals$viewWith = F3(
 									$elm$html$Html$text('+ 목표 만들기')
 								]))
 						])),
-					$elm$core$List$isEmpty(w.dh) ? A2($author$project$Ui$Common$emptyState, '현재 관리 중인 목표가 있나요?', '확인된 측정 기준이 있다면 아래에서 목표 초안을 만드세요. 모르는 내용은 조직 진단에 미확인으로 남길 수 있습니다.') : ((mode === 1) ? A2($author$project$Page$Goals$goalTable, model, w) : A2(
+					$elm$core$List$isEmpty(w.$7) ? A2($author$project$Ui$Common$emptyState, '현재 관리 중인 목표가 있나요?', '확인된 측정 기준이 있다면 아래에서 목표 초안을 만드세요. 모르는 내용은 조직 진단에 미확인으로 남길 수 있습니다.') : ((mode === 1) ? A2($author$project$Page$Goals$goalTable, model, w) : A2(
 					$elm$html$Html$div,
 					_List_fromArray(
 						[
@@ -16681,7 +18970,7 @@ var $author$project$Page$Goals$viewWith = F3(
 					A2(
 						$elm$core$List$map,
 						A2($author$project$Page$Goals$goalCard, model, w),
-						w.dh))),
+						w.$7))),
 					A2(
 					$elm$html$Html$details,
 					_List_fromArray(
@@ -16733,16 +19022,16 @@ var $author$project$Page$People$profileFields = F4(
 							A2(
 								$elm$core$List$map,
 								function (p) {
-									return _Utils_Tuple2(p.bC, p.dD + (' · ' + p.ee));
+									return _Utils_Tuple2(p.du, p.dO + (' · ' + p.eo));
 								},
 								A2(
 									$elm$core$List$filter,
 									function (p) {
-										return p.ba && (!_Utils_eq(
-											$elm$core$Maybe$Just(p.bC),
+										return p.bc && (!_Utils_eq(
+											$elm$core$Maybe$Just(p.du),
 											personId));
 									},
-									w.dV))))
+									w.d4))))
 					]))
 			]);
 	});
@@ -16753,23 +19042,23 @@ var $author$project$Page$People$detail = F3(
 			A2(
 				$elm$core$Basics$composeR,
 				function ($) {
-					return $.d5;
+					return $.ef;
 				},
 				$elm$core$Basics$eq(
-					$elm$core$Maybe$Just(person.bC))),
-			w.dV);
+					$elm$core$Maybe$Just(person.du))),
+			w.d4);
 		var goals = A2(
 			$elm$core$List$filter,
 			A2(
 				$elm$core$Basics$composeR,
 				function ($) {
-					return $.a1;
+					return $.a3;
 				},
 				$elm$core$Basics$eq(
-					$elm$core$Maybe$Just(person.bC))),
-			w.dh);
+					$elm$core$Maybe$Just(person.du))),
+			w.$7);
 		var requiresSuccessor = !($elm$core$List$isEmpty(goals) && $elm$core$List$isEmpty(reports));
-		var action = $author$project$Form$Action$DeactivatePerson(person.bC);
+		var action = $author$project$Form$Action$DeactivatePerson(person.du);
 		return A2(
 			$elm$html$Html$section,
 			_List_fromArray(
@@ -16786,9 +19075,9 @@ var $author$project$Page$People$detail = F3(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							A2($author$project$Ui$Label$personName, w, person.bC) + ' · 상세')
+							A2($author$project$Ui$Label$personName, w, person.du) + ' · 상세')
 						])),
-					$author$project$Ui$Common$note('구성원 ID: ' + person.bC),
+					$author$project$Ui$Common$note('구성원 ID: ' + person.du),
 					$author$project$Ui$Common$note(
 					'보고 대상: ' + A2(
 						$elm$core$Maybe$withDefault,
@@ -16796,7 +19085,7 @@ var $author$project$Page$People$detail = F3(
 						A2(
 							$elm$core$Maybe$map,
 							$author$project$Ui$Label$personName(w),
-							person.d5))),
+							person.ef))),
 					$author$project$Ui$Common$note(
 					'직속 보고자: ' + ($elm$core$List$isEmpty(reports) ? '없음' : A2(
 						$elm$core$String$join,
@@ -16804,7 +19093,7 @@ var $author$project$Page$People$detail = F3(
 						A2(
 							$elm$core$List$map,
 							function (p) {
-								return A2($author$project$Ui$Label$personName, w, p.bC);
+								return A2($author$project$Ui$Label$personName, w, p.du);
 							},
 							reports)))),
 					A2(
@@ -16812,9 +19101,9 @@ var $author$project$Page$People$detail = F3(
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$class('secondary'),
-							$elm$html$Html$Attributes$disabled(model.w.aV || (!model.w.al)),
+							$elm$html$Html$Attributes$disabled(model.w.aE || (!model.w.ao)),
 							$elm$html$Html$Events$onClick(
-							model.b$(person.bC))
+							model.a5(person.du))
 						]),
 					_List_fromArray(
 						[
@@ -16824,14 +19113,14 @@ var $author$project$Page$People$detail = F3(
 					A4(
 					$author$project$Ui$Form$formView,
 					model.w,
-					$author$project$Form$Action$UpdatePerson(person.bC),
+					$author$project$Form$Action$UpdatePerson(person.du),
 					'기본정보 저장',
 					A4(
 						$author$project$Page$People$profileFields,
 						model.w,
 						w,
-						$author$project$Form$Action$UpdatePerson(person.bC),
-						$elm$core$Maybe$Just(person.bC))),
+						$author$project$Form$Action$UpdatePerson(person.du),
+						$elm$core$Maybe$Just(person.du))),
 					A2(
 					$elm$html$Html$h3,
 					_List_Nil,
@@ -16850,7 +19139,7 @@ var $author$project$Page$People$detail = F3(
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text(g.aY.cZ)
+										$elm$html$Html$text(g.a_.c1)
 									]));
 						},
 						goals)),
@@ -16859,14 +19148,14 @@ var $author$project$Page$People$detail = F3(
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$class('secondary'),
-							$elm$html$Html$Attributes$disabled(model.w.aV),
-							$elm$html$Html$Events$onClick(model.dh)
+							$elm$html$Html$Attributes$disabled(model.w.aE),
+							$elm$html$Html$Events$onClick(model.$7)
 						]),
 					_List_fromArray(
 						[
 							$elm$html$Html$text('목표 관리 →')
 						])),
-					person.ba ? A2(
+					person.bc ? A2(
 					$elm$html$Html$details,
 					_List_fromArray(
 						[
@@ -16909,21 +19198,21 @@ var $author$project$Page$People$detail = F3(
 										A2(
 											$elm$core$List$map,
 											function (p) {
-												return _Utils_Tuple2(p.bC, p.dD + (' · ' + p.ee));
+												return _Utils_Tuple2(p.du, p.dO + (' · ' + p.eo));
 											},
 											A2(
 												$elm$core$List$filter,
 												function (p) {
-													return p.ba && (!_Utils_eq(p.bC, person.bC));
+													return p.bc && (!_Utils_eq(p.du, person.du));
 												},
-												w.dV))))
+												w.d4))))
 								]))
 						])) : $author$project$Ui$Common$note('비활성 구성원입니다. 기본정보를 수정하고 과거 기록을 조회할 수 있으며 새 업무를 배정할 수 없습니다.')
 				]));
 	});
 var $author$project$Page$People$matches = F3(
 	function (query, status, person) {
-		return ((status === 'all') || (((status === 'active') && person.ba) || ((status === 'inactive') && (!person.ba)))) && A2(
+		return ((status === 'all') || (((status === 'active') && person.bc) || ((status === 'inactive') && (!person.bc)))) && A2(
 			$elm$core$String$contains,
 			$elm$core$String$toLower(
 				$elm$core$String$trim(query)),
@@ -16933,10 +19222,10 @@ var $author$project$Page$People$matches = F3(
 					' ',
 					_List_fromArray(
 						[
-							person.dD,
-							person.ee,
-							A2($elm$core$Maybe$withDefault, '', person.cY),
-							A2($elm$core$Maybe$withDefault, '', person.c5)
+							person.dO,
+							person.eo,
+							A2($elm$core$Maybe$withDefault, '', person.c0),
+							A2($elm$core$Maybe$withDefault, '', person.da)
 						]))));
 	});
 var $author$project$Page$People$peopleTable = F3(
@@ -16962,22 +19251,14 @@ var $author$project$Page$People$peopleTable = F3(
 									]),
 								_List_fromArray(
 									[
-										$elm$html$Html$text(person.dD)
+										$elm$html$Html$text(person.dO)
 									])),
 								A2(
 								$elm$html$Html$td,
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text(person.ee)
-									])),
-								A2(
-								$elm$html$Html$td,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text(
-										A2($elm$core$Maybe$withDefault, '부서 미입력', person.cY))
+										$elm$html$Html$text(person.eo)
 									])),
 								A2(
 								$elm$html$Html$td,
@@ -16985,7 +19266,7 @@ var $author$project$Page$People$peopleTable = F3(
 								_List_fromArray(
 									[
 										$elm$html$Html$text(
-										A2($elm$core$Maybe$withDefault, '이메일 미입력', person.c5))
+										A2($elm$core$Maybe$withDefault, '부서 미입력', person.c0))
 									])),
 								A2(
 								$elm$html$Html$td,
@@ -16993,7 +19274,15 @@ var $author$project$Page$People$peopleTable = F3(
 								_List_fromArray(
 									[
 										$elm$html$Html$text(
-										person.ba ? '재직' : '비활성')
+										A2($elm$core$Maybe$withDefault, '이메일 미입력', person.da))
+									])),
+								A2(
+								$elm$html$Html$td,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text(
+										person.bc ? '재직' : '비활성')
 									])),
 								A2(
 								$elm$html$Html$td,
@@ -17008,11 +19297,11 @@ var $author$project$Page$People$peopleTable = F3(
 													A2(
 														$elm$core$Basics$composeR,
 														function ($) {
-															return $.a1;
+															return $.a3;
 														},
 														$elm$core$Basics$eq(
-															$elm$core$Maybe$Just(person.bC))),
-													w.dh))) + '개')
+															$elm$core$Maybe$Just(person.du))),
+													w.$7))) + '개')
 									])),
 								A2(
 								$elm$html$Html$td,
@@ -17024,9 +19313,9 @@ var $author$project$Page$People$peopleTable = F3(
 										_List_fromArray(
 											[
 												$elm$html$Html$Attributes$class('secondary'),
-												$elm$html$Html$Attributes$disabled(model.w.aV),
+												$elm$html$Html$Attributes$disabled(model.w.aE),
 												$elm$html$Html$Events$onClick(
-												model.bP(person.bC))
+												model.bP(person.du))
 											]),
 										_List_fromArray(
 											[
@@ -17052,7 +19341,7 @@ var $author$project$Page$People$personCard = F3(
 					_List_Nil,
 					_List_fromArray(
 						[
-							$elm$html$Html$text(person.dD)
+							$elm$html$Html$text(person.dO)
 						])),
 					A2(
 					$elm$html$Html$span,
@@ -17063,7 +19352,7 @@ var $author$project$Page$People$personCard = F3(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							person.ba ? '재직' : '비활성')
+							person.bc ? '재직' : '비활성')
 						])),
 					A2(
 					$elm$html$Html$p,
@@ -17071,7 +19360,7 @@ var $author$project$Page$People$personCard = F3(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							person.ee + (' · ' + A2($elm$core$Maybe$withDefault, '부서 미입력', person.cY)))
+							person.eo + (' · ' + A2($elm$core$Maybe$withDefault, '부서 미입력', person.c0)))
 						])),
 					A2(
 					$elm$html$Html$p,
@@ -17082,7 +19371,7 @@ var $author$project$Page$People$personCard = F3(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							A2($elm$core$Maybe$withDefault, '이메일 미입력', person.c5))
+							A2($elm$core$Maybe$withDefault, '이메일 미입력', person.da))
 						])),
 					$author$project$Ui$Common$note(
 					'담당 목표 ' + ($elm$core$String$fromInt(
@@ -17092,19 +19381,19 @@ var $author$project$Page$People$personCard = F3(
 								A2(
 									$elm$core$Basics$composeR,
 									function ($) {
-										return $.a1;
+										return $.a3;
 									},
 									$elm$core$Basics$eq(
-										$elm$core$Maybe$Just(person.bC))),
-								w.dh))) + '개')),
+										$elm$core$Maybe$Just(person.du))),
+								w.$7))) + '개')),
 					A2(
 					$elm$html$Html$button,
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$class('secondary'),
-							$elm$html$Html$Attributes$disabled(model.w.aV),
+							$elm$html$Html$Attributes$disabled(model.w.aE),
 							$elm$html$Html$Events$onClick(
-							model.bP(person.bC))
+							model.bP(person.du))
 						]),
 					_List_fromArray(
 						[
@@ -17119,14 +19408,14 @@ var $author$project$Page$People$viewWith = F3(
 				$elm$core$List$filter,
 				function (p) {
 					return _Utils_eq(
-						$elm$core$Maybe$Just(p.bC),
-						model.ei);
+						$elm$core$Maybe$Just(p.du),
+						model.es);
 				},
-				w.dV));
+				w.d4));
 		var people = A2(
 			$elm$core$List$filter,
-			A2($author$project$Page$People$matches, model.d_, model.a5),
-			w.dV);
+			A2($author$project$Page$People$matches, model.d9, model.ez),
+			w.d4);
 		return A2(
 			$elm$html$Html$div,
 			_List_Nil,
@@ -17146,12 +19435,12 @@ var $author$project$Page$People$viewWith = F3(
 								]),
 							_List_fromArray(
 								[
-									A6($author$project$Ui$Form$inputValue, 'people-search', model.d_, model.eh, '이름 · 역할 · 부서 · 이메일 검색', 'search', false),
+									A6($author$project$Ui$Form$inputValue, 'people-search', model.d9, model.er, '이름 · 역할 · 부서 · 이메일 검색', 'search', false),
 									A6(
 									$author$project$Ui$Form$selectValue,
 									'people-status',
-									model.a5,
-									model.dd,
+									model.ez,
+									model.dk,
 									'재직 상태',
 									true,
 									_List_fromArray(
@@ -17169,7 +19458,7 @@ var $author$project$Page$People$viewWith = F3(
 									$elm$html$Html$text(
 									'검색 결과 ' + ($elm$core$String$fromInt(
 										$elm$core$List$length(people)) + ('명 / 전체 ' + ($elm$core$String$fromInt(
-										$elm$core$List$length(w.dV)) + '명'))))
+										$elm$core$List$length(w.d4)) + '명'))))
 								])),
 							$elm$core$List$isEmpty(people) ? A2($author$project$Ui$Common$emptyState, '표시할 구성원이 없습니다', '아래에서 구성원을 등록하거나 검색어와 재직 상태 필터를 변경하세요.') : ((mode === 1) ? A3($author$project$Page$People$peopleTable, model, w, people) : A2(
 							$elm$html$Html$div,
@@ -17227,8 +19516,8 @@ var $author$project$Page$Results$resultContent = F3(
 	function (model, w, g) {
 		return _List_fromArray(
 			[
-				$author$project$Ui$Common$note('입력할 지표: ' + (g.aY.dy.dD + (' / 단위: ' + (g.aY.dy.eH + '. 목표값이나 예상값 대신 실제 측정값을 입력하세요.')))),
-				$author$project$Ui$Common$note(g.cs.dY),
+				$author$project$Ui$Common$note('입력할 지표: ' + (g.a_.dJ.dO + (' / 단위: ' + (g.a_.dJ.eT + '. 목표값이나 예상값 대신 실제 측정값을 입력하세요.')))),
+				$author$project$Ui$Common$note(g.cu.d7),
 				A2(
 				$elm$html$Html$h3,
 				_List_fromArray(
@@ -17242,7 +19531,7 @@ var $author$project$Page$Results$resultContent = F3(
 				A4(
 				$author$project$Ui$Form$formView,
 				model.w,
-				$author$project$Form$Action$Report(g.aY.bC),
+				$author$project$Form$Action$Report(g.a_.du),
 				'결과 보고',
 				_List_fromArray(
 					[
@@ -17257,7 +19546,7 @@ var $author$project$Page$Results$resultContent = F3(
 								A6(
 								$author$project$Ui$Form$inputField,
 								model.w,
-								$author$project$Form$Action$Report(g.aY.bC),
+								$author$project$Form$Action$Report(g.a_.du),
 								'실측값',
 								'value',
 								'number',
@@ -17265,7 +19554,7 @@ var $author$project$Page$Results$resultContent = F3(
 								A6(
 								$author$project$Ui$Form$selectField,
 								model.w,
-								$author$project$Form$Action$Report(g.aY.bC),
+								$author$project$Form$Action$Report(g.a_.du),
 								'보고자',
 								'reportedBy',
 								true,
@@ -17274,13 +19563,13 @@ var $author$project$Page$Results$resultContent = F3(
 						A6(
 						$author$project$Ui$Form$inputField,
 						model.w,
-						$author$project$Form$Action$Report(g.aY.bC),
+						$author$project$Form$Action$Report(g.a_.du),
 						'결과 설명',
 						'note',
 						'text',
 						true)
 					])),
-				$elm$core$List$isEmpty(g.d8) ? $author$project$Ui$Common$note('아직 결과가 없습니다.') : A2(
+				$elm$core$List$isEmpty(g.ei) ? $author$project$Ui$Common$note('아직 결과가 없습니다.') : A2(
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
@@ -17359,7 +19648,7 @@ var $author$project$Page$Results$resultContent = F3(
 													_List_Nil,
 													_List_fromArray(
 														[
-															$elm$html$Html$text(r.d3)
+															$elm$html$Html$text(r.ed)
 														])),
 													A2(
 													$elm$html$Html$td,
@@ -17367,7 +19656,7 @@ var $author$project$Page$Results$resultContent = F3(
 													_List_fromArray(
 														[
 															$elm$html$Html$text(
-															$author$project$Ui$Label$formatNumber(r.a8))
+															$author$project$Ui$Label$formatNumber(r.ba))
 														])),
 													A2(
 													$elm$html$Html$td,
@@ -17381,18 +19670,18 @@ var $author$project$Page$Results$resultContent = F3(
 																A2(
 																	$elm$core$Maybe$map,
 																	$author$project$Ui$Label$personName(w),
-																	r.d4)))
+																	r.ee)))
 														])),
 													A2(
 													$elm$html$Html$td,
 													_List_Nil,
 													_List_fromArray(
 														[
-															$elm$html$Html$text(r.dN)
+															$elm$html$Html$text(r.dY)
 														]))
 												]));
 									},
-									g.d8))
+									g.ei))
 							]))
 					])),
 				$author$project$Ui$Common$note('평가 기록은 현재 실측값·목표값·기간을 기준으로 계산한 평가를 저장합니다. 이 기록을 바탕으로 학습 화면에서 다음 결정을 남기세요.'),
@@ -17409,10 +19698,10 @@ var $author$project$Page$Results$resultContent = F3(
 						_List_fromArray(
 							[
 								$elm$html$Html$Attributes$class('secondary'),
-								$elm$html$Html$Attributes$disabled(model.w.aV || (!model.w.al)),
+								$elm$html$Html$Attributes$disabled(model.w.aE || (!model.w.ao)),
 								$elm$html$Html$Events$onClick(
-								model.w.et(
-									$author$project$Form$Action$Evaluate(g.aY.bC)))
+								model.w.eE(
+									$author$project$Form$Action$Evaluate(g.a_.du)))
 							]),
 						_List_fromArray(
 							[
@@ -17423,9 +19712,9 @@ var $author$project$Page$Results$resultContent = F3(
 						_List_fromArray(
 							[
 								$elm$html$Html$Attributes$class('secondary'),
-								$elm$html$Html$Attributes$disabled(model.w.aV),
+								$elm$html$Html$Attributes$disabled(model.w.aE),
 								$elm$html$Html$Events$onClick(
-								model.dh('goal-' + g.aY.bC))
+								model.$7('goal-' + g.a_.du))
 							]),
 						_List_fromArray(
 							[
@@ -17450,7 +19739,7 @@ var $author$project$Page$Results$goalTable = F2(
 							$elm$html$Html$tr,
 							_List_fromArray(
 								[
-									$elm$html$Html$Attributes$id('goal-' + g.aY.bC),
+									$elm$html$Html$Attributes$id('goal-' + g.a_.du),
 									$elm$html$Html$Attributes$tabindex(-1)
 								]),
 							_List_fromArray(
@@ -17468,7 +19757,7 @@ var $author$project$Page$Results$goalTable = F2(
 											_List_Nil,
 											_List_fromArray(
 												[
-													$elm$html$Html$text(g.aY.cZ)
+													$elm$html$Html$text(g.a_.c1)
 												])),
 											A2(
 											$elm$html$Html$small,
@@ -17476,7 +19765,7 @@ var $author$project$Page$Results$goalTable = F2(
 											_List_fromArray(
 												[
 													$elm$html$Html$text(
-													g.aY.dy.dD + (' · ' + ((g.aY.dy.c0 === 'HigherIsBetter') ? '↑ 증가' : '↓ 감소')))
+													g.a_.dJ.dO + (' · ' + ((g.a_.dJ.c4 === 'HigherIsBetter') ? '↑ 증가' : '↓ 감소')))
 												]))
 										])),
 									A2(
@@ -17491,7 +19780,7 @@ var $author$project$Page$Results$goalTable = F2(
 												A2(
 													$elm$core$Maybe$map,
 													$author$project$Ui$Label$personName(w),
-													g.a1)))
+													g.a3)))
 										])),
 									A2(
 									$elm$html$Html$td,
@@ -17502,7 +19791,7 @@ var $author$project$Page$Results$goalTable = F2(
 											A2(
 												$elm$core$Maybe$withDefault,
 												'—',
-												A2($elm$core$Maybe$map, $author$project$Ui$Label$formatNumber, g.bs.ds)) + (' / ' + ($author$project$Ui$Label$formatNumber(g.aY.ex) + (' ' + g.aY.dy.eH))))
+												A2($elm$core$Maybe$map, $author$project$Ui$Label$formatNumber, g.bu.dC)) + (' / ' + ($author$project$Ui$Label$formatNumber(g.a_.eI) + (' ' + g.a_.dJ.eT))))
 										])),
 									A2(
 									$elm$html$Html$td,
@@ -17511,14 +19800,14 @@ var $author$project$Page$Results$goalTable = F2(
 										[
 											$elm$html$Html$text(
 											$elm$core$String$fromInt(
-												$elm$core$Basics$round(g.bs.dZ * 100)) + '%'),
+												$elm$core$Basics$round(g.bu.d8 * 100)) + '%'),
 											A2(
 											$elm$html$Html$small,
 											_List_Nil,
 											_List_fromArray(
 												[
 													$elm$html$Html$text(
-													'기준 ' + $author$project$Ui$Label$formatNumber(g.aY.cA))
+													'기준 ' + $author$project$Ui$Label$formatNumber(g.a_.cE))
 												]))
 										])),
 									A2(
@@ -17527,7 +19816,7 @@ var $author$project$Page$Results$goalTable = F2(
 									_List_fromArray(
 										[
 											$elm$html$Html$text(
-											A2($elm$core$String$left, 10, g.aY.cS))
+											A2($elm$core$String$left, 10, g.a_.cW))
 										])),
 									A2(
 									$elm$html$Html$td,
@@ -17541,11 +19830,11 @@ var $author$project$Page$Results$goalTable = F2(
 							$author$project$Ui$ListView$detailRow,
 							6,
 							_List_Nil,
-							g.aY.cZ + ' · 결과 보고 · 평가 · 이력',
+							g.a_.c1 + ' · 결과 보고 · 평가 · 이력',
 							A3($author$project$Page$Results$resultContent, model, w, g))
 						]);
 				},
-				w.dh));
+				w.$7));
 	});
 var $author$project$Page$Results$resultCard = F3(
 	function (model, w, g) {
@@ -17554,7 +19843,7 @@ var $author$project$Page$Results$resultCard = F3(
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class('goal-card'),
-					$elm$html$Html$Attributes$id('goal-' + g.aY.bC),
+					$elm$html$Html$Attributes$id('goal-' + g.a_.du),
 					$elm$html$Html$Attributes$tabindex(-1)
 				]),
 			_Utils_ap(
@@ -17585,7 +19874,7 @@ var $author$project$Page$Results$viewWith = F3(
 								]))
 						])),
 					$author$project$Ui$Common$note('조직 구조를 정리한 뒤 성과를 추적하는 운영 단계입니다. 실제로 측정한 값과 근거를 보고하면 결과 이력이 다음 학습의 근거가 됩니다.'),
-					$elm$core$List$isEmpty(w.dh) ? A2($author$project$Ui$Common$emptyState, '아직 측정할 목표가 없습니다', '목표 메뉴에서 목표를 만든 뒤 결과를 기록하세요.') : ((mode === 1) ? A2($author$project$Page$Results$goalTable, model, w) : A2(
+					$elm$core$List$isEmpty(w.$7) ? A2($author$project$Ui$Common$emptyState, '아직 측정할 목표가 없습니다', '목표 메뉴에서 목표를 만든 뒤 결과를 기록하세요.') : ((mode === 1) ? A2($author$project$Page$Results$goalTable, model, w) : A2(
 					$elm$html$Html$div,
 					_List_fromArray(
 						[
@@ -17594,7 +19883,7 @@ var $author$project$Page$Results$viewWith = F3(
 					A2(
 						$elm$core$List$map,
 						A2($author$project$Page$Results$resultCard, model, w),
-						w.dh)))
+						w.$7)))
 				]));
 	});
 var $author$project$Form$Review$fieldName = function (field) {
@@ -17618,8 +19907,8 @@ var $author$project$Page$Learning$formInput = F5(
 		return A6(
 			$author$project$Ui$Form$inputValue,
 			$author$project$Form$Review$fieldName(field),
-			A2($author$project$Form$Review$value, model.bp, field),
-			model.aA(field),
+			A2($author$project$Form$Review$value, model.br, field),
+			model.am(field),
 			label_,
 			kind,
 			required_);
@@ -17629,8 +19918,8 @@ var $author$project$Page$Learning$formSelect = F5(
 		return A6(
 			$author$project$Ui$Form$selectValue,
 			$author$project$Form$Review$fieldName(field),
-			A2($author$project$Form$Review$value, model.bp, field),
-			model.aA(field),
+			A2($author$project$Form$Review$value, model.br, field),
+			model.am(field),
 			label_,
 			required_,
 			options);
@@ -17679,7 +19968,7 @@ var $author$project$Page$Learning$reviewCard = F3(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							A2($elm$core$String$left, 10, r.dk) + (' · ' + $author$project$Ui$Label$statusName(r.bs.a5)))
+							A2($elm$core$String$left, 10, r.ds) + (' · ' + $author$project$Ui$Label$statusName(r.bu.ez)))
 						])),
 					A2(
 					$elm$html$Html$h2,
@@ -17690,16 +19979,16 @@ var $author$project$Page$Learning$reviewCard = F3(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							A2($author$project$Ui$Label$goalName, w, r.aY))
+							A2($author$project$Ui$Label$goalName, w, r.a_))
 						])),
 					A2(
 					$elm$html$Html$p,
 					_List_Nil,
 					_List_fromArray(
 						[
-							$elm$html$Html$text(r.dN)
+							$elm$html$Html$text(r.dY)
 						])),
-					A2($author$project$Page$Learning$activityLink, activity, r.bC),
+					A2($author$project$Page$Learning$activityLink, activity, r.du),
 					A2(
 					$elm$html$Html$h3,
 					_List_Nil,
@@ -17707,7 +19996,7 @@ var $author$project$Page$Learning$reviewCard = F3(
 						[
 							$elm$html$Html$text('학습')
 						])),
-					$elm$core$List$isEmpty(r.dt) ? $author$project$Ui$Common$note('기록된 학습 없음') : A2(
+					$elm$core$List$isEmpty(r.dD) ? $author$project$Ui$Common$note('기록된 학습 없음') : A2(
 					$elm$html$Html$div,
 					_List_Nil,
 					A2(
@@ -17721,7 +20010,7 @@ var $author$project$Page$Learning$reviewCard = F3(
 										$elm$html$Html$text(learning)
 									]));
 						},
-						r.dt)),
+						r.dD)),
 					A2(
 					$elm$html$Html$h3,
 					_List_Nil,
@@ -17729,7 +20018,7 @@ var $author$project$Page$Learning$reviewCard = F3(
 						[
 							$elm$html$Html$text('다음 결정')
 						])),
-					$elm$core$List$isEmpty(r.cV) ? $author$project$Ui$Common$note('기록된 결정 없음') : A2(
+					$elm$core$List$isEmpty(r.cZ) ? $author$project$Ui$Common$note('기록된 결정 없음') : A2(
 					$elm$html$Html$div,
 					_List_Nil,
 					A2(
@@ -17740,7 +20029,7 @@ var $author$project$Page$Learning$reviewCard = F3(
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text(d.ey),
+										$elm$html$Html$text(d.eK),
 										A2($elm$html$Html$br, _List_Nil, _List_Nil),
 										A2(
 										$elm$html$Html$small,
@@ -17748,17 +20037,17 @@ var $author$project$Page$Learning$reviewCard = F3(
 										_List_fromArray(
 											[
 												$elm$html$Html$text(
-												A2($author$project$Ui$Label$personName, w, d.a1) + (' · ' + A2(
+												A2($author$project$Ui$Label$personName, w, d.a3) + (' · ' + A2(
 													$elm$core$Maybe$withDefault,
 													'기한 미정',
 													A2(
 														$elm$core$Maybe$map,
 														$elm$core$String$left(10),
-														d.cS))))
+														d.cW))))
 											]))
 									]));
 						},
-						r.cV)),
+						r.cZ)),
 					A2(
 					$elm$html$Html$div,
 					_List_Nil,
@@ -17779,17 +20068,17 @@ var $author$project$Page$Learning$reviewCard = F3(
 						A2(
 							$elm$core$List$concatMap,
 							function ($) {
-								return $.cj;
+								return $.cl;
 							},
 							A2(
 								$elm$core$List$filter,
 								A2(
 									$elm$core$Basics$composeR,
 									function ($) {
-										return $.bC;
+										return $.du;
 									},
-									$elm$core$Basics$eq(r.bC)),
-								w.ea))))
+									$elm$core$Basics$eq(r.du)),
+								w.ek))))
 				]));
 	});
 var $author$project$Page$Learning$reviewTable = F2(
@@ -17813,7 +20102,7 @@ var $author$project$Page$Learning$reviewTable = F2(
 								_List_fromArray(
 									[
 										$elm$html$Html$text(
-										A2($elm$core$String$left, 10, r.dk))
+										A2($elm$core$String$left, 10, r.ds))
 									])),
 								A2(
 								$elm$html$Html$th,
@@ -17824,7 +20113,7 @@ var $author$project$Page$Learning$reviewTable = F2(
 								_List_fromArray(
 									[
 										$elm$html$Html$text(
-										A2($author$project$Ui$Label$goalName, w, r.aY))
+										A2($author$project$Ui$Label$goalName, w, r.a_))
 									])),
 								A2(
 								$elm$html$Html$td,
@@ -17832,19 +20121,19 @@ var $author$project$Page$Learning$reviewTable = F2(
 								_List_fromArray(
 									[
 										$elm$html$Html$text(
-										$author$project$Ui$Label$statusName(r.bs.a5))
+										$author$project$Ui$Label$statusName(r.bu.ez))
 									])),
 								A2(
 								$elm$html$Html$td,
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text(r.dN)
+										$elm$html$Html$text(r.dY)
 									])),
 								A2(
 								$elm$html$Html$td,
 								_List_Nil,
-								$elm$core$List$isEmpty(r.dt) ? _List_fromArray(
+								$elm$core$List$isEmpty(r.dD) ? _List_fromArray(
 									[
 										$author$project$Ui$Common$note('기록된 학습 없음')
 									]) : A2(
@@ -17858,11 +20147,11 @@ var $author$project$Page$Learning$reviewTable = F2(
 													$elm$html$Html$text(learning)
 												]));
 									},
-									r.dt)),
+									r.dD)),
 								A2(
 								$elm$html$Html$td,
 								_List_Nil,
-								$elm$core$List$isEmpty(r.cV) ? _List_fromArray(
+								$elm$core$List$isEmpty(r.cZ) ? _List_fromArray(
 									[
 										$author$project$Ui$Common$note('기록된 결정 없음')
 									]) : A2(
@@ -17873,7 +20162,7 @@ var $author$project$Page$Learning$reviewTable = F2(
 											_List_Nil,
 											_List_fromArray(
 												[
-													$elm$html$Html$text(d.ey),
+													$elm$html$Html$text(d.eK),
 													A2($elm$html$Html$br, _List_Nil, _List_Nil),
 													A2(
 													$elm$html$Html$small,
@@ -17881,17 +20170,17 @@ var $author$project$Page$Learning$reviewTable = F2(
 													_List_fromArray(
 														[
 															$elm$html$Html$text(
-															A2($author$project$Ui$Label$personName, w, d.a1) + (' · ' + A2(
+															A2($author$project$Ui$Label$personName, w, d.a3) + (' · ' + A2(
 																$elm$core$Maybe$withDefault,
 																'기한 미정',
 																A2(
 																	$elm$core$Maybe$map,
 																	$elm$core$String$left(10),
-																	d.cS))))
+																	d.cW))))
 														]))
 												]));
 									},
-									r.cV)),
+									r.cZ)),
 								A2(
 								$elm$html$Html$td,
 								_List_Nil,
@@ -17912,27 +20201,27 @@ var $author$project$Page$Learning$reviewTable = F2(
 									A2(
 										$elm$core$List$concatMap,
 										function ($) {
-											return $.cj;
+											return $.cl;
 										},
 										A2(
 											$elm$core$List$filter,
 											A2(
 												$elm$core$Basics$composeR,
 												function ($) {
-													return $.bC;
+													return $.du;
 												},
-												$elm$core$Basics$eq(r.bC)),
-											w.ea)))),
+												$elm$core$Basics$eq(r.du)),
+											w.ek)))),
 								A2(
 								$elm$html$Html$td,
 								_List_Nil,
 								_List_fromArray(
 									[
-										A2($author$project$Page$Learning$activityLink, activity, r.bC)
+										A2($author$project$Page$Learning$activityLink, activity, r.du)
 									]))
 							]));
 				},
-				w.eb));
+				w.el));
 	});
 var $author$project$Page$Learning$viewWithActivity = F4(
 	function (activity, mode, model, w) {
@@ -17992,9 +20281,9 @@ var $author$project$Page$Learning$viewWithActivity = F4(
 											_List_fromArray(
 												[
 													$elm$html$Html$Attributes$value(
-													A2($author$project$Form$Review$value, model.bp, 2)),
+													A2($author$project$Form$Review$value, model.br, 2)),
 													$elm$html$Html$Events$onInput(
-													model.aA(2))
+													model.am(2))
 												]),
 											_List_Nil)
 										])),
@@ -18019,7 +20308,7 @@ var $author$project$Page$Learning$viewWithActivity = F4(
 									$author$project$Ui$Common$note('현재 최신 결과와 평가가 함께 보존됩니다. 결정과 학습이 모두 없으면 구조 검사가 경고합니다.')
 								]))
 						])),
-					$elm$core$List$isEmpty(w.eb) ? A2($author$project$Ui$Common$emptyState, '아직 회고 기록이 없습니다', '위에서 회고를 기록해 학습과 다음 결정을 남기세요.') : ((mode === 1) ? A2($author$project$Page$Learning$reviewTable, activity, w) : A2(
+					$elm$core$List$isEmpty(w.el) ? A2($author$project$Ui$Common$emptyState, '아직 회고 기록이 없습니다', '위에서 회고를 기록해 학습과 다음 결정을 남기세요.') : ((mode === 1) ? A2($author$project$Page$Learning$reviewTable, activity, w) : A2(
 					$elm$html$Html$div,
 					_List_fromArray(
 						[
@@ -18028,34 +20317,34 @@ var $author$project$Page$Learning$viewWithActivity = F4(
 					A2(
 						$elm$core$List$map,
 						A2($author$project$Page$Learning$reviewCard, activity, w),
-						w.eb)))
+						w.el)))
 				]));
 	});
 var $author$project$Main$workspaceView = function (model) {
 	return A2(
 		$author$project$Remote$view,
-		model.ab.a9,
+		model.ad.bb,
 		function (w) {
 			return A2(
 				$elm$html$Html$div,
 				_List_Nil,
 				_List_fromArray(
 					[
-						(w.bn && (model.bR.aa !== 11)) ? A2(
+						(w.bp && (model.bR.ac !== 12)) ? A2(
 						$author$project$Ui$Guide$view,
 						{
-							aV: $author$project$Main$busy(model),
-							bz: $author$project$App$Update$Guide,
-							aF: model.bR.aF,
-							eC: $author$project$App$Update$ToggleGuide
+							aE: $author$project$Main$busy(model),
+							aZ: $author$project$App$Update$Guide,
+							aI: model.bR.aI,
+							eO: $author$project$App$Update$ToggleGuide
 						},
 						w) : $elm$html$Html$text(''),
-						((!w.bn) && (model.bR.aa !== 11)) ? A4(
+						((!w.bp) && (model.bR.ac !== 12)) ? A4(
 						$author$project$Page$Discovery$guide,
-						model.bR.aF,
+						model.bR.aI,
 						$author$project$App$Update$ToggleGuide,
 						function (page) {
-							return A2($author$project$App$Update$Navigate, page, model.ab.aI);
+							return A2($author$project$App$Update$Navigate, page, model.ad.aL);
 						},
 						A2(
 							$elm$core$Maybe$withDefault,
@@ -18063,58 +20352,77 @@ var $author$project$Main$workspaceView = function (model) {
 							A2(
 								$elm$core$Maybe$map,
 								function ($) {
-									return $.X;
+									return $.Z;
 								},
-								A2($author$project$App$Discovery$saved, w.bQ.bC, model.X)))) : $elm$html$Html$text(''),
+								A2($author$project$App$Discovery$saved, w.bQ.du, model.Z)))) : $elm$html$Html$text(''),
 						function () {
-						var _v0 = model.bR.aa;
+						var _v0 = model.bR.ac;
 						switch (_v0) {
 							case 1:
 								return A3($author$project$Main$discoveryPage, 1, model, w);
 							case 2:
 								return A3($author$project$Main$discoveryPage, 2, model, w);
 							case 3:
-								return A3($author$project$Main$discoveryPage, 3, model, w);
+								return A2(
+									$author$project$Page$Agents$view,
+									{
+										aE: $author$project$Main$busy(model),
+										am: $author$project$App$Update$EditAgents,
+										dh: A2($author$project$Api$Path$orgPath, w.bQ.du, 'agents/export'),
+										aZ: function (target) {
+											return A2($author$project$App$Update$Navigate, target, model.ad.aL);
+										},
+										dv: $author$project$App$Update$ImportAgentDrafts,
+										aL: w.bQ.du,
+										bZ: $author$project$App$Update$RebaseAgents,
+										a5: $author$project$App$Update$ResetAgents,
+										b1: A3($author$project$Main$discoveryPage, 3, model, w),
+										b4: $author$project$App$Update$SubmitAgents,
+										cb: model.N
+									},
+									w);
 							case 4:
+								return A3($author$project$Page$Agents$graph, model.N, w.bQ.du, w);
+							case 5:
 								return A3(
 									$author$project$Page$People$viewWith,
 									$author$project$Main$listMode(model),
 									{
-										dd: $author$project$App$Update$FilterPeople,
+										dk: $author$project$App$Update$FilterPeople,
 										w: $author$project$Main$formConfig(model),
-										dh: A2($author$project$App$Update$Navigate, 5, model.ab.aI),
+										$7: A2($author$project$App$Update$Navigate, 6, model.ad.aL),
 										bP: $author$project$App$Update$OpenPerson,
-										d_: model.bR.aK,
-										b$: $author$project$App$Update$ResetPerson,
-										eh: $author$project$App$Update$SearchPeople,
-										ei: model.bR.aR,
-										a5: model.bR.aL
+										d9: model.bR.aN,
+										a5: $author$project$App$Update$ResetPerson,
+										er: $author$project$App$Update$SearchPeople,
+										es: model.bR.aU,
+										ez: model.bR.aO
 									},
 									w);
-							case 5:
+							case 6:
 								return A3(
 									$author$project$Page$Goals$viewWith,
 									$author$project$Main$listMode(model),
 									{
-										bp: $author$project$App$Drafts$goalDraft(model),
-										aA: $author$project$App$Update$EditGoal,
-										aB: model.bR.aB,
+										br: $author$project$App$Drafts$goalDraft(model),
+										am: $author$project$App$Update$EditGoal,
+										aF: model.bR.aF,
 										w: $author$project$Main$formConfig(model),
-										d8: $author$project$App$Update$Guide(8)
+										ei: $author$project$App$Update$Guide(9)
 									},
 									w);
-							case 6:
+							case 7:
 								return A6(
 									$author$project$Page$Responsibility$viewInteractive,
 									$author$project$Main$listMode(model),
-									model.bR.am,
+									model.bR.ap,
 									$elm$core$Maybe$Just($author$project$App$Update$GraphMsg),
 									$elm$core$Maybe$Just($author$project$App$Update$GraphGo),
 									{
 										w: $author$project$Main$formConfig(model)
 									},
 									w);
-							case 7:
+							case 8:
 								return A3(
 									$author$project$Page$Authorities$viewWith,
 									$author$project$Main$listMode(model),
@@ -18122,44 +20430,44 @@ var $author$project$Main$workspaceView = function (model) {
 										w: $author$project$Main$formConfig(model)
 									},
 									w);
-							case 8:
+							case 9:
 								return A3(
 									$author$project$Page$Results$viewWith,
 									$author$project$Main$listMode(model),
 									{
 										w: $author$project$Main$formConfig(model),
-										dh: $author$project$App$Update$Guide(5)
+										$7: $author$project$App$Update$Guide(6)
 									},
 									w);
-							case 9:
+							case 10:
 								return A4(
 									$author$project$Page$Learning$viewWithActivity,
 									$elm$core$Maybe$Just($author$project$App$Update$OpenReviewActivity),
 									$author$project$Main$listMode(model),
 									{
-										bp: $author$project$App$Drafts$reviewDraft(model),
-										aA: $author$project$App$Update$EditReview,
+										br: $author$project$App$Drafts$reviewDraft(model),
+										am: $author$project$App$Update$EditReview,
 										w: $author$project$Main$formConfig(model)
 									},
 									w);
-							case 10:
+							case 11:
 								return A4(
 									$author$project$Page$Activity$view,
 									$author$project$Main$listMode(model),
-									model.bR.V,
+									model.bR.X,
 									$author$project$App$Update$ActivityChange,
 									w);
-							case 11:
+							case 12:
 								return A2(
 									$author$project$Page$Settings$view,
 									{
-										cL: $author$project$App$Update$CloseDelete,
-										cO: $author$project$App$Update$ConfirmDelete,
-										bm: model.w.bm,
+										cP: $author$project$App$Update$CloseDelete,
+										cS: $author$project$App$Update$ConfirmDelete,
+										bo: model.w.bo,
 										w: $author$project$Main$formConfig(model),
-										dh: A2($author$project$App$Update$Navigate, 5, model.ab.aI),
-										dF: $author$project$App$Update$NoOp,
-										dR: $author$project$App$Update$OpenDelete
+										$7: A2($author$project$App$Update$Navigate, 6, model.ad.aL),
+										dQ: $author$project$App$Update$NoOp,
+										d0: $author$project$App$Update$OpenDelete
 									},
 									w);
 							default:
@@ -18226,10 +20534,10 @@ var $author$project$Main$view = function (model) {
 							[
 								$elm$html$Html$text(
 								function () {
-									var _v0 = model.ab.a9;
+									var _v0 = model.ad.bb;
 									if (_v0.$ === 1) {
 										var w = _v0.a;
-										return w.bQ.dD;
+										return w.bQ.dO;
 									} else {
 										return '조직 워크스페이스';
 									}
@@ -18243,12 +20551,12 @@ var $author$project$Main$view = function (model) {
 										_List_fromArray(
 											[
 												_Utils_Tuple2('workspace-switch', true),
-												_Utils_Tuple2('selected', !model.bR.aa)
+												_Utils_Tuple2('selected', !model.bR.ac)
 											])),
 										A2(
 										$elm$html$Html$Attributes$attribute,
 										'aria-current',
-										(!model.bR.aa) ? 'page' : 'false'),
+										(!model.bR.ac) ? 'page' : 'false'),
 										$elm$html$Html$Attributes$disabled(
 										$author$project$Main$busy(model)),
 										$elm$html$Html$Events$onClick(
@@ -18257,7 +20565,7 @@ var $author$project$Main$view = function (model) {
 								_List_fromArray(
 									[
 										$elm$html$Html$text(
-										_Utils_eq(model.ab.aI, $elm$core$Maybe$Nothing) ? '조직 선택 →' : '조직 전환 →')
+										_Utils_eq(model.ad.aL, $elm$core$Maybe$Nothing) ? '조직 선택 →' : '조직 전환 →')
 									]))
 							])),
 						A2(
@@ -18311,15 +20619,15 @@ var $author$project$Main$view = function (model) {
 									_Utils_Tuple2(
 									'조직 운영',
 									_List_fromArray(
-										[4, 5, 6, 7])),
+										[5, 6, 7, 8])),
 									_Utils_Tuple2(
 									'에이전트 설계',
 									_List_fromArray(
-										[3])),
+										[3, 4])),
 									_Utils_Tuple2(
 									'운영과 개선',
 									_List_fromArray(
-										[8, 9, 10]))
+										[9, 10, 11]))
 								])))
 					])),
 				A2(
@@ -18357,7 +20665,7 @@ var $author$project$Main$view = function (model) {
 										_List_fromArray(
 											[
 												$elm$html$Html$text(
-												$author$project$Page$pageName(model.bR.aa))
+												$author$project$Page$pageName(model.bR.ac))
 											])),
 										A2(
 										$elm$html$Html$p,
@@ -18375,7 +20683,7 @@ var $author$project$Main$view = function (model) {
 									]),
 								_List_fromArray(
 									[
-										(!_Utils_eq(model.ab.aI, $elm$core$Maybe$Nothing)) ? A2(
+										(!_Utils_eq(model.ad.aL, $elm$core$Maybe$Nothing)) ? A2(
 										$elm$html$Html$button,
 										_List_fromArray(
 											[
@@ -18383,7 +20691,7 @@ var $author$project$Main$view = function (model) {
 												$elm$html$Html$Attributes$disabled(
 												$author$project$Main$busy(model)),
 												$elm$html$Html$Events$onClick(
-												A2($author$project$App$Update$Navigate, 11, model.ab.aI))
+												A2($author$project$App$Update$Navigate, 12, model.ad.aL))
 											]),
 										_List_fromArray(
 											[
@@ -18412,12 +20720,12 @@ var $author$project$Main$view = function (model) {
 								$elm$html$Html$Attributes$classList(
 								_List_fromArray(
 									[
-										_Utils_Tuple2('error', model.br)
+										_Utils_Tuple2('error', model.bt)
 									])),
 								A2(
 								$elm$html$Html$Attributes$attribute,
 								'role',
-								model.br ? 'alert' : 'status'),
+								model.bt ? 'alert' : 'status'),
 								A2($elm$html$Html$Attributes$attribute, 'aria-live', 'polite')
 							]),
 						_List_fromArray(
@@ -18441,17 +20749,17 @@ var $author$project$Main$view = function (model) {
 									]),
 								_List_Nil),
 								$elm$html$Html$text(
-								$author$project$Main$busy(model) ? '저장 중 · 완료 후 다음 작업을 진행하세요' : (model.ab.al ? '최신 상태 · 입력은 화면을 이동해도 유지됩니다' : (model.ab.at ? '최신 상태를 확인하고 있습니다…' : '최신 상태 확인 실패 · 새로고침해 주세요')))
+								$author$project$Main$busy(model) ? '저장 중 · 완료 후 다음 작업을 진행하세요' : (model.ad.ao ? '최신 상태 · 입력은 화면을 이동해도 유지됩니다' : (model.ad.aw ? '최신 상태를 확인하고 있습니다…' : '최신 상태 확인 실패 · 새로고침해 주세요')))
 							])),
 						(!A2(
 						$elm$core$List$member,
-						model.bR.aa,
+						model.bR.ac,
 						_List_fromArray(
-							[11, 1, 2, 3]))) ? A2(
+							[12, 1, 2, 3, 4]))) ? A2(
 						$author$project$Ui$ListView$controls,
 						$author$project$Main$listMode(model),
-						$author$project$App$Update$SetListMode(model.bR.aa)) : $elm$html$Html$text(''),
-						(!model.bR.aa) ? A2(
+						$author$project$App$Update$SetListMode(model.bR.ac)) : $elm$html$Html$text(''),
+						(!model.bR.ac) ? A2(
 						$author$project$Page$Organizations$viewWith,
 						$author$project$Main$listMode(model),
 						{
@@ -18462,11 +20770,11 @@ var $author$project$Main$view = function (model) {
 									1,
 									$elm$core$Maybe$Just(org));
 							},
-							aJ: model.ab.aJ,
-							el: function (org) {
+							aM: model.ad.aM,
+							ev: function (org) {
 								return A2(
 									$author$project$App$Update$Navigate,
-									11,
+									12,
 									$elm$core$Maybe$Just(org));
 							}
 						}) : $author$project$Main$workspaceView(model),
@@ -18482,14 +20790,14 @@ var $author$project$Main$view = function (model) {
 };
 var $author$project$Main$main = $elm$browser$Browser$element(
 	{
-		$7: A2($elm$core$Basics$composeR, $author$project$App$Update$init, $author$project$Main$runEffects),
-		eu: $elm$core$Basics$always($elm$core$Platform$Sub$none),
-		eJ: F2(
+		dy: A2($elm$core$Basics$composeR, $author$project$App$Update$init, $author$project$Main$runEffects),
+		eF: $elm$core$Basics$always($elm$core$Platform$Sub$none),
+		eV: F2(
 			function (msg, model) {
 				return $author$project$Main$runEffects(
 					A2($author$project$App$Update$update, msg, model));
 			}),
-		eK: $author$project$Main$view
+		eW: $author$project$Main$view
 	});
 _Platform_export({'Main':{'init':$author$project$Main$main(
 	A2(
@@ -18502,7 +20810,7 @@ _Platform_export({'Main':{'init':$author$project$Main$main(
 						$elm$json$Json$Decode$andThen,
 						function (deadline) {
 							return $elm$json$Json$Decode$succeed(
-								{cS: deadline, b5: seed, eB: today});
+								{cW: deadline, b6: seed, eN: today});
 						},
 						A2($elm$json$Json$Decode$field, 'deadline', $elm$json$Json$Decode$string));
 				},

@@ -1,12 +1,29 @@
-module Domain.Discovery exposing (Change(..), Document, Observation, Review, Snapshot, Workflow, apply, empty, problems, statusLabel)
+module Domain.Discovery exposing (Change(..), Document, Observation, Review, Snapshot, Workflow, apply, empty, emptyWorkflow, problems, statusLabel)
 
 
 type alias Observation =
     { id : String, subject : String, detail : String, status : String, evidence : String }
 
 
+{-| 업무 흐름. 자유 텍스트 필드는 그대로 두고 선택적인 참조 필드가 구성원, 결정 권한, 다른 업무를 가리킨다.
+-}
 type alias Workflow =
-    { id : String, name : String, role : String, trigger : String, inputs : String, tools : String, outputs : String, handoff : String, approval : String, status : String, evidence : String }
+    { id : String
+    , name : String
+    , role : String
+    , rolePerson : Maybe String
+    , trigger : String
+    , inputs : String
+    , tools : String
+    , outputs : String
+    , handoff : String
+    , handoffWorkflows : List String
+    , approval : String
+    , approvalPerson : Maybe String
+    , approvalPermission : Maybe String
+    , status : String
+    , evidence : String
+    }
 
 
 type alias Review =
@@ -28,6 +45,10 @@ type Change
     | ObservationField String String String
     | AddWorkflow String
     | WorkflowField String String String
+    | WorkflowRolePerson String String
+    | WorkflowApprovalPerson String String
+    | WorkflowApprovalPermission String String
+    | WorkflowHandoff String String Bool
     | RemoveObservation String
     | RemoveWorkflow String
     | ReviewNote String
@@ -37,6 +58,11 @@ type Change
 empty : Document
 empty =
     { scope = "", asOf = "", observations = [], workflows = [], review = { status = "pending", note = "" } }
+
+
+emptyWorkflow : String -> Workflow
+emptyWorkflow ident =
+    { id = ident, name = "", role = "", rolePerson = Nothing, trigger = "", inputs = "", tools = "", outputs = "", handoff = "", handoffWorkflows = [], approval = "", approvalPerson = Nothing, approvalPermission = Nothing, status = "unknown", evidence = "" }
 
 
 statusLabel : String -> String
@@ -50,6 +76,31 @@ statusLabel status =
 
         _ ->
             "미확인"
+
+
+optional : String -> Maybe String
+optional value =
+    if String.trim value == "" then
+        Nothing
+
+    else
+        Just value
+
+
+mapWorkflow : String -> (Workflow -> Workflow) -> Document -> Document
+mapWorkflow ident f doc =
+    { doc
+        | workflows =
+            List.map
+                (\w ->
+                    if w.id == ident then
+                        f w
+
+                    else
+                        w
+                )
+                doc.workflows
+    }
 
 
 apply : Change -> Document -> Document
@@ -81,27 +132,48 @@ apply change doc =
                     }
 
                 AddWorkflow ident ->
-                    { doc | workflows = doc.workflows ++ [ { id = ident, name = "", role = "", trigger = "", inputs = "", tools = "", outputs = "", handoff = "", approval = "", status = "unknown", evidence = "" } ] }
+                    { doc | workflows = doc.workflows ++ [ emptyWorkflow ident ] }
 
                 WorkflowField ident key value ->
-                    { doc
-                        | workflows =
-                            List.map
-                                (\w ->
-                                    if w.id == ident then
-                                        editWorkflow key value w
+                    mapWorkflow ident (editWorkflow key value) doc
+
+                WorkflowRolePerson ident value ->
+                    mapWorkflow ident (\w -> { w | rolePerson = optional value }) doc
+
+                WorkflowApprovalPerson ident value ->
+                    mapWorkflow ident (\w -> { w | approvalPerson = optional value }) doc
+
+                WorkflowApprovalPermission ident value ->
+                    mapWorkflow ident (\w -> { w | approvalPermission = optional value }) doc
+
+                WorkflowHandoff ident target selected ->
+                    mapWorkflow ident
+                        (\w ->
+                            let
+                                without =
+                                    List.filter ((/=) target) w.handoffWorkflows
+                            in
+                            { w
+                                | handoffWorkflows =
+                                    if selected && target /= ident then
+                                        without ++ [ target ]
 
                                     else
-                                        w
-                                )
-                                doc.workflows
-                    }
+                                        without
+                            }
+                        )
+                        doc
 
                 RemoveObservation ident ->
                     { doc | observations = List.filter (\o -> o.id /= ident) doc.observations }
 
                 RemoveWorkflow ident ->
-                    { doc | workflows = List.filter (\w -> w.id /= ident) doc.workflows }
+                    { doc
+                        | workflows =
+                            doc.workflows
+                                |> List.filter (\w -> w.id /= ident)
+                                |> List.map (\w -> { w | handoffWorkflows = List.filter ((/=) ident) w.handoffWorkflows })
+                    }
 
                 ReviewNote value ->
                     { doc | review = { status = doc.review.status, note = value } }

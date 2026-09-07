@@ -2,7 +2,8 @@ module Lib
   ( someFunc
   ) where
 
-import Control.Exception (bracket)
+import Control.Concurrent (myThreadId)
+import Control.Exception (AsyncException (UserInterrupt), bracket, throwTo)
 import Data.Map.Strict qualified as Map
 import MyOrg.Demo (isDemoStore)
 import MyOrg.Registry (registryEvents)
@@ -10,10 +11,17 @@ import MyOrg.Server (application)
 import MyOrg.Store
 import Network.Wai.Handler.Warp (defaultSettings, runSettings, setHost, setPort)
 import System.Environment (lookupEnv)
+import System.Posix.Signals (Handler (Catch), installHandler, sigINT, sigTERM)
 import Text.Read (readMaybe)
 
 someFunc :: IO ()
 someFunc = do
+  -- SIGINT and SIGTERM both unwind the main thread so the store lock is
+  -- released even when the parent process ignores SIGINT or sends SIGTERM.
+  mainThread <- myThreadId
+  mapM_
+    (\signal -> installHandler signal (Catch (throwTo mainThread UserInterrupt)) Nothing)
+    [sigINT, sigTERM]
   demo <- (== Just "1") <$> lookupEnv "MY_ORG_DEMO"
   file <- maybe "runs/local/events.json" id <$> lookupEnv "MY_ORG_EVENT_FILE"
   port <- maybe 8080 id . (>>= readMaybe) <$> lookupEnv "MY_ORG_PORT"

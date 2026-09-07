@@ -11,6 +11,7 @@ import Data.Set qualified as Set
 import Data.Time (UTCTime)
 import MyOrg.Application.ReadModel
 import MyOrg.Demo (isDemoEpoch)
+import MyOrg.Domain.AgentDraft (deriveAgents, diagnoseAgents)
 import MyOrg.Domain.Analysis (analyzeGoal)
 import MyOrg.Domain.Authority (Ownership (..))
 import MyOrg.Domain.Compiler (compileOrganization)
@@ -30,18 +31,28 @@ import MyOrg.Registry
 data Selection = SoleOrganization
                | SelectedOrganization OrgId
   deriving (Show, Eq)
-data Resource = DashboardResource | OrganizationResource | PeopleResource | GoalsResource | CompilerResource | GraphResource | EventsResource | ReviewsResource | DiscoveryResource
+data Resource = DashboardResource | OrganizationResource | PeopleResource | GoalsResource | CompilerResource | GraphResource | EventsResource | ReviewsResource | DiscoveryResource | AgentsResource
   deriving (Show, Eq)
 data Query = ListOrganizations
            | OrganizationSummaryQuery OrgId
            | OrganizationQuery Selection Resource
            | PersonQuery Selection UserId
+           | AgentExportQuery OrgId
   deriving (Show, Eq)
 
 executeQuery :: UTCTime -> Registry -> Query -> Either OrganizationError QueryResult
 executeQuery now registry query = case query of
   ListOrganizations -> pure (OrganizationsResult (map summary (activeOrganizations registry)))
   OrganizationSummaryQuery oid -> SummaryResult . summary <$> organizationState registry oid
+  AgentExportQuery oid -> do
+    st <- organizationState registry oid
+    let saved = not (null (stateAgents st))
+    pure
+      ( AgentExportResult
+          (stateOrganization st)
+          saved
+          (if saved then stateAgents st else deriveAgents st)
+      )
   PersonQuery selection uid -> do
     oid <- case selection of
       SelectedOrganization selected -> pure selected
@@ -119,3 +130,13 @@ executeQuery now registry query = case query of
       EventsResource -> EventsResult (currentEpoch (history st))
       ReviewsResource -> ReviewsResult (stateReviews st)
       DiscoveryResource -> DiscoveryResult (stateLastSeq st) (stateDiscovery st)
+      AgentsResource ->
+        let drafts = deriveAgents st
+         in AgentsResult
+              ( AgentReport
+                  (stateLastSeq st)
+                  (stateAgents st)
+                  drafts
+                  (diagnoseAgents st (stateAgents st))
+                  (diagnoseAgents st drafts)
+              )

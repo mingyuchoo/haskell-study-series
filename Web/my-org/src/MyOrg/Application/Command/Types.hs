@@ -3,6 +3,7 @@ module MyOrg.Application.Command.Types
   ) where
 
 import Data.Text (Text)
+import MyOrg.Domain.Agent
 import MyOrg.Domain.Authority
 import MyOrg.Domain.Discovery
 import MyOrg.Domain.Goal.Types
@@ -28,4 +29,5 @@ data Command = CreateOrganization OrgId Text
              | HoldReview ReviewId GoalId [Learning] [Decision] Text
              | ChangeStrategy GoalId Text
              | SaveDiscovery Discovery Int
+             | SaveAgentRoles [AgentRole] Int
   deriving (Show, Eq)

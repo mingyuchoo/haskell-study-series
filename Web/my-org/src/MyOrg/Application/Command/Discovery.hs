@@ -11,6 +11,7 @@ import MyOrg.Application.Command.Validation
 import MyOrg.Domain.Discovery
 import MyOrg.Domain.Error
 import MyOrg.Domain.Event.Types
+import MyOrg.Domain.Queries (requireActivePerson)
 import MyOrg.Domain.State
 
 saveDiscovery
@@ -19,6 +20,7 @@ saveDiscovery st document version = do
   _ <- requireOrganization st
   checkVersion st version
   validateDiscovery document
+  validateReferences st document
   let review = discoveryReview document
       needsReview =
         not (sameDiscoveryContent (stateDiscovery st) document)
@@ -28,6 +30,21 @@ saveDiscovery st document version = do
           then document {discoveryReview = review {discoveryReviewStatus = Pending}}
           else document
   pure (DiscoverySaved saved)
+
+-- | 참조 필드는 현재 조직의 활성 구성원과 같은 문서의 다른 업무만 가리킬 수 있다.
+validateReferences :: OrgState -> Discovery -> Either OrganizationError ()
+validateReferences st Discovery {..} = mapM_ check discoveryWorkflows
+  where
+    ids = Set.fromList (map workflowId discoveryWorkflows)
+    check Workflow {..} = do
+      mapM_ (requireActivePerson st) workflowRolePerson
+      mapM_ (requireActivePerson st) workflowApprovalPerson
+      mapM_
+        ( \target -> do
+            when (target == workflowId) (Left (InvalidInput "업무는 자기 자신에게 인계할 수 없습니다."))
+            unless (Set.member target ids) (Left (InvalidInput ("인계 대상 업무를 찾을 수 없습니다: " <> target)))
+        )
+        workflowHandoffWorkflows
 
 validateDiscovery :: Discovery -> Either OrganizationError ()
 validateDiscovery Discovery {..} = do
