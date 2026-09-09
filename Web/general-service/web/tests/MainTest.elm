@@ -23,6 +23,26 @@ suite =
                     , Task.quadrantOf Task.Urgent Task.NotImportant
                     , Task.quadrantOf Task.NotUrgent Task.NotImportant
                     ]
+        , test "초기 인증 화면에서 회원가입 버튼을 사용할 수 있다" <|
+            \_ ->
+                let
+                    baseModel =
+                        TaskBoard.initialModel
+
+                    model =
+                        { baseModel
+                            | authMode = TaskBoard.SignUp
+                            , authEmail = "member@example.com"
+                            , authDisplayName = "새 사용자"
+                            , authPassword = "safe-password"
+                        }
+
+                    ( updatedModel, effects ) =
+                        TaskBoard.update TaskBoard.SubmitAuthentication model
+                in
+                Expect.equal
+                    ( True, [ TaskBoard.Register "member@example.com" "새 사용자" "safe-password" ] )
+                    ( updatedModel.loading, effects )
         , test "빈 제목 제출은 효과 없이 사용자에게 알린다" <|
             \_ ->
                 case TaskBoard.update TaskBoard.SubmitTask TaskBoard.initialModel of

@@ -11,6 +11,7 @@ import Domain.Task
   , Urgency (..)
   )
 import Infrastructure.InMemoryTaskRepository (newInMemoryTaskRepository)
+import Infrastructure.InMemoryUserRepository (newInMemoryUserRepository)
 import Interface.Http.TaskRoutes (application)
 import Network.Wai.Handler.Warp (run)
 import System.Environment (lookupEnv)
@@ -18,9 +19,10 @@ import System.Environment (lookupEnv)
 main :: IO ()
 main = do
   repository <- newInMemoryTaskRepository initialTasks
+  userRepository <- newInMemoryUserRepository
   port <- maybe 3000 read <$> lookupEnv "PORT"
   putStrLn ("GeneralService is running at http://localhost:" <> show port)
-  run port (application repository)
+  run port (application repository userRepository)
 
 initialTasks :: [TaskItem]
 initialTasks =

@@ -1,6 +1,6 @@
 module Presentation.TaskBoard exposing (view)
 
-import Application.TaskBoard exposing (Model, Msg(..), selectedTask)
+import Application.TaskBoard exposing (AuthMode(..), Model, Msg(..), selectedTask)
 import Domain.Task as Task exposing (Importance, Status, Task, Urgency)
 import Html exposing (Html, aside, button, dd, div, dl, dt, h1, h2, h3, input, label, option, p, select, span, text, textarea)
 import Html.Attributes exposing (attribute, checked, class, disabled, for, id, name, placeholder, selected, tabindex, type_, value)
@@ -10,15 +10,91 @@ import Json.Decode as Decode
 
 view : Model -> Html Msg
 view model =
-    div [ class "page-shell" ]
+    case model.session of
+        Nothing ->
+            authView model
+
+        Just _ ->
+            div [ class "page-shell" ]
+                [ toastView model
+                , headerView model
+                , profileView model
+                , div [ class "content" ]
+                    [ formView model
+                    , kanbanBoard model
+                    ]
+                , detailView model
+                ]
+
+
+authView : Model -> Html Msg
+authView model =
+    div [ class "auth-page" ]
         [ toastView model
-        , headerView model
-        , div [ class "content" ]
-            [ formView model
-            , kanbanBoard model
+        , div [ class "auth-card" ]
+            [ div [ class "auth-brand" ]
+                [ div [ class "brand-mark" ] [ text "GS" ]
+                , div [] [ span [ class "eyebrow" ] [ text "GENERAL SERVICE" ], h1 [] [ text "업무 관리" ] ]
+                ]
+            , h2 []
+                [ text
+                    (if model.authMode == SignIn then
+                        "다시 만나서 반갑습니다"
+
+                     else
+                        "계정을 만들어 시작하세요"
+                    )
+                ]
+            , p [ class "auth-copy" ] [ text "업무 보드를 사용하려면 로그인해 주세요." ]
+            , div [ class "auth-tabs" ]
+                [ button [ class (authTabClass (model.authMode == SignIn)), type_ "button", onClick (SelectAuthMode SignIn) ] [ text "로그인" ]
+                , button [ class (authTabClass (model.authMode == SignUp)), type_ "button", onClick (SelectAuthMode SignUp) ] [ text "회원가입" ]
+                ]
+            , div [ class "auth-fields" ]
+                ([ div [ class "field" ]
+                    [ label [ for "auth-email" ] [ text "이메일" ]
+                    , input [ id "auth-email", type_ "email", value model.authEmail, placeholder "name@example.com", onInput EditAuthEmail ] []
+                    ]
+                 ]
+                    ++ (if model.authMode == SignUp then
+                            [ div [ class "field" ]
+                                [ label [ for "auth-display-name" ] [ text "표시 이름" ]
+                                , input [ id "auth-display-name", value model.authDisplayName, placeholder "보드에 표시할 이름", onInput EditAuthDisplayName ] []
+                                ]
+                            ]
+
+                        else
+                            []
+                       )
+                    ++ [ div [ class "field" ]
+                            [ label [ for "auth-password" ] [ text "비밀번호" ]
+                            , input [ id "auth-password", type_ "password", value model.authPassword, placeholder "8자 이상", onInput EditAuthPassword ] []
+                            ]
+                       ]
+                )
+            , button [ class "button primary auth-submit", type_ "button", disabled model.loading, onClick SubmitAuthentication ]
+                [ text
+                    (if model.authMode == SignIn then
+                        "로그인"
+
+                     else
+                        "회원가입하고 시작하기"
+                    )
+                ]
+            , p [ class "auth-footnote" ] [ text "개발용 계정은 이 서버가 실행되는 동안에만 유지됩니다." ]
             ]
-        , detailView model
         ]
+
+
+authTabClass : Bool -> String
+authTabClass active =
+    "auth-tab"
+        ++ (if active then
+                " is-active"
+
+            else
+                ""
+           )
 
 
 headerView : Model -> Html Msg
@@ -27,10 +103,44 @@ headerView model =
         [ div [ class "brand-row" ]
             [ div [ class "brand-mark" ] [ text "GS" ]
             , div [] [ span [ class "eyebrow" ] [ text "GENERAL SERVICE" ], h1 [] [ text "업무 관리" ] ]
-            , span [ class "live-dot" ] [ text "관리자 모드" ]
+            , case model.session of
+                Just session ->
+                    div [ class "user-actions" ]
+                        [ button [ class "profile-button", type_ "button", onClick ToggleProfile ] [ text session.user.displayName ]
+                        , button [ class "logout-button", type_ "button", onClick LogoutRequested ] [ text "로그아웃" ]
+                        ]
+
+                Nothing ->
+                    text ""
             ]
         , p [ class "hero-copy" ] [ text "업무의 흐름을 한눈에 보고, 다음 단계로 자연스럽게 이어가세요." ]
         ]
+
+
+profileView : Model -> Html Msg
+profileView model =
+    case ( model.profileOpen, model.session ) of
+        ( True, Just session ) ->
+            div [ class "profile-layer" ]
+                [ div [ class "profile-backdrop", onClick ToggleProfile ] []
+                , aside [ class "profile-panel", attribute "role" "dialog", attribute "aria-modal" "true", attribute "aria-label" "내 프로필" ]
+                    [ div [ class "detail-heading" ]
+                        [ div [] [ h2 [] [ text "내 프로필" ], p [ class "profile-email" ] [ text session.user.email ] ]
+                        , button [ class "icon-button", type_ "button", attribute "aria-label" "닫기", onClick ToggleProfile ] [ text "×" ]
+                        ]
+                    , div [ class "field" ]
+                        [ label [ for "profile-display-name" ] [ text "표시 이름" ]
+                        , input [ id "profile-display-name", value model.profileDraft, onInput EditProfileName ] []
+                        ]
+                    , div [ class "detail-actions" ]
+                        [ button [ class "button secondary", type_ "button", onClick ToggleProfile ] [ text "취소" ]
+                        , button [ class "button primary", type_ "button", disabled model.loading, onClick SaveProfile ] [ text "저장" ]
+                        ]
+                    ]
+                ]
+
+        _ ->
+            text ""
 
 
 toastView : Model -> Html Msg

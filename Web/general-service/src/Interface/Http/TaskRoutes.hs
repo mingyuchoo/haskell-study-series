@@ -5,7 +5,9 @@ module Interface.Http.TaskRoutes
   )
 where
 
+import qualified Application.AuthService as AuthService
 import Application.Port.TaskRepository (TaskRepository)
+import Application.Port.UserRepository (UserRepository)
 import qualified Application.TaskService as TaskService
 import Data.Aeson
   ( FromJSON (..)
@@ -18,8 +20,10 @@ import Data.Aeson
   , (.:?)
   , (.=)
   )
+import Data.ByteString (ByteString)
 import Data.Text (Text)
 import qualified Data.Text as Text
+import qualified Data.Text.Encoding as TextEncoding
 import Domain.Task
   ( Importance (..)
   , Outcome (..)
@@ -34,6 +38,12 @@ import Domain.Task
   , Urgency (..)
   , quadrantOf
   )
+import Domain.User
+  ( AuthError (..)
+  , ProfileUpdate (..)
+  , SignUpInput (..)
+  , UserProfile (..)
+  )
 import Network.HTTP.Types
   ( methodDelete
   , methodGet
@@ -43,7 +53,9 @@ import Network.HTTP.Types
   , status201
   , status204
   , status400
+  , status401
   , status404
+  , status409
   )
 import qualified Network.HTTP.Types as HTTP
 import Network.Wai
@@ -74,6 +86,16 @@ data ReviewRequest = ReviewRequest OutcomeOwner (Maybe Text)
 data OutcomeInputRequest = OutcomeInputRequest Text OutcomeOwner [Int]
 
 data OutcomeResponse = OutcomeResponse Int Text OutcomeOwner [Int] [Text] Status
+
+data SignUpRequest = SignUpRequest Text Text Text
+
+data LoginRequest = LoginRequest Text Text
+
+newtype ProfileUpdateRequest = ProfileUpdateRequest Text
+
+data ProfileResponse = ProfileResponse Int Text Text
+
+data SessionResponse = SessionResponse Text ProfileResponse
 
 instance FromJSON TaskInputRequest where
   parseJSON = withObject "TaskInputRequest" $ \value -> do
@@ -108,6 +130,18 @@ instance FromJSON OutcomeInputRequest where
       <$> value .: "outcomeDescription"
       <*> (OutcomeOwner <$> value .: "outcomeOwner")
       <*> value .: "taskIds"
+
+instance FromJSON SignUpRequest where
+  parseJSON = withObject "SignUpRequest" $ \value ->
+    SignUpRequest <$> value .: "email" <*> value .: "displayName" <*> value .: "password"
+
+instance FromJSON LoginRequest where
+  parseJSON = withObject "LoginRequest" $ \value ->
+    LoginRequest <$> value .: "email" <*> value .: "password"
+
+instance FromJSON ProfileUpdateRequest where
+  parseJSON = withObject "ProfileUpdateRequest" $ \value ->
+    ProfileUpdateRequest <$> value .: "displayName"
 
 instance ToJSON TaskResponse where
   toJSON
@@ -159,9 +193,41 @@ instance ToJSON OutcomeResponse where
         , "status" .= statusText finalStatus
         ]
 
-application :: TaskRepository IO -> Application
-application repository request respond =
+instance ToJSON ProfileResponse where
+  toJSON (ProfileResponse identifier email displayName) =
+    object
+      [ "id" .= identifier
+      , "email" .= email
+      , "displayName" .= displayName
+      ]
+
+instance ToJSON SessionResponse where
+  toJSON (SessionResponse token profile) = object ["token" .= token, "user" .= profile]
+
+application :: TaskRepository IO -> UserRepository IO -> Application
+application repository userRepository request respond =
   case pathInfo request of
+    ["api", "auth", "signup"] | requestMethod request == methodPost ->
+      withSignUp request respond $ \(SignUpRequest email displayName password) -> do
+        result <- AuthService.signUp userRepository (SignUpInput email displayName password)
+        respondSessionResult status201 respond result
+    ["api", "auth", "login"] | requestMethod request == methodPost ->
+      withLogin request respond $ \(LoginRequest email password) -> do
+        result <- AuthService.login userRepository email password
+        respondSessionResult status200 respond result
+    ["api", "auth", "logout"] | requestMethod request == methodPost ->
+      withBearerToken request respond $ \token -> do
+        AuthService.logout userRepository token
+        respond (responseLBS status204 [] "")
+    ["api", "auth", "me"] | requestMethod request == methodGet ->
+      withBearerToken request respond $ \token -> do
+        result <- AuthService.currentUser userRepository token
+        respondProfileResult respond result
+    ["api", "auth", "me"] | requestMethod request == methodPut ->
+      withBearerToken request respond $ \token ->
+        withProfileUpdate request respond $ \(ProfileUpdateRequest displayName) -> do
+          result <- AuthService.updateProfile userRepository token (ProfileUpdate displayName)
+          respondProfileResult respond result
     ["api", "task"] | requestMethod request == methodGet -> do
       tasks <- TaskService.listTasks repository
       respond (json status200 (map toResponse tasks))
@@ -298,6 +364,95 @@ withOutcomeInput request respond action = do
     Left _ ->
       respond (responseLBS status400 [jsonContentType] "{\"error\":\"Invalid outcome input\"}")
     Right input -> action input
+
+withSignUp
+  :: Request
+  -> (Response -> IO ResponseReceived)
+  -> (SignUpRequest -> IO ResponseReceived)
+  -> IO ResponseReceived
+withSignUp request respond action = do
+  body <- strictRequestBody request
+  case eitherDecode body of
+    Left _ ->
+      respond (responseLBS status400 [jsonContentType] "{\"error\":\"Invalid sign-up input\"}")
+    Right input -> action input
+
+withLogin
+  :: Request
+  -> (Response -> IO ResponseReceived)
+  -> (LoginRequest -> IO ResponseReceived)
+  -> IO ResponseReceived
+withLogin request respond action = do
+  body <- strictRequestBody request
+  case eitherDecode body of
+    Left _ ->
+      respond (responseLBS status400 [jsonContentType] "{\"error\":\"Invalid login input\"}")
+    Right input -> action input
+
+withProfileUpdate
+  :: Request
+  -> (Response -> IO ResponseReceived)
+  -> (ProfileUpdateRequest -> IO ResponseReceived)
+  -> IO ResponseReceived
+withProfileUpdate request respond action = do
+  body <- strictRequestBody request
+  case eitherDecode body of
+    Left _ ->
+      respond (responseLBS status400 [jsonContentType] "{\"error\":\"Invalid profile input\"}")
+    Right input -> action input
+
+withBearerToken
+  :: Request
+  -> (Response -> IO ResponseReceived)
+  -> (Text -> IO ResponseReceived)
+  -> IO ResponseReceived
+withBearerToken request respond action =
+  case lookup "Authorization" (requestHeaders request) >>= bearerToken of
+    Nothing -> respond (authError AuthenticationRequired)
+    Just token -> action token
+
+bearerToken :: ByteString -> Maybe Text
+bearerToken value = Text.stripPrefix "Bearer " (TextEncoding.decodeUtf8 value)
+
+respondSessionResult
+  :: HTTP.Status
+  -> (Response -> IO ResponseReceived)
+  -> Either AuthError AuthService.Session
+  -> IO ResponseReceived
+respondSessionResult httpStatus respond result =
+  case result of
+    Left err -> respond (authError err)
+    Right session -> respond (json httpStatus (sessionResponse session))
+
+respondProfileResult
+  :: (Response -> IO ResponseReceived)
+  -> Either AuthError UserProfile
+  -> IO ResponseReceived
+respondProfileResult respond result =
+  case result of
+    Left err -> respond (authError err)
+    Right profile -> respond (json status200 (profileResponse profile))
+
+sessionResponse :: AuthService.Session -> SessionResponse
+sessionResponse session =
+  SessionResponse
+    (AuthService.sessionToken session)
+    (profileResponse (AuthService.sessionUser session))
+
+profileResponse :: UserProfile -> ProfileResponse
+profileResponse profile =
+  ProfileResponse
+    (profileId profile)
+    (profileEmail profile)
+    (profileDisplayName profile)
+
+authError :: AuthError -> Response
+authError InvalidEmail = responseLBS status400 [jsonContentType] "{\"error\":\"유효한 이메일을 입력해 주세요.\"}"
+authError EmptyDisplayName = responseLBS status400 [jsonContentType] "{\"error\":\"표시 이름을 입력해 주세요.\"}"
+authError PasswordTooShort = responseLBS status400 [jsonContentType] "{\"error\":\"비밀번호는 8자 이상이어야 합니다.\"}"
+authError DuplicateEmail = responseLBS status409 [jsonContentType] "{\"error\":\"이미 가입된 이메일입니다.\"}"
+authError InvalidCredentials = responseLBS status401 [jsonContentType] "{\"error\":\"이메일 또는 비밀번호가 올바르지 않습니다.\"}"
+authError AuthenticationRequired = responseLBS status401 [jsonContentType] "{\"error\":\"로그인이 필요합니다.\"}"
 
 domainError :: TaskError -> Response
 domainError EmptyTitle = responseLBS status400 [jsonContentType] "{\"error\":\"Task title is required\"}"

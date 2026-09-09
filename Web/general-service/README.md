@@ -1,6 +1,6 @@
 # GeneralService
 
-관리자가 Task 상태를 등록·수정·삭제하는 Haskell + Elm 웹 서비스입니다.
+회원가입·로그인한 구성원이 Task 상태를 등록·수정·삭제하는 Haskell + Elm 웹 서비스입니다.
 
 ## 실행
 
@@ -12,6 +12,8 @@ stack run
 
 ## 기능
 
+- 이메일·비밀번호·표시 이름으로 회원가입 및 로그인
+- 로그인한 사용자의 표시 이름을 수정하는 내 프로필 관리와 로그아웃
 - 업무 제목, 설명, 상태의 생성·조회·수정·삭제
 - `Draft`, `Reviewed`, `Submitted`, `Approved`, `Effective` 상태를 한국어로 표시
 - 긴급도·중요도 조합으로 계산한 아이젠하워 매트릭스 우선순위(즉시 실행, 계획 수립, 위임, 제거) 표시
@@ -36,5 +38,10 @@ stack run
 | `POST` | `/api/task/:id/revision` | Outcome Owner가 수정 요청 (`outcomeOwner`, 선택 `reviewComment`) |
 | `GET` | `/api/outcome` | Outcome 전체 조회 |
 | `POST` | `/api/outcome` | 승인된 업무를 묶어 Outcome 생성 |
+| `POST` | `/api/auth/signup` | 회원가입 (`email`, `displayName`, `password`) |
+| `POST` | `/api/auth/login` | 로그인 (`email`, `password`) |
+| `POST` | `/api/auth/logout` | 로그아웃 (Bearer 토큰) |
+| `GET` | `/api/auth/me` | 내 프로필 조회 (Bearer 토큰) |
+| `PUT` | `/api/auth/me` | 내 표시 이름 변경 (`displayName`, Bearer 토큰) |
 
-저장소는 현재 서버 메모리입니다. 서버를 다시 시작하면 초기 예시 Task로 돌아갑니다.
+비밀번호는 bcrypt 해시로만 저장합니다. 사용자·세션·Task 저장소는 현재 서버 메모리입니다. 서버를 다시 시작하면 계정과 로그인 세션, 초기 예시 Task가 초기화됩니다. 이 구현은 개발용이며 HTTPS, 영속 저장소, 속도 제한 및 서버 측 Task 권한 검증 없이 외부에 배포하면 안 됩니다.

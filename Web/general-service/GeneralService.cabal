@@ -26,9 +26,13 @@ source-repository head
 library
   exposed-modules:
       Application.Port.TaskRepository
+      Application.Port.UserRepository
+      Application.AuthService
       Application.TaskService
       Domain.Task
+      Domain.User
       Infrastructure.InMemoryTaskRepository
+      Infrastructure.InMemoryUserRepository
       Interface.Http.TaskRoutes
       Lib
   other-modules:
@@ -41,6 +45,7 @@ library
   build-depends:
       aeson
     , base >=4.7 && <5
+    , bcrypt
     , bytestring
     , http-types
     , text
@@ -61,6 +66,7 @@ executable GeneralService-exe
       GeneralService
     , aeson
     , base >=4.7 && <5
+    , bcrypt
     , bytestring
     , http-types
     , text
@@ -82,6 +88,7 @@ test-suite GeneralService-test
       GeneralService
     , aeson
     , base >=4.7 && <5
+    , bcrypt
     , bytestring
     , http-types
     , text

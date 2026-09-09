@@ -2,9 +2,17 @@
 
 module Main (main) where
 
+import qualified Application.AuthService as AuthService
 import qualified Application.TaskService as TaskService
 import Domain.Task
+import Domain.User
+  ( AuthError (..)
+  , ProfileUpdate (..)
+  , SignUpInput (..)
+  , profileDisplayName
+  )
 import Infrastructure.InMemoryTaskRepository (newInMemoryTaskRepository)
+import Infrastructure.InMemoryUserRepository (newInMemoryUserRepository)
 import System.Exit (exitFailure)
 
 main :: IO ()
@@ -82,6 +90,31 @@ main = do
     )
   deleted <- TaskService.deleteTask repository 1
   assert "유스케이스가 존재하는 업무를 삭제한다" deleted
+  userRepository <- newInMemoryUserRepository
+  signedUp <-
+    AuthService.signUp
+      userRepository
+      (SignUpInput "member@example.com" "새 사용자" "safe-password")
+  session <- expectRight "유효한 사용자를 가입시킨다" signedUp
+  duplicate <-
+    AuthService.signUp
+      userRepository
+      (SignUpInput "member@example.com" "다른 사용자" "safe-password")
+  assert "중복 이메일 가입을 거부한다" (duplicate == Left DuplicateEmail)
+  invalidLogin <- AuthService.login userRepository "member@example.com" "wrong-password"
+  assert "잘못된 비밀번호 로그인을 거부한다" (invalidLogin == Left InvalidCredentials)
+  loggedIn <- AuthService.login userRepository "member@example.com" "safe-password"
+  loginSession <- expectRight "올바른 비밀번호로 로그인한다" loggedIn
+  updatedProfile <-
+    AuthService.updateProfile
+      userRepository
+      (AuthService.sessionToken loginSession)
+      (ProfileUpdate "변경된 사용자")
+  profile <- expectRight "로그인한 사용자가 프로필을 수정한다" updatedProfile
+  assert "표시 이름을 갱신한다" (profileDisplayName profile == "변경된 사용자")
+  AuthService.logout userRepository (AuthService.sessionToken session)
+  loggedOut <- AuthService.currentUser userRepository (AuthService.sessionToken session)
+  assert "로그아웃한 세션을 거부한다" (loggedOut == Left AuthenticationRequired)
   putStrLn "All domain tests passed"
 
 assert :: String -> Bool -> IO ()
@@ -89,3 +122,9 @@ assert label condition =
   if condition
     then putStrLn ("PASS: " <> label)
     else putStrLn ("FAIL: " <> label) >> exitFailure
+
+expectRight :: String -> Either a b -> IO b
+expectRight label result =
+  case result of
+    Right value -> putStrLn ("PASS: " <> label) >> pure value
+    Left _ -> putStrLn ("FAIL: " <> label) >> exitFailure

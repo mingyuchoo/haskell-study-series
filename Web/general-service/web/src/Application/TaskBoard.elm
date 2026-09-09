@@ -1,8 +1,11 @@
 module Application.TaskBoard exposing
     ( ApiError(..)
+    , AuthMode(..)
     , Effect(..)
     , Model
     , Msg(..)
+    , Profile
+    , Session
     , init
     , initialModel
     , selectedTask
@@ -24,6 +27,31 @@ type alias Model =
     , loading : Bool
     , notice : Maybe String
     , noticeVersion : Int
+    , authMode : AuthMode
+    , authEmail : String
+    , authDisplayName : String
+    , authPassword : String
+    , session : Maybe Session
+    , profileOpen : Bool
+    , profileDraft : String
+    }
+
+
+type AuthMode
+    = SignIn
+    | SignUp
+
+
+type alias Profile =
+    { id : Int
+    , email : String
+    , displayName : String
+    }
+
+
+type alias Session =
+    { token : String
+    , user : Profile
     }
 
 
@@ -41,11 +69,27 @@ type Effect
     | SubmitTaskResult Int String String
     | ApproveTaskResult Int String (Maybe String)
     | RequestTaskRevision Int String (Maybe String)
+    | Register String String String
+    | Login String String
+    | UpdateProfile String String
+    | Logout String
     | ClearNoticeAfter Int
 
 
 type Msg
     = GotTasks (Result ApiError (List Task))
+    | SelectAuthMode AuthMode
+    | EditAuthEmail String
+    | EditAuthDisplayName String
+    | EditAuthPassword String
+    | SubmitAuthentication
+    | Authenticated (Result ApiError Session)
+    | ToggleProfile
+    | EditProfileName String
+    | SaveProfile
+    | ProfileSaved (Result ApiError Profile)
+    | LogoutRequested
+    | LoggedOut (Result ApiError ())
     | EditTitle String
     | EditDescription String
     | EditStatus String
@@ -86,15 +130,22 @@ initialModel =
     , selectedTaskId = Nothing
     , submissionDraft = ""
     , reviewDraft = ""
-    , loading = True
+    , loading = False
     , notice = Nothing
     , noticeVersion = 0
+    , authMode = SignIn
+    , authEmail = ""
+    , authDisplayName = ""
+    , authPassword = ""
+    , session = Nothing
+    , profileOpen = False
+    , profileDraft = ""
     }
 
 
 init : ( Model, List Effect )
 init =
-    ( initialModel, [ LoadTasks ] )
+    ( initialModel, [] )
 
 
 {-| 상세 패널에 표시할 업무. 선택된 ID가 목록에 없으면 Nothing이다.
@@ -107,6 +158,103 @@ selectedTask model =
 update : Msg -> Model -> ( Model, List Effect )
 update msg model =
     case msg of
+        SelectAuthMode mode ->
+            ( { model | authMode = mode, notice = Nothing }, [] )
+
+        EditAuthEmail email ->
+            ( { model | authEmail = email }, [] )
+
+        EditAuthDisplayName displayName ->
+            ( { model | authDisplayName = displayName }, [] )
+
+        EditAuthPassword password ->
+            ( { model | authPassword = password }, [] )
+
+        SubmitAuthentication ->
+            if String.trim model.authEmail == "" || String.trim model.authPassword == "" then
+                showNotice "이메일과 비밀번호를 입력해 주세요." model
+
+            else if model.authMode == SignUp && String.trim model.authDisplayName == "" then
+                showNotice "표시 이름을 입력해 주세요." model
+
+            else
+                let
+                    effect =
+                        case model.authMode of
+                            SignIn ->
+                                Login (String.trim model.authEmail) model.authPassword
+
+                            SignUp ->
+                                Register (String.trim model.authEmail) (String.trim model.authDisplayName) model.authPassword
+                in
+                ( { model | loading = True, notice = Nothing }, [ effect ] )
+
+        Authenticated result ->
+            case result of
+                Ok session ->
+                    ( { model
+                        | session = Just session
+                        , authPassword = ""
+                        , profileDraft = session.user.displayName
+                        , loading = True
+                      }
+                    , [ LoadTasks ]
+                    )
+
+                Err error ->
+                    showNotice (errorMessage "가입 또는 로그인하지 못했습니다." error) { model | loading = False }
+
+        ToggleProfile ->
+            case model.session of
+                Just session ->
+                    ( { model | profileOpen = not model.profileOpen, profileDraft = session.user.displayName }, [] )
+
+                Nothing ->
+                    ( model, [] )
+
+        EditProfileName displayName ->
+            ( { model | profileDraft = displayName }, [] )
+
+        SaveProfile ->
+            case model.session of
+                Just session ->
+                    if String.trim model.profileDraft == "" then
+                        showNotice "표시 이름을 입력해 주세요." model
+
+                    else
+                        ( { model | loading = True, notice = Nothing }, [ UpdateProfile session.token (String.trim model.profileDraft) ] )
+
+                Nothing ->
+                    ( model, [] )
+
+        ProfileSaved result ->
+            case ( result, model.session ) of
+                ( Ok profile, Just session ) ->
+                    showNotice "프로필을 저장했습니다."
+                        { model | session = Just { session | user = profile }, profileDraft = profile.displayName, profileOpen = False, loading = False }
+
+                ( Err error, _ ) ->
+                    showNotice (errorMessage "프로필을 저장하지 못했습니다." error) { model | loading = False }
+
+                _ ->
+                    ( model, [] )
+
+        LogoutRequested ->
+            case model.session of
+                Just session ->
+                    ( { model | loading = True, notice = Nothing }, [ Logout session.token ] )
+
+                Nothing ->
+                    ( model, [] )
+
+        LoggedOut result ->
+            case result of
+                Ok _ ->
+                    showNotice "로그아웃했습니다." { initialModel | noticeVersion = model.noticeVersion }
+
+                Err error ->
+                    showNotice (errorMessage "로그아웃하지 못했습니다." error) { model | loading = False }
+
         GotTasks result ->
             case result of
                 Ok tasks ->

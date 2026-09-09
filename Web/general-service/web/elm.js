@@ -5334,16 +5334,13 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$element = _Browser_element;
-var $author$project$Application$TaskBoard$LoadTasks = {$: 'LoadTasks'};
+var $author$project$Application$TaskBoard$SignIn = {$: 'SignIn'};
 var $author$project$Domain$Task$Draft = {$: 'Draft'};
 var $author$project$Domain$Task$Important = {$: 'Important'};
 var $author$project$Domain$Task$NotUrgent = {$: 'NotUrgent'};
 var $author$project$Domain$Task$emptyInput = {description: '', expectedResult: '', importance: $author$project$Domain$Task$Important, outcomeOwner: '', status: $author$project$Domain$Task$Draft, taskOwner: '', title: '', urgency: $author$project$Domain$Task$NotUrgent};
-var $author$project$Application$TaskBoard$initialModel = {draft: $author$project$Domain$Task$emptyInput, draggedTaskId: $elm$core$Maybe$Nothing, dropTarget: $elm$core$Maybe$Nothing, editing: $elm$core$Maybe$Nothing, loading: true, notice: $elm$core$Maybe$Nothing, noticeVersion: 0, reviewDraft: '', selectedTaskId: $elm$core$Maybe$Nothing, submissionDraft: '', tasks: _List_Nil};
-var $author$project$Application$TaskBoard$init = _Utils_Tuple2(
-	$author$project$Application$TaskBoard$initialModel,
-	_List_fromArray(
-		[$author$project$Application$TaskBoard$LoadTasks]));
+var $author$project$Application$TaskBoard$initialModel = {authDisplayName: '', authEmail: '', authMode: $author$project$Application$TaskBoard$SignIn, authPassword: '', draft: $author$project$Domain$Task$emptyInput, draggedTaskId: $elm$core$Maybe$Nothing, dropTarget: $elm$core$Maybe$Nothing, editing: $elm$core$Maybe$Nothing, loading: false, notice: $elm$core$Maybe$Nothing, noticeVersion: 0, profileDraft: '', profileOpen: false, reviewDraft: '', selectedTaskId: $elm$core$Maybe$Nothing, session: $elm$core$Maybe$Nothing, submissionDraft: '', tasks: _List_Nil};
+var $author$project$Application$TaskBoard$init = _Utils_Tuple2($author$project$Application$TaskBoard$initialModel, _List_Nil);
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $author$project$Application$TaskBoard$ApproveTaskResult = F3(
@@ -5356,17 +5353,34 @@ var $author$project$Application$TaskBoard$CreateTask = function (a) {
 var $author$project$Application$TaskBoard$DeleteTask = function (a) {
 	return {$: 'DeleteTask', a: a};
 };
+var $author$project$Application$TaskBoard$LoadTasks = {$: 'LoadTasks'};
+var $author$project$Application$TaskBoard$Login = F2(
+	function (a, b) {
+		return {$: 'Login', a: a, b: b};
+	});
+var $author$project$Application$TaskBoard$Logout = function (a) {
+	return {$: 'Logout', a: a};
+};
 var $author$project$Application$TaskBoard$MoveTask = F2(
 	function (a, b) {
 		return {$: 'MoveTask', a: a, b: b};
+	});
+var $author$project$Application$TaskBoard$Register = F3(
+	function (a, b, c) {
+		return {$: 'Register', a: a, b: b, c: c};
 	});
 var $author$project$Application$TaskBoard$RequestTaskRevision = F3(
 	function (a, b, c) {
 		return {$: 'RequestTaskRevision', a: a, b: b, c: c};
 	});
+var $author$project$Application$TaskBoard$SignUp = {$: 'SignUp'};
 var $author$project$Application$TaskBoard$SubmitTaskResult = F3(
 	function (a, b, c) {
 		return {$: 'SubmitTaskResult', a: a, b: b, c: c};
+	});
+var $author$project$Application$TaskBoard$UpdateProfile = F2(
+	function (a, b) {
+		return {$: 'UpdateProfile', a: a, b: b};
 	});
 var $author$project$Application$TaskBoard$UpdateTask = F2(
 	function (a, b) {
@@ -5465,6 +5479,7 @@ var $author$project$Domain$Task$importanceFromString = function (rawImportance) 
 			return $elm$core$Maybe$Nothing;
 	}
 };
+var $elm$core$Basics$not = _Basics_not;
 var $elm$core$String$trim = _String_trim;
 var $author$project$Application$TaskBoard$optionalText = function (raw) {
 	return ($elm$core$String$trim(raw) === '') ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(
@@ -5577,6 +5592,191 @@ var $author$project$Application$TaskBoard$workflowNotice = function (task) {
 var $author$project$Application$TaskBoard$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
+			case 'SelectAuthMode':
+				var mode = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{authMode: mode, notice: $elm$core$Maybe$Nothing}),
+					_List_Nil);
+			case 'EditAuthEmail':
+				var email = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{authEmail: email}),
+					_List_Nil);
+			case 'EditAuthDisplayName':
+				var displayName = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{authDisplayName: displayName}),
+					_List_Nil);
+			case 'EditAuthPassword':
+				var password = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{authPassword: password}),
+					_List_Nil);
+			case 'SubmitAuthentication':
+				if (($elm$core$String$trim(model.authEmail) === '') || ($elm$core$String$trim(model.authPassword) === '')) {
+					return A2($author$project$Application$TaskBoard$showNotice, '이메일과 비밀번호를 입력해 주세요.', model);
+				} else {
+					if (_Utils_eq(model.authMode, $author$project$Application$TaskBoard$SignUp) && ($elm$core$String$trim(model.authDisplayName) === '')) {
+						return A2($author$project$Application$TaskBoard$showNotice, '표시 이름을 입력해 주세요.', model);
+					} else {
+						var effect = function () {
+							var _v1 = model.authMode;
+							if (_v1.$ === 'SignIn') {
+								return A2(
+									$author$project$Application$TaskBoard$Login,
+									$elm$core$String$trim(model.authEmail),
+									model.authPassword);
+							} else {
+								return A3(
+									$author$project$Application$TaskBoard$Register,
+									$elm$core$String$trim(model.authEmail),
+									$elm$core$String$trim(model.authDisplayName),
+									model.authPassword);
+							}
+						}();
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{loading: true, notice: $elm$core$Maybe$Nothing}),
+							_List_fromArray(
+								[effect]));
+					}
+				}
+			case 'Authenticated':
+				var result = msg.a;
+				if (result.$ === 'Ok') {
+					var session = result.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								authPassword: '',
+								loading: true,
+								profileDraft: session.user.displayName,
+								session: $elm$core$Maybe$Just(session)
+							}),
+						_List_fromArray(
+							[$author$project$Application$TaskBoard$LoadTasks]));
+				} else {
+					var error = result.a;
+					return A2(
+						$author$project$Application$TaskBoard$showNotice,
+						A2($author$project$Application$TaskBoard$errorMessage, '가입 또는 로그인하지 못했습니다.', error),
+						_Utils_update(
+							model,
+							{loading: false}));
+				}
+			case 'ToggleProfile':
+				var _v3 = model.session;
+				if (_v3.$ === 'Just') {
+					var session = _v3.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{profileDraft: session.user.displayName, profileOpen: !model.profileOpen}),
+						_List_Nil);
+				} else {
+					return _Utils_Tuple2(model, _List_Nil);
+				}
+			case 'EditProfileName':
+				var displayName = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{profileDraft: displayName}),
+					_List_Nil);
+			case 'SaveProfile':
+				var _v4 = model.session;
+				if (_v4.$ === 'Just') {
+					var session = _v4.a;
+					return ($elm$core$String$trim(model.profileDraft) === '') ? A2($author$project$Application$TaskBoard$showNotice, '표시 이름을 입력해 주세요.', model) : _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{loading: true, notice: $elm$core$Maybe$Nothing}),
+						_List_fromArray(
+							[
+								A2(
+								$author$project$Application$TaskBoard$UpdateProfile,
+								session.token,
+								$elm$core$String$trim(model.profileDraft))
+							]));
+				} else {
+					return _Utils_Tuple2(model, _List_Nil);
+				}
+			case 'ProfileSaved':
+				var result = msg.a;
+				var _v5 = _Utils_Tuple2(result, model.session);
+				if (_v5.a.$ === 'Ok') {
+					if (_v5.b.$ === 'Just') {
+						var profile = _v5.a.a;
+						var session = _v5.b.a;
+						return A2(
+							$author$project$Application$TaskBoard$showNotice,
+							'프로필을 저장했습니다.',
+							_Utils_update(
+								model,
+								{
+									loading: false,
+									profileDraft: profile.displayName,
+									profileOpen: false,
+									session: $elm$core$Maybe$Just(
+										_Utils_update(
+											session,
+											{user: profile}))
+								}));
+					} else {
+						return _Utils_Tuple2(model, _List_Nil);
+					}
+				} else {
+					var error = _v5.a.a;
+					return A2(
+						$author$project$Application$TaskBoard$showNotice,
+						A2($author$project$Application$TaskBoard$errorMessage, '프로필을 저장하지 못했습니다.', error),
+						_Utils_update(
+							model,
+							{loading: false}));
+				}
+			case 'LogoutRequested':
+				var _v6 = model.session;
+				if (_v6.$ === 'Just') {
+					var session = _v6.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{loading: true, notice: $elm$core$Maybe$Nothing}),
+						_List_fromArray(
+							[
+								$author$project$Application$TaskBoard$Logout(session.token)
+							]));
+				} else {
+					return _Utils_Tuple2(model, _List_Nil);
+				}
+			case 'LoggedOut':
+				var result = msg.a;
+				if (result.$ === 'Ok') {
+					return A2(
+						$author$project$Application$TaskBoard$showNotice,
+						'로그아웃했습니다.',
+						_Utils_update(
+							$author$project$Application$TaskBoard$initialModel,
+							{noticeVersion: model.noticeVersion}));
+				} else {
+					var error = result.a;
+					return A2(
+						$author$project$Application$TaskBoard$showNotice,
+						A2($author$project$Application$TaskBoard$errorMessage, '로그아웃하지 못했습니다.', error),
+						_Utils_update(
+							model,
+							{loading: false}));
+				}
 			case 'GotTasks':
 				var result = msg.a;
 				if (result.$ === 'Ok') {
@@ -5632,9 +5832,9 @@ var $author$project$Application$TaskBoard$update = F2(
 					_List_Nil);
 			case 'EditStatus':
 				var rawStatus = msg.a;
-				var _v2 = $author$project$Domain$Task$statusFromString(rawStatus);
-				if (_v2.$ === 'Just') {
-					var taskStatus = _v2.a;
+				var _v9 = $author$project$Domain$Task$statusFromString(rawStatus);
+				if (_v9.$ === 'Just') {
+					var taskStatus = _v9.a;
 					return _Utils_Tuple2(
 						A2(
 							$author$project$Application$TaskBoard$updateForm,
@@ -5650,9 +5850,9 @@ var $author$project$Application$TaskBoard$update = F2(
 				}
 			case 'EditUrgency':
 				var rawUrgency = msg.a;
-				var _v3 = $author$project$Domain$Task$urgencyFromString(rawUrgency);
-				if (_v3.$ === 'Just') {
-					var taskUrgency = _v3.a;
+				var _v10 = $author$project$Domain$Task$urgencyFromString(rawUrgency);
+				if (_v10.$ === 'Just') {
+					var taskUrgency = _v10.a;
 					return _Utils_Tuple2(
 						A2(
 							$author$project$Application$TaskBoard$updateForm,
@@ -5668,9 +5868,9 @@ var $author$project$Application$TaskBoard$update = F2(
 				}
 			case 'EditImportance':
 				var rawImportance = msg.a;
-				var _v4 = $author$project$Domain$Task$importanceFromString(rawImportance);
-				if (_v4.$ === 'Just') {
-					var taskImportance = _v4.a;
+				var _v11 = $author$project$Domain$Task$importanceFromString(rawImportance);
+				if (_v11.$ === 'Just') {
+					var taskImportance = _v11.a;
 					return _Utils_Tuple2(
 						A2(
 							$author$project$Application$TaskBoard$updateForm,
@@ -5721,15 +5921,15 @@ var $author$project$Application$TaskBoard$update = F2(
 						model),
 					_List_Nil);
 			case 'SubmitTask':
-				var _v5 = $author$project$Domain$Task$validateInput(model.draft);
-				if (_v5.$ === 'Err') {
-					var _v6 = _v5.a;
+				var _v12 = $author$project$Domain$Task$validateInput(model.draft);
+				if (_v12.$ === 'Err') {
+					var _v13 = _v12.a;
 					return A2($author$project$Application$TaskBoard$showNotice, '업무 제목을 입력해 주세요.', model);
 				} else {
-					var input = _v5.a;
-					var _v7 = model.editing;
-					if (_v7.$ === 'Just') {
-						var task = _v7.a;
+					var input = _v12.a;
+					var _v14 = model.editing;
+					if (_v14.$ === 'Just') {
+						var task = _v14.a;
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -5831,8 +6031,8 @@ var $author$project$Application$TaskBoard$update = F2(
 					_List_Nil);
 			case 'DragOver':
 				var taskStatus = msg.a;
-				var _v10 = model.draggedTaskId;
-				if (_v10.$ === 'Just') {
+				var _v17 = model.draggedTaskId;
+				if (_v17.$ === 'Just') {
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -5851,12 +6051,12 @@ var $author$project$Application$TaskBoard$update = F2(
 					_List_Nil);
 			case 'DroppedOn':
 				var targetStatus = msg.a;
-				var _v11 = _Utils_Tuple2(model.loading, model.draggedTaskId);
-				if ((!_v11.a) && (_v11.b.$ === 'Just')) {
-					var taskId = _v11.b.a;
-					var _v12 = A2($author$project$Application$TaskBoard$findTask, taskId, model);
-					if (_v12.$ === 'Just') {
-						var task = _v12.a;
+				var _v18 = _Utils_Tuple2(model.loading, model.draggedTaskId);
+				if ((!_v18.a) && (_v18.b.$ === 'Just')) {
+					var taskId = _v18.b.a;
+					var _v19 = A2($author$project$Application$TaskBoard$findTask, taskId, model);
+					if (_v19.$ === 'Just') {
+						var task = _v19.a;
 						return _Utils_eq(task.status, targetStatus) ? _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -5909,9 +6109,9 @@ var $author$project$Application$TaskBoard$update = F2(
 				}
 			case 'OpenTask':
 				var taskId = msg.a;
-				var _v14 = A2($author$project$Application$TaskBoard$findTask, taskId, model);
-				if (_v14.$ === 'Just') {
-					var task = _v14.a;
+				var _v21 = A2($author$project$Application$TaskBoard$findTask, taskId, model);
+				if (_v21.$ === 'Just') {
+					var task = _v21.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -5944,9 +6144,9 @@ var $author$project$Application$TaskBoard$update = F2(
 					_List_Nil);
 			case 'SubmitResult':
 				var taskId = msg.a;
-				var _v15 = A2($author$project$Application$TaskBoard$findTask, taskId, model);
-				if (_v15.$ === 'Just') {
-					var task = _v15.a;
+				var _v22 = A2($author$project$Application$TaskBoard$findTask, taskId, model);
+				if (_v22.$ === 'Just') {
+					var task = _v22.a;
 					return ($elm$core$String$trim(model.submissionDraft) === '') ? A2($author$project$Application$TaskBoard$showNotice, '제출 결과물을 입력해 주세요.', model) : _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -5964,9 +6164,9 @@ var $author$project$Application$TaskBoard$update = F2(
 				}
 			case 'ApproveResult':
 				var taskId = msg.a;
-				var _v16 = A2($author$project$Application$TaskBoard$findTask, taskId, model);
-				if (_v16.$ === 'Just') {
-					var task = _v16.a;
+				var _v23 = A2($author$project$Application$TaskBoard$findTask, taskId, model);
+				if (_v23.$ === 'Just') {
+					var task = _v23.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -5984,9 +6184,9 @@ var $author$project$Application$TaskBoard$update = F2(
 				}
 			case 'RequestRevision':
 				var taskId = msg.a;
-				var _v17 = A2($author$project$Application$TaskBoard$findTask, taskId, model);
-				if (_v17.$ === 'Just') {
-					var task = _v17.a;
+				var _v24 = A2($author$project$Application$TaskBoard$findTask, taskId, model);
+				if (_v24.$ === 'Just') {
+					var task = _v24.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -6038,6 +6238,23 @@ var $author$project$Application$TaskBoard$update = F2(
 					_List_Nil) : _Utils_Tuple2(model, _List_Nil);
 		}
 	});
+var $author$project$Application$TaskBoard$EditAuthDisplayName = function (a) {
+	return {$: 'EditAuthDisplayName', a: a};
+};
+var $author$project$Application$TaskBoard$EditAuthEmail = function (a) {
+	return {$: 'EditAuthEmail', a: a};
+};
+var $author$project$Application$TaskBoard$EditAuthPassword = function (a) {
+	return {$: 'EditAuthPassword', a: a};
+};
+var $author$project$Application$TaskBoard$SelectAuthMode = function (a) {
+	return {$: 'SelectAuthMode', a: a};
+};
+var $author$project$Application$TaskBoard$SubmitAuthentication = {$: 'SubmitAuthentication'};
+var $author$project$Presentation$TaskBoard$authTabClass = function (active) {
+	return 'auth-tab' + (active ? ' is-active' : '');
+};
+var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -6047,14 +6264,77 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 			$elm$json$Json$Encode$string(string));
 	});
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
-var $author$project$Application$TaskBoard$CloseTask = {$: 'CloseTask'};
-var $author$project$Application$TaskBoard$DeleteRequested = function (a) {
-	return {$: 'DeleteRequested', a: a};
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
+var $elm$html$Html$div = _VirtualDom_node('div');
+var $elm$html$Html$Attributes$for = $elm$html$Html$Attributes$stringProperty('htmlFor');
+var $elm$html$Html$h1 = _VirtualDom_node('h1');
+var $elm$html$Html$h2 = _VirtualDom_node('h2');
+var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
+var $elm$html$Html$input = _VirtualDom_node('input');
+var $elm$html$Html$label = _VirtualDom_node('label');
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
 };
-var $author$project$Application$TaskBoard$StartEdit = function (a) {
-	return {$: 'StartEdit', a: a};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var $elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
 };
-var $elm$html$Html$aside = _VirtualDom_node('aside');
+var $elm$html$Html$Events$alwaysStop = function (x) {
+	return _Utils_Tuple2(x, true);
+};
+var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
+	return {$: 'MayStopPropagation', a: a};
+};
+var $elm$html$Html$Events$stopPropagationOn = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
+	});
+var $elm$json$Json$Decode$field = _Json_decodeField;
+var $elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
+	});
+var $elm$json$Json$Decode$string = _Json_decodeString;
+var $elm$html$Html$Events$targetValue = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'value']),
+	$elm$json$Json$Decode$string);
+var $elm$html$Html$Events$onInput = function (tagger) {
+	return A2(
+		$elm$html$Html$Events$stopPropagationOn,
+		'input',
+		A2(
+			$elm$json$Json$Decode$map,
+			$elm$html$Html$Events$alwaysStop,
+			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
+};
+var $elm$html$Html$p = _VirtualDom_node('p');
+var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
+var $elm$html$Html$span = _VirtualDom_node('span');
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $elm$virtual_dom$VirtualDom$attribute = F2(
 	function (key, value) {
 		return A2(
@@ -6063,13 +6343,288 @@ var $elm$virtual_dom$VirtualDom$attribute = F2(
 			_VirtualDom_noJavaScriptOrHtmlUri(value));
 	});
 var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
-var $elm$html$Html$button = _VirtualDom_node('button');
+var $author$project$Presentation$TaskBoard$toastView = function (model) {
+	var _v0 = model.notice;
+	if (_v0.$ === 'Just') {
+		var notice = _v0.a;
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('notice'),
+					A2($elm$html$Html$Attributes$attribute, 'aria-live', 'polite'),
+					A2($elm$html$Html$Attributes$attribute, 'role', 'status')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(notice)
+				]));
+	} else {
+		return $elm$html$Html$text('');
+	}
+};
+var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
+var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
+var $author$project$Presentation$TaskBoard$authView = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('auth-page')
+			]),
+		_List_fromArray(
+			[
+				$author$project$Presentation$TaskBoard$toastView(model),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('auth-card')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('auth-brand')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('brand-mark')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('GS')
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$span,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('eyebrow')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text('GENERAL SERVICE')
+											])),
+										A2(
+										$elm$html$Html$h1,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$text('업무 관리')
+											]))
+									]))
+							])),
+						A2(
+						$elm$html$Html$h2,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								_Utils_eq(model.authMode, $author$project$Application$TaskBoard$SignIn) ? '다시 만나서 반갑습니다' : '계정을 만들어 시작하세요')
+							])),
+						A2(
+						$elm$html$Html$p,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('auth-copy')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('업무 보드를 사용하려면 로그인해 주세요.')
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('auth-tabs')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class(
+										$author$project$Presentation$TaskBoard$authTabClass(
+											_Utils_eq(model.authMode, $author$project$Application$TaskBoard$SignIn))),
+										$elm$html$Html$Attributes$type_('button'),
+										$elm$html$Html$Events$onClick(
+										$author$project$Application$TaskBoard$SelectAuthMode($author$project$Application$TaskBoard$SignIn))
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('로그인')
+									])),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class(
+										$author$project$Presentation$TaskBoard$authTabClass(
+											_Utils_eq(model.authMode, $author$project$Application$TaskBoard$SignUp))),
+										$elm$html$Html$Attributes$type_('button'),
+										$elm$html$Html$Events$onClick(
+										$author$project$Application$TaskBoard$SelectAuthMode($author$project$Application$TaskBoard$SignUp))
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('회원가입')
+									]))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('auth-fields')
+							]),
+						_Utils_ap(
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$div,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('field')
+										]),
+									_List_fromArray(
+										[
+											A2(
+											$elm$html$Html$label,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$for('auth-email')
+												]),
+											_List_fromArray(
+												[
+													$elm$html$Html$text('이메일')
+												])),
+											A2(
+											$elm$html$Html$input,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$id('auth-email'),
+													$elm$html$Html$Attributes$type_('email'),
+													$elm$html$Html$Attributes$value(model.authEmail),
+													$elm$html$Html$Attributes$placeholder('name@example.com'),
+													$elm$html$Html$Events$onInput($author$project$Application$TaskBoard$EditAuthEmail)
+												]),
+											_List_Nil)
+										]))
+								]),
+							_Utils_ap(
+								_Utils_eq(model.authMode, $author$project$Application$TaskBoard$SignUp) ? _List_fromArray(
+									[
+										A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('field')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$label,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$for('auth-display-name')
+													]),
+												_List_fromArray(
+													[
+														$elm$html$Html$text('표시 이름')
+													])),
+												A2(
+												$elm$html$Html$input,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$id('auth-display-name'),
+														$elm$html$Html$Attributes$value(model.authDisplayName),
+														$elm$html$Html$Attributes$placeholder('보드에 표시할 이름'),
+														$elm$html$Html$Events$onInput($author$project$Application$TaskBoard$EditAuthDisplayName)
+													]),
+												_List_Nil)
+											]))
+									]) : _List_Nil,
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('field')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$label,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$for('auth-password')
+													]),
+												_List_fromArray(
+													[
+														$elm$html$Html$text('비밀번호')
+													])),
+												A2(
+												$elm$html$Html$input,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$id('auth-password'),
+														$elm$html$Html$Attributes$type_('password'),
+														$elm$html$Html$Attributes$value(model.authPassword),
+														$elm$html$Html$Attributes$placeholder('8자 이상'),
+														$elm$html$Html$Events$onInput($author$project$Application$TaskBoard$EditAuthPassword)
+													]),
+												_List_Nil)
+											]))
+									])))),
+						A2(
+						$elm$html$Html$button,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('button primary auth-submit'),
+								$elm$html$Html$Attributes$type_('button'),
+								$elm$html$Html$Attributes$disabled(model.loading),
+								$elm$html$Html$Events$onClick($author$project$Application$TaskBoard$SubmitAuthentication)
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								_Utils_eq(model.authMode, $author$project$Application$TaskBoard$SignIn) ? '로그인' : '회원가입하고 시작하기')
+							])),
+						A2(
+						$elm$html$Html$p,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('auth-footnote')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('개발용 계정은 이 서버가 실행되는 동안에만 유지됩니다.')
+							]))
+					]))
+			]));
+};
+var $author$project$Application$TaskBoard$CloseTask = {$: 'CloseTask'};
+var $author$project$Application$TaskBoard$DeleteRequested = function (a) {
+	return {$: 'DeleteRequested', a: a};
+};
+var $author$project$Application$TaskBoard$StartEdit = function (a) {
+	return {$: 'StartEdit', a: a};
+};
+var $elm$html$Html$aside = _VirtualDom_node('aside');
 var $elm$html$Html$dd = _VirtualDom_node('dd');
-var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$html$Html$h3 = _VirtualDom_node('h3');
-var $elm$html$Html$p = _VirtualDom_node('p');
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $author$project$Presentation$TaskBoard$detailSection = F2(
 	function (heading, body) {
 		return A2(
@@ -6099,18 +6654,8 @@ var $author$project$Presentation$TaskBoard$detailSection = F2(
 						]))
 				]));
 	});
-var $elm$json$Json$Encode$bool = _Json_wrap;
-var $elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$bool(bool));
-	});
-var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
 var $elm$html$Html$dl = _VirtualDom_node('dl');
 var $elm$html$Html$dt = _VirtualDom_node('dt');
-var $elm$html$Html$h2 = _VirtualDom_node('h2');
 var $author$project$Domain$Task$importanceLabel = function (taskImportance) {
 	if (taskImportance.$ === 'Important') {
 		return '중요';
@@ -6122,23 +6667,6 @@ var $author$project$Presentation$TaskBoard$nonEmpty = F2(
 	function (fallback, raw) {
 		return ($elm$core$String$trim(raw) === '') ? fallback : raw;
 	});
-var $elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var $elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			$elm$virtual_dom$VirtualDom$on,
-			event,
-			$elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var $elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		$elm$html$Html$Events$on,
-		'click',
-		$elm$json$Json$Decode$succeed(msg));
-};
 var $author$project$Domain$Task$quadrantClass = function (quadrant) {
 	switch (quadrant.$) {
 		case 'DoFirst':
@@ -6251,7 +6779,6 @@ var $author$project$Application$TaskBoard$selectedTask = function (model) {
 		},
 		model.selectedTaskId);
 };
-var $elm$html$Html$span = _VirtualDom_node('span');
 var $author$project$Domain$Task$statusString = function (taskStatus) {
 	switch (taskStatus.$) {
 		case 'Draft':
@@ -6271,7 +6798,6 @@ var $author$project$Domain$Task$statusClass = function (taskStatus) {
 	return 'status-' + $elm$core$String$toLower(
 		$author$project$Domain$Task$statusString(taskStatus));
 };
-var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
 var $author$project$Domain$Task$urgencyLabel = function (taskUrgency) {
 	if (taskUrgency.$ === 'Urgent') {
 		return '긴급';
@@ -6309,43 +6835,7 @@ var $author$project$Domain$Task$canSubmitResult = function (task) {
 			return false;
 	}
 };
-var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
-var $elm$html$Html$Events$alwaysStop = function (x) {
-	return _Utils_Tuple2(x, true);
-};
-var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
-	return {$: 'MayStopPropagation', a: a};
-};
-var $elm$html$Html$Events$stopPropagationOn = F2(
-	function (event, decoder) {
-		return A2(
-			$elm$virtual_dom$VirtualDom$on,
-			event,
-			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
-	});
-var $elm$json$Json$Decode$field = _Json_decodeField;
-var $elm$json$Json$Decode$at = F2(
-	function (fields, decoder) {
-		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
-	});
-var $elm$json$Json$Decode$string = _Json_decodeString;
-var $elm$html$Html$Events$targetValue = A2(
-	$elm$json$Json$Decode$at,
-	_List_fromArray(
-		['target', 'value']),
-	$elm$json$Json$Decode$string);
-var $elm$html$Html$Events$onInput = function (tagger) {
-	return A2(
-		$elm$html$Html$Events$stopPropagationOn,
-		'input',
-		A2(
-			$elm$json$Json$Decode$map,
-			$elm$html$Html$Events$alwaysStop,
-			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
-};
-var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
 var $elm$html$Html$textarea = _VirtualDom_node('textarea');
-var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
 var $author$project$Presentation$TaskBoard$workflowSection = F2(
 	function (model, task) {
 		return $author$project$Domain$Task$canSubmitResult(task) ? A2(
@@ -6808,7 +7298,6 @@ var $author$project$Application$TaskBoard$EditUrgency = function (a) {
 var $author$project$Application$TaskBoard$SubmitTask = {$: 'SubmitTask'};
 var $author$project$Domain$Task$allStatuses = _List_fromArray(
 	[$author$project$Domain$Task$Draft, $author$project$Domain$Task$Reviewed, $author$project$Domain$Task$Submitted, $author$project$Domain$Task$Approved, $author$project$Domain$Task$Effective]);
-var $elm$html$Html$Attributes$for = $elm$html$Html$Attributes$stringProperty('htmlFor');
 var $author$project$Domain$Task$importanceString = function (taskImportance) {
 	if (taskImportance.$ === 'Important') {
 		return 'Important';
@@ -6816,8 +7305,6 @@ var $author$project$Domain$Task$importanceString = function (taskImportance) {
 		return 'NotImportant';
 	}
 };
-var $elm$html$Html$input = _VirtualDom_node('input');
-var $elm$html$Html$label = _VirtualDom_node('label');
 var $elm$html$Html$Attributes$checked = $elm$html$Html$Attributes$boolProperty('checked');
 var $elm$html$Html$Attributes$name = $elm$html$Html$Attributes$stringProperty('name');
 var $author$project$Presentation$TaskBoard$radioField = F6(
@@ -7194,7 +7681,8 @@ var $author$project$Presentation$TaskBoard$formView = function (model) {
 					]))
 			]));
 };
-var $elm$html$Html$h1 = _VirtualDom_node('h1');
+var $author$project$Application$TaskBoard$LogoutRequested = {$: 'LogoutRequested'};
+var $author$project$Application$TaskBoard$ToggleProfile = {$: 'ToggleProfile'};
 var $author$project$Presentation$TaskBoard$headerView = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -7245,16 +7733,47 @@ var $author$project$Presentation$TaskBoard$headerView = function (model) {
 										$elm$html$Html$text('업무 관리')
 									]))
 							])),
-						A2(
-						$elm$html$Html$span,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('live-dot')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('관리자 모드')
-							]))
+						function () {
+						var _v0 = model.session;
+						if (_v0.$ === 'Just') {
+							var session = _v0.a;
+							return A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('user-actions')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('profile-button'),
+												$elm$html$Html$Attributes$type_('button'),
+												$elm$html$Html$Events$onClick($author$project$Application$TaskBoard$ToggleProfile)
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text(session.user.displayName)
+											])),
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('logout-button'),
+												$elm$html$Html$Attributes$type_('button'),
+												$elm$html$Html$Events$onClick($author$project$Application$TaskBoard$LogoutRequested)
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text('로그아웃')
+											]))
+									]));
+						} else {
+							return $elm$html$Html$text('');
+						}
+					}()
 					])),
 				A2(
 				$elm$html$Html$p,
@@ -7691,54 +8210,191 @@ var $author$project$Presentation$TaskBoard$kanbanBoard = function (model) {
 					$author$project$Domain$Task$allStatuses))
 			]));
 };
-var $author$project$Presentation$TaskBoard$toastView = function (model) {
-	var _v0 = model.notice;
-	if (_v0.$ === 'Just') {
-		var notice = _v0.a;
+var $author$project$Application$TaskBoard$EditProfileName = function (a) {
+	return {$: 'EditProfileName', a: a};
+};
+var $author$project$Application$TaskBoard$SaveProfile = {$: 'SaveProfile'};
+var $author$project$Presentation$TaskBoard$profileView = function (model) {
+	var _v0 = _Utils_Tuple2(model.profileOpen, model.session);
+	if (_v0.a && (_v0.b.$ === 'Just')) {
+		var session = _v0.b.a;
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('notice'),
-					A2($elm$html$Html$Attributes$attribute, 'aria-live', 'polite'),
-					A2($elm$html$Html$Attributes$attribute, 'role', 'status')
+					$elm$html$Html$Attributes$class('profile-layer')
 				]),
 			_List_fromArray(
 				[
-					$elm$html$Html$text(notice)
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('profile-backdrop'),
+							$elm$html$Html$Events$onClick($author$project$Application$TaskBoard$ToggleProfile)
+						]),
+					_List_Nil),
+					A2(
+					$elm$html$Html$aside,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('profile-panel'),
+							A2($elm$html$Html$Attributes$attribute, 'role', 'dialog'),
+							A2($elm$html$Html$Attributes$attribute, 'aria-modal', 'true'),
+							A2($elm$html$Html$Attributes$attribute, 'aria-label', '내 프로필')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('detail-heading')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$div,
+									_List_Nil,
+									_List_fromArray(
+										[
+											A2(
+											$elm$html$Html$h2,
+											_List_Nil,
+											_List_fromArray(
+												[
+													$elm$html$Html$text('내 프로필')
+												])),
+											A2(
+											$elm$html$Html$p,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$class('profile-email')
+												]),
+											_List_fromArray(
+												[
+													$elm$html$Html$text(session.user.email)
+												]))
+										])),
+									A2(
+									$elm$html$Html$button,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('icon-button'),
+											$elm$html$Html$Attributes$type_('button'),
+											A2($elm$html$Html$Attributes$attribute, 'aria-label', '닫기'),
+											$elm$html$Html$Events$onClick($author$project$Application$TaskBoard$ToggleProfile)
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('×')
+										]))
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('field')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$label,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$for('profile-display-name')
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('표시 이름')
+										])),
+									A2(
+									$elm$html$Html$input,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$id('profile-display-name'),
+											$elm$html$Html$Attributes$value(model.profileDraft),
+											$elm$html$Html$Events$onInput($author$project$Application$TaskBoard$EditProfileName)
+										]),
+									_List_Nil)
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('detail-actions')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$button,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('button secondary'),
+											$elm$html$Html$Attributes$type_('button'),
+											$elm$html$Html$Events$onClick($author$project$Application$TaskBoard$ToggleProfile)
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('취소')
+										])),
+									A2(
+									$elm$html$Html$button,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('button primary'),
+											$elm$html$Html$Attributes$type_('button'),
+											$elm$html$Html$Attributes$disabled(model.loading),
+											$elm$html$Html$Events$onClick($author$project$Application$TaskBoard$SaveProfile)
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('저장')
+										]))
+								]))
+						]))
 				]));
 	} else {
 		return $elm$html$Html$text('');
 	}
 };
 var $author$project$Presentation$TaskBoard$view = function (model) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('page-shell')
-			]),
-		_List_fromArray(
-			[
-				$author$project$Presentation$TaskBoard$toastView(model),
-				$author$project$Presentation$TaskBoard$headerView(model),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('content')
-					]),
-				_List_fromArray(
-					[
-						$author$project$Presentation$TaskBoard$formView(model),
-						$author$project$Presentation$TaskBoard$kanbanBoard(model)
-					])),
-				$author$project$Presentation$TaskBoard$detailView(model)
-			]));
+	var _v0 = model.session;
+	if (_v0.$ === 'Nothing') {
+		return $author$project$Presentation$TaskBoard$authView(model);
+	} else {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('page-shell')
+				]),
+			_List_fromArray(
+				[
+					$author$project$Presentation$TaskBoard$toastView(model),
+					$author$project$Presentation$TaskBoard$headerView(model),
+					$author$project$Presentation$TaskBoard$profileView(model),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('content')
+						]),
+					_List_fromArray(
+						[
+							$author$project$Presentation$TaskBoard$formView(model),
+							$author$project$Presentation$TaskBoard$kanbanBoard(model)
+						])),
+					$author$project$Presentation$TaskBoard$detailView(model)
+				]));
+	}
 };
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $author$project$Application$TaskBoard$DismissNotice = function (a) {
 	return {$: 'DismissNotice', a: a};
+};
+var $author$project$Application$TaskBoard$Authenticated = function (a) {
+	return {$: 'Authenticated', a: a};
 };
 var $author$project$Application$TaskBoard$Deleted = function (a) {
 	return {$: 'Deleted', a: a};
@@ -7746,8 +8402,14 @@ var $author$project$Application$TaskBoard$Deleted = function (a) {
 var $author$project$Application$TaskBoard$GotTasks = function (a) {
 	return {$: 'GotTasks', a: a};
 };
+var $author$project$Application$TaskBoard$LoggedOut = function (a) {
+	return {$: 'LoggedOut', a: a};
+};
 var $author$project$Application$TaskBoard$MoveSaved = function (a) {
 	return {$: 'MoveSaved', a: a};
+};
+var $author$project$Application$TaskBoard$ProfileSaved = function (a) {
+	return {$: 'ProfileSaved', a: a};
 };
 var $author$project$Application$TaskBoard$Saved = function (a) {
 	return {$: 'Saved', a: a};
@@ -8390,6 +9052,76 @@ var $elm$core$Result$map = F2(
 			return $elm$core$Result$Err(e);
 		}
 	});
+var $elm$core$Result$withDefault = F2(
+	function (def, result) {
+		if (result.$ === 'Ok') {
+			var a = result.a;
+			return a;
+		} else {
+			return def;
+		}
+	});
+var $author$project$Infrastructure$TaskApi$decodeResponse = F2(
+	function (decoder, response) {
+		switch (response.$) {
+			case 'GoodStatus_':
+				var body = response.b;
+				return A2(
+					$elm$core$Result$mapError,
+					function (_v1) {
+						return $author$project$Application$TaskBoard$RequestFailed;
+					},
+					A2($elm$json$Json$Decode$decodeString, decoder, body));
+			case 'BadStatus_':
+				var body = response.b;
+				return $elm$core$Result$Err(
+					A2(
+						$elm$core$Result$withDefault,
+						$author$project$Application$TaskBoard$RequestFailed,
+						A2(
+							$elm$core$Result$map,
+							$author$project$Application$TaskBoard$Rejected,
+							A2(
+								$elm$json$Json$Decode$decodeString,
+								A2($elm$json$Json$Decode$field, 'error', $elm$json$Json$Decode$string),
+								body))));
+			default:
+				return $elm$core$Result$Err($author$project$Application$TaskBoard$RequestFailed);
+		}
+	});
+var $author$project$Application$TaskBoard$Profile = F3(
+	function (id, email, displayName) {
+		return {displayName: displayName, email: email, id: id};
+	});
+var $elm$json$Json$Decode$int = _Json_decodeInt;
+var $elm$json$Json$Decode$map3 = _Json_map3;
+var $author$project$Infrastructure$TaskApi$profileDecoder = A4(
+	$elm$json$Json$Decode$map3,
+	$author$project$Application$TaskBoard$Profile,
+	A2($elm$json$Json$Decode$field, 'id', $elm$json$Json$Decode$int),
+	A2($elm$json$Json$Decode$field, 'email', $elm$json$Json$Decode$string),
+	A2($elm$json$Json$Decode$field, 'displayName', $elm$json$Json$Decode$string));
+var $author$project$Infrastructure$TaskApi$expectProfile = function (toMsg) {
+	return A2(
+		$elm$http$Http$expectStringResponse,
+		toMsg,
+		$author$project$Infrastructure$TaskApi$decodeResponse($author$project$Infrastructure$TaskApi$profileDecoder));
+};
+var $author$project$Application$TaskBoard$Session = F2(
+	function (token, user) {
+		return {token: token, user: user};
+	});
+var $author$project$Infrastructure$TaskApi$sessionDecoder = A3(
+	$elm$json$Json$Decode$map2,
+	$author$project$Application$TaskBoard$Session,
+	A2($elm$json$Json$Decode$field, 'token', $elm$json$Json$Decode$string),
+	A2($elm$json$Json$Decode$field, 'user', $author$project$Infrastructure$TaskApi$profileDecoder));
+var $author$project$Infrastructure$TaskApi$expectSession = function (toMsg) {
+	return A2(
+		$elm$http$Http$expectStringResponse,
+		toMsg,
+		$author$project$Infrastructure$TaskApi$decodeResponse($author$project$Infrastructure$TaskApi$sessionDecoder));
+};
 var $author$project$Domain$Task$Task = function (taskId) {
 	return function (title) {
 		return function (description) {
@@ -8425,8 +9157,6 @@ var $author$project$Infrastructure$TaskApi$importanceDecoder = A2(
 		}
 	},
 	$elm$json$Json$Decode$string);
-var $elm$json$Json$Decode$int = _Json_decodeInt;
-var $elm$json$Json$Decode$map3 = _Json_map3;
 var $elm$json$Json$Decode$map8 = _Json_map8;
 var $elm$json$Json$Decode$null = _Json_decodeNull;
 var $elm$json$Json$Decode$oneOf = _Json_oneOf;
@@ -8500,15 +9230,6 @@ var $author$project$Infrastructure$TaskApi$taskDecoder = A3(
 			$elm$json$Json$Decode$field,
 			'reviewComment',
 			$elm$json$Json$Decode$nullable($elm$json$Json$Decode$string))));
-var $elm$core$Result$withDefault = F2(
-	function (def, result) {
-		if (result.$ === 'Ok') {
-			var a = result.a;
-			return a;
-		} else {
-			return def;
-		}
-	});
 var $author$project$Infrastructure$TaskApi$expectTask = function (toMsg) {
 	return A2(
 		$elm$http$Http$expectStringResponse,
@@ -8730,6 +9451,11 @@ var $elm$http$Http$get = function (r) {
 	return $elm$http$Http$request(
 		{body: $elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
 };
+var $elm$http$Http$Header = F2(
+	function (a, b) {
+		return {$: 'Header', a: a, b: b};
+	});
+var $elm$http$Http$header = $elm$http$Http$Header;
 var $elm$http$Http$jsonBody = function (value) {
 	return A2(
 		_Http_pair,
@@ -8737,11 +9463,6 @@ var $elm$http$Http$jsonBody = function (value) {
 		A2($elm$json$Json$Encode$encode, 0, value));
 };
 var $elm$json$Json$Decode$list = _Json_decodeList;
-var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
-var $elm$http$Http$post = function (r) {
-	return $elm$http$Http$request(
-		{body: r.body, expect: r.expect, headers: _List_Nil, method: 'POST', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
-};
 var $elm$json$Json$Encode$object = function (pairs) {
 	return _Json_wrap(
 		A3(
@@ -8754,6 +9475,24 @@ var $elm$json$Json$Encode$object = function (pairs) {
 				}),
 			_Json_emptyObject(_Utils_Tuple0),
 			pairs));
+};
+var $author$project$Infrastructure$TaskApi$loginEncoder = F2(
+	function (email, password) {
+		return $elm$json$Json$Encode$object(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'email',
+					$elm$json$Json$Encode$string(email)),
+					_Utils_Tuple2(
+					'password',
+					$elm$json$Json$Encode$string(password))
+				]));
+	});
+var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $elm$http$Http$post = function (r) {
+	return $elm$http$Http$request(
+		{body: r.body, expect: r.expect, headers: _List_Nil, method: 'POST', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
 };
 var $author$project$Infrastructure$TaskApi$reviewEncoder = F2(
 	function (owner, comment) {
@@ -8776,6 +9515,22 @@ var $author$project$Infrastructure$TaskApi$reviewEncoder = F2(
 						return _List_Nil;
 					}
 				}()));
+	});
+var $author$project$Infrastructure$TaskApi$signUpEncoder = F3(
+	function (email, displayName, password) {
+		return $elm$json$Json$Encode$object(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'email',
+					$elm$json$Json$Encode$string(email)),
+					_Utils_Tuple2(
+					'displayName',
+					$elm$json$Json$Encode$string(displayName)),
+					_Utils_Tuple2(
+					'password',
+					$elm$json$Json$Encode$string(password))
+				]));
 	});
 var $author$project$Infrastructure$TaskApi$submissionEncoder = F2(
 	function (owner, submittedResult) {
@@ -8925,6 +9680,69 @@ var $author$project$Infrastructure$TaskApi$perform = function (effect) {
 						A2($author$project$Infrastructure$TaskApi$reviewEncoder, owner, comment)),
 					expect: $author$project$Infrastructure$TaskApi$expectTask($author$project$Application$TaskBoard$WorkflowSaved),
 					url: '/api/task/' + ($elm$core$String$fromInt(taskId) + '/revision')
+				});
+		case 'Register':
+			var email = effect.a;
+			var displayName = effect.b;
+			var password = effect.c;
+			return $elm$http$Http$post(
+				{
+					body: $elm$http$Http$jsonBody(
+						A3($author$project$Infrastructure$TaskApi$signUpEncoder, email, displayName, password)),
+					expect: $author$project$Infrastructure$TaskApi$expectSession($author$project$Application$TaskBoard$Authenticated),
+					url: '/api/auth/signup'
+				});
+		case 'Login':
+			var email = effect.a;
+			var password = effect.b;
+			return $elm$http$Http$post(
+				{
+					body: $elm$http$Http$jsonBody(
+						A2($author$project$Infrastructure$TaskApi$loginEncoder, email, password)),
+					expect: $author$project$Infrastructure$TaskApi$expectSession($author$project$Application$TaskBoard$Authenticated),
+					url: '/api/auth/login'
+				});
+		case 'UpdateProfile':
+			var token = effect.a;
+			var displayName = effect.b;
+			return $elm$http$Http$request(
+				{
+					body: $elm$http$Http$jsonBody(
+						$elm$json$Json$Encode$object(
+							_List_fromArray(
+								[
+									_Utils_Tuple2(
+									'displayName',
+									$elm$json$Json$Encode$string(displayName))
+								]))),
+					expect: $author$project$Infrastructure$TaskApi$expectProfile($author$project$Application$TaskBoard$ProfileSaved),
+					headers: _List_fromArray(
+						[
+							A2($elm$http$Http$header, 'Authorization', 'Bearer ' + token)
+						]),
+					method: 'PUT',
+					timeout: $elm$core$Maybe$Nothing,
+					tracker: $elm$core$Maybe$Nothing,
+					url: '/api/auth/me'
+				});
+		case 'Logout':
+			var token = effect.a;
+			return $elm$http$Http$request(
+				{
+					body: $elm$http$Http$emptyBody,
+					expect: $elm$http$Http$expectWhatever(
+						A2(
+							$elm$core$Basics$composeL,
+							$author$project$Application$TaskBoard$LoggedOut,
+							$elm$core$Result$mapError($author$project$Infrastructure$TaskApi$toApiError))),
+					headers: _List_fromArray(
+						[
+							A2($elm$http$Http$header, 'Authorization', 'Bearer ' + token)
+						]),
+					method: 'POST',
+					timeout: $elm$core$Maybe$Nothing,
+					tracker: $elm$core$Maybe$Nothing,
+					url: '/api/auth/logout'
 				});
 		default:
 			return $elm$core$Platform$Cmd$none;

@@ -1,6 +1,6 @@
 module Infrastructure.TaskApi exposing (perform)
 
-import Application.TaskBoard exposing (ApiError(..), Effect(..), Msg(..))
+import Application.TaskBoard exposing (ApiError(..), Effect(..), Msg(..), Profile, Session)
 import Domain.Task as Task exposing (Status, Task, TaskInput)
 import Http
 import Json.Decode as Decode exposing (Decoder)
@@ -77,6 +77,42 @@ perform effect =
                 , expect = expectTask WorkflowSaved
                 }
 
+        Register email displayName password ->
+            Http.post
+                { url = "/api/auth/signup"
+                , body = Http.jsonBody (signUpEncoder email displayName password)
+                , expect = expectSession Authenticated
+                }
+
+        Login email password ->
+            Http.post
+                { url = "/api/auth/login"
+                , body = Http.jsonBody (loginEncoder email password)
+                , expect = expectSession Authenticated
+                }
+
+        UpdateProfile token displayName ->
+            Http.request
+                { method = "PUT"
+                , headers = [ Http.header "Authorization" ("Bearer " ++ token) ]
+                , url = "/api/auth/me"
+                , body = Http.jsonBody (Encode.object [ ( "displayName", Encode.string displayName ) ])
+                , expect = expectProfile ProfileSaved
+                , timeout = Nothing
+                , tracker = Nothing
+                }
+
+        Logout token ->
+            Http.request
+                { method = "POST"
+                , headers = [ Http.header "Authorization" ("Bearer " ++ token) ]
+                , url = "/api/auth/logout"
+                , body = Http.emptyBody
+                , expect = Http.expectWhatever (LoggedOut << Result.mapError toApiError)
+                , timeout = Nothing
+                , tracker = Nothing
+                }
+
         ClearNoticeAfter _ ->
             Cmd.none
 
@@ -108,6 +144,33 @@ expectTask toMsg =
         )
 
 
+expectSession : (Result ApiError Session -> Msg) -> Http.Expect Msg
+expectSession toMsg =
+    Http.expectStringResponse toMsg (decodeResponse sessionDecoder)
+
+
+expectProfile : (Result ApiError Profile -> Msg) -> Http.Expect Msg
+expectProfile toMsg =
+    Http.expectStringResponse toMsg (decodeResponse profileDecoder)
+
+
+decodeResponse : Decoder value -> Http.Response String -> Result ApiError value
+decodeResponse decoder response =
+    case response of
+        Http.GoodStatus_ _ body ->
+            Decode.decodeString decoder body
+                |> Result.mapError (\_ -> RequestFailed)
+
+        Http.BadStatus_ _ body ->
+            Decode.decodeString (Decode.field "error" Decode.string) body
+                |> Result.map Rejected
+                |> Result.withDefault RequestFailed
+                |> Err
+
+        _ ->
+            Err RequestFailed
+
+
 taskDecoder : Decoder Task
 taskDecoder =
     Decode.map2
@@ -128,6 +191,21 @@ taskDecoder =
             (Decode.field "outcomeOwner" Decode.string)
         )
         (Decode.map3 (\expected submitted review -> ( expected, submitted, review )) (Decode.field "expectedResult" Decode.string) (Decode.field "submittedResult" (Decode.nullable Decode.string)) (Decode.field "reviewComment" (Decode.nullable Decode.string)))
+
+
+profileDecoder : Decoder Profile
+profileDecoder =
+    Decode.map3 Profile
+        (Decode.field "id" Decode.int)
+        (Decode.field "email" Decode.string)
+        (Decode.field "displayName" Decode.string)
+
+
+sessionDecoder : Decoder Session
+sessionDecoder =
+    Decode.map2 Session
+        (Decode.field "token" Decode.string)
+        (Decode.field "user" profileDecoder)
 
 
 statusDecoder : Decoder Status
@@ -206,3 +284,20 @@ reviewEncoder owner comment =
                         []
                )
         )
+
+
+signUpEncoder : String -> String -> String -> Encode.Value
+signUpEncoder email displayName password =
+    Encode.object
+        [ ( "email", Encode.string email )
+        , ( "displayName", Encode.string displayName )
+        , ( "password", Encode.string password )
+        ]
+
+
+loginEncoder : String -> String -> Encode.Value
+loginEncoder email password =
+    Encode.object
+        [ ( "email", Encode.string email )
+        , ( "password", Encode.string password )
+        ]
