@@ -1,0 +1,102 @@
+cabal-version: 2.4
+name: todo-list
+version: 0.1.0.0
+license: BSD-3-Clause
+build-type: Simple
+category: Web
+
+extra-source-files:
+    README.md
+    AGENTS.md
+    docs/*.md
+    tasks/*.md
+    migrations/*.sql
+
+library
+  exposed-modules:
+      Lib
+      Shared.Config
+      Shared.Database
+      Shared.Error
+      Todo.Application.CompleteTodo
+      Todo.Application.CreateTodo
+      Todo.Application.DeleteTodo
+      Todo.Application.GetTodo
+      Todo.Application.ListTodos
+      Todo.Application.TodoRepository
+      Todo.Domain.Todo
+      Todo.Domain.TodoId
+      Todo.Infrastructure.Persistence.PostgresTodoRepository
+      Todo.Infrastructure.Persistence.TodoRepository
+      Todo.Interface.HTTP.API
+      Todo.Interface.HTTP.DTO
+      Todo.Interface.HTTP.Handler
+      Todo.Interface.HTTP.Server
+  hs-source-dirs: src
+  build-depends:
+      aeson
+    , base >=4.19 && <5
+    , bytestring
+    , http-types
+    , postgresql-simple
+    , servant
+    , servant-server
+    , text
+    , time
+    , transformers
+    , uuid
+    , wai
+    , warp
+  default-language: GHC2021
+  ghc-options: -Wall -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
+
+executable todo-list
+  main-is: Main.hs
+  hs-source-dirs: app
+  build-depends:
+      base >=4.19 && <5
+    , todo-list
+    , warp
+  default-language: GHC2021
+  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
+
+test-suite todo-list-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  hs-source-dirs: test
+  other-modules:
+      Support.Fixtures
+      Todo.Application.CompleteTodoSpec
+      Todo.Application.CreateTodoSpec
+      Todo.Application.DeleteTodoSpec
+      Todo.Domain.TodoSpec
+      Todo.Interface.HTTP.TodoApiSpec
+  build-depends:
+      aeson
+    , base >=4.19 && <5
+    , bytestring
+    , containers
+    , hspec
+    , hspec-wai
+    , http-types
+    , text
+    , time
+    , todo-list
+    , uuid
+    , wai
+    , wai-extra
+  default-language: GHC2021
+  ghc-options: -Wall
+
+test-suite todo-list-integration
+  type: exitcode-stdio-1.0
+  main-is: TodoWorkflowSpec.hs
+  hs-source-dirs: integration
+  build-depends:
+      base >=4.19 && <5
+    , hspec
+    , postgresql-simple
+    , text
+    , todo-list
+  default-language: GHC2021
+  ghc-options: -Wall
