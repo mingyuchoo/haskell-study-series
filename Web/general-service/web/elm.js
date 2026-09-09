@@ -7146,6 +7146,37 @@ var $author$project$Presentation$TaskBoard$detailView = function (model) {
 									_List_Nil,
 									_List_fromArray(
 										[
+											$elm$html$Html$text('실행 분류')
+										])),
+									A2(
+									$elm$html$Html$dd,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text(
+											$author$project$Domain$Task$quadrantLabel(
+												A2($author$project$Domain$Task$quadrantOf, task.urgency, task.importance)))
+										])),
+									A2(
+									$elm$html$Html$dt,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text('진행 상태')
+										])),
+									A2(
+									$elm$html$Html$dd,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text(
+											$author$project$Domain$Task$statusLabel(task.status))
+										])),
+									A2(
+									$elm$html$Html$dt,
+									_List_Nil,
+									_List_fromArray(
+										[
 											$elm$html$Html$text('긴급도')
 										])),
 									A2(
@@ -8079,17 +8110,78 @@ var $author$project$Presentation$TaskBoard$kanbanColumn = F2(
 						statusTasks))
 				]));
 	});
+var $author$project$Presentation$TaskBoard$priorityTaskCard = function (task) {
+	return A2(
+		$elm$html$Html$button,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('priority-task-card'),
+				$elm$html$Html$Attributes$type_('button'),
+				$elm$html$Html$Events$onClick(
+				$author$project$Application$TaskBoard$OpenTask(task.taskId)),
+				A2($elm$html$Html$Attributes$attribute, 'aria-label', task.title + ' 상세 보기')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$span,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('priority-task-title')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(task.title)
+					])),
+				A2(
+				$elm$html$Html$span,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('priority-task-meta')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						'Task Owner ' + (task.taskOwner + (' · ' + $author$project$Domain$Task$statusLabel(task.status))))
+					])),
+				A2(
+				$elm$html$Html$span,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('priority-task-result')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						$author$project$Domain$Task$resultStateLabel(task))
+					])),
+				A2(
+				$elm$html$Html$span,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('priority-task-description')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						A2($author$project$Presentation$TaskBoard$nonEmpty, '등록된 설명이 없습니다.', task.description))
+					]))
+			]));
+};
+var $author$project$Domain$Task$tasksInQuadrant = F2(
+	function (quadrant, tasks) {
+		return A2(
+			$elm$core$List$filter,
+			function (task) {
+				return _Utils_eq(
+					A2($author$project$Domain$Task$quadrantOf, task.urgency, task.importance),
+					quadrant);
+			},
+			tasks);
+	});
 var $author$project$Presentation$TaskBoard$prioritySummary = function (tasks) {
 	var summaryItem = function (quadrant) {
-		var count = $elm$core$List$length(
-			A2(
-				$elm$core$List$filter,
-				function (task) {
-					return _Utils_eq(
-						A2($author$project$Domain$Task$quadrantOf, task.urgency, task.importance),
-						quadrant);
-				},
-				tasks));
+		var quadrantTasks = A2($author$project$Domain$Task$tasksInQuadrant, quadrant, tasks);
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -8100,27 +8192,56 @@ var $author$project$Presentation$TaskBoard$prioritySummary = function (tasks) {
 			_List_fromArray(
 				[
 					A2(
-					$elm$html$Html$span,
+					$elm$html$Html$div,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('priority-summary-label')
+							$elm$html$Html$Attributes$class('priority-summary-heading')
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text(
-							$author$project$Domain$Task$quadrantLabel(quadrant))
+							A2(
+							$elm$html$Html$span,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('priority-summary-label')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text(
+									$author$project$Domain$Task$quadrantLabel(quadrant))
+								])),
+							A2(
+							$elm$html$Html$span,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('priority-summary-count')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text(
+									$elm$core$String$fromInt(
+										$elm$core$List$length(quadrantTasks)))
+								]))
 						])),
 					A2(
-					$elm$html$Html$span,
+					$elm$html$Html$div,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('priority-summary-count')
+							$elm$html$Html$Attributes$class('priority-task-list')
 						]),
-					_List_fromArray(
+					$elm$core$List$isEmpty(quadrantTasks) ? _List_fromArray(
 						[
-							$elm$html$Html$text(
-							$elm$core$String$fromInt(count))
-						]))
+							A2(
+							$elm$html$Html$p,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('priority-empty')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('배치된 업무가 없습니다')
+								]))
+						]) : A2($elm$core$List$map, $author$project$Presentation$TaskBoard$priorityTaskCard, quadrantTasks))
 				]));
 	};
 	return A2(
@@ -8128,7 +8249,7 @@ var $author$project$Presentation$TaskBoard$prioritySummary = function (tasks) {
 		_List_fromArray(
 			[
 				$elm$html$Html$Attributes$class('priority-summary'),
-				A2($elm$html$Html$Attributes$attribute, 'aria-label', '아이젠하워 매트릭스 우선순위 요약')
+				A2($elm$html$Html$Attributes$attribute, 'aria-label', '아이젠하워 매트릭스 실행 분류별 업무')
 			]),
 		_List_fromArray(
 			[
@@ -8172,7 +8293,7 @@ var $author$project$Presentation$TaskBoard$kanbanBoard = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('카드를 원하는 상태 컬럼으로 끌어 옮겨 다음 단계를 관리하세요.')
+										$elm$html$Html$text('실행 분류에서 업무를 찾고, 아래 상태 스윔레인에서 진행 단계를 관리하세요.')
 									]))
 							])),
 						A2(
@@ -8189,6 +8310,29 @@ var $author$project$Presentation$TaskBoard$kanbanBoard = function (model) {
 							]))
 					])),
 				$author$project$Presentation$TaskBoard$prioritySummary(model.tasks),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('swimlane-heading')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$h3,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('진행 상태 스윔레인')
+							])),
+						A2(
+						$elm$html$Html$p,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('카드를 원하는 상태로 끌어 옮겨 도메인 진행 상태를 변경하세요.')
+							]))
+					])),
 				(model.loading && $elm$core$List$isEmpty(model.tasks)) ? A2(
 				$elm$html$Html$p,
 				_List_fromArray(

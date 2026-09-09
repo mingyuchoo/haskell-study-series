@@ -282,11 +282,15 @@ kanbanBoard model =
         [ div [ class "board-heading" ]
             [ div []
                 [ h2 [] [ text "업무 보드" ]
-                , p [] [ text "카드를 원하는 상태 컬럼으로 끌어 옮겨 다음 단계를 관리하세요." ]
+                , p [] [ text "실행 분류에서 업무를 찾고, 아래 상태 스윔레인에서 진행 단계를 관리하세요." ]
                 ]
             , span [ class "board-total" ] [ text (String.fromInt (List.length model.tasks) ++ "개 업무") ]
             ]
         , prioritySummary model.tasks
+        , div [ class "swimlane-heading" ]
+            [ h3 [] [ text "진행 상태 스윔레인" ]
+            , p [] [ text "카드를 원하는 상태로 끌어 옮겨 도메인 진행 상태를 변경하세요." ]
+            ]
         , if model.loading && List.isEmpty model.tasks then
             p [ class "empty board-empty" ] [ text "업무를 불러오는 중입니다…" ]
 
@@ -434,7 +438,11 @@ detailView model =
                         , span [ class "result-chip" ] [ text (Task.resultStateLabel task) ]
                         ]
                     , dl [ class "detail-grid" ]
-                        [ dt [] [ text "긴급도" ]
+                        [ dt [] [ text "실행 분류" ]
+                        , dd [] [ text (Task.quadrantLabel (Task.quadrantOf task.urgency task.importance)) ]
+                        , dt [] [ text "진행 상태" ]
+                        , dd [] [ text (Task.statusLabel task.status) ]
+                        , dt [] [ text "긴급도" ]
                         , dd [] [ text (Task.urgencyLabel task.urgency) ]
                         , dt [] [ text "중요도" ]
                         , dd [] [ text (Task.importanceLabel task.importance) ]
@@ -550,19 +558,43 @@ prioritySummary tasks =
     let
         summaryItem quadrant =
             let
-                count =
-                    tasks
-                        |> List.filter (\task -> Task.quadrantOf task.urgency task.importance == quadrant)
-                        |> List.length
+                quadrantTasks =
+                    Task.tasksInQuadrant quadrant tasks
             in
             div [ class ("priority-summary-item " ++ Task.quadrantClass quadrant) ]
-                [ span [ class "priority-summary-label" ] [ text (Task.quadrantLabel quadrant) ]
-                , span [ class "priority-summary-count" ] [ text (String.fromInt count) ]
+                [ div [ class "priority-summary-heading" ]
+                    [ span [ class "priority-summary-label" ] [ text (Task.quadrantLabel quadrant) ]
+                    , span [ class "priority-summary-count" ] [ text (String.fromInt (List.length quadrantTasks)) ]
+                    ]
+                , div [ class "priority-task-list" ]
+                    (if List.isEmpty quadrantTasks then
+                        [ p [ class "priority-empty" ] [ text "배치된 업무가 없습니다" ] ]
+
+                     else
+                        List.map priorityTaskCard quadrantTasks
+                    )
                 ]
     in
-    div [ class "priority-summary", attribute "aria-label" "아이젠하워 매트릭스 우선순위 요약" ]
+    div [ class "priority-summary", attribute "aria-label" "아이젠하워 매트릭스 실행 분류별 업무" ]
         [ summaryItem Task.DoFirst
         , summaryItem Task.Schedule
         , summaryItem Task.Delegate
         , summaryItem Task.Eliminate
+        ]
+
+
+priorityTaskCard : Task -> Html Msg
+priorityTaskCard task =
+    button
+        [ class "priority-task-card"
+        , type_ "button"
+        , onClick (OpenTask task.taskId)
+        , attribute "aria-label" (task.title ++ " 상세 보기")
+        ]
+        [ span [ class "priority-task-title" ] [ text task.title ]
+        , span [ class "priority-task-meta" ]
+            [ text ("Task Owner " ++ task.taskOwner ++ " · " ++ Task.statusLabel task.status) ]
+        , span [ class "priority-task-result" ] [ text (Task.resultStateLabel task) ]
+        , span [ class "priority-task-description" ]
+            [ text (nonEmpty "등록된 설명이 없습니다." task.description) ]
         ]

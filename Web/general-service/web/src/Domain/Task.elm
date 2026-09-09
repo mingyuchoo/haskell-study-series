@@ -21,6 +21,7 @@ module Domain.Task exposing
     , statusFromString
     , statusLabel
     , statusString
+    , tasksInQuadrant
     , urgencyFromString
     , urgencyLabel
     , urgencyString
@@ -248,6 +249,11 @@ quadrantOf taskUrgency taskImportance =
 
         ( NotUrgent, NotImportant ) ->
             Eliminate
+
+
+tasksInQuadrant : Quadrant -> List Task -> List Task
+tasksInQuadrant quadrant tasks =
+    List.filter (\task -> quadrantOf task.urgency task.importance == quadrant) tasks
 
 
 quadrantLabel : Quadrant -> String

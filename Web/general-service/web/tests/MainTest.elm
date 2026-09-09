@@ -23,6 +23,20 @@ suite =
                     , Task.quadrantOf Task.Urgent Task.NotImportant
                     , Task.quadrantOf Task.NotUrgent Task.NotImportant
                     ]
+        , test "실행 분류별로 해당 Task만 찾는다" <|
+            \_ ->
+                let
+                    scheduleTask =
+                        { sampleTask | taskId = 2, urgency = Task.NotUrgent, importance = Task.Important }
+
+                    delegateTask =
+                        { sampleTask | taskId = 3, urgency = Task.Urgent, importance = Task.NotImportant }
+                in
+                Expect.equal
+                    [ 2 ]
+                    (Task.tasksInQuadrant Task.Schedule [ sampleTask, scheduleTask, delegateTask ]
+                        |> List.map .taskId
+                    )
         , test "초기 인증 화면에서 회원가입 버튼을 사용할 수 있다" <|
             \_ ->
                 let
