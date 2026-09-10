@@ -33,6 +33,9 @@ library
       Domain.User
       Infrastructure.InMemoryTaskRepository
       Infrastructure.InMemoryUserRepository
+      Infrastructure.SQLiteDatabase
+      Infrastructure.SQLiteTaskRepository
+      Infrastructure.SQLiteUserRepository
       Interface.Http.TaskRoutes
       Lib
   other-modules:
@@ -48,6 +51,7 @@ library
     , bcrypt
     , bytestring
     , http-types
+    , sqlite-simple
     , text
     , wai
     , warp
@@ -69,6 +73,7 @@ executable GeneralService-exe
     , bcrypt
     , bytestring
     , http-types
+    , sqlite-simple
     , text
     , wai
     , warp
@@ -90,7 +95,9 @@ test-suite GeneralService-test
     , base >=4.7 && <5
     , bcrypt
     , bytestring
+    , directory
     , http-types
+    , sqlite-simple
     , text
     , wai
     , warp

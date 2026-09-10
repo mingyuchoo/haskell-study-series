@@ -4,6 +4,9 @@ module Main (main) where
 
 import qualified Application.AuthService as AuthService
 import qualified Application.TaskService as TaskService
+import Control.Exception (bracket)
+import Control.Monad (forM_)
+import Data.List (find)
 import Domain.Task
 import Domain.User
   ( AuthError (..)
@@ -13,7 +16,18 @@ import Domain.User
   )
 import Infrastructure.InMemoryTaskRepository (newInMemoryTaskRepository)
 import Infrastructure.InMemoryUserRepository (newInMemoryUserRepository)
+import Infrastructure.SQLiteDatabase
+  ( closeSQLiteDatabase
+  , openSQLiteDatabase
+  )
+import Infrastructure.SQLiteTaskRepository
+  ( newSQLiteTaskRepository
+  , seedInitialTasks
+  )
+import Infrastructure.SQLiteUserRepository (newSQLiteUserRepository)
+import System.Directory (doesFileExist, getTemporaryDirectory, removeFile)
 import System.Exit (exitFailure)
+import System.IO (hClose, openTempFile)
 
 main :: IO ()
 main = do
@@ -115,7 +129,107 @@ main = do
   AuthService.logout userRepository (AuthService.sessionToken session)
   loggedOut <- AuthService.currentUser userRepository (AuthService.sessionToken session)
   assert "로그아웃한 세션을 거부한다" (loggedOut == Left AuthenticationRequired)
+  testSQLitePersistence
   putStrLn "All domain tests passed"
+
+testSQLitePersistence :: IO ()
+testSQLitePersistence = withTemporaryDatabasePath $ \databasePath -> do
+  let sqliteInput =
+        TaskInput
+          "영속 업무"
+          "서버 재시작 뒤에도 남아야 합니다."
+          Draft
+          NotUrgent
+          Important
+          (TaskOwner "영속 담당자")
+          (OutcomeOwner "영속 성과 담당자")
+          "영속 결과물"
+      seedTask = createTask 1 (sqliteInput {inputTitle = "최초 1회 예시 업무"})
+  (approvedTask, createdOutcome, sessionToken, expectedProfile) <-
+    bracket
+      (openSQLiteDatabase databasePath)
+      closeSQLiteDatabase
+      ( \database -> do
+          repository <- newSQLiteTaskRepository database
+          userRepository <- newSQLiteUserRepository database
+          seedInitialTasks database [seedTask]
+          seedInitialTasks database [seedTask]
+          initiallySeeded <- TaskService.listTasks repository
+          assert "SQLite 예시 업무를 최초 한 번만 시드한다" (initiallySeeded == [seedTask])
+          createdResult <- TaskService.createTask repository sqliteInput
+          createdTask <- expectRight "SQLite에 Task를 생성한다" createdResult
+          submissionResult <-
+            TaskService.submitTaskResult
+              repository
+              (taskId createdTask)
+              (TaskOwner "영속 담당자")
+              "완료된 영속 결과물"
+          submittedTask <- expectRightMaybe "SQLite Task 결과물을 제출한다" submissionResult
+          approvedResult <-
+            TaskService.approveTaskResult
+              repository
+              (taskId submittedTask)
+              (OutcomeOwner "영속 성과 담당자")
+              (Just "영속 승인")
+          approved <- expectRightMaybe "SQLite Task 결과물을 승인한다" approvedResult
+          outcomeResult <-
+            TaskService.createOutcome
+              repository
+              ( OutcomeInput
+                  "영속 Outcome"
+                  (OutcomeOwner "영속 성과 담당자")
+                  [taskId approved]
+              )
+          outcome <- expectRight "SQLite에 Outcome을 생성한다" outcomeResult
+          signedUp <-
+            AuthService.signUp
+              userRepository
+              (SignUpInput "persistent@example.com" "영속 사용자" "safe-password")
+          sqliteSession <- expectRight "SQLite에 사용자와 세션을 생성한다" signedUp
+          updated <-
+            AuthService.updateProfile
+              userRepository
+              (AuthService.sessionToken sqliteSession)
+              (ProfileUpdate "재개방 사용자")
+          profile <- expectRight "SQLite 사용자 프로필을 갱신한다" updated
+          pure (approved, outcome, AuthService.sessionToken sqliteSession, profile)
+      )
+  bracket
+    (openSQLiteDatabase databasePath)
+    closeSQLiteDatabase
+    ( \database -> do
+        repository <- newSQLiteTaskRepository database
+        userRepository <- newSQLiteUserRepository database
+        seedInitialTasks database [seedTask]
+        reopenedTasks <- TaskService.listTasks repository
+        assert
+          "DB 재개방 뒤 Task와 시드 마커를 보존한다"
+          ( length reopenedTasks == 2
+              && find ((== taskId approvedTask) . taskId) reopenedTasks == Just approvedTask
+          )
+        reopenedOutcomes <- TaskService.listOutcomes repository
+        assert "DB 재개방 뒤 Outcome을 보존한다" (reopenedOutcomes == [createdOutcome])
+        reopenedUser <- AuthService.currentUser userRepository sessionToken
+        assert "DB 재개방 뒤 사용자와 유효 세션을 보존한다" (reopenedUser == Right expectedProfile)
+    )
+
+withTemporaryDatabasePath :: (FilePath -> IO a) -> IO a
+withTemporaryDatabasePath action = do
+  temporaryDirectory <- getTemporaryDirectory
+  bracket
+    ( do
+        (databasePath, handle) <- openTempFile temporaryDirectory "general-service-test.sqlite3"
+        hClose handle
+        pure databasePath
+    )
+    cleanupDatabaseFiles
+    action
+
+cleanupDatabaseFiles :: FilePath -> IO ()
+cleanupDatabaseFiles databasePath =
+  forM_ [databasePath, databasePath <> "-wal", databasePath <> "-shm"] $ \path -> do
+    exists <- doesFileExist path
+    if exists then removeFile path else pure ()
 
 assert :: String -> Bool -> IO ()
 assert label condition =
@@ -128,3 +242,9 @@ expectRight label result =
   case result of
     Right value -> putStrLn ("PASS: " <> label) >> pure value
     Left _ -> putStrLn ("FAIL: " <> label) >> exitFailure
+
+expectRightMaybe :: String -> Either a (Maybe b) -> IO b
+expectRightMaybe label result =
+  case result of
+    Right (Just value) -> putStrLn ("PASS: " <> label) >> pure value
+    _ -> putStrLn ("FAIL: " <> label) >> exitFailure

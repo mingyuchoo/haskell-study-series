@@ -10,6 +10,20 @@ stack run
 
 브라우저에서 `http://localhost:3000`을 엽니다.
 
+기본 데이터베이스는 명령을 실행한 디렉터리의 `general-service.sqlite3`입니다. 다른 위치를 사용하려면 실행 환경에 `DATABASE_PATH`를 지정합니다. `.env.example`은 설정 예시일 뿐 애플리케이션이 `.env` 파일을 자동으로 읽지는 않습니다.
+
+```bash
+DATABASE_PATH=/absolute/path/general-service.sqlite3 stack run
+```
+
+빈 `DATABASE_PATH`는 허용되지 않습니다. 서버 시작 시 스키마 전진 마이그레이션을 트랜잭션으로 적용하며, 서버보다 새로운 스키마 버전이면 시작을 거부합니다.
+
+예시 Task 시드는 기본적으로 활성화됩니다. 개발 환경이 아니거나 빈 DB를 빈 상태로 시작해야 하면 리터럴 소문자 `false`를 지정합니다.
+
+```bash
+DATABASE_PATH=/absolute/path/general-service.sqlite3 SEED_EXAMPLE_DATA=false stack run
+```
+
 ## 기능
 
 - 이메일·비밀번호·표시 이름으로 회원가입 및 로그인
@@ -45,4 +59,30 @@ stack run
 | `GET` | `/api/auth/me` | 내 프로필 조회 (Bearer 토큰) |
 | `PUT` | `/api/auth/me` | 내 표시 이름 변경 (`displayName`, Bearer 토큰) |
 
-비밀번호는 bcrypt 해시로만 저장합니다. 사용자·세션·Task 저장소는 현재 서버 메모리입니다. 서버를 다시 시작하면 계정과 로그인 세션, 초기 예시 Task가 초기화됩니다. 이 구현은 개발용이며 HTTPS, 영속 저장소, 속도 제한 및 서버 측 Task 권한 검증 없이 외부에 배포하면 안 됩니다.
+## 데이터 영속성과 세션
+
+Task, Outcome, 사용자, 세션은 SQLite에 저장되어 정상적인 서버 재시작 뒤에도 유지됩니다. 비밀번호는 bcrypt 해시로만 저장합니다. 로그인 세션은 생성 시점부터 24시간 동안 유효하며, 만료된 세션으로 사용자 정보를 조회하면 해당 세션을 삭제하고 인증을 거부합니다.
+
+`SEED_EXAMPLE_DATA`가 활성화된 경우에만 예시 Task를 새 데이터베이스의 빈 Task 테이블에 한 번 추가하며, 시드 처리 여부를 데이터베이스에 기록합니다. 기존 데이터가 있으면 예시 Task를 추가하지 않습니다. 과거 서버 프로세스에 있던 메모리 데이터는 SQLite로 자동 이관되지 않습니다. 전환 전에 종료된 메모리 데이터의 자동 복구나 가져오기 도구도 제공하지 않습니다.
+
+현재 서버는 하나의 SQLite 연결을 프로세스 안에서 직렬화하고 WAL 모드를 사용합니다. 단일 서버 인스턴스 운영을 전제로 하며, 여러 서버 인스턴스나 공유 파일시스템에서 같은 파일을 사용하는 구성은 지원하지 않습니다.
+
+## 백업과 복원
+
+로컬 백업은 SQLite CLI를 사용할 수 있다면 `.backup` 명령으로 일관된 스냅샷을 만듭니다. 실제 경로와 백업 파일은 실행 전에 확인합니다.
+
+```bash
+sqlite3 general-service.sqlite3 ".backup 'general-service-backup.sqlite3'"
+sqlite3 general-service-backup.sqlite3 "PRAGMA integrity_check;"
+```
+
+복원할 때는 서버를 먼저 정상 종료하고 현재 DB도 별도로 백업한 뒤, 검증된 백업을 명시적인 대상 경로에 복원합니다.
+
+```bash
+sqlite3 general-service.sqlite3 ".restore 'general-service-backup.sqlite3'"
+sqlite3 general-service.sqlite3 "PRAGMA integrity_check;"
+```
+
+실행 중인 DB 파일과 `-wal`·`-shm` 파일을 각각 복사해 백업하지 않습니다. 기존 운영 DB에 마이그레이션 또는 복원을 적용하는 작업은 사전 백업과 복원 리허설을 준비하고 별도의 사람 승인을 받은 뒤 수행해야 합니다. 이 변경은 운영 DB 적용이나 배포를 포함하지 않습니다.
+
+이 구현은 개발·단일 인스턴스 용도입니다. HTTPS, 속도 제한, 감사 로그 및 인증된 사용자에 기반한 Task 권한 검증 없이 외부에 배포하면 안 됩니다.

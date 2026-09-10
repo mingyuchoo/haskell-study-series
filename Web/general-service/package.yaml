@@ -25,6 +25,7 @@ dependencies:
 - bcrypt
 - bytestring
 - http-types
+- sqlite-simple
 - text
 - wai
 - warp
@@ -51,6 +52,9 @@ library:
   - Domain.User
   - Infrastructure.InMemoryTaskRepository
   - Infrastructure.InMemoryUserRepository
+  - Infrastructure.SQLiteDatabase
+  - Infrastructure.SQLiteTaskRepository
+  - Infrastructure.SQLiteUserRepository
   - Interface.Http.TaskRoutes
   - Lib
 
@@ -81,3 +85,4 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - GeneralService
+    - directory

@@ -8,7 +8,8 @@ import Control.Concurrent.MVar (modifyMVar, newMVar, readMVar)
 import Data.List (find, partition)
 import Domain.Task
   ( Outcome (..)
-  , OutcomeInput
+  , OutcomeInput (..)
+  , TaskError (..)
   , TaskItem
   , assembleOutcome
   , createTask
@@ -50,14 +51,19 @@ newInMemoryTaskRepository initialTasks = do
       , listOutcomes = do
           Store _ outcomes <- readMVar store
           pure outcomes
-      , createStoredOutcome = \input tasks ->
+      , createStoredOutcome = \input ->
           modifyMVar store $ \(Store storedTasks outcomes) ->
-            let outcome =
-                  either
-                    (error "validated outcome creation failed")
-                    id
-                    (assembleOutcome (nextOutcomeId outcomes) input tasks)
-             in pure (Store storedTasks (outcomes <> [outcome]), outcome)
+            let selectedTasks =
+                  filter (\task -> taskId task `elem` inputSourceTaskIds input) storedTasks
+             in if length selectedTasks /= length (inputSourceTaskIds input)
+                  then pure (Store storedTasks outcomes, Left TaskNotApproved)
+                  else case assembleOutcome (nextOutcomeId outcomes) input selectedTasks of
+                    Left err -> pure (Store storedTasks outcomes, Left err)
+                    Right outcome ->
+                      pure
+                        ( Store storedTasks (outcomes <> [outcome])
+                        , Right outcome
+                        )
       }
 
 nextId :: [TaskItem] -> Int

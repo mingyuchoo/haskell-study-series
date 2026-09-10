@@ -3,7 +3,7 @@ module Application.Port.TaskRepository
   )
 where
 
-import Domain.Task (Outcome, OutcomeInput, TaskInput, TaskItem)
+import Domain.Task (Outcome, OutcomeInput, TaskError, TaskInput, TaskItem)
 
 data TaskRepository m = TaskRepository
   { listTasks :: m [TaskItem]
@@ -13,5 +13,5 @@ data TaskRepository m = TaskRepository
   , replaceStoredTask :: TaskItem -> m ()
   , deleteStoredTask :: Int -> m Bool
   , listOutcomes :: m [Outcome]
-  , createStoredOutcome :: OutcomeInput -> [TaskItem] -> m Outcome
+  , createStoredOutcome :: OutcomeInput -> m (Either TaskError Outcome)
   }

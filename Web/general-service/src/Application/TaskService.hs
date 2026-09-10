@@ -16,14 +16,12 @@ import qualified Application.Port.TaskRepository as Repository
 import Data.Text (Text)
 import Domain.Task
   ( Outcome
-  , OutcomeInput (..)
+  , OutcomeInput
   , OutcomeOwner
-  , TaskError (..)
+  , TaskError
   , TaskInput
   , TaskItem
   , TaskOwner
-  , assembleOutcome
-  , taskId
   , validateTaskInput
   )
 import qualified Domain.Task as Domain
@@ -97,11 +95,4 @@ requestTaskRevision repository identifier actor comment = do
 
 createOutcome
   :: TaskRepository IO -> OutcomeInput -> IO (Either TaskError Outcome)
-createOutcome repository input = do
-  allTasks <- Repository.listTasks repository
-  let selectedTasks = filter (\task -> taskId task `elem` inputSourceTaskIds input) allTasks
-  if length selectedTasks /= length (inputSourceTaskIds input)
-    then pure (Left TaskNotApproved)
-    else case assembleOutcome 0 input selectedTasks of
-      Left err -> pure (Left err)
-      Right _ -> Right <$> Repository.createStoredOutcome repository input selectedTasks
+createOutcome = Repository.createStoredOutcome

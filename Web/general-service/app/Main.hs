@@ -2,6 +2,8 @@
 
 module Main (main) where
 
+import Control.Exception (bracket)
+import Control.Monad (when)
 import Domain.Task
   ( Importance (..)
   , OutcomeOwner (..)
@@ -10,19 +12,37 @@ import Domain.Task
   , TaskOwner (..)
   , Urgency (..)
   )
-import Infrastructure.InMemoryTaskRepository (newInMemoryTaskRepository)
-import Infrastructure.InMemoryUserRepository (newInMemoryUserRepository)
+import Infrastructure.SQLiteDatabase
+  ( closeSQLiteDatabase
+  , openSQLiteDatabase
+  )
+import Infrastructure.SQLiteTaskRepository
+  ( newSQLiteTaskRepository
+  , seedInitialTasks
+  )
+import Infrastructure.SQLiteUserRepository (newSQLiteUserRepository)
 import Interface.Http.TaskRoutes (application)
 import Network.Wai.Handler.Warp (run)
 import System.Environment (lookupEnv)
 
 main :: IO ()
 main = do
-  repository <- newInMemoryTaskRepository initialTasks
-  userRepository <- newInMemoryUserRepository
   port <- maybe 3000 read <$> lookupEnv "PORT"
-  putStrLn ("GeneralService is running at http://localhost:" <> show port)
-  run port (application repository userRepository)
+  databasePath <- maybe "general-service.sqlite3" id <$> lookupEnv "DATABASE_PATH"
+  seedExampleData <- maybe True (/= "false") <$> lookupEnv "SEED_EXAMPLE_DATA"
+  when (null databasePath) (fail "DATABASE_PATH must not be empty")
+  bracket
+    (openSQLiteDatabase databasePath)
+    closeSQLiteDatabase
+    ( \database -> do
+        repository <- newSQLiteTaskRepository database
+        userRepository <- newSQLiteUserRepository database
+        when
+          seedExampleData
+          (seedInitialTasks database initialTasks)
+        putStrLn ("GeneralService is running at http://localhost:" <> show port)
+        run port (application repository userRepository)
+    )
 
 initialTasks :: [TaskItem]
 initialTasks =
