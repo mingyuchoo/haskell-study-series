@@ -5,6 +5,7 @@
 | T-2026-0910-021 | REVIEW | orchestrator | 회원가입 화면의 비활성화된 제출 버튼을 수정했다. |
 | T-2026-0910-022 | DONE | orchestrator | 실행 분류별 Task 카드와 상태 스윔레인을 분리해 보드에서 업무를 쉽게 확인하게 했다. |
 | T-2026-0910-023 | IN_PROGRESS | orchestrator | 메모리 저장소를 SQLite 영속 저장소로 교체한다. |
+| T-2026-0910-024 | REVIEW | orchestrator | 좁은 화면에서 상태 스윔레인이 줄바꿈되도록 반응형 레이아웃을 수정했다. |
 
 ## 가정
 
